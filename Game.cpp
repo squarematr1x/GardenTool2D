@@ -155,14 +155,19 @@ void Game::spawnEnemy()
 	std::uniform_int_distribution rand_w{ 32, m_width - 32 };
 	std::uniform_int_distribution rand_h{ 32, m_height - 32 };
 	std::uniform_int_distribution rand_points{ 3, 8 };
+	std::uniform_int_distribution rand_rgb{ 0, 255 };
+
+	std::uniform_real_distribution rand_speed{ 2.0, 3.0 };
 
 	const float f_w = static_cast<float>(rand_w(mt));
 	const float f_h = static_cast<float>(rand_h(mt));
 	const int points = rand_points(mt);
-
+	const Vec2 speed = Vec2(static_cast<float>(rand_speed(mt)), static_cast<float>(rand_speed(mt)));
+	const auto color = sf::Color(rand_rgb(mt), rand_rgb(mt), rand_rgb(mt));
 	auto entity = m_entities.addEntity("enemy");
-	entity->cTransform = std::make_shared<CTransform>(Vec2(f_w, f_h), Vec2(0.5f, 1.0f), 0.0f);
-	entity->cShape = std::make_shared<CShape>(32.0f, points, sf::Color(10, 10, 10), sf::Color(255, 255, 255), 4.0f);
+
+	entity->cTransform = std::make_shared<CTransform>(Vec2(f_w, f_h), speed, 0.0f);
+	entity->cShape = std::make_shared<CShape>(32.0f, points, sf::Color(10, 10, 10), color, 4.0f);
 	entity->cCollision = std::make_shared<CCollision>(32.0f);
 	entity->cScore = std::make_shared<CScore>(points * 10);
 
@@ -386,6 +391,8 @@ void Game::sCollision()
 			if (isCollision(player, enemy))
 			{
 				player->destroy();
+				enemy->destroy();
+				spawnSmallEnemies(enemy);
 				spawnPlayer();
 			}
 		}
