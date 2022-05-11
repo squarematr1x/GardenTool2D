@@ -23,6 +23,7 @@ void Game::init(const std::string& path)
 	auto screen_mode{ sf::Style::Resize | sf::Style::Close};
 	bool full_screen{ false };
 
+	// FIXME: Make a better config file parser and simplify config file structure
 	while (file_in)
 	{
 		std::string line;
@@ -44,6 +45,26 @@ void Game::init(const std::string& path)
 				if (full_screen)
 					screen_mode = sf::Style::Fullscreen;
 			}
+			else if (arg == "Font")
+			{
+				std::string font_file;
+				int font_size;
+				int font_R;
+				int font_G;
+				int font_B;
+				ssin >> font_file >> font_size >> font_R >> font_G >> font_B;
+
+				if (!m_font.loadFromFile(font_file))
+				{
+					std::cerr << "Font not found\n";
+					exit(-1);
+				}
+
+				m_text.setFont(m_font);
+				m_text.setCharacterSize(font_size);
+				m_text.setFillColor(sf::Color(font_R, font_G, font_B));
+				m_text.setPosition(32, 32);
+			}
 			else if (arg == "Player")
 			{
 				ssin >> m_player_config.SR
@@ -58,45 +79,38 @@ void Game::init(const std::string& path)
 					>> m_player_config.OT
 					>> m_player_config.V;
 			}
-		}
-
-		if (args[0] == "Window")
-		{
-			//m_width = stoi(args[1]);
-			//m_height = stoi(args[2]);
-			//bool full_screen{ false };
-			//std::istringstream(args[4]) >> full_screen;
-
-			//if (full_screen)
-			//	screen_mode = sf::Style::Fullscreen;
-		}
-		else if (args[0] == "Font")
-		{
-
-		}
-		else if (args[0] == "Player")
-		{
-
-		}
-		else if (args[0] == "Enemy")
-		{
-
-		}
-		else if (args[0] == "Bullet")
-		{
-
+			else if (arg == "Enemy")
+			{
+				ssin >> m_enemy_config.SR
+					>> m_enemy_config.CR
+					>> m_enemy_config.SMIN
+					>> m_enemy_config.SMAX
+					>> m_enemy_config.OR
+					>> m_enemy_config.OG
+					>> m_enemy_config.OB
+					>> m_enemy_config.OT
+					>> m_enemy_config.VMIN
+					>> m_enemy_config.VMAX
+					>> m_enemy_config.L
+					>> m_enemy_config.SI;
+			}
+			else if (arg == "Bullet")
+			{
+				ssin >> m_bullet_config.SR
+					>> m_bullet_config.CR
+					>> m_bullet_config.S
+					>> m_bullet_config.FR
+					>> m_bullet_config.FG
+					>> m_bullet_config.FB
+					>> m_bullet_config.OR
+					>> m_bullet_config.OG
+					>> m_bullet_config.OB
+					>> m_bullet_config.OT
+					>> m_bullet_config.V
+					>> m_bullet_config.L;
+			}
 		}
 	}
-
-
-	if (!m_font.loadFromFile("fonts/arial.ttf"))
-	{
-	    std::cerr << "Font not found\n";
-	    exit(-1);
-	}
-	m_text.setFont(m_font);
-	m_text.setCharacterSize(24);
-	m_text.setPosition(32, 32);
 
 	m_window.create(sf::VideoMode(m_width, m_height), "2D Game Engine", screen_mode);
 	m_window.setFramerateLimit(60);
@@ -135,12 +149,16 @@ void Game::spawnPlayer()
 {
 	auto entity = m_entities.addEntity("player");
 
-	// Use struct read from config file when ready
-
-	entity->cTransform = std::make_shared<CTransform>(Vec2(m_width/2, m_height/2), Vec2(0.0f, -1.0f), 0.0f);
-	entity->cShape = std::make_shared<CShape>(32.0f, 8, sf::Color(10, 10, 10), sf::Color(255, 0, 0), 4.0f);
+	entity->cShape = std::make_shared<CShape>(
+		static_cast<float>(m_player_config.SR),
+		m_player_config.V,
+		sf::Color(m_player_config.FR, m_player_config.FG, m_player_config.FB),
+		sf::Color(m_player_config.OR, m_player_config.OG, m_player_config.OB),
+		static_cast<float>(m_player_config.OT)
+	);
 	entity->cInput = std::make_shared<CInput>();
-	entity->cCollision = std::make_shared<CCollision>(32.0f);
+	entity->cTransform = std::make_shared<CTransform>(Vec2(m_width / 2, m_height / 2), Vec2(0.0f, 0.0f), 0.0f);
+	entity->cCollision = std::make_shared<CCollision>(static_cast<float>(m_player_config.CR));
 
 	m_player = entity;
 }
@@ -154,10 +172,10 @@ void Game::spawnEnemy()
 
 	std::uniform_int_distribution rand_w{ 32, m_width - 32 };
 	std::uniform_int_distribution rand_h{ 32, m_height - 32 };
-	std::uniform_int_distribution rand_points{ 3, 8 };
+	std::uniform_int_distribution rand_points{ m_enemy_config.VMIN, m_enemy_config.VMAX };
 	std::uniform_int_distribution rand_rgb{ 0, 255 };
 
-	std::uniform_real_distribution rand_speed{ 2.0, 3.0 };
+	std::uniform_real_distribution rand_speed{ -m_enemy_config.SMIN, m_enemy_config.SMAX };
 
 	const float f_w = static_cast<float>(rand_w(mt));
 	const float f_h = static_cast<float>(rand_h(mt));
@@ -166,9 +184,15 @@ void Game::spawnEnemy()
 	const auto color = sf::Color(rand_rgb(mt), rand_rgb(mt), rand_rgb(mt));
 	auto entity = m_entities.addEntity("enemy");
 
+	entity->cShape = std::make_shared<CShape>(
+		static_cast<float>(m_enemy_config.SR),
+		points,
+		color,
+		sf::Color(m_enemy_config.OR, m_enemy_config.OG, m_enemy_config.OB),
+		static_cast<float>(m_enemy_config.OT)
+	);
 	entity->cTransform = std::make_shared<CTransform>(Vec2(f_w, f_h), speed, 0.0f);
-	entity->cShape = std::make_shared<CShape>(32.0f, points, sf::Color(10, 10, 10), color, 4.0f);
-	entity->cCollision = std::make_shared<CCollision>(32.0f);
+	entity->cCollision = std::make_shared<CCollision>(static_cast<float>(m_enemy_config.CR));
 	entity->cScore = std::make_shared<CScore>(points * 10);
 
 	m_last_enemy_spawn_time = m_current_frame;
@@ -195,10 +219,18 @@ void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vec2& mouse_pos)
 {
 	auto bullet = m_entities.addEntity("bullet");
 	Vec2 diff = mouse_pos - entity->cTransform->pos;
-	bullet->cTransform = std::make_shared<CTransform>(entity->cTransform->pos, diff.normalize()*2.5f, 0.0f);
-	bullet->cShape = std::make_shared<CShape>(10.0f, 32, sf::Color(200, 200, 200), sf::Color(200, 200, 200), 4.0f);
-	bullet->cCollision = std::make_shared<CCollision>(16.0f);
-	bullet->cLifespan = std::make_shared<CLifespan>(120);
+	float bullet_speed = static_cast<float>(m_bullet_config.S);
+
+	bullet->cShape = std::make_shared<CShape>(
+		static_cast<float>(m_bullet_config.SR),
+		m_bullet_config.V,
+		sf::Color(m_bullet_config.FR, m_bullet_config.FG, m_bullet_config.FB),
+		sf::Color(m_bullet_config.OR, m_bullet_config.OG, m_bullet_config.OB),
+		static_cast<float>(m_bullet_config.OT)
+	);
+	bullet->cTransform = std::make_shared<CTransform>(entity->cTransform->pos, diff.normalize()*bullet_speed, 0.0f);
+	bullet->cCollision = std::make_shared<CCollision>(static_cast<float>(m_bullet_config.CR));
+	bullet->cLifespan = std::make_shared<CLifespan>(m_bullet_config.L);
 }
 
 void Game::spawnSpecialWeapon(std::shared_ptr<Entity> entity)
