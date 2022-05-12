@@ -1,16 +1,16 @@
-#include "Game.h"
+#include "GameEngine.h"
 
 #include <fstream>
 #include <sstream>
 #include <random>
 #include <chrono>
 
-Game::Game(const std::string& config)
+GameEngine::GameEngine(const std::string& config)
 {
 	init(config);
 }
 
-void Game::init(const std::string& path)
+void GameEngine::init(const std::string& path)
 {
 	std::ifstream file_in{ path };
 
@@ -118,12 +118,12 @@ void Game::init(const std::string& path)
 	spawnPlayer();
 }
 
-void Game::setPaused(bool paused)
+void GameEngine::setPaused(bool paused)
 {
 	m_paused = paused;
 }
 
-void Game::run()
+void GameEngine::run()
 {
 	while (m_running)
 	{
@@ -145,7 +145,7 @@ void Game::run()
 }
 
 
-void Game::spawnPlayer()
+void GameEngine::spawnPlayer()
 {
 	auto entity = m_entities.addEntity("player");
 
@@ -164,7 +164,7 @@ void Game::spawnPlayer()
 }
 
 // Spawn an enemy at a random position
-void Game::spawnEnemy()
+void GameEngine::spawnEnemy()
 {
 	static std::mt19937 mt{ static_cast<unsigned int>(
 		std::chrono::steady_clock::now().time_since_epoch().count()
@@ -198,7 +198,7 @@ void Game::spawnEnemy()
 	m_last_enemy_spawn_time = m_current_frame;
 }
 
-void Game::spawnSmallEnemies(std::shared_ptr<Entity> entity)
+void GameEngine::spawnSmallEnemies(std::shared_ptr<Entity> entity)
 {
 	const int vertices = entity->cShape->circle.getPointCount();
 	int step = 360 / vertices;
@@ -215,7 +215,7 @@ void Game::spawnSmallEnemies(std::shared_ptr<Entity> entity)
 	}
 }
 
-void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vec2& mouse_pos)
+void GameEngine::spawnBullet(std::shared_ptr<Entity> entity, const Vec2& mouse_pos)
 {
 	auto bullet = m_entities.addEntity("bullet");
 	Vec2 diff = mouse_pos - entity->cTransform->pos;
@@ -233,7 +233,7 @@ void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vec2& mouse_pos)
 	bullet->cLifespan = std::make_shared<CLifespan>(m_bullet_config.L);
 }
 
-void Game::spawnSpecialWeapon(std::shared_ptr<Entity> entity)
+void GameEngine::spawnSpecialWeapon(std::shared_ptr<Entity> entity)
 {
 	if (m_current_frame - m_last_special_weapon_time < 300)
 		return;
@@ -254,7 +254,7 @@ void Game::spawnSpecialWeapon(std::shared_ptr<Entity> entity)
 	m_last_special_weapon_time = m_current_frame;
 }
 
-void Game::sMovement()
+void GameEngine::sMovement()
 {
 	Vec2 player_velocity(0.0f, 0.0f);
 
@@ -297,7 +297,7 @@ void Game::sMovement()
 	}
 }
 
-void Game::sUserInput()
+void GameEngine::sUserInput()
 {
 	sf::Event event;
 	while (m_window.pollEvent(event))
@@ -368,7 +368,7 @@ void Game::sUserInput()
 	}
 }
 
-void Game::sLifeSpan()
+void GameEngine::sLifeSpan()
 {
 	for (auto& entity : m_entities.getEntities())
 	{
@@ -391,7 +391,7 @@ void Game::sLifeSpan()
 	}
 }
 
-void Game::sRender()
+void GameEngine::sRender()
 {
 	m_window.clear();
 	
@@ -408,13 +408,13 @@ void Game::sRender()
 	m_window.display();
 }
 
-void Game::sEnemySpawner()
+void GameEngine::sEnemySpawner()
 {
 	if (m_current_frame - m_last_enemy_spawn_time > 200)
 		spawnEnemy();
 }
 
-void Game::sCollision()
+void GameEngine::sCollision()
 {
 	for (auto& player : m_entities.getEntities("player"))
 	{
@@ -454,7 +454,7 @@ void Game::sCollision()
 	}
 }
 
-bool Game::isCollision(const std::shared_ptr<Entity>& entity_a, const std::shared_ptr<Entity>& entity_b) const
+bool GameEngine::isCollision(const std::shared_ptr<Entity>& entity_a, const std::shared_ptr<Entity>& entity_b) const
 {
 	float distance = entity_a->cTransform->pos.distance(entity_b->cTransform->pos);
 	float entity_a_r = entity_a->cCollision->radius;

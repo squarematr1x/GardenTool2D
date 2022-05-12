@@ -6,10 +6,10 @@ struct PlayerConfig { int SR, CR, OT, V, FR, FG, FB, OR, OG, OB; float S; };
 struct EnemyConfig { int SR, CR, OR, OG, OB, OT, VMIN, VMAX, L, SI; float SMIN, SMAX; };
 struct BulletConfig { int SR, CR, FR, FG, FB, OR, OG, OB, OT, V, L; float S; };
 
-class Game
+class GameEngine
 {
 public:
-	Game(const std::string& config);
+	GameEngine(const std::string& config);
 
 	void run();
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-
 #include "Vec2.h"
+
+#include "Animation.h"
 
 struct CTransform
 {
@@ -75,12 +75,47 @@ struct CLifespan
 	}
 };
 
-struct CName
-{
-
-};
-
 struct CBBox
 {
+	Vec2 size;
+	Vec2 half_size;
 
+	CBBox(Vec2 size_in)
+		: size(size_in), half_size(size_in / 2)
+	{
+	}
+};
+
+struct CAnimation
+{
+	Animation animation;
+	bool repeat{ false };
+	
+	CAnimation() {}
+	CAnimation(const Animation& animation_in, bool repeat_in)
+		: animation(animation_in), repeat(repeat_in)
+	{
+	}
+};
+
+struct CGravity
+{
+	float gravity{ 0 };
+
+	CGravity() {}
+	CGravity(float gravity_in)
+		: gravity(gravity_in)
+	{
+	}
+};
+
+struct CState
+{
+	std::string state{ "jump" };
+
+	CState() {}
+	CState(const std::string& state_in)
+		: state(state_in)
+	{
+	}
 };
