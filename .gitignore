@@ -1,6 +1,7 @@
 *.vcxproj
 *.vcxproj.*
 .vscode
+.DS_Store
 Debug
 Release
 
