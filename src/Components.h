@@ -22,7 +22,7 @@ struct CShape
 	sf::CircleShape circle;
 
 	CShape(float radius, int points, const sf::Color& fill, const sf::Color& outline, float thickness)
-		: circle(radius, points)
+		: circle(radius, static_cast<std::size_t>(points))
 	{
 		circle.setFillColor(fill);
 		circle.setOutlineColor(outline);

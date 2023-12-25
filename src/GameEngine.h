@@ -2,9 +2,19 @@
 
 #include "EntityManager.h"
 
-struct PlayerConfig { int SR, CR, OT, V, FR, FG, FB, OR, OG, OB; float S; };
-struct EnemyConfig { int SR, CR, OR, OG, OB, OT, VMIN, VMAX, L, SI; float SMIN, SMAX; };
-struct BulletConfig { int SR, CR, FR, FG, FB, OR, OG, OB, OT, V, L; float S; };
+struct PlayerConfig {
+	int SR, CR, OT, V, FR, FG, FB, OR, OG, OB;
+	float S;
+};
+
+struct EnemyConfig {
+	int SR, CR, OR, OG, OB, OT, VMIN, VMAX, L, SI;
+	float SMIN, SMAX;
+};
+struct BulletConfig {
+	int SR, CR, FR, FG, FB, OR, OG, OB, OT, V, L;
+	float S;
+};
 
 class GameEngine
 {
@@ -25,8 +35,8 @@ private:
 	int m_current_frame{ 0 };
 	int m_last_enemy_spawn_time{ 0 };
 	int m_last_special_weapon_time{ 0 };
-	int m_width{ 0 };
-	int m_height{ 0 };
+	sf::Uint32 m_width{ 0 };
+	sf::Uint32 m_height{ 0 };
 	bool m_paused{ false };
 	bool m_running{ true };
 

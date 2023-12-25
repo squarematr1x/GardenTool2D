@@ -8,10 +8,11 @@
 class Animation
 {
 	std::string m_name{ "" };
+	sf::Sprite m_sprite;
+
 	int m_current_frame{ 0 };
 	int m_speed{ 0 };
 
-	sf::Sprite m_sprite;
 	Vec2 m_size;
 
 public:

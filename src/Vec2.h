@@ -22,6 +22,11 @@ public:
 	{
 	}
 
+	Vec2(unsigned int x_in, unsigned int y_in)
+		: x(static_cast<float>(x_in)), y(static_cast<float>(y_in))
+	{
+	}
+
 	Vec2 operator+ (const Vec2& p) const;
 	Vec2 operator- (const Vec2& p) const;
 	Vec2 operator* (const float scale) const;

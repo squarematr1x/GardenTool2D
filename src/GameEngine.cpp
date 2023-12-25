@@ -48,10 +48,10 @@ void GameEngine::init(const std::string& path)
 			else if (arg == "Font")
 			{
 				std::string font_file;
-				int font_size;
-				int font_R;
-				int font_G;
-				int font_B;
+				sf::Uint8 font_size;
+				sf::Uint8 font_R;
+				sf::Uint8 font_G;
+				sf::Uint8 font_B;
 				ssin >> font_file >> font_size >> font_R >> font_G >> font_B;
 
 				if (!m_font.loadFromFile(font_file))
@@ -112,7 +112,7 @@ void GameEngine::init(const std::string& path)
 		}
 	}
 
-	m_window.create(sf::VideoMode(m_width, m_height), "2D Game Engine", screen_mode);
+	m_window.create(sf::VideoMode(m_width, m_height), "2D Game Engine", static_cast<sf::Uint32>(screen_mode));
 	m_window.setFramerateLimit(60);
 
 	spawnPlayer();
@@ -152,8 +152,16 @@ void GameEngine::spawnPlayer()
 	entity->cShape = std::make_shared<CShape>(
 		static_cast<float>(m_player_config.SR),
 		m_player_config.V,
-		sf::Color(m_player_config.FR, m_player_config.FG, m_player_config.FB),
-		sf::Color(m_player_config.OR, m_player_config.OG, m_player_config.OB),
+		sf::Color(
+			static_cast<sf::Uint8>(m_player_config.FR), 
+			static_cast<sf::Uint8>(m_player_config.FG),
+			static_cast<sf::Uint8>(m_player_config.FB)
+		),
+		sf::Color(
+			static_cast<sf::Uint8>(m_player_config.OR),
+			static_cast<sf::Uint8>(m_player_config.OG),
+			static_cast<sf::Uint8>(m_player_config.OB)
+		),
 		static_cast<float>(m_player_config.OT)
 	);
 	entity->cInput = std::make_shared<CInput>();
@@ -170,8 +178,9 @@ void GameEngine::spawnEnemy()
 		std::chrono::steady_clock::now().time_since_epoch().count()
 	) };
 
-	std::uniform_int_distribution rand_w{ 32, m_width - 32 };
-	std::uniform_int_distribution rand_h{ 32, m_height - 32 };
+	constexpr sf::Uint32 offset { 32 };
+	std::uniform_int_distribution rand_w{ offset, m_width - offset };
+	std::uniform_int_distribution rand_h{ offset, m_height - offset };
 	std::uniform_int_distribution rand_points{ m_enemy_config.VMIN, m_enemy_config.VMAX };
 	std::uniform_int_distribution rand_rgb{ 0, 255 };
 
@@ -181,14 +190,22 @@ void GameEngine::spawnEnemy()
 	const float f_h = static_cast<float>(rand_h(mt));
 	const int points = rand_points(mt);
 	const Vec2 speed = Vec2(static_cast<float>(rand_speed(mt)), static_cast<float>(rand_speed(mt)));
-	const auto color = sf::Color(rand_rgb(mt), rand_rgb(mt), rand_rgb(mt));
+	const auto color = sf::Color(
+		static_cast<sf::Uint8>(rand_rgb(mt)),
+		static_cast<sf::Uint8>(rand_rgb(mt)),
+		static_cast<sf::Uint8>(rand_rgb(mt))
+	);
 	auto entity = m_entities.addEntity("enemy");
 
 	entity->cShape = std::make_shared<CShape>(
 		static_cast<float>(m_enemy_config.SR),
 		points,
 		color,
-		sf::Color(m_enemy_config.OR, m_enemy_config.OG, m_enemy_config.OB),
+		sf::Color(
+			static_cast<sf::Uint8>(m_enemy_config.OR),
+			static_cast<sf::Uint8>(m_enemy_config.OG),
+			static_cast<sf::Uint8>(m_enemy_config.OB)
+		),
 		static_cast<float>(m_enemy_config.OT)
 	);
 	entity->cTransform = std::make_shared<CTransform>(Vec2(f_w, f_h), speed, 0.0f);
@@ -200,7 +217,7 @@ void GameEngine::spawnEnemy()
 
 void GameEngine::spawnSmallEnemies(std::shared_ptr<Entity> entity)
 {
-	const int vertices = entity->cShape->circle.getPointCount();
+	const int vertices = static_cast<int>(entity->cShape->circle.getPointCount());
 	int step = 360 / vertices;
 
 	for (int i = 1; i <= vertices; i++)
@@ -224,8 +241,16 @@ void GameEngine::spawnBullet(std::shared_ptr<Entity> entity, const Vec2& mouse_p
 	bullet->cShape = std::make_shared<CShape>(
 		static_cast<float>(m_bullet_config.SR),
 		m_bullet_config.V,
-		sf::Color(m_bullet_config.FR, m_bullet_config.FG, m_bullet_config.FB),
-		sf::Color(m_bullet_config.OR, m_bullet_config.OG, m_bullet_config.OB),
+		sf::Color(
+			static_cast<sf::Uint8>(m_bullet_config.FR),
+			static_cast<sf::Uint8>(m_bullet_config.FG),
+			static_cast<sf::Uint8>(m_bullet_config.FB)
+		),
+		sf::Color(
+			static_cast<sf::Uint8>(m_bullet_config.OR),
+			static_cast<sf::Uint8>(m_bullet_config.OG),
+			static_cast<sf::Uint8>(m_bullet_config.OB)
+		),
 		static_cast<float>(m_bullet_config.OT)
 	);
 	bullet->cTransform = std::make_shared<CTransform>(entity->cTransform->pos, diff.normalize()*bullet_speed, 0.0f);
@@ -238,7 +263,7 @@ void GameEngine::spawnSpecialWeapon(std::shared_ptr<Entity> entity)
 	if (m_current_frame - m_last_special_weapon_time < 300)
 		return;
 
-	const int vertices = entity->cShape->circle.getPointCount();
+	const int vertices = static_cast<int>(entity->cShape->circle.getPointCount());
 	int step = 360 / vertices;
 
 	for (int i = 1; i <= vertices; i++)
@@ -329,6 +354,8 @@ void GameEngine::sUserInput()
 			case sf::Keyboard::Escape:
 				m_running = false;
 				break;
+			default:
+				break;
 			}
 		}
 
@@ -348,6 +375,8 @@ void GameEngine::sUserInput()
 			case sf::Keyboard::D:
 				m_player->cInput->right = false;
 				break;
+			default:
+				break;
 			}
 		}
 
@@ -362,6 +391,8 @@ void GameEngine::sUserInput()
 				break;
 			case sf::Mouse::Right:
 				spawnSpecialWeapon(m_player);
+				break;
+			default:
 				break;
 			}
 		}
@@ -410,7 +441,7 @@ void GameEngine::sRender()
 
 void GameEngine::sEnemySpawner()
 {
-	if (m_current_frame - m_last_enemy_spawn_time > 200)
+	if (m_current_frame - m_last_enemy_spawn_time > 100)
 		spawnEnemy();
 }
 

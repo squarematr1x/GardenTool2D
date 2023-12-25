@@ -24,8 +24,8 @@ public:
 private:
 	friend class EntityManager; // EntityManager can construct Entities
 
-	Entity(const std::string tag, const size_t id) // Only EntityManager can access this
-		: m_tag(tag), m_id(id)
+	Entity(const size_t id, const std::string tag) // Only EntityManager can access this
+		: m_id(id), m_tag(tag)
 	{
 	}
 
