@@ -1,4 +1,7 @@
 *.vcxproj
 *.vcxproj.*
+.vscode
 Debug
 Release
+
+build
