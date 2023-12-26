@@ -7,3 +7,6 @@ Bullet 10 10 10 255 255 255 255 255 255 4 20 90
 #Player : shape r, collision r, speed, fill color, outline color, outline thickness, shape vertices
 #Enemy  : shape r, collision r, min speed, max speed, outline color, outline thickness, min vertices, max vertices, small lifespawn, spawn interval
 #Bullet : shape r, collision r, speed, fill color, outline color, outline thickness, shape vertices, lifespan
+
+# Texture : text name, path
+# Animation : animation name, texture, frame count, speed

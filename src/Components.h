@@ -8,6 +8,8 @@ struct CTransform
 {
 	Vec2 pos{ 0.0f, 0.0f }; // Center of an object
 	Vec2 velocity{ 0.0f, 0.0f };
+	// Vec2 prevPos{ 0.0f, 0.0f };
+	// Vec2 scale{ 0.0f, 0.0f };
 
 	float angle{ 0.0f };
 
@@ -78,7 +80,7 @@ struct CLifespan
 struct CBBox
 {
 	Vec2 size;
-	Vec2 half_size;
+	Vec2 half_size; // To reduce computations
 
 	CBBox(Vec2 size_in)
 		: size(size_in), half_size(size_in / 2)

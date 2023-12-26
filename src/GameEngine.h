@@ -1,6 +1,8 @@
 #pragma once
 
 #include "EntityManager.h"
+// #include "Scene.h"
+// #include "Asset.h"
 
 struct PlayerConfig {
 	int SR, CR, OT, V, FR, FG, FB, OR, OG, OB;
@@ -22,6 +24,9 @@ public:
 	GameEngine(const std::string& config);
 
 	void run();
+	// void changeScene(const std::string& scene);
+	// std::vector<Asset> getAssets();
+	// std::shared_ptr<Scene> currentScene() { return m_scenes[m_cur_scene]; }
 
 private:
 	sf::RenderWindow m_window;
@@ -41,6 +46,10 @@ private:
 	bool m_running{ true };
 
 	std::shared_ptr<Entity> m_player;
+
+	// std::map<std::string, std::shared_ptr<Scene>> m_scenes;
+	// std::string m_cur_scene;
+	// std::vector<Asset> assets;
 
 	bool isCollision(const std::shared_ptr<Entity>& entity_a, const std::shared_ptr<Entity>& entity_b) const;
 
