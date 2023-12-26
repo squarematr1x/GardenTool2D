@@ -2,7 +2,7 @@
 
 int main()
 {
-    GameEngine game("/Users/spirttipera/2D-Game-Engine/src/config.txt");
+    GameEngine game("/Users/spirttipera/2D-Game-Engine/config/config.txt");
     game.run();
 
     return 0;
