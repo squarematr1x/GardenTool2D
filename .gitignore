@@ -2,7 +2,8 @@
 *.vcxproj.*
 .vscode
 .DS_Store
+
 Debug
 Release
-
 build
+notes
