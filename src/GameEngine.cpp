@@ -12,6 +12,14 @@ GameEngine::GameEngine(const std::string& config)
 
 void GameEngine::init(const std::string& path)
 {
+	m_assets.loadFromFile(path);
+
+	m_window.create(sf::VideoMode(1280, 768), "2D Game");
+	m_window.setFramerateLimit(60);
+
+	changeScene("MENU", std::make_shared<SceneMenu>(this));
+
+	// ========= TODO: remove the stuff below ========= 
 	std::ifstream file_in{ path };
 
 	if (!file_in)
@@ -123,9 +131,13 @@ void GameEngine::setPaused(bool paused)
 	m_paused = paused;
 }
 
+bool GameEngine::isRunning() {
+	return m_running && m_window.isOpen();
+}
+
 void GameEngine::run()
 {
-	while (m_running)
+	while (isRunning())
 	{
 		m_entities.update();
 
@@ -332,10 +344,18 @@ void GameEngine::sUserInput()
 			m_running = false;
 		}
 
-		// TODO: Add new action based handling here
-
 		if (event.type == sf::Event::KeyPressed)
 		{
+			if (event.key.code == sf::Keyboard::X) {
+				sf::Texture texture;
+				texture.create(m_window.getSize().x, m_window.getSize().y);
+				texture.update(m_window);
+				if (texture.copyToImage().saveToFile("test.png")) {
+					std::cout << "Screenshot saved to " << "test.png\n";
+				}
+			}
+
+			// TODO: Get rid of the code below:
 			switch (event.key.code)
 			{
 			case sf::Keyboard::W:
@@ -359,6 +379,18 @@ void GameEngine::sUserInput()
 			default:
 				break;
 			}
+		}
+
+		// New action based handling
+		if (event.type == sf::Event::KeyPressed || sf::Event::KeyReleased) {
+			// if the current scene does not have an axction associated with this key, skip the event
+			if (currentScene()->getActionMap().find(event.key.code) == currentScene()->getActionMap().end()) { continue; }
+
+			// determine start or end action by whether it was press or realease
+			const std::string action_type = (event.type == sf::Event::KeyPressed) ? "START" : "END";
+
+			// look up the action and send the action to the scene
+			currentScene()->doAction(Action(currentScene()->getActionMap().at(event.key.code), action_type));
 		}
 
 		if (event.type == sf::Event::KeyReleased)

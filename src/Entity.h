@@ -14,6 +14,10 @@ public:
 	std::shared_ptr<CScore> cScore;
 	std::shared_ptr<CInput> cInput;
 	std::shared_ptr<CLifespan> cLifespan;
+	std::shared_ptr<CAnimation> cAnimation;
+	std::shared_ptr<CBBox> cBBox;
+	std::shared_ptr<CGravity> cGravity;
+	std::shared_ptr<CState> cState;
 
 	std::string tag() const { return m_tag; }
 	bool isActive() const { return m_alive; }
@@ -23,7 +27,8 @@ public:
 
 	void addComponent();
 	bool hasComponent();
-	//std::shared_ptr<Component>
+	std::shared_ptr<Component>& getComponent();
+	void removeComponent();
 
 
 private:

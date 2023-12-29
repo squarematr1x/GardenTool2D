@@ -29,7 +29,7 @@ public:
 	void changeScene(const std::string& scene_name, std::shared_ptr<Scene>, bool end_current_scene = false);
 
 	sf::RenderWindow& window();
-	const Assets& assets() const;
+	const Assets& assets() const { return m_assets; };
 	bool isRunning();
 
 private:
@@ -53,6 +53,8 @@ private:
 
 	std::map<std::string, std::shared_ptr<Scene>> m_scenes;
 	std::string m_cur_scene;
+
+	Assets m_assets;
 
 	bool isCollision(const std::shared_ptr<Entity>& entity_a, const std::shared_ptr<Entity>& entity_b) const;
 

@@ -67,9 +67,13 @@ public:
 	void loadLevel(const std::string& path);
 	void registerAction(int key, const std::string& action_name);
 
+	void spawnPlayer();
+	void spawnBullet();
+
 	// Systems
 	void sAnimation();
 	void sMovement();
+	void sLifeSpan();
 	void sEnemySpawner();
 	void sCollision();
 	void sRender();

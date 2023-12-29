@@ -39,14 +39,98 @@ void ScenePlay::loadLevel(const std::string& path) {
 
     // NOTE: all of thre code below is sample code which shows you how to set up and use entitties with the new syntax
 
-    // spawnPlayer();
+    spawnPlayer();
 
     auto brick = m_entity_manager.addEntity("tile");
     // IMPORTANT: always add the CAnimation component first that gridToMidPixel can compute correctly 54:43
-    //brick->addCo
+    brick->cAnimation = std::make_shared<CAnimation>(m_game_engine->assets().getAnimation("Block"), true);
+    brick->cTransform = std::make_shared<CTransform>(Vec2(224, 480));
+    // NOTE: You final code should position the entity with the grid x,y position read from
+    // brick->addComponent<CTransform>(gridToMidPixel(grid_x, grid_y, brick));
 
+    if (brick->getComponent<CAnimation>().animation_name == "Brick") {
+        std::cout << "This could be good identifying whether a tile is brick\n";
+    }
+
+    auto block = m_entity_manager.addEntity("tile");
+    brick->cAnimation = std::make_shared<CAnimation>(m_game_engine->assets().getAnimation("Question"), true);
+    brick->cTransform = std::make_shared<CTransform>(Vec2(352, 480));
+
+    // NOTE: IMPORTANT:
+    // Components are now returned as a references than pointers
+    // If you don't specify a reference variable type, it will COPY the component:
+    // Here is an example:
+    //
+    // This will COPY the transform into the variable 'transform1' - it's INCORRECT
+    // Any changes you make to transform1 will not be changed inside the entity auto transform1 = entity->get<CTransform>()
+    //
+    // This will REFERENCE the transform with the variable 'transform2' - it's CORRECT
+    // Now any changes made to transform2 will be changed inside the entity
+    // auto& transform2 = entity->get<CTransform>()
+}
+
+void ScenePlay::spawnPlayer() {
+    // here is a sample entity which you can use to construct other entities
+    m_player = m_entity_manager.addEntity("player");
+    // TODO: Implement addComponent<T>() method for entity class
+    // e.g.
+    // m_player->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Stand"), true);
+    // m_player->addComponent<CTransform>(Vec2(224, 352));
+    // m_player->addComponent<CBBox>(Vec2(48, 48));
+    // ...add also remaining components
+}
+
+void ScenePlay::spawnBullet() {
+    // TODO: spawn a bullet at the given entity, going in the direction the entity is facing
+}
+
+void ScenePlay::update() {
+    m_entity_manager.update();
+
+    // TODO: implement pause functionality
+
+    sMovement();
+    sLifespan();
+    sCollision();
+    sAnimation();
+    sRender();
+}
+
+void ScenePlay::sMovement() {
+    // TODO: Implement player movement/jumping based on its CInput component
+    // TODO: Implement gravity's effect on player
+    // TODO: Implement the maximum player speed in both X and Y directions
+    // TODO: Setting an entity's scale.x to -1/1 will make it face to the left/right
+}
+
+void ScenePlay::sLifeSpan() {
+    // TODO: Check lifespan of entities that have them, and destroy the id they go over
+}
+
+void ScenePlay::sCollision() {
+    // REMEMBER: SFML's (0, 0) position is on the TOP-LEFT corner
+    // This means jumping will have a negative y-component and gravity will have positive y-component
+    // Also, something BELOW something else will have a y value greater than it
+    // Also, something ABOVE something else will have a y value less than it
+
+    // TODO: Implement Physics::GetOverlap() function, use it inside this function
+    // TODO: Implement bullet/tile collision (Destroy the tile if it has 'Brick' as animation)
+    // TODO: Implement player/tile collision and resolutions, update the CState component of the player to
+    // store whether it's currently on the ground or in the air. This will be used by the animation system.
+    // TODO: Check to see if the player has fallen down a hole (y > height())
+    // TODO: Don't let the player walk off the left side of the map
 }
 
 void ScenePlay::sDoAction(const Action& action) {
+    if (action.getType() == "START") {
+        if (action.getName() == "TOGGLE_TEXTURE") { m_draw_textures = !m_draw_textures; }
+        else if (action.getName() == "TOGGLE_COLLISION") { m_draw_collision = !m_draw_collision; }
+        else if (action.getName() == "TOGGLE_GRID") { m_draw_grid = !m_draw_grid; }
+        else if (action.getName() == "PAUSE") { setPaused(!m_paused); }
+        else if (action.getName() == "QUIT") { onEnd(); }
+        else if (action.getName() == "JUMP") { /* Jump */ }
+    } else if (action.getType() == "END") {
+
+    }
     (void)action;
 }
