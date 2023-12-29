@@ -13,5 +13,5 @@ struct Action
 	}
 
 	std::string getName() const { return name; }
-	 std::string getType() const { return type; }
+	std::string getType() const { return type; }
 };

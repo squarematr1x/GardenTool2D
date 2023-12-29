@@ -1,8 +1,7 @@
 #include "Physics.h"
 #include "Components.h"
 
-Vec2 getOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b)
-{
+Vec2 getOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
 	// auto& pos = a->getComponent<CTransform>().pos;
 	(void)a;
 	(void)b;
@@ -10,8 +9,7 @@ Vec2 getOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b)
 	return Vec2(0, 0);
 }
 
-Vec2 getPrevOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b)
-{
+Vec2 getPrevOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
 	(void)a;
 	(void)b;
 	// return the previous overlap (uses entity's previous position)

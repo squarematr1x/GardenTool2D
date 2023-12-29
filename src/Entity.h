@@ -71,6 +71,3 @@ private:
 	bool m_alive{ true };
 	ComponentTuple m_components;
 };
-
-// Note
-// template <class T> using ptr = std::shared_ptr<T>;

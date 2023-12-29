@@ -89,7 +89,7 @@ protected:
 	std::vector<std::string> m_menu_strings;
 	std::vector<std::string> m_level_paths;
 	sf::Text m_menu_text;
-	size_t m_selected_menu_index{ 0 };
+	size_t m_menu_index{ 0 }; // selected menu item
 
 	void init();
 	void update();
