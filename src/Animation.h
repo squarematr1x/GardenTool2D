@@ -11,7 +11,7 @@ class Animation
 	sf::Sprite m_sprite;
 
 	int m_current_frame{ 0 }; // frame in animation (if animation has 4 "images" frame 2 would be the third image and so on)
-	int m_game_frame{ 0 };
+	int m_frame_count{ 0 };
 	int m_speed{ 0 }; // animation speed
 
 	Vec2 m_size; // (texture_w / frame_count, texture_h)
@@ -19,11 +19,9 @@ class Animation
 public:
 	Animation() = default;
 
-	Animation(const std::string& name, sf::Texture texture, int frame_count, int speed)
-		: m_name(name), m_sprite(texture), m_current_frame(frame_count), m_speed(speed)
-	{
-	}
+	Animation(const std::string& name, const sf::Texture& texture);
 
+	Animation(const std::string& name, const sf::Texture& texture, int frame_count, int speed);
 	void update();
 
 	bool hasEnded();

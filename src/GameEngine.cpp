@@ -332,6 +332,8 @@ void GameEngine::sUserInput()
 			m_running = false;
 		}
 
+		// TODO: Add new action based handling here
+
 		if (event.type == sf::Event::KeyPressed)
 		{
 			switch (event.key.code)

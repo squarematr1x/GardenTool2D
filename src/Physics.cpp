@@ -13,6 +13,6 @@ Vec2 getPrevOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b)
 {
 	(void)a;
 	(void)b;
-	// return the previous overlap
+	// return the previous overlap (uses entity's previous position)
 	return Vec2(0, 0);
 }

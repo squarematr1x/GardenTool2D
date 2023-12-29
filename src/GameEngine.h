@@ -1,8 +1,8 @@
 #pragma once
 
 #include "EntityManager.h"
-// #include "Scene.h"
-// #include "Asset.h"
+#include "Scene.h"
+#include "Assets.h"
 
 struct PlayerConfig {
 	int SR, CR, OT, V, FR, FG, FB, OR, OG, OB;
@@ -24,9 +24,13 @@ public:
 	GameEngine(const std::string& config);
 
 	void run();
-	// void changeScene(const std::string& scene);
-	// std::vector<Asset> getAssets();
-	// std::shared_ptr<Scene> currentScene() { return m_scenes[m_cur_scene]; }
+	void quit();
+
+	void changeScene(const std::string& scene_name, std::shared_ptr<Scene>, bool end_current_scene = false);
+
+	sf::RenderWindow& window();
+	const Assets& assets() const;
+	bool isRunning();
 
 private:
 	sf::RenderWindow m_window;
@@ -47,9 +51,8 @@ private:
 
 	std::shared_ptr<Entity> m_player;
 
-	// std::map<std::string, std::shared_ptr<Scene>> m_scenes;
-	// std::string m_cur_scene;
-	// std::vector<Asset> assets;
+	std::map<std::string, std::shared_ptr<Scene>> m_scenes;
+	std::string m_cur_scene;
 
 	bool isCollision(const std::shared_ptr<Entity>& entity_a, const std::shared_ptr<Entity>& entity_b) const;
 
@@ -68,4 +71,6 @@ private:
 	void spawnSmallEnemies(std::shared_ptr<Entity> entity);
 	void spawnBullet(std::shared_ptr<Entity> entity, const Vec2& mouse_pos);
 	void spawnSpecialWeapon(std::shared_ptr<Entity> entity);
+
+	std::shared_ptr<Scene> currentScene() { return m_scenes[m_cur_scene]; }
 };

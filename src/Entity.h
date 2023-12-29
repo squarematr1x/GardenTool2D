@@ -21,6 +21,11 @@ public:
 
 	void destroy() { m_alive = false; }
 
+	void addComponent();
+	bool hasComponent();
+	//std::shared_ptr<Component>
+
+
 private:
 	friend class EntityManager; // EntityManager can construct Entities
 

@@ -4,12 +4,16 @@
 
 #include "Animation.h"
 
-struct CTransform
+struct Component {
+	bool has{ false };
+};
+
+struct CTransform: Component
 {
 	Vec2 pos{ 0.0f, 0.0f }; // Center of an object
 	Vec2 velocity{ 0.0f, 0.0f };
-	// Vec2 prevPos{ 0.0f, 0.0f };
-	// Vec2 scale{ 0.0f, 0.0f };
+	Vec2 prevPos{ 0.0f, 0.0f };
+	Vec2 scale{ 0.0f, 0.0f };
 
 	float angle{ 0.0f };
 
@@ -19,7 +23,7 @@ struct CTransform
 	}
 };
 
-struct CShape
+struct CShape: Component
 {
 	sf::CircleShape circle;
 
@@ -33,7 +37,7 @@ struct CShape
 	}
 };
 
-struct CCollision
+struct CCollision: Component
 {
 	float radius;
 
@@ -43,7 +47,7 @@ struct CCollision
 	}
 };
 
-struct CScore
+struct CScore: Component
 {
 	int score;
 
@@ -53,7 +57,7 @@ struct CScore
 	}
 };
 
-struct CInput
+struct CInput: Component
 {
 	bool up{ false };
 	bool left{ false };
@@ -66,7 +70,7 @@ struct CInput
 	}
 };
 
-struct CLifespan
+struct CLifespan: Component
 {
 	int remaining{ 0 };
 	int total{ 0 };
@@ -77,7 +81,7 @@ struct CLifespan
 	}
 };
 
-struct CBBox
+struct CBBox: Component
 {
 	Vec2 size;
 	Vec2 half_size; // To reduce computations
@@ -88,7 +92,7 @@ struct CBBox
 	}
 };
 
-struct CAnimation
+struct CAnimation: Component
 {
 	Animation animation;
 	bool repeat{ false };
@@ -100,7 +104,7 @@ struct CAnimation
 	}
 };
 
-struct CGravity
+struct CGravity: Component
 {
 	float gravity{ 0 };
 
@@ -111,7 +115,7 @@ struct CGravity
 	}
 };
 
-struct CState
+struct CState: Component
 {
 	std::string state{ "jump" };
 
