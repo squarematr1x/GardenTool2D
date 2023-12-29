@@ -17,6 +17,7 @@ struct CTransform: Component
 
 	float angle{ 0.0f };
 
+	CTransform() {}
 	CTransform(const Vec2 p, const Vec2 v, float a)
 		: pos(p), velocity(v), angle(a)
 	{
@@ -75,6 +76,7 @@ struct CLifespan: Component
 	int remaining{ 0 };
 	int total{ 0 };
 
+	CLifespan() {}
 	CLifespan(int total)
 		: remaining(total), total(total)
 	{
@@ -83,9 +85,10 @@ struct CLifespan: Component
 
 struct CBBox: Component
 {
-	Vec2 size;
-	Vec2 half_size; // To reduce computations
+	Vec2 size{ 0.0f, 0.0f };
+	Vec2 half_size{ 0.0f, 0.0f }; // To reduce computations
 
+	CBBox() {}
 	CBBox(Vec2 size_in)
 		: size(size_in), half_size(size_in / 2)
 	{
@@ -117,7 +120,7 @@ struct CGravity: Component
 
 struct CState: Component
 {
-	std::string state{ "jump" };
+	std::string state{ "JUMP" }; // TODO: switch to enums in the sort of things...
 
 	CState() {}
 	CState(const std::string& state_in)

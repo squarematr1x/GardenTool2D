@@ -73,12 +73,14 @@ public:
 	// Systems
 	void sAnimation();
 	void sMovement();
-	void sLifeSpan();
+	void sLifespan();
 	void sEnemySpawner();
 	void sCollision();
 	void sRender();
 	void sDoAction(const Action& action);
 	void sDebug();
+
+	void onEnd();
 };
 
 class SceneMenu: public Scene {

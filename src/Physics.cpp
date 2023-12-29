@@ -3,6 +3,7 @@
 
 Vec2 getOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b)
 {
+	// auto& pos = a->getComponent<CTransform>().pos;
 	(void)a;
 	(void)b;
 	// return the overlap rectangle size of the bounding boxes of entity a and b
