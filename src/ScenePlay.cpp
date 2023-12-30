@@ -20,7 +20,7 @@ void ScenePlay::init(const std::string& level_path) {
 
     m_grid_text.setCharacterSize(12);
     
-    m_grid_text.setFont(m_game_engine->assets().getFont("Tech"));
+    m_grid_text.setFont(m_game_engine->assets().getFont("Arial"));
 
     loadLevel(level_path);
 }
@@ -48,11 +48,11 @@ void ScenePlay::loadLevel(const std::string& path) {
 
     // NOTE: all of thre code below is sample code which shows you how to set up and use entitties with the new syntax
 
-    spawnPlayer();
+    // spawnPlayer();
 
     auto brick = m_entity_manager.addEntity("tile");
     // IMPORTANT: always add the CAnimation component first that gridToMidPixel can compute correctly 54:43
-    brick->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Block"), true);
+    brick->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Brick"), true);
     brick->addComponent<CTransform>(Vec2(96, 480));
     // NOTE: You final code should position the entity with the grid x,y position read from
     // brick->addComponent<CTransform>(gridToMidPixel(grid_x, grid_y, brick));
@@ -61,13 +61,13 @@ void ScenePlay::loadLevel(const std::string& path) {
         std::cout << "This could be good identifying whether a tile is brick\n";
     }
 
-    auto block = m_entity_manager.addEntity("tile");
-    block->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Block"), true);
-    block->addComponent<CTransform>(Vec2(224, 480));
+    // auto block = m_entity_manager.addEntity("tile");
+    // block->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Block"), true);
+    // block->addComponent<CTransform>(Vec2(224, 480));
 
-    auto question = m_entity_manager.addEntity("tile");
-    question->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Question"), true);
-    question->addComponent<CTransform>(Vec2(352, 480));
+    // auto question = m_entity_manager.addEntity("tile");
+    // question->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Question"), true);
+    // question->addComponent<CTransform>(Vec2(352, 480));
 
     // NOTE: IMPORTANT:
     // Components are now returned as a references than pointers
@@ -188,7 +188,7 @@ void ScenePlay::sAnimation() {
 
 void ScenePlay::sRender() {
     // color the background darker so you know the game is paused
-    if (!m_paused) { m_game_engine->window().clear(sf::Color(100, 100, 255)); }
+    if (!m_paused) { m_game_engine->window().clear(sf::Color(70, 80, 255)); }
     else { m_game_engine->window().clear(sf::Color(50, 50, 150)); }
 
     // set the viewport of the window to be centered on the player if it's far enough right

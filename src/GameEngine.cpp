@@ -17,7 +17,7 @@ void GameEngine::init(const std::string& path) {
 	m_window.create(sf::VideoMode(1280, 768), "2D Game");
 	m_window.setFramerateLimit(60);
 
-	changeScene("MENU", std::make_shared<SceneMenu>(this));
+	changeScene("PLAY", std::make_shared<ScenePlay>(this, ""));
 
 	// TODO: remove the stuff below
 	// std::ifstream file_in{ path };
