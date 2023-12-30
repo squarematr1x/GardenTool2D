@@ -35,6 +35,10 @@ build:
 run: all
 	./$(APP_DIR)/$(TARGET)
 
+.PHONY: debug
+debug: all
+	lldb ./$(APP_DIR)/$(TARGET)
+
 .PHONY: clean
 clean:
 	-@rm -rvf $(OBJ_DIR)/*
