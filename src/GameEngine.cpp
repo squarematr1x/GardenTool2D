@@ -10,7 +10,6 @@ GameEngine::GameEngine(const std::string& config) {
 	init(config);
 }
 
-
 void GameEngine::init(const std::string& path) {
 	m_assets.loadFromFile(path);
 
@@ -52,8 +51,7 @@ void GameEngine::run() {
 	m_window.close();
  }
 
-void GameEngine::sUserInput()
-{
+void GameEngine::sUserInput() {
 	sf::Event event;
 	while (m_window.pollEvent(event)) {
 		if (event.type == sf::Event::Closed) {

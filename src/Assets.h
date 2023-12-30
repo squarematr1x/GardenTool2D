@@ -26,8 +26,6 @@ class Assets
 	void addSound(const std::string& sound_name, const std::string& path);
 
 public:
-	Assets();
-
 	void loadFromFile(const std::string& path);
 
 	const sf::Texture& getTexture(const std::string& texture_name) const;

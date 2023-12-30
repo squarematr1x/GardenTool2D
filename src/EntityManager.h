@@ -10,6 +10,13 @@ typedef std::map<std::string, EntityVec> EntityMap;
 
 class EntityManager
 {
+	EntityVec m_entities;
+	EntityVec m_entities_to_add;
+	EntityMap m_entity_map;
+	size_t m_total_entities{ 0 };
+
+	void removeDeadEntities(EntityVec& vec);
+
 public:
 	EntityManager()
 	{
@@ -21,12 +28,4 @@ public:
 	EntityVec& getEntities(const std::string tag);
 
 	void update();
-
-private:
-	EntityVec m_entities;
-	EntityVec m_entities_to_add;
-	EntityMap m_entity_map;
-	size_t m_total_entities{ 0 };
-
-	void removeDeadEntities(EntityVec& vec);
 };

@@ -4,8 +4,6 @@
 #include <iostream>
 #include <cassert>
 
-Assets::Assets() {}
-
 void Assets::loadFromFile(const std::string& path) {
 	std::ifstream file(path);
 	std::string str;

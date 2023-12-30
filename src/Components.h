@@ -8,8 +8,7 @@ struct Component {
 	bool has{ false };
 };
 
-struct CTransform: Component
-{
+struct CTransform: Component {
 	Vec2 pos{ 0.0f, 0.0f }; // Center of an object
 	Vec2 velocity{ 0.0f, 0.0f };
 	Vec2 prevPos{ 0.0f, 0.0f };
@@ -32,8 +31,7 @@ struct CTransform: Component
 	}
 };
 
-struct CShape: Component
-{
+struct CShape: Component {
 	sf::CircleShape circle;
 
 	CShape(float radius, int points, const sf::Color& fill, const sf::Color& outline, float thickness)
@@ -46,8 +44,7 @@ struct CShape: Component
 	}
 };
 
-struct CCollision: Component
-{
+struct CCollision: Component {
 	float radius;
 
 	CCollision(float r)
@@ -56,8 +53,7 @@ struct CCollision: Component
 	}
 };
 
-struct CScore: Component
-{
+struct CScore: Component {
 	int score;
 
 	CScore(int s)
@@ -66,8 +62,7 @@ struct CScore: Component
 	}
 };
 
-struct CInput: Component
-{
+struct CInput: Component {
 	bool up{ false };
 	bool left{ false };
 	bool right{ false };
@@ -79,8 +74,7 @@ struct CInput: Component
 	}
 };
 
-struct CLifespan: Component
-{
+struct CLifespan: Component {
 	int remaining{ 0 };
 	int total{ 0 };
 
@@ -91,8 +85,7 @@ struct CLifespan: Component
 	}
 };
 
-struct CBBox: Component
-{
+struct CBBox: Component {
 	Vec2 size{ 0.0f, 0.0f };
 	Vec2 half_size{ 0.0f, 0.0f }; // To reduce computations
 
@@ -103,8 +96,7 @@ struct CBBox: Component
 	}
 };
 
-struct CAnimation: Component
-{
+struct CAnimation: Component {
 	Animation animation;
 	bool repeat{ false };
 	
@@ -119,8 +111,7 @@ struct CAnimation: Component
 	}
 };
 
-struct CGravity: Component
-{
+struct CGravity: Component {
 	float gravity{ 0 };
 
 	CGravity() {}
@@ -130,8 +121,7 @@ struct CGravity: Component
 	}
 };
 
-struct CState: Component
-{
+struct CState: Component {
 	std::string state{ "JUMP" }; // TODO: switch to enums in the sort of things...
 
 	CState() {}
