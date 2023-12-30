@@ -18,112 +18,6 @@ void GameEngine::init(const std::string& path) {
 	m_window.setFramerateLimit(60);
 
 	changeScene("PLAY", std::make_shared<ScenePlay>(this, ""));
-
-	// TODO: remove the stuff below
-	// std::ifstream file_in{ path };
-
-	// if (!file_in)
-	// {
-	// 	std::cerr << "Config file not found\n";
-	// 	exit(-1);
-	// }
-
-	// auto screen_mode{ sf::Style::Resize | sf::Style::Close};
-	// bool full_screen{ false };
-
-	// // FIXME: Make a better config file parser and simplify config file structure
-	// while (file_in)
-	// {
-	// 	std::string line;
-	// 	std::getline(file_in, line);
-	// 	std::stringstream ssin(line);
-	// 	std::vector<std::string> args;
-
-	// 	while (ssin.good())
-	// 	{
-	// 		std::string arg;
-	// 		ssin >> arg;
-	// 		args.push_back(arg);
-
-	// 		if (arg == "Window")
-	// 		{
-	// 			int fps{ 60 };
-	// 			ssin >> m_width >> m_height >> fps >> full_screen;
-
-	// 			if (full_screen)
-	// 				screen_mode = sf::Style::Fullscreen;
-	// 		}
-	// 		else if (arg == "Font")
-	// 		{
-	// 			std::string font_file;
-	// 			sf::Uint8 font_size;
-	// 			sf::Uint8 font_R;
-	// 			sf::Uint8 font_G;
-	// 			sf::Uint8 font_B;
-	// 			ssin >> font_file >> font_size >> font_R >> font_G >> font_B;
-
-	// 			if (!m_font.loadFromFile(font_file))
-	// 			{
-	// 				std::cerr << "Font not found\n";
-	// 				exit(-1);
-	// 			}
-
-	// 			m_text.setFont(m_font);
-	// 			m_text.setCharacterSize(font_size);
-	// 			m_text.setFillColor(sf::Color(font_R, font_G, font_B));
-	// 			m_text.setPosition(32, 32);
-	// 		}
-	// 		else if (arg == "Player")
-	// 		{
-	// 			ssin >> m_player_config.SR
-	// 				>> m_player_config.CR
-	// 				>> m_player_config.S
-	// 				>> m_player_config.FR
-	// 				>> m_player_config.FG
-	// 				>> m_player_config.FB
-	// 				>> m_player_config.OR
-	// 				>> m_player_config.OG
-	// 				>> m_player_config.OB
-	// 				>> m_player_config.OT
-	// 				>> m_player_config.V;
-	// 		}
-	// 		else if (arg == "Enemy")
-	// 		{
-	// 			ssin >> m_enemy_config.SR
-	// 				>> m_enemy_config.CR
-	// 				>> m_enemy_config.SMIN
-	// 				>> m_enemy_config.SMAX
-	// 				>> m_enemy_config.OR
-	// 				>> m_enemy_config.OG
-	// 				>> m_enemy_config.OB
-	// 				>> m_enemy_config.OT
-	// 				>> m_enemy_config.VMIN
-	// 				>> m_enemy_config.VMAX
-	// 				>> m_enemy_config.L
-	// 				>> m_enemy_config.SI;
-	// 		}
-	// 		else if (arg == "Bullet")
-	// 		{
-	// 			ssin >> m_bullet_config.SR
-	// 				>> m_bullet_config.CR
-	// 				>> m_bullet_config.S
-	// 				>> m_bullet_config.FR
-	// 				>> m_bullet_config.FG
-	// 				>> m_bullet_config.FB
-	// 				>> m_bullet_config.OR
-	// 				>> m_bullet_config.OG
-	// 				>> m_bullet_config.OB
-	// 				>> m_bullet_config.OT
-	// 				>> m_bullet_config.V
-	// 				>> m_bullet_config.L;
-	// 		}
-	// 	}
-	// }
-
-	// m_window.create(sf::VideoMode(m_width, m_height), "2D Game Engine", static_cast<sf::Uint32>(screen_mode));
-	// m_window.setFramerateLimit(60);
-
-	// spawnPlayer();
 }
 
 void GameEngine::changeScene(const std::string& scene_name, std::shared_ptr<Scene> scene, bool end_current_scene) {
@@ -140,9 +34,14 @@ bool GameEngine::isRunning() {
 	return m_running && m_window.isOpen();
 }
 
+void GameEngine::update() {
+	sUserInput();
+}
+
 void GameEngine::run() {
 	while (isRunning()) {
 		if (!m_paused) {
+			update();
 			currentScene()->update();
 		}
 	}

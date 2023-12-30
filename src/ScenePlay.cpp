@@ -58,7 +58,7 @@ void ScenePlay::loadLevel(const std::string& path) {
     // brick->addComponent<CTransform>(gridToMidPixel(grid_x, grid_y, brick));
 
     if (brick->getComponent<CAnimation>().animation.getName() == "Brick") {
-        std::cout << "This could be good identifying whether a tile is brick\n";
+        // This could be good identifying whether a tile is brick
     }
 
     // auto block = m_entity_manager.addEntity("tile");
@@ -83,10 +83,7 @@ void ScenePlay::loadLevel(const std::string& path) {
 }
 
 void ScenePlay::spawnPlayer() {
-    // here is a sample entity which you can use to construct other entities
     m_player = m_entity_manager.addEntity("player");
-    // TODO: Implement addComponent<T>() method for entity class
-    // e.g.
     m_player->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Stand"), true);
     m_player->addComponent<CTransform>(Vec2(224, 352));
     m_player->addComponent<CBBox>(Vec2(48, 48));
@@ -112,23 +109,23 @@ void ScenePlay::update() {
 }
 
 void ScenePlay::sMovement() {
-    Vec2 player_v(0.0f, m_player->getComponent<CTransform>().velocity.y);
-    if (m_player->getComponent<CInput>().up) {
-        m_player->getComponent<CState>().state = "JUMP";
-        player_v.y = -3;
-    }
+    // Vec2 player_v(0.0f, m_player->getComponent<CTransform>().velocity.y);
+    // if (m_player->getComponent<CInput>().up) {
+    //     m_player->getComponent<CState>().state = "JUMP";
+    //     player_v.y = -3;
+    // }
 
-    m_player->getComponent<CTransform>().velocity = player_v;
+    // m_player->getComponent<CTransform>().velocity = player_v;
     
-    for (auto e : m_entity_manager.getEntities()){
-        if (e->hasComponent<CGravity>()) {
-            e->getComponent<CTransform>().velocity.y += e->getComponent<CGravity>().gravity;
+    // for (auto e : m_entity_manager.getEntities()){
+    //     if (e->hasComponent<CGravity>()) {
+    //         e->getComponent<CTransform>().velocity.y += e->getComponent<CGravity>().gravity;
 
-            // if player is moving faster than max speed in any direction -> player speed in that direction = max speed
-            // also, when landing on someting -> set player's y velocity to 0
-        }
-        e->getComponent<CTransform>().pos += e->getComponent<CTransform>().velocity;
-    }
+    //         // if player is moving faster than max speed in any direction -> player speed in that direction = max speed
+    //         // also, when landing on someting -> set player's y velocity to 0
+    //     }
+    //     e->getComponent<CTransform>().pos += e->getComponent<CTransform>().velocity;
+    // }
 
     // TODO: Implement player movement/jumping based on its CInput component
     // TODO: Implement gravity's effect on player
@@ -177,13 +174,14 @@ void ScenePlay::sAnimation() {
     // TODO: set the animation of the player based on its CState component
     // TODO: for each entity with an animation, call entity->getComponent<CAnimation>().animation.update();
     //       if the animation is not repeated, and it has ended, destroy the entity
-    if (m_player->getComponent<CState>().state == "JUMP") {
-        m_player->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Jump"));
-    }
 
-    if (m_player->getComponent<CState>().state == "RUN") {
-        m_player->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Run"));
-    }
+    // if (m_player->getComponent<CState>().state == "JUMP") { // TODO: This cause segfault (source: lldb)
+    //     m_player->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Jump"));
+    // }
+
+    // if (m_player->getComponent<CState>().state == "RUN") {
+    //     m_player->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Run"));
+    // }
 }
 
 void ScenePlay::sRender() {
@@ -192,11 +190,11 @@ void ScenePlay::sRender() {
     else { m_game_engine->window().clear(sf::Color(50, 50, 150)); }
 
     // set the viewport of the window to be centered on the player if it's far enough right
-    auto& p_pos = m_player->getComponent<CTransform>().pos;
-    float window_center_x = std::max(m_game_engine->window().getSize().x / 2.0f, p_pos.x);
-    sf::View view = m_game_engine->window().getView();
-    view.setCenter(window_center_x, m_game_engine->window().getSize().y - view.getCenter().y);
-    m_game_engine->window().setView(view);
+    // auto& p_pos = m_player->getComponent<CTransform>().pos;
+    // float window_center_x = std::max(m_game_engine->window().getSize().x / 2.0f, p_pos.x); // TODO: Causes segfault (source: lldb)
+    // sf::View view = m_game_engine->window().getView();
+    // view.setCenter(window_center_x, m_game_engine->window().getSize().y - view.getCenter().y);
+    // m_game_engine->window().setView(view);
 
     // draw all Entity textures/animations
     if (m_draw_textures) {
@@ -251,6 +249,7 @@ void ScenePlay::sRender() {
             }
         }
     }
+    m_game_engine->window().display();
 }
 
 void ScenePlay::onEnd() {

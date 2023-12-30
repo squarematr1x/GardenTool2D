@@ -12,7 +12,6 @@ public:
 
 	void run();
 	void quit();
-	void update();
 
 	void changeScene(const std::string& scene_name, std::shared_ptr<Scene> scene, bool end_current_scene = false);
 
@@ -32,6 +31,7 @@ private:
 
 	void init(const std::string& config);
 	void setPaused(bool paused);
+	void update();
 
 	void sUserInput();
 

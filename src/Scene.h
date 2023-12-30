@@ -32,7 +32,7 @@ public:
 	void drawLine(const Vec2& p1, const Vec2& p2);
 
 protected:
-	GameEngine* m_game_engine;
+	GameEngine* m_game_engine{ nullptr };
 	EntityManager m_entity_manager;
 	size_t m_current_frame{ 0 };
 	std::map<int, std::string> m_action_map; // SFML key -> action name
