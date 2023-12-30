@@ -8,10 +8,10 @@ void SceneMenu::init() {
     registerAction(sf::Keyboard::Escape, "QUIT");
 }
 
-void SceneMenu::registerAction(int key, const std::string& action_name) {
-    m_action_map[key] = action_name;
+void SceneMenu::update() {
+    // sDoAction();
+    sRender();
 }
-
 
 void SceneMenu::sDoAction(const Action& action) {
     if (action.getType() != "START") { return; }
@@ -26,6 +26,10 @@ void SceneMenu::sDoAction(const Action& action) {
     } else if (action.getName() == "QUIT") {
         onEnd();
     }
+}
+
+void SceneMenu::sRender() {
+    // TODO: Render menu here
 }
 
 void SceneMenu::onEnd() {

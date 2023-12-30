@@ -14,17 +14,18 @@ public:
 	Scene(GameEngine* game_engine)
 		: m_game_engine(game_engine) {}
 
+	virtual ~Scene() {}
+
 	virtual void update() = 0;
-	virtual void sDoAction(const Action& action) = 0; // (Action action as param)
+	virtual void sDoAction(const Action& action) = 0;
 	virtual void sRender() = 0;
 
-	virtual void simulate();
-	virtual void doAction(const Action& action); // (Action action as param)
-	virtual void registerAction(int key, const std::string& action_name);
+	virtual void registerAction(int key, const std::string& action_name) { m_action_map[key] = action_name; };
+	// virtual void doAction(const Action& action); ?
 
 	size_t width() const;
 	size_t height() const;
-	size_t currentFrame() const;
+	size_t currentFrame() const { return m_current_frame; };
 
 	bool hasEnded() const { return m_has_ended; }
 	const std::map<int, std::string>& getActionMap() const { return m_action_map; }
@@ -33,7 +34,7 @@ public:
 protected:
 	GameEngine* m_game_engine;
 	EntityManager m_entity_manager;
-	int current_frame{ 0 }; // TODO: use size_t type here?
+	size_t m_current_frame{ 0 };
 	std::map<int, std::string> m_action_map; // SFML key -> action name
 	bool m_paused{ false };
 	bool m_has_ended{ false };
@@ -42,8 +43,27 @@ protected:
 	void setPaused(bool paused) { m_paused = paused; }
 };
 
+class SceneMenu: public Scene
+{
+	std::string m_title;
+	std::vector<std::string> m_menu_strings;
+	std::vector<std::string> m_level_paths;
+	sf::Text m_menu_text;
+	size_t m_menu_index{ 0 }; // selected menu item
 
-class ScenePlay: public Scene {
+public:
+	SceneMenu(GameEngine* game_engine)
+		: Scene(game_engine) {}
+
+	void init();
+	void update();
+	void onEnd();
+	void sDoAction(const Action& action);
+	void sRender();
+};
+
+class ScenePlay: public Scene
+{
 	struct PlayerConfig {
 		float X, Y, CX, CY, SPEED, MAXSPEED, JUMP, GRAVITY;
 		std::string WEAPON;
@@ -58,14 +78,14 @@ class ScenePlay: public Scene {
 	sf::Text m_grid_text;
 
 public:
-	ScenePlay::ScenePlay(GameEngine* game_engine, const std::string& level_path);
+	ScenePlay(GameEngine* game_engine, const std::string& level_path);
+
 	void init(const std::string& level_path);
 	void update();
 
 	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity);
 
 	void loadLevel(const std::string& path);
-	void registerAction(int key, const std::string& action_name);
 
 	void spawnPlayer();
 	void spawnBullet();
@@ -81,23 +101,4 @@ public:
 	void sDebug();
 
 	void onEnd();
-};
-
-class SceneMenu: public Scene {
-protected:
-	std::string m_title;
-	std::vector<std::string> m_menu_strings;
-	std::vector<std::string> m_level_paths;
-	sf::Text m_menu_text;
-	size_t m_menu_index{ 0 }; // selected menu item
-
-	void init();
-	void update();
-	void onEnd();
-	void sDoAction(const Action& action);
-
-public:
-	SceneMenu(GameEngine* game_engine = nullptr);
-	void registerAction(int key, const std::string& action_name);
-	void sRender();
 };

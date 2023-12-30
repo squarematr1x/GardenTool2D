@@ -25,7 +25,10 @@ void ScenePlay::init(const std::string& level_path) {
     loadLevel(level_path);
 }
 
-Vec2 ScenePlay::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity) {
+Vec2 ScenePlay::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entity> entity) {
+    (void)grid_x;
+    (void)grid_y;
+    (void)entity;
     // TODO: This function takes grid x,y position and an Entity
     // returns a Vec2 indicatinh where the CENTER position of the Entity should be
     // You must use the Entity's Animation size to position it correctly
@@ -35,6 +38,7 @@ Vec2 ScenePlay::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity>
 }
 
 void ScenePlay::loadLevel(const std::string& path) {
+    (void)path;
     // resset the entity manager every time we load a level
     m_entity_manager = EntityManager();
 

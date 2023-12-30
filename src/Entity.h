@@ -39,7 +39,7 @@ public:
 	void destroy() { m_alive = false; }
 
 	template<typename T>
-	bool hasComponent() const { return getComponent<T>().has}
+	bool hasComponent() const { return getComponent<T>().has; }
 
 	template<typename T, typename... TArgs>
 	T& addComponent(TArgs&&... args) { // Overwrites the previous component
@@ -62,7 +62,7 @@ public:
 private:
 	friend class EntityManager; // EntityManager can construct Entities
 
-	Entity::Entity(const size_t id, const std::string tag) // Only EntityManager can access this
+	Entity(const size_t id, const std::string tag) // Only EntityManager can access this
 		: m_id(id), m_tag(tag) {
     }
 

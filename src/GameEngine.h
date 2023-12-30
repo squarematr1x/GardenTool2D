@@ -1,8 +1,9 @@
 #pragma once
 
 #include "EntityManager.h"
-#include "Scene.h"
 #include "Assets.h"
+
+class Scene;
 
 class GameEngine
 {
@@ -13,9 +14,9 @@ public:
 	void quit();
 	void update();
 
-	void changeScene(const std::string& scene_name, std::shared_ptr<Scene>, bool end_current_scene = false);
+	void changeScene(const std::string& scene_name, std::shared_ptr<Scene> scene, bool end_current_scene = false);
 
-	sf::RenderWindow& window();
+	sf::RenderWindow& window() { return m_window; };
 	const Assets& assets() const { return m_assets; };
 	bool isRunning();
 

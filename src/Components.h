@@ -18,7 +18,15 @@ struct CTransform: Component
 	float angle{ 0.0f };
 
 	CTransform() {}
-	CTransform(const Vec2 p, const Vec2 v, float a)
+	CTransform(const Vec2& p) 
+		: pos(p)
+	{
+	}
+	CTransform(const Vec2& p, const Vec2& v) 
+		: pos(p), velocity(v) 
+	{
+	}
+	CTransform(const Vec2& p, const Vec2& v, float a)
 		: pos(p), velocity(v), angle(a)
 	{
 	}
@@ -101,6 +109,10 @@ struct CAnimation: Component
 	bool repeat{ false };
 	
 	CAnimation() {}
+	CAnimation(const Animation& animation_in)
+		: animation(animation_in)
+	{
+	}
 	CAnimation(const Animation& animation_in, bool repeat_in)
 		: animation(animation_in), repeat(repeat_in)
 	{

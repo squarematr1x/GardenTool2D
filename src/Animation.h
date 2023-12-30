@@ -10,8 +10,8 @@ class Animation
 	std::string m_name{ "none" };
 	sf::Sprite m_sprite;
 
-	int m_current_frame{ 0 }; // frame in animation (if animation has 4 "images" frame 2 would be the third image and so on)
 	int m_frame_count{ 0 };
+	int m_current_frame{ 0 }; // frame in animation (if animation has 4 "images" frame 2 would be the third image and so on)
 	int m_speed{ 0 }; // animation speed
 
 	Vec2 m_size{ 1, 1 }; // (texture_w / frame_count, texture_h)

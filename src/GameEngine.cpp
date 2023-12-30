@@ -1,4 +1,5 @@
 #include "GameEngine.h"
+#include "Scene.h"
 
 #include <fstream>
 #include <sstream>
@@ -8,6 +9,7 @@
 GameEngine::GameEngine(const std::string& config) {
 	init(config);
 }
+
 
 void GameEngine::init(const std::string& path) {
 	m_assets.loadFromFile(path);
@@ -124,6 +126,12 @@ void GameEngine::init(const std::string& path) {
 	// spawnPlayer();
 }
 
+void GameEngine::changeScene(const std::string& scene_name, std::shared_ptr<Scene> scene, bool end_current_scene) {
+	(void)end_current_scene; // TODO: Use later if needed
+	m_scenes[scene_name] = scene;
+	m_cur_scene = scene_name;
+}
+
 void GameEngine::setPaused(bool paused) {
 	m_paused = paused;
 }
@@ -139,6 +147,11 @@ void GameEngine::run() {
 		}
 	}
 }
+ 
+ void GameEngine::quit() {
+	m_running = false;
+	m_window.close();
+ }
 
 void GameEngine::sUserInput()
 {
@@ -160,7 +173,7 @@ void GameEngine::sUserInput()
 		}
 
 		// New action based handling
-		if (event.type == sf::Event::KeyPressed || sf::Event::KeyReleased) {
+		if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased) {
 			// if the current scene does not have an axction associated with this key, skip the event
 			if (currentScene()->getActionMap().find(event.key.code) == currentScene()->getActionMap().end()) { continue; }
 
@@ -168,7 +181,7 @@ void GameEngine::sUserInput()
 			const std::string action_type = (event.type == sf::Event::KeyPressed) ? "START" : "END";
 
 			// look up the action and send the action to the scene
-			currentScene()->doAction(Action(currentScene()->getActionMap().at(event.key.code), action_type));
+			currentScene()->sDoAction(Action(currentScene()->getActionMap().at(event.key.code), action_type));
 		}
 	}
 }
