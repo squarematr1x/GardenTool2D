@@ -6,7 +6,7 @@ void Scene::drawLine(const Vec2& p1, const Vec2& p2) {
         {{p1.x, p1.y}, sf::Color(255, 255, 255)},
         {{p2.x, p2.y}, sf::Color(255, 255, 255)}
     };
-    m_game_engine->window().draw(line, 2, sf::Lines);
+    m_engine->window().draw(line, 2, sf::Lines);
 }
 
 size_t Scene::width() const {

@@ -3,8 +3,8 @@
 #include "Scene.h"
 #include "GameEngine.h"
 
-ScenePlay::ScenePlay(GameEngine* game_engine, const std::string& level_path)
-    : Scene(game_engine), m_level_path(level_path) {
+ScenePlay::ScenePlay(GameEngine* engine, const std::string& level_path)
+    : Scene(engine), m_level_path(level_path) {
         init(level_path);
     }
 
@@ -20,7 +20,7 @@ void ScenePlay::init(const std::string& level_path) {
 
     m_grid_text.setCharacterSize(12);
     
-    m_grid_text.setFont(m_game_engine->assets().getFont("Arial"));
+    m_grid_text.setFont(m_engine->assets().getFont("Arial"));
 
     loadLevel(level_path);
 }
@@ -52,7 +52,7 @@ void ScenePlay::loadLevel(const std::string& path) {
 
     auto brick = m_entity_manager.addEntity("tile");
     // IMPORTANT: always add the CAnimation component first that gridToMidPixel can compute correctly 54:43
-    brick->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Brick"), true);
+    brick->addComponent<CAnimation>(m_engine->assets().getAnimation("Brick"), true);
     brick->addComponent<CTransform>(Vec2(96, 480));
     // NOTE: You final code should position the entity with the grid x,y position read from
     // brick->addComponent<CTransform>(gridToMidPixel(grid_x, grid_y, brick));
@@ -84,7 +84,7 @@ void ScenePlay::loadLevel(const std::string& path) {
 
 void ScenePlay::spawnPlayer() {
     m_player = m_entity_manager.addEntity("player");
-    m_player->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Stand"), true);
+    m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Stand"), true);
     m_player->addComponent<CTransform>(Vec2(224, 352));
     m_player->addComponent<CBBox>(Vec2(48, 48));
     m_player->addComponent<CGravity>(0.1f);
@@ -186,8 +186,8 @@ void ScenePlay::sAnimation() {
 
 void ScenePlay::sRender() {
     // color the background darker so you know the game is paused
-    if (!m_paused) { m_game_engine->window().clear(sf::Color(70, 80, 255)); }
-    else { m_game_engine->window().clear(sf::Color(50, 50, 150)); }
+    if (!m_paused) { m_engine->window().clear(sf::Color(70, 80, 255)); }
+    else { m_engine->window().clear(sf::Color(50, 50, 150)); }
 
     // set the viewport of the window to be centered on the player if it's far enough right
     // auto& p_pos = m_player->getComponent<CTransform>().pos;
@@ -200,12 +200,12 @@ void ScenePlay::sRender() {
     if (m_draw_textures) {
         for (auto e : m_entity_manager.getEntities()) {
             auto& transform = e->getComponent<CTransform>();
-            if (e->hasComponent<CAnimation>()) {
+            if (e->hasComponent<CAnimation>()) { // TODO: continue here...
                 auto& animation = e->getComponent<CAnimation>().animation;
                 animation.getSprite().setRotation(transform.angle);
                 animation.getSprite().setPosition(transform.pos.x, transform.pos.y);
                 animation.getSprite().setScale(transform.scale.x, transform.scale.y);
-                m_game_engine->window().draw(animation.getSprite());
+                m_engine->window().draw(animation.getSprite());
             }
         }
     }
@@ -223,13 +223,13 @@ void ScenePlay::sRender() {
                 rect.setFillColor(sf::Color(0, 0, 0));
                 rect.setOutlineColor(sf::Color(255, 255, 255, 255));
                 rect.setOutlineThickness(1);
-                m_game_engine->window().draw(rect);
+                m_engine->window().draw(rect);
             }
         }
     }
 
     if (m_draw_grid) {
-        float left_x = m_game_engine->window().getView().getCenter().x - width() / 2;
+        float left_x = m_engine->window().getView().getCenter().x - width() / 2;
         float right_x = left_x + width() + m_grid_size.x;
         float next_grid_x = left_x - (static_cast<int>(left_x) % static_cast<int>(m_grid_size.x));
 
@@ -245,14 +245,15 @@ void ScenePlay::sRender() {
                 std::string y_cell = std::to_string(static_cast<int>(y) / static_cast<int>(m_grid_size.y));
                 m_grid_text.setString("(" + x_cell + "," + y_cell + ")");
                 m_grid_text.setPosition(x + 3, height() - y - m_grid_size.y + 2);
-                m_game_engine->window().draw(m_grid_text);
+                m_engine->window().draw(m_grid_text);
             }
         }
     }
-    m_game_engine->window().display();
+    m_engine->window().display();
 }
 
 void ScenePlay::onEnd() {
     // TODO: When the scene ends, change back to the MENU scene
     //       use m_game_engine->ChangeScene(correctParams)
+    m_engine->quit();
 }

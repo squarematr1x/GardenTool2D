@@ -11,8 +11,8 @@ class GameEngine;
 class Scene
 {
 public:
-	Scene(GameEngine* game_engine)
-		: m_game_engine(game_engine) {}
+	Scene(GameEngine* engine)
+		: m_engine(engine) {}
 
 	virtual ~Scene() {}
 
@@ -32,7 +32,7 @@ public:
 	void drawLine(const Vec2& p1, const Vec2& p2);
 
 protected:
-	GameEngine* m_game_engine{ nullptr };
+	GameEngine* m_engine{ nullptr };
 	EntityManager m_entity_manager;
 	size_t m_current_frame{ 0 };
 	std::map<int, std::string> m_action_map; // SFML key -> action name
@@ -52,8 +52,8 @@ class SceneMenu: public Scene
 	size_t m_menu_index{ 0 }; // selected menu item
 
 public:
-	SceneMenu(GameEngine* game_engine)
-		: Scene(game_engine) {}
+	SceneMenu(GameEngine* engine)
+		: Scene(engine) {}
 
 	void init();
 	void update();
@@ -71,14 +71,14 @@ class ScenePlay: public Scene
 	std::string m_level_path{""};
 	std::shared_ptr<Entity> m_player;
 	PlayerConfig m_player_config;
-	bool m_draw_textures{false};
-	bool m_draw_collision{false};
-	bool m_draw_grid{false};
-	const Vec2 m_grid_size{64, 64};
+	bool m_draw_textures{ true };
+	bool m_draw_collision{ false };
+	bool m_draw_grid{ false };
+	const Vec2 m_grid_size{ 64, 64 };
 	sf::Text m_grid_text;
 
 public:
-	ScenePlay(GameEngine* game_engine, const std::string& level_path);
+	ScenePlay(GameEngine* engine, const std::string& level_path);
 
 	void init(const std::string& level_path);
 	void update();
