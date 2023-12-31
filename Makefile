@@ -39,6 +39,10 @@ run: all
 debug: all
 	lldb ./$(APP_DIR)/$(TARGET)
 
+.PHONY: check-leaks
+check-leaks: all
+	leaks -atExit -- ./$(APP_DIR)/$(TARGET)
+
 .PHONY: clean
 clean:
 	-@rm -rvf $(OBJ_DIR)/*
