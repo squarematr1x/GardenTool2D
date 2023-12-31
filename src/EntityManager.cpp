@@ -7,16 +7,14 @@ std::shared_ptr<Entity> EntityManager::addEntity(const std::string tag) {
 }
 
 void EntityManager::update() {
-	for (auto& e : m_entities_to_add)
-	{
+	for (auto& e : m_entities_to_add) {
 		m_entities.push_back(e);
 		m_entity_map[e->tag()].push_back(e);
 	}
 
 	removeDeadEntities(m_entities);
 
-	for (auto& [tag, entityVec] : m_entity_map)
-	{
+	for (auto& [tag, entityVec] : m_entity_map) {
 		removeDeadEntities(entityVec);
 	}
 

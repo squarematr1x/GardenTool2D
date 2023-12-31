@@ -51,7 +51,7 @@ void ScenePlay::loadLevel(const std::string& path) {
     // spawnPlayer();
 
     auto brick = m_entity_manager.addEntity("tile");
-    // IMPORTANT: always add the CAnimation component first that gridToMidPixel can compute correctly 54:43
+    // IMPORTANT: always add the CAnimation component first that gridToMidPixel can compute correctly
     brick->addComponent<CAnimation>(m_engine->assets().getAnimation("Brick"), true);
     brick->addComponent<CTransform>(Vec2(96, 480));
     // NOTE: You final code should position the entity with the grid x,y position read from
@@ -158,13 +158,9 @@ void ScenePlay::sDoAction(const Action& action) {
         else if (action.getName() == "TOGGLE_GRID") { m_draw_grid = !m_draw_grid; }
         else if (action.getName() == "PAUSE") { setPaused(!m_paused); }
         else if (action.getName() == "QUIT") { onEnd(); }
-        else if (action.getName() == "JUMP") {
-            m_player->getComponent<CInput>().up = true;
-         }
+        else if (action.getName() == "JUMP") { m_player->getComponent<CInput>().up = true; }
     } else if (action.getType() == "END") {
-        if (action.getName() == "JUMP") {
-            m_player->getComponent<CInput>().up = false;
-        }
+        if (action.getName() == "JUMP") { m_player->getComponent<CInput>().up = false; }
     }
     (void)action;
 }
@@ -249,7 +245,6 @@ void ScenePlay::sRender() {
             }
         }
     }
-    m_engine->window().display();
 }
 
 void ScenePlay::onEnd() {

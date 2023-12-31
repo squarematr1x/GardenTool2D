@@ -4,7 +4,7 @@ Animation::Animation(const std::string& name, const sf::Texture& texture)
 	: Animation(name, texture, 1, 0) {
 }
 
-Animation::Animation(const std::string& name, const sf::Texture& texture, int frame_count, int speed)
+Animation::Animation(const std::string& name, const sf::Texture& texture, size_t frame_count, int speed)
 		: m_name(name), m_sprite(texture), m_frame_count(frame_count), m_current_frame(0), m_speed(speed) {
 		m_size = Vec2(
 			static_cast<float>(texture.getSize().x / static_cast<unsigned int>(frame_count)),

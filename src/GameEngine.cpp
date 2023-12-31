@@ -43,6 +43,7 @@ void GameEngine::run() {
 			update();
 			currentScene()->update();
 		}
+		m_window.display();
 	}
 }
  
@@ -84,22 +85,6 @@ void GameEngine::sUserInput() {
 }
 
 // TODO: Remove this later
-// void GameEngine::sRender() {
-// 	m_window.clear();
-	
-// 	for (auto& entity : m_entities.getEntities())
-// 	{
-// 		entity->cShape->circle.setPosition(entity->cTransform->pos.x, entity->cTransform->pos.y);
-// 		entity->cTransform->angle += 1.0f;
-// 		entity->cShape->circle.setRotation(entity->cTransform->angle);
-// 		m_window.draw(entity->cShape->circle);
-// 	}
-
-// 	m_text.setString("Score: " + std::to_string(m_score));
-// 	m_window.draw(m_text);
-// 	m_window.display();
-// }
-
 // void GameEngine::spawnEnemy() {
 // 	static std::mt19937 mt{ static_cast<unsigned int>(
 // 		std::chrono::steady_clock::now().time_since_epoch().count()

@@ -10,9 +10,9 @@ void Scene::drawLine(const Vec2& p1, const Vec2& p2) {
 }
 
 size_t Scene::width() const {
-    return 0;
+    return m_engine->window().getSize().x;
 }
 
 size_t Scene::height() const {
-    return 0;
+    return m_engine->window().getSize().y;
 }
