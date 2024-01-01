@@ -1,5 +1,5 @@
 CXX := clang++
-CXX_FLAGS := -std=c++17 -Werror -Wall -Wextra -Wconversion -gdwarf-4 -g
+CXX_FLAGS := -std=c++17 -Werror -Wall -Wextra -Wconversion -gdwarf-4 -g -fsanitize=address
 LD_FLAGS := -L/usr/lib -lstdc++ -lm
 BUILD := build
 OBJ_DIR := $(BUILD)/obj
