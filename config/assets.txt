@@ -1,3 +1,4 @@
 Texture BrickText /Users/spirttipera/2D-Game-Engine/assets/images/tile.png
 Animation Brick BrickText 1 1
+Animation Stand BrickText 1 1 
 Font Arial /Users/spirttipera/2D-Game-Engine/assets/fonts/arial.ttf

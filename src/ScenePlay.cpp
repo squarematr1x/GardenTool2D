@@ -17,6 +17,10 @@ void ScenePlay::init(const std::string& level_path) {
 
     // TODO: register all other gameplay Actions
     registerAction(sf::Keyboard::Space, "JUMP");
+    registerAction(sf::Keyboard::Up, "UP");
+    registerAction(sf::Keyboard::Right, "RIGHT");
+    registerAction(sf::Keyboard::Down, "DOWN");
+    registerAction(sf::Keyboard::Left, "LEFT");
 
     m_grid_text.setCharacterSize(12);
     
@@ -48,7 +52,7 @@ void ScenePlay::loadLevel(const std::string& path) {
 
     // NOTE: all of thre code below is sample code which shows you how to set up and use entitties with the new syntax
 
-    // spawnPlayer();
+    spawnPlayer();
 
     auto brick = m_entity_manager.addEntity("tile");
     // IMPORTANT: always add the CAnimation component first that gridToMidPixel can compute correctly
@@ -109,23 +113,23 @@ void ScenePlay::update() {
 }
 
 void ScenePlay::sMovement() {
-    // Vec2 player_v(0.0f, m_player->getComponent<CTransform>().velocity.y);
-    // if (m_player->getComponent<CInput>().up) {
-    //     m_player->getComponent<CState>().state = "JUMP";
-    //     player_v.y = -3;
-    // }
+    Vec2 player_v(0.0f, m_player->getComponent<CTransform>().velocity.y);
+    if (m_player->getComponent<CInput>().up) {
+        m_player->getComponent<CState>().state = "JUMP";
+        player_v.y = -3;
+    }
 
-    // m_player->getComponent<CTransform>().velocity = player_v;
+    m_player->getComponent<CTransform>().velocity = player_v;
     
-    // for (auto e : m_entity_manager.getEntities()){
-    //     if (e->hasComponent<CGravity>()) {
-    //         e->getComponent<CTransform>().velocity.y += e->getComponent<CGravity>().gravity;
+    for (auto e : m_entity_manager.getEntities()){
+        if (e->hasComponent<CGravity>()) {
+            e->getComponent<CTransform>().velocity.y += e->getComponent<CGravity>().gravity;
 
-    //         // if player is moving faster than max speed in any direction -> player speed in that direction = max speed
-    //         // also, when landing on someting -> set player's y velocity to 0
-    //     }
-    //     e->getComponent<CTransform>().pos += e->getComponent<CTransform>().velocity;
-    // }
+            // if player is moving faster than max speed in any direction -> player speed in that direction = max speed
+            // also, when landing on someting -> set player's y velocity to 0
+        }
+        e->getComponent<CTransform>().pos += e->getComponent<CTransform>().velocity;
+    }
 
     // TODO: Implement player movement/jumping based on its CInput component
     // TODO: Implement gravity's effect on player
@@ -159,6 +163,9 @@ void ScenePlay::sDoAction(const Action& action) {
         else if (action.getName() == "PAUSE") { setPaused(!m_paused); }
         else if (action.getName() == "QUIT") { onEnd(); }
         else if (action.getName() == "JUMP") { m_player->getComponent<CInput>().up = true; }
+        else if (action.getName() == "RIGHT") { m_player->getComponent<CInput>().right = true; }
+        else if (action.getName() == "DOWN") { m_player->getComponent<CInput>().down = true; }
+        else if (action.getName() == "LEFT") { m_player->getComponent<CInput>().left = true; }
     } else if (action.getType() == "END") {
         if (action.getName() == "JUMP") { m_player->getComponent<CInput>().up = false; }
     }
