@@ -103,12 +103,12 @@ void ScenePlay::spawnBullet() {
 void ScenePlay::update() {
     m_entity_manager.update();
 
-    // TODO: implement pause functionality
-
-    sMovement();
-    sLifespan();
-    sCollision();
-    sAnimation();
+    if (!m_paused) {
+        sMovement();
+        sLifespan();
+        sCollision();
+        sAnimation();
+    }
     sRender();
 }
 
@@ -116,7 +116,7 @@ void ScenePlay::sMovement() {
     Vec2 player_v(0.0f, m_player->getComponent<CTransform>().velocity.y);
     if (m_player->getComponent<CInput>().up) {
         m_player->getComponent<CState>().state = "JUMP";
-        player_v.y = -3;
+        player_v.y = -1;
     }
 
     m_player->getComponent<CTransform>().velocity = player_v;
@@ -188,16 +188,15 @@ void ScenePlay::sAnimation() {
 }
 
 void ScenePlay::sRender() {
-    // color the background darker so you know the game is paused
-    if (!m_paused) { m_engine->window().clear(sf::Color(70, 80, 255)); }
-    else { m_engine->window().clear(sf::Color(50, 50, 150)); }
+    if (m_paused) { m_engine->window().clear(sf::Color(50, 50, 150)); }
+    else { m_engine->window().clear(sf::Color(70, 80, 255)); }
 
     // set the viewport of the window to be centered on the player if it's far enough right
-    // auto& p_pos = m_player->getComponent<CTransform>().pos;
-    // float window_center_x = std::max(m_game_engine->window().getSize().x / 2.0f, p_pos.x); // TODO: Causes segfault (source: lldb)
-    // sf::View view = m_game_engine->window().getView();
-    // view.setCenter(window_center_x, m_game_engine->window().getSize().y - view.getCenter().y);
-    // m_game_engine->window().setView(view);
+    auto& p_pos = m_player->getComponent<CTransform>().pos;
+    float window_center_x = std::max(m_engine->window().getSize().x / 2.0f, p_pos.x); // TODO: Causes segfault (source: lldb)
+    sf::View view = m_engine->window().getView();
+    view.setCenter(window_center_x, m_engine->window().getSize().y - view.getCenter().y);
+    m_engine->window().setView(view);
 
     // draw all Entity textures/animations
     if (m_draw_textures) {
