@@ -30,20 +30,19 @@ void ScenePlay::init(const std::string& level_path) {
 }
 
 Vec2 ScenePlay::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entity> entity) {
-    (void)grid_x;
-    (void)grid_y;
-    (void)entity;
-    // TODO: This function takes grid x,y position and an Entity
-    // returns a Vec2 indicatinh where the CENTER position of the Entity should be
-    // You must use the Entity's Animation size to position it correctly
-    // The size of the grid width and height is stored in m_grid_size.x and m_grid_size.y
-    // The bottom-left corner of the Animation should align with the bottom left of the grid cell
+    if (entity->hasComponent<CAnimation>()) {
+        const auto& animation_size = entity->getComponent<CAnimation>().animation.getSize();
+        const float x = grid_x * m_grid_size.x + (animation_size.x / 2.0f);
+        const float y = height() - (grid_y * m_grid_size.y + (animation_size.y / 2.0f));
+
+        return Vec2(x, y);
+    }
     return Vec2(0, 0);
 }
 
 void ScenePlay::loadLevel(const std::string& path) {
     (void)path;
-    // resset the entity manager every time we load a level
+    // reset the entity manager every time we load a level
     m_entity_manager = EntityManager();
 
     // TODO: read in the level file and add the appropriate entities
@@ -57,7 +56,7 @@ void ScenePlay::loadLevel(const std::string& path) {
     auto brick = m_entity_manager.addEntity("tile");
     // IMPORTANT: always add the CAnimation component first that gridToMidPixel can compute correctly
     brick->addComponent<CAnimation>(m_engine->assets().getAnimation("Brick"), true);
-    brick->addComponent<CTransform>(Vec2(96, 480));
+    brick->addComponent<CTransform>(gridToMidPixel(1.0f, 4.0f, brick));
     // NOTE: You final code should position the entity with the grid x,y position read from
     // brick->addComponent<CTransform>(gridToMidPixel(grid_x, grid_y, brick));
 
@@ -193,7 +192,7 @@ void ScenePlay::sRender() {
 
     // set the viewport of the window to be centered on the player if it's far enough right
     auto& p_pos = m_player->getComponent<CTransform>().pos;
-    float window_center_x = std::max(m_engine->window().getSize().x / 2.0f, p_pos.x); // TODO: Causes segfault (source: lldb)
+    float window_center_x = std::max(m_engine->window().getSize().x / 2.0f, p_pos.x);
     sf::View view = m_engine->window().getView();
     view.setCenter(window_center_x, m_engine->window().getSize().y - view.getCenter().y);
     m_engine->window().setView(view);
@@ -202,7 +201,7 @@ void ScenePlay::sRender() {
     if (m_draw_textures) {
         for (auto e : m_entity_manager.getEntities()) {
             auto& transform = e->getComponent<CTransform>();
-            if (e->hasComponent<CAnimation>()) { // TODO: continue here...
+            if (e->hasComponent<CAnimation>()) {
                 auto& animation = e->getComponent<CAnimation>().animation;
                 animation.getSprite().setRotation(transform.angle);
                 animation.getSprite().setPosition(transform.pos.x, transform.pos.y);
@@ -222,7 +221,7 @@ void ScenePlay::sRender() {
                 rect.setSize(sf::Vector2f(box.size.x-1, box.size.y-1));
                 rect.setOrigin(sf::Vector2f(box.half_size.x, box.half_size.y));
                 rect.setPosition(transform.pos.x, transform.pos.y);
-                rect.setFillColor(sf::Color(0, 0, 0));
+                rect.setFillColor(sf::Color(255, 255, 255, 0));
                 rect.setOutlineColor(sf::Color(255, 255, 255, 255));
                 rect.setOutlineThickness(1);
                 m_engine->window().draw(rect);
