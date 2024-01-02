@@ -101,9 +101,9 @@ void ScenePlay::spawnBullet() {
 }
 
 void ScenePlay::update() {
-    m_entity_manager.update();
-
     if (!m_paused) {
+        m_entity_manager.update();
+
         sMovement();
         sLifespan();
         sCollision();
