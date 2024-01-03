@@ -1,7 +1,7 @@
 #include "Physics.h"
 #include "Entity.h"
 
-namespace Physics
+namespace physics
 {
 Vec2 getOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
 	const auto pos_a = a->getComponent<CTransform>().pos;
@@ -36,4 +36,4 @@ Vec2 getPrevOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
 
 	return Vec2(overlap_x, overlap_y);
 }
-} // Physics
+} // physics
