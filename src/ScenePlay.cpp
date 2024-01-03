@@ -1,4 +1,5 @@
 #include <string>
+#include <fstream>
 
 #include "Scene.h"
 #include "GameEngine.h"
@@ -53,21 +54,37 @@ void ScenePlay::loadLevel(const std::string& path) {
 
     spawnPlayer();
 
-    auto brick = m_entity_manager.addEntity("tile");
-    // IMPORTANT: always add the CAnimation component first that gridToMidPixel can compute correctly
-    brick->addComponent<CAnimation>(m_engine->assets().getAnimation("Brick"), true);
-    brick->addComponent<CTransform>(gridToMidPixel(1.0f, 4.0f, brick));
-    // NOTE: You final code should position the entity with the grid x,y position read from
-    // brick->addComponent<CTransform>(gridToMidPixel(grid_x, grid_y, brick));
+    std::ifstream file(path);
+    std::string str;
 
-    if (brick->getComponent<CAnimation>().animation.getName() == "Brick") {
-        // This could be good identifying whether a tile is brick
+    while (file.good()) {
+        file >> str;
+
+        if (str == "Tile" || str == "Dec") {
+            std::string animation;
+            float x, y;
+            file >> animation >> x >> y;
+
+            auto tile = m_entity_manager.addEntity("tile");
+            tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
+            tile->addComponent<CTransform>(gridToMidPixel(x, y, tile));
+
+            if (tile->getComponent<CAnimation>().animation.getName() == "Brick") {
+                const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
+                tile->addComponent<CBBox>(animation_size);
+            }
+        } else if (str == "Player") {
+            float x, y, bbox_w, bbox_h, v, jump_v, max_v, gravity;
+            std::string bullet_animation;
+            file >> x >> y >> bbox_w >> bbox_h >> v >> jump_v >> max_v >> gravity >> bullet_animation;
+        } else {
+            std::cerr << "Unknown level object: " << str << '\n';
+        }
     }
 
     // auto block = m_entity_manager.addEntity("tile");
     // block->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Block"), true);
     // block->addComponent<CTransform>(Vec2(224, 480));
-
     // auto question = m_entity_manager.addEntity("tile");
     // question->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Question"), true);
     // question->addComponent<CTransform>(Vec2(352, 480));
