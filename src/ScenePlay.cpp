@@ -3,6 +3,7 @@
 
 #include "Scene.h"
 #include "GameEngine.h"
+#include "Physics.h"
 
 ScenePlay::ScenePlay(GameEngine* engine, const std::string& level_path)
     : Scene(engine), m_level_path(level_path) {
@@ -50,8 +51,6 @@ void ScenePlay::loadLevel(const std::string& path) {
     // use the PlayerConfig struct m_playerConfig to store player properties
     // this struct is defined at the top of ScenePlay.h
 
-    // NOTE: all of thre code below is sample code which shows you how to set up and use entitties with the new syntax
-
     spawnPlayer();
 
     std::ifstream file(path);
@@ -81,13 +80,6 @@ void ScenePlay::loadLevel(const std::string& path) {
             std::cerr << "Unknown level object: " << str << '\n';
         }
     }
-
-    // auto block = m_entity_manager.addEntity("tile");
-    // block->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Block"), true);
-    // block->addComponent<CTransform>(Vec2(224, 480));
-    // auto question = m_entity_manager.addEntity("tile");
-    // question->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Question"), true);
-    // question->addComponent<CTransform>(Vec2(352, 480));
 
     // NOTE: IMPORTANT:
     // Components are now returned as a references than pointers
@@ -158,12 +150,19 @@ void ScenePlay::sLifespan() {
 }
 
 void ScenePlay::sCollision() {
-    // REMEMBER: SFML's (0, 0) position is on the TOP-LEFT corner
-    // This means jumping will have a negative y-component and gravity will have positive y-component
-    // Also, something BELOW something else will have a y value greater than it
-    // Also, something ABOVE something else will have a y value less than it
+    // BELOW something else will have a y value greater than it
+    // ABOVE something else will have a y value less than it
 
-    // TODO: Implement Physics::GetOverlap() function, use it inside this function
+    for (auto entity : m_entity_manager.getEntities()) {
+        if (entity->tag() == "tile") {
+            Vec2 overlap = physics::getOverlap(m_player, entity);
+            if (overlap.x > 0 && overlap.y > 0) {
+                m_player->getComponent<CTransform>().pos.y -= overlap.y;
+                // Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
+            }
+        }
+    }
+
     // TODO: Implement bullet/tile collision (Destroy the tile if it has 'Brick' as animation)
     // TODO: Implement player/tile collision and resolutions, update the CState component of the player to
     // store whether it's currently on the ground or in the air. This will be used by the animation system.
