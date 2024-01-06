@@ -17,12 +17,12 @@ void ScenePlay::init(const std::string& level_path) {
     registerAction(sf::Keyboard::C, "TOGGLE_COLLISION");
     registerAction(sf::Keyboard::G, "TOGGLE_GRID");
 
-    // TODO: register all other gameplay Actions
     registerAction(sf::Keyboard::Space, "JUMP");
     registerAction(sf::Keyboard::Up, "UP");
     registerAction(sf::Keyboard::Right, "RIGHT");
     registerAction(sf::Keyboard::Down, "DOWN");
     registerAction(sf::Keyboard::Left, "LEFT");
+    registerAction(sf::Keyboard::Z, "SHOOT");
 
     m_grid_text.setCharacterSize(12);
     
@@ -91,7 +91,12 @@ void ScenePlay::spawnPlayer() {
 void ScenePlay::spawnBullet() {
     // TODO: spawn a bullet at the given entity, going in the direction the entity is facing
     // if space bar down can CInput.canShoot becomes false
-    // if it's up canShoot = true (only spawn bullet when canShoot = true)
+    // if it's up canShoot = true (only spawn bullet when canShoot = true
+
+    auto bullet = m_entity_manager.addEntity("bullet");
+    bullet->addComponent<CAnimation>(m_engine->assets().getAnimation("Bullet"), true);
+    bullet->addComponent<CTransform>(m_player->getComponent<CTransform>());
+    // bullet->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y));
 }
 
 void ScenePlay::update() {
@@ -119,6 +124,10 @@ void ScenePlay::sMovement() {
     if (m_player->getComponent<CInput>().right) {
         player_v.x = m_player_config.v;
     }
+    if (m_player->getComponent<CInput>().shoot) {
+        m_player->getComponent<CInput>().shoot = false;
+        spawnBullet();
+    }
 
     m_player->getComponent<CTransform>().velocity = player_v;
     
@@ -139,7 +148,13 @@ void ScenePlay::sMovement() {
 }
 
 void ScenePlay::sLifespan() {
-    // TODO: Check lifespan of entities that have them, and destroy the id they go over
+    for (auto entity : m_entity_manager.getEntities()) {
+        if (entity->hasComponent<CLifespan>()) {
+            if (entity->getComponent<CLifespan>().remaining <= 0) {
+                entity->destroy();
+            }
+        }
+    }
 }
 
 void ScenePlay::sCollision() {
@@ -174,6 +189,7 @@ void ScenePlay::sDoAction(const Action& action) {
         else if (action.getName() == "RIGHT") { m_player->getComponent<CInput>().right = true; }
         else if (action.getName() == "DOWN") { m_player->getComponent<CInput>().down = true; }
         else if (action.getName() == "LEFT") { m_player->getComponent<CInput>().left = true; }
+        else if (action.getName() == "SHOOT") { m_player->getComponent<CInput>().shoot = true; }
     } else if (action.getType() == "END") {
         if (action.getName() == "JUMP") { m_player->getComponent<CInput>().up = false; }
         else if (action.getName() == "RIGHT") { m_player->getComponent<CInput>().right = false; }
