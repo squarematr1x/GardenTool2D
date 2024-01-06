@@ -113,6 +113,7 @@ void ScenePlay::update() {
 
 void ScenePlay::sMovement() {
     Vec2 player_v = m_player->getComponent<CTransform>().velocity;
+
     player_v.x = 0.0f;
     if (m_player->getComponent<CInput>().up) {
         m_player->getComponent<CState>().state = "JUMP";
@@ -127,6 +128,17 @@ void ScenePlay::sMovement() {
     if (m_player->getComponent<CInput>().shoot) {
         m_player->getComponent<CInput>().shoot = false;
         spawnBullet();
+    }
+
+    if (player_v.x > m_player_config.max_v) {
+        player_v.x = m_player_config.max_v;
+    } else if (player_v.x < -m_player_config.max_v) {
+        player_v.x = -m_player_config.max_v;
+    }
+    if (player_v.y > m_player_config.max_v) {
+        player_v.y = m_player_config.max_v;
+    } else if (player_v.x < -m_player_config.max_v) {
+        player_v.y = -m_player_config.max_v;
     }
 
     m_player->getComponent<CTransform>().velocity = player_v;
@@ -164,7 +176,24 @@ void ScenePlay::sCollision() {
     for (auto entity : m_entity_manager.getEntities("tile")) {
         Vec2 overlap = physics::getOverlap(m_player, entity);
         if (overlap.x > 0 && overlap.y > 0) {
+            Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
+            if (prev_overlap.x > 0) {
+
+            }
+            if (prev_overlap.x > overlap.x) {
+
+            } else if (prev_overlap.x < overlap.x) {
+
+            }
+            if (prev_overlap.y > overlap.y) {
+
+            } else if (prev_overlap.y < overlap.y) {
+
+            }
+
+
             m_player->getComponent<CTransform>().pos.y -= overlap.y;
+            m_player->getComponent<CTransform>().velocity = Vec2(0.0f, 0.0f);
             // Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
         }
     }

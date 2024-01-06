@@ -8,6 +8,10 @@ Tile Brick 3 0
 Tile Brick 3 1
 Tile Brick 4 0
 Tile Brick 4 1
-Tile Bullet 4 5
+Tile Brick 6 0
+Tile Brick 6 1
+Tile Brick 7 0
+Tile Brick 7 1
 Dec Bush 1 2
-Player 2 6 48 48 5 5 10 0.75 Bullet
+Dec Bush 7 2
+Player 2 6 48 48 5 5 10 2 Fire
