@@ -57,7 +57,7 @@ void ScenePlay::loadLevel(const std::string& path) {
             float x, y;
             file >> animation >> x >> y;
 
-            auto tile = m_entity_manager.addEntity("tile");
+            auto tile = str == "Tile" ? m_entity_manager.addEntity("tile") : m_entity_manager.addEntity("dec");
             tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
             tile->addComponent<CTransform>(gridToMidPixel(x, y, tile));
 
@@ -161,13 +161,11 @@ void ScenePlay::sCollision() {
     // BELOW something else will have a y value greater than it
     // ABOVE something else will have a y value less than it
 
-    for (auto entity : m_entity_manager.getEntities()) {
-        if (entity->tag() == "tile") {
-            Vec2 overlap = physics::getOverlap(m_player, entity);
-            if (overlap.x > 0 && overlap.y > 0) {
-                m_player->getComponent<CTransform>().pos.y -= overlap.y;
-                // Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
-            }
+    for (auto entity : m_entity_manager.getEntities("tile")) {
+        Vec2 overlap = physics::getOverlap(m_player, entity);
+        if (overlap.x > 0 && overlap.y > 0) {
+            m_player->getComponent<CTransform>().pos.y -= overlap.y;
+            // Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
         }
     }
 
