@@ -8,3 +8,5 @@ Tile Brick 3 0
 Tile Brick 3 1
 Tile Brick 4 0
 Tile Brick 4 1
+Tile Bullet 4 5
+Player 2 6 48 48 5 5 10 0.75 Bullet

@@ -69,9 +69,7 @@ struct CInput: Component {
 	bool down{ false };
 	bool shoot{ false };
 
-	CInput()
-	{
-	}
+	CInput() {}
 };
 
 struct CLifespan: Component {

@@ -35,7 +35,7 @@ protected:
 	GameEngine* m_engine{ nullptr };
 	EntityManager m_entity_manager;
 	size_t m_current_frame{ 0 };
-	std::map<int, std::string> m_action_map; // SFML key -> action name
+	std::map<int, std::string> m_action_map;
 	bool m_paused{ false };
 	bool m_has_ended{ false };
 
@@ -65,8 +65,15 @@ public:
 class ScenePlay: public Scene
 {
 	struct PlayerConfig {
-		float X, Y, CX, CY, SPEED, MAXSPEED, JUMP, GRAVITY;
-		std::string WEAPON;
+		float x{ 0.0f };
+		float y{ 0.0f };
+		float bbox_x{ 0.0f };
+		float bbox_y{ 0.0f };
+		float v{ 0.0f };
+		float max_v{ 0.0f };
+		float jump_v{ 0.0f };
+		float gravity{ 0.0f };
+		std::string weapon{ "" };
 	};
 	std::string m_level_path{""};
 	std::shared_ptr<Entity> m_player;

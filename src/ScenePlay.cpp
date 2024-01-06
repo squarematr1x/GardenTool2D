@@ -43,15 +43,8 @@ Vec2 ScenePlay::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entit
 }
 
 void ScenePlay::loadLevel(const std::string& path) {
-    (void)path;
     // reset the entity manager every time we load a level
     m_entity_manager = EntityManager();
-
-    // TODO: read in the level file and add the appropriate entities
-    // use the PlayerConfig struct m_playerConfig to store player properties
-    // this struct is defined at the top of ScenePlay.h
-
-    spawnPlayer();
 
     std::ifstream file(path);
     std::string str;
@@ -74,38 +67,31 @@ void ScenePlay::loadLevel(const std::string& path) {
             }
         } else if (str == "Player") {
             float x, y, bbox_w, bbox_h, v, jump_v, max_v, gravity;
-            std::string bullet_animation;
-            file >> x >> y >> bbox_w >> bbox_h >> v >> jump_v >> max_v >> gravity >> bullet_animation;
+            std::string weapon_animation;
+            file >> x >> y >> bbox_w >> bbox_h >> v >> max_v >> jump_v >> gravity >> weapon_animation;
+            m_player_config = {
+                x, y, bbox_w, bbox_h, v, max_v, jump_v, gravity, weapon_animation
+            };
         } else {
             std::cerr << "Unknown level object: " << str << '\n';
         }
     }
 
-    // NOTE: IMPORTANT:
-    // Components are now returned as a references than pointers
-    // If you don't specify a reference variable type, it will COPY the component:
-    // Here is an example:
-    //
-    // This will COPY the transform into the variable 'transform1' - it's INCORRECT
-    // Any changes you make to transform1 will not be changed inside the entity auto transform1 = entity->get<CTransform>()
-    //
-    // This will REFERENCE the transform with the variable 'transform2' - it's CORRECT
-    // Now any changes made to transform2 will be changed inside the entity
-    // auto& transform2 = entity->get<CTransform>()
+    spawnPlayer();
 }
 
 void ScenePlay::spawnPlayer() {
     m_player = m_entity_manager.addEntity("player");
     m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Stand"), true);
-    m_player->addComponent<CTransform>(Vec2(224, 352));
-    m_player->addComponent<CBBox>(Vec2(48, 48));
-    m_player->addComponent<CGravity>(0.1f);
-    // ...add also remaining components
+    m_player->addComponent<CTransform>(gridToMidPixel(m_player_config.x, m_player_config.y, m_player));
+    m_player->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y));
+    m_player->addComponent<CGravity>(m_player_config.gravity);
 }
 
 void ScenePlay::spawnBullet() {
     // TODO: spawn a bullet at the given entity, going in the direction the entity is facing
-    // if space bar down can CInput.canShoot becomes false, if it's up canShoot = true (only spawn bullet when canShoot = true)
+    // if space bar down can CInput.canShoot becomes false
+    // if it's up canShoot = true (only spawn bullet when canShoot = true)
 }
 
 void ScenePlay::update() {
@@ -121,10 +107,17 @@ void ScenePlay::update() {
 }
 
 void ScenePlay::sMovement() {
-    Vec2 player_v(0.0f, m_player->getComponent<CTransform>().velocity.y);
+    Vec2 player_v = m_player->getComponent<CTransform>().velocity;
+    player_v.x = 0.0f;
     if (m_player->getComponent<CInput>().up) {
         m_player->getComponent<CState>().state = "JUMP";
-        player_v.y = -1;
+        player_v.y = -m_player_config.jump_v;
+    }
+    if (m_player->getComponent<CInput>().left) {
+        player_v.x = -m_player_config.v;
+    }
+    if (m_player->getComponent<CInput>().right) {
+        player_v.x = m_player_config.v;
     }
 
     m_player->getComponent<CTransform>().velocity = player_v;
@@ -183,6 +176,9 @@ void ScenePlay::sDoAction(const Action& action) {
         else if (action.getName() == "LEFT") { m_player->getComponent<CInput>().left = true; }
     } else if (action.getType() == "END") {
         if (action.getName() == "JUMP") { m_player->getComponent<CInput>().up = false; }
+        else if (action.getName() == "RIGHT") { m_player->getComponent<CInput>().right = false; }
+        else if (action.getName() == "DOWN") { m_player->getComponent<CInput>().down = false; }
+        else if (action.getName() == "LEFT") { m_player->getComponent<CInput>().left = false; }
     }
     (void)action;
 }
