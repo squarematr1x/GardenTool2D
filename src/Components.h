@@ -4,23 +4,34 @@
 
 #include "Animation.h"
 
-struct CTransform
-{
+struct Component {
+	bool has{ false };
+};
+
+struct CTransform: Component {
 	Vec2 pos{ 0.0f, 0.0f }; // Center of an object
 	Vec2 velocity{ 0.0f, 0.0f };
-	// Vec2 prevPos{ 0.0f, 0.0f };
-	// Vec2 scale{ 0.0f, 0.0f };
+	Vec2 prevPos{ 0.0f, 0.0f };
+	Vec2 scale{ 1.0f, 1.0f };
 
 	float angle{ 0.0f };
 
-	CTransform(const Vec2 p, const Vec2 v, float a)
+	CTransform() {}
+	CTransform(const Vec2& p) 
+		: pos(p)
+	{
+	}
+	CTransform(const Vec2& p, const Vec2& v) 
+		: pos(p), velocity(v) 
+	{
+	}
+	CTransform(const Vec2& p, const Vec2& v, float a)
 		: pos(p), velocity(v), angle(a)
 	{
 	}
 };
 
-struct CShape
-{
+struct CShape: Component {
 	sf::CircleShape circle;
 
 	CShape(float radius, int points, const sf::Color& fill, const sf::Color& outline, float thickness)
@@ -33,8 +44,7 @@ struct CShape
 	}
 };
 
-struct CCollision
-{
+struct CCollision: Component {
 	float radius;
 
 	CCollision(float r)
@@ -43,8 +53,7 @@ struct CCollision
 	}
 };
 
-struct CScore
-{
+struct CScore: Component {
 	int score;
 
 	CScore(int s)
@@ -53,55 +62,54 @@ struct CScore
 	}
 };
 
-struct CInput
-{
+struct CInput: Component {
 	bool up{ false };
 	bool left{ false };
 	bool right{ false };
 	bool down{ false };
 	bool shoot{ false };
 
-	CInput()
-	{
-	}
+	CInput() {}
 };
 
-struct CLifespan
-{
+struct CLifespan: Component {
 	int remaining{ 0 };
 	int total{ 0 };
 
+	CLifespan() {}
 	CLifespan(int total)
 		: remaining(total), total(total)
 	{
 	}
 };
 
-struct CBBox
-{
-	Vec2 size;
-	Vec2 half_size; // To reduce computations
+struct CBBox: Component {
+	Vec2 size{ 0.0f, 0.0f };
+	Vec2 half_size{ 0.0f, 0.0f }; // To reduce computations
 
+	CBBox() {}
 	CBBox(Vec2 size_in)
 		: size(size_in), half_size(size_in / 2)
 	{
 	}
 };
 
-struct CAnimation
-{
+struct CAnimation: Component {
 	Animation animation;
 	bool repeat{ false };
 	
 	CAnimation() {}
+	CAnimation(const Animation& animation_in)
+		: animation(animation_in)
+	{
+	}
 	CAnimation(const Animation& animation_in, bool repeat_in)
 		: animation(animation_in), repeat(repeat_in)
 	{
 	}
 };
 
-struct CGravity
-{
+struct CGravity: Component {
 	float gravity{ 0 };
 
 	CGravity() {}
@@ -111,9 +119,8 @@ struct CGravity
 	}
 };
 
-struct CState
-{
-	std::string state{ "jump" };
+struct CState: Component {
+	std::string state{ "JUMP" }; // TODO: switch to enums in the sort of things...
 
 	CState() {}
 	CState(const std::string& state_in)

@@ -10,43 +10,102 @@ class GameEngine;
 
 class Scene
 {
-protected:
-	std::shared_ptr<GameEngine> m_game_engine;
-	EntityManager m_entities;
-	int current_frame{ 0 };
-	std::map<int, std::string> m_action_map;
-	bool paused{ false };
-	bool hasEnded{ false };
+public:
+	Scene(GameEngine* engine)
+		: m_engine(engine) {}
+
+	virtual ~Scene() {}
 
 	virtual void update() = 0;
-	virtual void sDoAction(Action action) = 0; // (Action action as param)
+	virtual void sDoAction(const Action& action) = 0;
 	virtual void sRender() = 0;
 
-	virtual void simulate();
-	virtual void doAction(Action action); // (Action action as param)
-	virtual void registerAction();
+	virtual void registerAction(int key, const std::string& action_name) { m_action_map[key] = action_name; };
+	// virtual void doAction(const Action& action); ?
+
+	size_t width() const;
+	size_t height() const;
+	size_t currentFrame() const { return m_current_frame; };
+
+	bool hasEnded() const { return m_has_ended; }
+	const std::map<int, std::string>& getActionMap() const { return m_action_map; }
+	void drawLine(const Vec2& p1, const Vec2& p2);
+
+protected:
+	GameEngine* m_engine{ nullptr };
+	EntityManager m_entity_manager;
+	size_t m_current_frame{ 0 };
+	std::map<int, std::string> m_action_map;
+	bool m_paused{ false };
+	bool m_has_ended{ false };
+
+	virtual void onEnd() = 0;
+	void setPaused(bool paused) { m_paused = paused; }
 };
 
-
-class ScenePlay: public Scene {
-	std::string m_level_path{""};
-	std::shared_ptr<Entity> m_player;
-	// playerConfig
+class SceneMenu: public Scene
+{
+	std::string m_title;
+	std::vector<std::string> m_menu_strings;
+	std::vector<std::string> m_level_paths;
+	sf::Text m_menu_text;
+	size_t m_menu_index{ 0 }; // selected menu item
 
 public:
+	SceneMenu(GameEngine* engine)
+		: Scene(engine) {}
+
 	void init();
 	void update();
+	void onEnd();
+	void sDoAction(const Action& action);
+	void sRender();
+};
+
+class ScenePlay: public Scene
+{
+	struct PlayerConfig {
+		float x{ 0.0f };
+		float y{ 0.0f };
+		float bbox_x{ 0.0f };
+		float bbox_y{ 0.0f };
+		float v{ 0.0f };
+		float max_v{ 0.0f };
+		float jump_v{ 0.0f };
+		float gravity{ 0.0f };
+		std::string weapon{ "" };
+	};
+	std::string m_level_path{""};
+	std::shared_ptr<Entity> m_player;
+	PlayerConfig m_player_config;
+	bool m_draw_textures{ true };
+	bool m_draw_collision{ false };
+	bool m_draw_grid{ false };
+	const Vec2 m_grid_size{ 64, 64 };
+	sf::Text m_grid_text;
+
+public:
+	ScenePlay(GameEngine* engine, const std::string& level_path);
+
+	void init(const std::string& level_path);
+	void update();
+
+	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity);
+
+	void loadLevel(const std::string& path);
+
+	void spawnPlayer();
+	void spawnBullet();
 
 	// Systems
 	void sAnimation();
 	void sMovement();
+	void sLifespan();
 	void sEnemySpawner();
 	void sCollision();
 	void sRender();
-	void sDoAction(Action action);
+	void sDoAction(const Action& action);
 	void sDebug();
-};
 
-class SceneMenu: public Scene {
-
+	void onEnd();
 };

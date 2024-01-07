@@ -1,15 +1,11 @@
 #pragma once
 
-#include "Animation.h"
-
-// FIXME: double includes etc.
-
-#include "Components.h"
+#include <map>
+#include <string>
 
 #include <SFML/Audio.hpp>
 
-#include <map>
-#include <string>
+#include "Animation.h"
 
 // Assets are: textures, animations, sounds, fonts
 
@@ -21,13 +17,11 @@ class Assets
 	std::map<std::string, sf::Sound> m_sound_map;
 
 	void addTexture(const std::string& texture_name, const std::string& path, bool smooth = true);
-	void addAnimation(const std::string& animation_name, const std::string& texture_name, int frame_count, int speed);
+	void addAnimation(const std::string& animation_name, const std::string& texture_name, size_t frame_count, int speed);
 	void addFont(const std::string& font_name, const std::string& path);
 	void addSound(const std::string& sound_name, const std::string& path);
 
 public:
-	Assets();
-
 	void loadFromFile(const std::string& path);
 
 	const sf::Texture& getTexture(const std::string& texture_name) const;
