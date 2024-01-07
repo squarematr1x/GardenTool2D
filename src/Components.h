@@ -11,7 +11,7 @@ struct Component {
 struct CTransform: Component {
 	Vec2 pos{ 0.0f, 0.0f }; // Center of an object
 	Vec2 velocity{ 0.0f, 0.0f };
-	Vec2 prevPos{ 0.0f, 0.0f };
+	Vec2 prev_pos{ 0.0f, 0.0f };
 	Vec2 scale{ 1.0f, 1.0f };
 
 	float angle{ 0.0f };

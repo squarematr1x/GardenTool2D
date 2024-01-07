@@ -94,7 +94,7 @@ void ScenePlay::spawnBullet() {
     // if it's up canShoot = true (only spawn bullet when canShoot = true
 
     auto bullet = m_entity_manager.addEntity("bullet");
-    bullet->addComponent<CAnimation>(m_engine->assets().getAnimation("Bullet"), true);
+    bullet->addComponent<CAnimation>(m_engine->assets().getAnimation("Fire"), true);
     bullet->addComponent<CTransform>(m_player->getComponent<CTransform>());
     // bullet->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y));
 }
@@ -150,7 +150,9 @@ void ScenePlay::sMovement() {
             // if player is moving faster than max speed in any direction -> player speed in that direction = max speed
             // also, when landing on someting -> set player's y velocity to 0
         }
-        e->getComponent<CTransform>().pos += e->getComponent<CTransform>().velocity;
+        auto& transform = e->getComponent<CTransform>();
+        transform.prev_pos = transform.pos;
+        transform.pos += transform.velocity;
     }
 
     // TODO: Implement player movement/jumping based on its CInput component
@@ -170,39 +172,34 @@ void ScenePlay::sLifespan() {
 }
 
 void ScenePlay::sCollision() {
-    // BELOW something else will have a y value greater than it
-    // ABOVE something else will have a y value less than it
-
     for (auto entity : m_entity_manager.getEntities("tile")) {
         Vec2 overlap = physics::getOverlap(m_player, entity);
         if (overlap.x > 0 && overlap.y > 0) {
             Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
+            auto& transform = m_player->getComponent<CTransform>();
+            if (prev_overlap.y > 0) {
+                if (transform.velocity.x > 0) { transform.pos.x -= overlap.x; }
+                else if (transform.velocity.x < 0) { transform.pos.x += overlap.x; }
+                transform.velocity.x = 0.0f;
+            }
             if (prev_overlap.x > 0) {
-
+                if (transform.velocity.y > 0) { transform.pos.y -= overlap.y; }
+                else if (transform.velocity.y < 0) { transform.pos.y += overlap.y; }
+                transform.velocity.y = 0.0f;
             }
-            if (prev_overlap.x > overlap.x) {
-
-            } else if (prev_overlap.x < overlap.x) {
-
-            }
-            if (prev_overlap.y > overlap.y) {
-
-            } else if (prev_overlap.y < overlap.y) {
-
-            }
-
-
-            m_player->getComponent<CTransform>().pos.y -= overlap.y;
-            m_player->getComponent<CTransform>().velocity = Vec2(0.0f, 0.0f);
-            // Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
         }
+    }
+
+    if (m_player->getComponent<CTransform>().pos.y > height()) {
+        m_player->addComponent<CTransform>().pos = gridToMidPixel(m_player_config.x, m_player_config.y, m_player);
+    }
+    if (m_player->getComponent<CTransform>().pos.x < m_player->getComponent<CBBox>().half_size.x) {
+        m_player->getComponent<CTransform>().pos.x = m_player->getComponent<CBBox>().half_size.x;
     }
 
     // TODO: Implement bullet/tile collision (Destroy the tile if it has 'Brick' as animation)
     // TODO: Implement player/tile collision and resolutions, update the CState component of the player to
     // store whether it's currently on the ground or in the air. This will be used by the animation system.
-    // TODO: Check to see if the player has fallen down a hole (y > height())
-    // TODO: Don't let the player walk off the left side of the map
 }
 
 void ScenePlay::sDoAction(const Action& action) {
