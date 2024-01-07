@@ -26,10 +26,10 @@ enum class ActionName : unsigned char {
 struct Action
 {
 	ActionName name{ ActionName::NONE };
-	ActionType type{ ActionType::NONE }; // Start or End (enums)
+	ActionType type{ ActionType::NONE };
 
 	Action(ActionName name_in, ActionType type_in)
-		: name(name_in), type(type_in) // e.g. {"RIGHT", "START"}
+		: name(name_in), type(type_in)
 	{
 	}
 
