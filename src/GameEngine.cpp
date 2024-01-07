@@ -56,7 +56,7 @@ void GameEngine::sUserInput() {
 	sf::Event event;
 	while (m_window.pollEvent(event)) {
 		if (event.type == sf::Event::Closed) {
-			m_running = false; // TODO: Maybe remove this also
+			quit();
 		}
 
 		if (event.type == sf::Event::KeyPressed) {
@@ -76,53 +76,10 @@ void GameEngine::sUserInput() {
 			if (currentScene()->getActionMap().find(event.key.code) == currentScene()->getActionMap().end()) { continue; }
 
 			// determine start or end action by whether it was press or realease
-			const std::string action_type = (event.type == sf::Event::KeyPressed) ? "START" : "END";
+			const ActionType action_type = (event.type == sf::Event::KeyPressed) ? ActionType::START : ActionType::END;
 
 			// look up the action and send the action to the scene
 			currentScene()->sDoAction(Action(currentScene()->getActionMap().at(event.key.code), action_type));
 		}
 	}
 }
-
-// TODO: Remove this later
-// void GameEngine::spawnEnemy() {
-// 	static std::mt19937 mt{ static_cast<unsigned int>(
-// 		std::chrono::steady_clock::now().time_since_epoch().count()
-// 	) };
-
-// 	constexpr sf::Uint32 offset { 32 };
-// 	std::uniform_int_distribution rand_w{ offset, m_width - offset };
-// 	std::uniform_int_distribution rand_h{ offset, m_height - offset };
-// 	std::uniform_int_distribution rand_points{ m_enemy_config.VMIN, m_enemy_config.VMAX };
-// 	std::uniform_int_distribution rand_rgb{ 0, 255 };
-
-// 	std::uniform_real_distribution rand_speed{ -m_enemy_config.SMIN, m_enemy_config.SMAX };
-
-// 	const float f_w = static_cast<float>(rand_w(mt));
-// 	const float f_h = static_cast<float>(rand_h(mt));
-// 	const int points = rand_points(mt);
-// 	const Vec2 speed = Vec2(static_cast<float>(rand_speed(mt)), static_cast<float>(rand_speed(mt)));
-// 	const auto color = sf::Color(
-// 		static_cast<sf::Uint8>(rand_rgb(mt)),
-// 		static_cast<sf::Uint8>(rand_rgb(mt)),
-// 		static_cast<sf::Uint8>(rand_rgb(mt))
-// 	);
-// 	auto entity = m_entities.addEntity("enemy");
-
-// 	entity->cShape = std::make_shared<CShape>(
-// 		static_cast<float>(m_enemy_config.SR),
-// 		points,
-// 		color,
-// 		sf::Color(
-// 			static_cast<sf::Uint8>(m_enemy_config.OR),
-// 			static_cast<sf::Uint8>(m_enemy_config.OG),
-// 			static_cast<sf::Uint8>(m_enemy_config.OB)
-// 		),
-// 		static_cast<float>(m_enemy_config.OT)
-// 	);
-// 	entity->cTransform = std::make_shared<CTransform>(Vec2(f_w, f_h), speed, 0.0f);
-// 	entity->cCollision = std::make_shared<CCollision>(static_cast<float>(m_enemy_config.CR));
-// 	entity->cScore = std::make_shared<CScore>(points * 10);
-
-// 	m_last_enemy_spawn_time = m_current_frame;
-// }

@@ -3,6 +3,7 @@
 
 namespace physics
 {
+
 Vec2 getOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
 	const Vec2 pos_a = a->getComponent<CTransform>().pos;
 	const Vec2 pos_b = b->getComponent<CTransform>().pos;
@@ -21,8 +22,8 @@ Vec2 getOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
 }
 
 Vec2 getPrevOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
-	const Vec2 pos_a = a->getComponent<CTransform>().prevPos;
-	const Vec2 pos_b = b->getComponent<CTransform>().prevPos;
+	const Vec2 pos_a = a->getComponent<CTransform>().prev_pos;
+	const Vec2 pos_b = b->getComponent<CTransform>().prev_pos;
 	const Vec2 half_size_a = a->getComponent<CBBox>().half_size;
 	const Vec2 half_size_b = b->getComponent<CBBox>().half_size;
 	const Vec2 delta = Vec2(
@@ -36,4 +37,5 @@ Vec2 getPrevOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
 
 	return Vec2(overlap_x, overlap_y);
 }
-} // physics
+
+} // namespace physics

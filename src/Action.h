@@ -2,16 +2,37 @@
 
 #include <string>
 
+enum class ActionType : unsigned char {
+	NONE,
+	START,
+	END
+};
+
+enum class ActionName : unsigned char {
+	NONE,
+	UP,
+	RIGHT,
+	DOWN,
+	LEFT,
+	SHOOT,
+	PLAY,
+	PAUSE,
+	QUIT,
+	TOGGLE_TEXTURE,
+	TOGGLE_COLLISION,
+	TOGGLE_GRID
+};
+
 struct Action
 {
-	std::string name{ "NONE" };
-	std::string type{ "NONE" }; // Start or End (enums)
+	ActionName name{ ActionName::NONE };
+	ActionType type{ ActionType::NONE };
 
-	Action(std::string name_in, std::string type_in)
-		: name(name_in), type(type_in) // e.g. {"RIGHT", "START"}
+	Action(ActionName name_in, ActionType type_in)
+		: name(name_in), type(type_in)
 	{
 	}
 
-	std::string getName() const { return name; }
-	std::string getType() const { return type; }
+	ActionName getName() const { return name; }
+	ActionType getType() const { return type; }
 };

@@ -11,18 +11,18 @@ ScenePlay::ScenePlay(GameEngine* engine, const std::string& level_path)
     }
 
 void ScenePlay::init(const std::string& level_path) {
-    registerAction(sf::Keyboard::P, "PAUSE");
-    registerAction(sf::Keyboard::Escape, "QUIT");
-    registerAction(sf::Keyboard::T, "TOGGLE_TEXTURE");
-    registerAction(sf::Keyboard::C, "TOGGLE_COLLISION");
-    registerAction(sf::Keyboard::G, "TOGGLE_GRID");
+    registerAction(sf::Keyboard::P, ActionName::PAUSE);
+    registerAction(sf::Keyboard::Escape, ActionName::QUIT);
+    registerAction(sf::Keyboard::T, ActionName::TOGGLE_TEXTURE);
+    registerAction(sf::Keyboard::C, ActionName::TOGGLE_COLLISION);
+    registerAction(sf::Keyboard::G, ActionName::TOGGLE_GRID);
 
-    registerAction(sf::Keyboard::Space, "JUMP");
-    registerAction(sf::Keyboard::Up, "UP");
-    registerAction(sf::Keyboard::Right, "RIGHT");
-    registerAction(sf::Keyboard::Down, "DOWN");
-    registerAction(sf::Keyboard::Left, "LEFT");
-    registerAction(sf::Keyboard::Z, "SHOOT");
+    registerAction(sf::Keyboard::Space, ActionName::UP);
+    registerAction(sf::Keyboard::Up, ActionName::UP);
+    registerAction(sf::Keyboard::Right, ActionName::RIGHT);
+    registerAction(sf::Keyboard::Down, ActionName::DOWN);
+    registerAction(sf::Keyboard::Left, ActionName::LEFT);
+    registerAction(sf::Keyboard::Z, ActionName::SHOOT);
 
     m_grid_text.setCharacterSize(12);
     
@@ -57,7 +57,7 @@ void ScenePlay::loadLevel(const std::string& path) {
             float x, y;
             file >> animation >> x >> y;
 
-            auto tile = str == "Tile" ? m_entity_manager.addEntity("tile") : m_entity_manager.addEntity("dec");
+            auto tile = str == "Tile" ? m_entity_manager.addEntity(ETag::TILE) : m_entity_manager.addEntity(ETag::DEC);
             tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
             tile->addComponent<CTransform>(gridToMidPixel(x, y, tile));
 
@@ -81,7 +81,7 @@ void ScenePlay::loadLevel(const std::string& path) {
 }
 
 void ScenePlay::spawnPlayer() {
-    m_player = m_entity_manager.addEntity("player");
+    m_player = m_entity_manager.addEntity(ETag::PLAYER);
     m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Stand"), true);
     m_player->addComponent<CTransform>(gridToMidPixel(m_player_config.x, m_player_config.y, m_player));
     m_player->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y));
@@ -93,8 +93,8 @@ void ScenePlay::spawnBullet() {
     // if space bar down can CInput.canShoot becomes false
     // if it's up canShoot = true (only spawn bullet when canShoot = true
 
-    auto bullet = m_entity_manager.addEntity("bullet");
-    bullet->addComponent<CAnimation>(m_engine->assets().getAnimation("Bullet"), true);
+    auto bullet = m_entity_manager.addEntity(ETag::BULLET);
+    bullet->addComponent<CAnimation>(m_engine->assets().getAnimation("Fire"), true);
     bullet->addComponent<CTransform>(m_player->getComponent<CTransform>());
     // bullet->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y));
 }
@@ -146,16 +146,13 @@ void ScenePlay::sMovement() {
     for (auto e : m_entity_manager.getEntities()){
         if (e->hasComponent<CGravity>()) {
             e->getComponent<CTransform>().velocity.y += e->getComponent<CGravity>().gravity;
-
-            // if player is moving faster than max speed in any direction -> player speed in that direction = max speed
-            // also, when landing on someting -> set player's y velocity to 0
         }
-        e->getComponent<CTransform>().pos += e->getComponent<CTransform>().velocity;
+        auto& transform = e->getComponent<CTransform>();
+        transform.prev_pos = transform.pos;
+        transform.pos += transform.velocity;
     }
 
     // TODO: Implement player movement/jumping based on its CInput component
-    // TODO: Implement gravity's effect on player
-    // TODO: Implement the maximum player speed in both X and Y directions
     // TODO: Setting an entity's scale.x to -1/1 will make it face to the left/right
 }
 
@@ -170,60 +167,66 @@ void ScenePlay::sLifespan() {
 }
 
 void ScenePlay::sCollision() {
-    // BELOW something else will have a y value greater than it
-    // ABOVE something else will have a y value less than it
-
-    for (auto entity : m_entity_manager.getEntities("tile")) {
+    for (auto entity : m_entity_manager.getEntities(ETag::TILE)) {
         Vec2 overlap = physics::getOverlap(m_player, entity);
         if (overlap.x > 0 && overlap.y > 0) {
             Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
+            auto& transform = m_player->getComponent<CTransform>();
+            if (prev_overlap.y > 0) {
+                if (transform.velocity.x > 0) { transform.pos.x -= overlap.x; }
+                else if (transform.velocity.x < 0) { transform.pos.x += overlap.x; }
+                transform.velocity.x = 0.0f;
+            }
             if (prev_overlap.x > 0) {
-
+                if (transform.velocity.y > 0) { transform.pos.y -= overlap.y; }
+                else if (transform.velocity.y < 0) { transform.pos.y += overlap.y; }
+                transform.velocity.y = 0.0f;
             }
-            if (prev_overlap.x > overlap.x) {
-
-            } else if (prev_overlap.x < overlap.x) {
-
-            }
-            if (prev_overlap.y > overlap.y) {
-
-            } else if (prev_overlap.y < overlap.y) {
-
-            }
-
-
-            m_player->getComponent<CTransform>().pos.y -= overlap.y;
-            m_player->getComponent<CTransform>().velocity = Vec2(0.0f, 0.0f);
-            // Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
         }
+    }
+
+    if (m_player->getComponent<CTransform>().pos.y > height()) {
+        m_player->addComponent<CTransform>().pos = gridToMidPixel(m_player_config.x, m_player_config.y, m_player);
+    }
+    if (m_player->getComponent<CTransform>().pos.x < m_player->getComponent<CBBox>().half_size.x) {
+        m_player->getComponent<CTransform>().pos.x = m_player->getComponent<CBBox>().half_size.x;
     }
 
     // TODO: Implement bullet/tile collision (Destroy the tile if it has 'Brick' as animation)
     // TODO: Implement player/tile collision and resolutions, update the CState component of the player to
     // store whether it's currently on the ground or in the air. This will be used by the animation system.
-    // TODO: Check to see if the player has fallen down a hole (y > height())
-    // TODO: Don't let the player walk off the left side of the map
 }
 
 void ScenePlay::sDoAction(const Action& action) {
-    if (action.getType() == "START") {
-        if (action.getName() == "TOGGLE_TEXTURE") { m_draw_textures = !m_draw_textures; }
-        else if (action.getName() == "TOGGLE_COLLISION") { m_draw_collision = !m_draw_collision; }
-        else if (action.getName() == "TOGGLE_GRID") { m_draw_grid = !m_draw_grid; }
-        else if (action.getName() == "PAUSE") { setPaused(!m_paused); }
-        else if (action.getName() == "QUIT") { onEnd(); }
-        else if (action.getName() == "JUMP") { m_player->getComponent<CInput>().up = true; }
-        else if (action.getName() == "RIGHT") { m_player->getComponent<CInput>().right = true; }
-        else if (action.getName() == "DOWN") { m_player->getComponent<CInput>().down = true; }
-        else if (action.getName() == "LEFT") { m_player->getComponent<CInput>().left = true; }
-        else if (action.getName() == "SHOOT") { m_player->getComponent<CInput>().shoot = true; }
-    } else if (action.getType() == "END") {
-        if (action.getName() == "JUMP") { m_player->getComponent<CInput>().up = false; }
-        else if (action.getName() == "RIGHT") { m_player->getComponent<CInput>().right = false; }
-        else if (action.getName() == "DOWN") { m_player->getComponent<CInput>().down = false; }
-        else if (action.getName() == "LEFT") { m_player->getComponent<CInput>().left = false; }
+    switch (action.getType()) {
+        case ActionType::START: {
+            switch (action.getName()) {
+                case ActionName::TOGGLE_TEXTURE: m_draw_textures = !m_draw_textures; break;
+                case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
+                case ActionName::TOGGLE_GRID: m_draw_grid = !m_draw_grid; break;
+                case ActionName::PAUSE: setPaused(!m_paused); break;
+                case ActionName::UP: m_player->getComponent<CInput>().up = true; break;
+                case ActionName::RIGHT: m_player->getComponent<CInput>().right = true; break;
+                case ActionName::DOWN: m_player->getComponent<CInput>().down = true; break;
+                case ActionName::LEFT: m_player->getComponent<CInput>().left = true; break;
+                case ActionName::SHOOT: m_player->getComponent<CInput>().shoot = true; break;
+                case ActionName::QUIT: onEnd(); break;
+                default: break;
+            }
+            break;
+        }
+        case ActionType::END: {
+            switch (action.getName()) {
+                case ActionName::UP: m_player->getComponent<CInput>().up = false; break;
+                case ActionName::RIGHT: m_player->getComponent<CInput>().right = false; break;
+                case ActionName::DOWN: m_player->getComponent<CInput>().down = false; break;
+                case ActionName::LEFT: m_player->getComponent<CInput>().left = false; break;
+                default: break;
+            }
+            break;
+        }
+        default: break;
     }
-    (void)action;
 }
 
 void ScenePlay::sAnimation() {
@@ -304,6 +307,14 @@ void ScenePlay::sRender() {
                 m_engine->window().draw(m_grid_text);
             }
         }
+    }
+
+    if (m_paused) {
+        const auto text_rect = m_grid_text.getLocalBounds();
+        m_grid_text.setString("PAUSE");
+        m_grid_text.setOrigin(text_rect.left + text_rect.width/2.0f, text_rect.top + text_rect.height/2.0f);
+        m_grid_text.setPosition(width()/2.0f, height()/2.0f);
+        m_engine->window().draw(m_grid_text);
     }
 }
 

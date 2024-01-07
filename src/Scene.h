@@ -20,7 +20,7 @@ public:
 	virtual void sDoAction(const Action& action) = 0;
 	virtual void sRender() = 0;
 
-	virtual void registerAction(int key, const std::string& action_name) { m_action_map[key] = action_name; };
+	virtual void registerAction(int key, const ActionName action_name) { m_action_map[key] = action_name; };
 	// virtual void doAction(const Action& action); ?
 
 	size_t width() const;
@@ -28,14 +28,14 @@ public:
 	size_t currentFrame() const { return m_current_frame; };
 
 	bool hasEnded() const { return m_has_ended; }
-	const std::map<int, std::string>& getActionMap() const { return m_action_map; }
+	const std::map<int, ActionName>& getActionMap() const { return m_action_map; }
 	void drawLine(const Vec2& p1, const Vec2& p2);
 
 protected:
 	GameEngine* m_engine{ nullptr };
 	EntityManager m_entity_manager;
 	size_t m_current_frame{ 0 };
-	std::map<int, std::string> m_action_map;
+	std::map<int, ActionName> m_action_map;
 	bool m_paused{ false };
 	bool m_has_ended{ false };
 
