@@ -56,7 +56,7 @@ void GameEngine::sUserInput() {
 	sf::Event event;
 	while (m_window.pollEvent(event)) {
 		if (event.type == sf::Event::Closed) {
-			m_running = false; // TODO: Maybe remove this also
+			quit();
 		}
 
 		if (event.type == sf::Event::KeyPressed) {
