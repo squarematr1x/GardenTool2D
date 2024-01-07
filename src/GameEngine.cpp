@@ -76,7 +76,7 @@ void GameEngine::sUserInput() {
 			if (currentScene()->getActionMap().find(event.key.code) == currentScene()->getActionMap().end()) { continue; }
 
 			// determine start or end action by whether it was press or realease
-			const std::string action_type = (event.type == sf::Event::KeyPressed) ? "START" : "END";
+			const ActionType action_type = (event.type == sf::Event::KeyPressed) ? ActionType::START : ActionType::END;
 
 			// look up the action and send the action to the scene
 			currentScene()->sDoAction(Action(currentScene()->getActionMap().at(event.key.code), action_type));

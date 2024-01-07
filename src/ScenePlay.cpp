@@ -11,18 +11,18 @@ ScenePlay::ScenePlay(GameEngine* engine, const std::string& level_path)
     }
 
 void ScenePlay::init(const std::string& level_path) {
-    registerAction(sf::Keyboard::P, "PAUSE");
-    registerAction(sf::Keyboard::Escape, "QUIT");
-    registerAction(sf::Keyboard::T, "TOGGLE_TEXTURE");
-    registerAction(sf::Keyboard::C, "TOGGLE_COLLISION");
-    registerAction(sf::Keyboard::G, "TOGGLE_GRID");
+    registerAction(sf::Keyboard::P, ActionName::PAUSE);
+    registerAction(sf::Keyboard::Escape, ActionName::QUIT);
+    registerAction(sf::Keyboard::T, ActionName::TOGGLE_TEXTURE);
+    registerAction(sf::Keyboard::C, ActionName::TOGGLE_COLLISION);
+    registerAction(sf::Keyboard::G, ActionName::TOGGLE_GRID);
 
-    registerAction(sf::Keyboard::Space, "JUMP");
-    registerAction(sf::Keyboard::Up, "UP");
-    registerAction(sf::Keyboard::Right, "RIGHT");
-    registerAction(sf::Keyboard::Down, "DOWN");
-    registerAction(sf::Keyboard::Left, "LEFT");
-    registerAction(sf::Keyboard::Z, "SHOOT");
+    registerAction(sf::Keyboard::Space, ActionName::UP);
+    registerAction(sf::Keyboard::Up, ActionName::UP);
+    registerAction(sf::Keyboard::Right, ActionName::RIGHT);
+    registerAction(sf::Keyboard::Down, ActionName::DOWN);
+    registerAction(sf::Keyboard::Left, ActionName::LEFT);
+    registerAction(sf::Keyboard::Z, ActionName::SHOOT);
 
     m_grid_text.setCharacterSize(12);
     
@@ -198,24 +198,35 @@ void ScenePlay::sCollision() {
 }
 
 void ScenePlay::sDoAction(const Action& action) {
-    if (action.getType() == "START") {
-        if (action.getName() == "TOGGLE_TEXTURE") { m_draw_textures = !m_draw_textures; }
-        else if (action.getName() == "TOGGLE_COLLISION") { m_draw_collision = !m_draw_collision; }
-        else if (action.getName() == "TOGGLE_GRID") { m_draw_grid = !m_draw_grid; }
-        else if (action.getName() == "PAUSE") { setPaused(!m_paused); }
-        else if (action.getName() == "QUIT") { onEnd(); }
-        else if (action.getName() == "JUMP") { m_player->getComponent<CInput>().up = true; }
-        else if (action.getName() == "RIGHT") { m_player->getComponent<CInput>().right = true; }
-        else if (action.getName() == "DOWN") { m_player->getComponent<CInput>().down = true; }
-        else if (action.getName() == "LEFT") { m_player->getComponent<CInput>().left = true; }
-        else if (action.getName() == "SHOOT") { m_player->getComponent<CInput>().shoot = true; }
-    } else if (action.getType() == "END") {
-        if (action.getName() == "JUMP") { m_player->getComponent<CInput>().up = false; }
-        else if (action.getName() == "RIGHT") { m_player->getComponent<CInput>().right = false; }
-        else if (action.getName() == "DOWN") { m_player->getComponent<CInput>().down = false; }
-        else if (action.getName() == "LEFT") { m_player->getComponent<CInput>().left = false; }
+    switch (action.getType()) {
+        case ActionType::START: {
+            switch (action.getName()) {
+                case ActionName::TOGGLE_TEXTURE: m_draw_textures = !m_draw_textures; break;
+                case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
+                case ActionName::TOGGLE_GRID: m_draw_grid = !m_draw_grid; break;
+                case ActionName::PAUSE: setPaused(!m_paused); break;
+                case ActionName::UP: m_player->getComponent<CInput>().up = true; break;
+                case ActionName::RIGHT: m_player->getComponent<CInput>().right = true; break;
+                case ActionName::DOWN: m_player->getComponent<CInput>().down = true; break;
+                case ActionName::LEFT: m_player->getComponent<CInput>().left = true; break;
+                case ActionName::SHOOT: m_player->getComponent<CInput>().shoot = true; break;
+                case ActionName::QUIT: onEnd(); break;
+                default: break;
+            }
+            break;
+        }
+        case ActionType::END: {
+            switch (action.getName()) {
+                case ActionName::UP: m_player->getComponent<CInput>().up = false; break;
+                case ActionName::RIGHT: m_player->getComponent<CInput>().right = false; break;
+                case ActionName::DOWN: m_player->getComponent<CInput>().down = false; break;
+                case ActionName::LEFT: m_player->getComponent<CInput>().left = false; break;
+                default: break;
+            }
+            break;
+        }
+        default: break;
     }
-    (void)action;
 }
 
 void ScenePlay::sAnimation() {
