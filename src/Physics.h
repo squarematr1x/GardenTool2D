@@ -6,6 +6,8 @@ class Entity;
 
 namespace physics
 {
+
 	Vec2 getOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b);
 	Vec2 getPrevOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b);
-} // physics
+
+} // namespace physics
