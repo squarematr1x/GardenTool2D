@@ -6,7 +6,7 @@
 #include "Entity.h"
 
 typedef std::vector<std::shared_ptr<Entity>> EntityVec;
-typedef std::map<std::string, EntityVec> EntityMap;
+typedef std::map<ETag, EntityVec> EntityMap;
 
 class EntityManager
 {
@@ -20,10 +20,10 @@ class EntityManager
 public:
 	EntityManager() {}
 
-	std::shared_ptr<Entity> addEntity(const std::string tag);
+	std::shared_ptr<Entity> addEntity(const ETag tag);
 
 	EntityVec& getEntities() { return m_entities; }
-	EntityVec& getEntities(const std::string tag);
+	EntityVec& getEntities(const ETag tag);
 
 	void update();
 };

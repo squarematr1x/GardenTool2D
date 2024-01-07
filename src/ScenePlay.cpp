@@ -57,7 +57,7 @@ void ScenePlay::loadLevel(const std::string& path) {
             float x, y;
             file >> animation >> x >> y;
 
-            auto tile = str == "Tile" ? m_entity_manager.addEntity("tile") : m_entity_manager.addEntity("dec");
+            auto tile = str == "Tile" ? m_entity_manager.addEntity(ETag::TILE) : m_entity_manager.addEntity(ETag::DEC);
             tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
             tile->addComponent<CTransform>(gridToMidPixel(x, y, tile));
 
@@ -81,7 +81,7 @@ void ScenePlay::loadLevel(const std::string& path) {
 }
 
 void ScenePlay::spawnPlayer() {
-    m_player = m_entity_manager.addEntity("player");
+    m_player = m_entity_manager.addEntity(ETag::PLAYER);
     m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Stand"), true);
     m_player->addComponent<CTransform>(gridToMidPixel(m_player_config.x, m_player_config.y, m_player));
     m_player->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y));
@@ -93,7 +93,7 @@ void ScenePlay::spawnBullet() {
     // if space bar down can CInput.canShoot becomes false
     // if it's up canShoot = true (only spawn bullet when canShoot = true
 
-    auto bullet = m_entity_manager.addEntity("bullet");
+    auto bullet = m_entity_manager.addEntity(ETag::BULLET);
     bullet->addComponent<CAnimation>(m_engine->assets().getAnimation("Fire"), true);
     bullet->addComponent<CTransform>(m_player->getComponent<CTransform>());
     // bullet->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y));
@@ -167,7 +167,7 @@ void ScenePlay::sLifespan() {
 }
 
 void ScenePlay::sCollision() {
-    for (auto entity : m_entity_manager.getEntities("tile")) {
+    for (auto entity : m_entity_manager.getEntities(ETag::TILE)) {
         Vec2 overlap = physics::getOverlap(m_player, entity);
         if (overlap.x > 0 && overlap.y > 0) {
             Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
