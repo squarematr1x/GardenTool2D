@@ -146,9 +146,6 @@ void ScenePlay::sMovement() {
     for (auto e : m_entity_manager.getEntities()){
         if (e->hasComponent<CGravity>()) {
             e->getComponent<CTransform>().velocity.y += e->getComponent<CGravity>().gravity;
-
-            // if player is moving faster than max speed in any direction -> player speed in that direction = max speed
-            // also, when landing on someting -> set player's y velocity to 0
         }
         auto& transform = e->getComponent<CTransform>();
         transform.prev_pos = transform.pos;
@@ -156,8 +153,6 @@ void ScenePlay::sMovement() {
     }
 
     // TODO: Implement player movement/jumping based on its CInput component
-    // TODO: Implement gravity's effect on player
-    // TODO: Implement the maximum player speed in both X and Y directions
     // TODO: Setting an entity's scale.x to -1/1 will make it face to the left/right
 }
 
@@ -301,6 +296,14 @@ void ScenePlay::sRender() {
                 m_engine->window().draw(m_grid_text);
             }
         }
+    }
+
+    if (m_paused) {
+        const auto text_rect = m_grid_text.getLocalBounds();
+        m_grid_text.setString("PAUSE");
+        m_grid_text.setOrigin(text_rect.left + text_rect.width/2.0f, text_rect.top + text_rect.height/2.0f);
+        m_grid_text.setPosition(width()/2.0f, height()/2.0f);
+        m_engine->window().draw(m_grid_text);
     }
 }
 
