@@ -7,8 +7,8 @@
 
 ScenePlay::ScenePlay(GameEngine* engine, const std::string& level_path)
     : Scene(engine), m_level_path(level_path) {
-        init(level_path);
-    }
+    init(level_path);
+}
 
 void ScenePlay::init(const std::string& level_path) {
     registerAction(sf::Keyboard::P, ActionName::PAUSE);
@@ -25,7 +25,6 @@ void ScenePlay::init(const std::string& level_path) {
     registerAction(sf::Keyboard::Z, ActionName::SHOOT);
 
     m_grid_text.setCharacterSize(12);
-    
     m_grid_text.setFont(m_engine->assets().getFont("Arial"));
 
     loadLevel(level_path);
@@ -319,7 +318,5 @@ void ScenePlay::sRender() {
 }
 
 void ScenePlay::onEnd() {
-    // TODO: When the scene ends, change back to the MENU scene
-    //       use m_game_engine->ChangeScene(correctParams)
-    m_engine->quit();
+    m_engine->changeScene("MENU", std::make_shared<SceneMenu>(m_engine), true);
 }

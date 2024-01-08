@@ -1,15 +1,22 @@
 #include "Scene.h"
 #include "GameEngine.h"
 
+SceneMenu::SceneMenu(GameEngine* engine)
+    : Scene(engine) {
+    init();
+}
+
 void SceneMenu::init() {
     registerAction(sf::Keyboard::Up, ActionName::UP);
     registerAction(sf::Keyboard::Down, ActionName::DOWN);
     registerAction(sf::Keyboard::Enter, ActionName::PLAY);
     registerAction(sf::Keyboard::Escape, ActionName::QUIT);
+
+    m_menu_text.setCharacterSize(m_font_size);
+    m_menu_text.setFont(m_engine->assets().getFont("Arial"));
 }
 
 void SceneMenu::update() {
-    // sDoAction();
     sRender();
 }
 
@@ -29,10 +36,25 @@ void SceneMenu::sDoAction(const Action& action) {
 }
 
 void SceneMenu::sRender() {
-    // TODO: Render menu here
+    m_engine->window().clear(m_background_color);
+
+    float offset = 64.0f;
+    size_t index = 0;
+    for (const std::string& item : m_menu_strings) {
+        const auto text_rect = m_menu_text.getLocalBounds();
+
+        if (index == m_menu_index) { m_menu_text.setFillColor(sf::Color(255, 255, 255)); }
+        else { m_menu_text.setFillColor(sf::Color(125, 125, 125)); }
+
+        m_menu_text.setString(item);
+        m_menu_text.setOrigin(text_rect.left + text_rect.width/2.0f, text_rect.top + text_rect.height/2.0f);
+        m_menu_text.setPosition(width()/2.0f, offset);
+        m_engine->window().draw(m_menu_text);
+        offset += 64.0f;
+        index++;
+    }
 }
 
 void SceneMenu::onEnd() {
-    // Close the game
     m_engine->quit();
 }

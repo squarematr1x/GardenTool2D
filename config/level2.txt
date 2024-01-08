@@ -1,0 +1,14 @@
+Tile Brick 1 0
+Tile Brick 1 1
+Tile Brick 2 0
+Tile Brick 2 1
+Tile Brick 3 0
+Tile Brick 3 1
+Tile Brick 3 3
+Tile Brick 6 0
+Tile Brick 6 1
+Tile Brick 7 0
+Tile Brick 7 1
+Dec Bush 1 2
+Dec Bush 7 2
+Player 2 6 48 48 5 5 10 2 Fire

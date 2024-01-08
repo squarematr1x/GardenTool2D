@@ -16,7 +16,7 @@ void GameEngine::init(const std::string& path) {
 	m_window.create(sf::VideoMode(1280, 768), "2D Game");
 	m_window.setFramerateLimit(60);
 
-	changeScene("PLAY", std::make_shared<ScenePlay>(this, "/Users/spirttipera/2D-Game-Engine/config/level.txt"));
+	changeScene("MENU", std::make_shared<SceneMenu>(this));
 }
 
 void GameEngine::changeScene(const std::string& scene_name, std::shared_ptr<Scene> scene, bool end_current_scene) {
