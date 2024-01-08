@@ -1,9 +1,9 @@
-Texture BrickText /Users/spirttipera/2D-Game-Engine/assets/images/tile.png
+Texture BrickText assets/images/tile.png
 Animation Brick BrickText 1 1
-Texture PlayerText /Users/spirttipera/2D-Game-Engine/assets/images/thing.png
+Texture PlayerText assets/images/thing.png
 Animation Stand PlayerText 1 1
-Texture FireText /Users/spirttipera/2D-Game-Engine/assets/images/bullet.png
+Texture FireText assets/images/bullet.png
 Animation Fire FireText 1 1
-Texture BushText /Users/spirttipera/2D-Game-Engine/assets/images/bush.png
+Texture BushText assets/images/bush.png
 Animation Bush BushText 1 1
-Font Arial /Users/spirttipera/2D-Game-Engine/assets/fonts/arial.ttf
+Font Arial assets/fonts/arial.ttf

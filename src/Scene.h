@@ -45,19 +45,22 @@ protected:
 
 class SceneMenu: public Scene
 {
-	std::string m_title;
-	std::vector<std::string> m_menu_strings;
-	std::vector<std::string> m_level_paths;
+	std::string m_title { "Menu" };
+	std::vector<std::string> m_menu_strings{ "level 1", "level 2" };
+	std::vector<std::string> m_level_paths{ "config/level1.txt", "config/level2.txt" }; // TODO: load paths from a file?
 	sf::Text m_menu_text;
+	sf::Color m_background_color{ 20, 20, 20 };
 	size_t m_menu_index{ 0 }; // selected menu item
+	unsigned int m_font_size{ 20 };
 
 public:
-	SceneMenu(GameEngine* engine)
-		: Scene(engine) {}
+	SceneMenu(GameEngine* engine);
 
 	void init();
 	void update();
 	void onEnd();
+
+	// Systems
 	void sDoAction(const Action& action);
 	void sRender();
 };
@@ -75,7 +78,7 @@ class ScenePlay: public Scene
 		float gravity{ 0.0f };
 		std::string weapon{ "" };
 	};
-	std::string m_level_path{""};
+	std::string m_level_path{ "" };
 	std::shared_ptr<Entity> m_player;
 	PlayerConfig m_player_config;
 	bool m_draw_textures{ true };

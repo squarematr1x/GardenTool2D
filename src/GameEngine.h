@@ -7,9 +7,13 @@ class Scene;
 
 class GameEngine
 {
+	std::string m_title{ "2D Game" };
 	sf::RenderWindow m_window;
 	bool m_paused{ false };
 	bool m_running{ true };
+	unsigned int m_screen_w{ 1280 };
+	unsigned int m_screen_h{ 768 };
+	unsigned int m_framerate{ 60 };
 
 	std::map<std::string, std::shared_ptr<Scene>> m_scenes;
 	std::string m_cur_scene;
