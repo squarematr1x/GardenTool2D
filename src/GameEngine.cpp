@@ -13,8 +13,8 @@ GameEngine::GameEngine(const std::string& config) {
 void GameEngine::init(const std::string& path) {
 	m_assets.loadFromFile(path);
 
-	m_window.create(sf::VideoMode(1280, 768), "2D Game");
-	m_window.setFramerateLimit(60);
+	m_window.create(sf::VideoMode(m_screen_w, m_screen_h), m_title);
+	m_window.setFramerateLimit(m_framerate);
 
 	changeScene("MENU", std::make_shared<SceneMenu>(this));
 }
