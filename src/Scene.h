@@ -8,6 +8,13 @@
 
 class GameEngine;
 
+enum class SceneType : unsigned char {
+	NONE,
+	MENU,
+	SIDE_SCROLL,
+	TOP_DOWN_RPG
+};
+
 class Scene
 {
 public:
