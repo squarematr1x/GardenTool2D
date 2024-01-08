@@ -115,7 +115,7 @@ void ScenePlay::sMovement() {
 
     player_v.x = 0.0f;
     if (m_player->getComponent<CInput>().up) {
-        m_player->getComponent<CState>().state = "JUMP";
+        m_player->getComponent<CState>().state = EState::JUMP;
         player_v.y = -m_player_config.jump_v;
     }
     if (m_player->getComponent<CInput>().left) {
