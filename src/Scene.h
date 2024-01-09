@@ -93,6 +93,7 @@ class ScenePlay: public Scene
 	bool m_draw_grid{ false };
 	const Vec2 m_grid_size{ 64, 64 };
 	sf::Text m_grid_text;
+	sf::Text m_pause_text;
 
 public:
 	ScenePlay(GameEngine* engine, const std::string& level_path);

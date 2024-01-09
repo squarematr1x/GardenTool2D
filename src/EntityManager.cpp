@@ -1,6 +1,6 @@
 #include "EntityManager.h"
 
-std::shared_ptr<Entity> EntityManager::addEntity(const ETag tag) {
+std::shared_ptr<Entity> EntityManager::addEntity(const Tag tag) {
 	auto e = std::shared_ptr<Entity>(new Entity(m_total_entities++, tag));
 	m_entities_to_add.push_back(e);
 	return e;
@@ -26,6 +26,6 @@ void EntityManager::removeDeadEntities(EntityVec& vec) {
 		[](std::shared_ptr<Entity> e) { return !e->isActive(); }), vec.end());
 }
 
-EntityVec& EntityManager::getEntities(const ETag tag) {
+EntityVec& EntityManager::getEntities(const Tag tag) {
 	return m_entity_map[tag];
 }

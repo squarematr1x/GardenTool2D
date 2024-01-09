@@ -26,6 +26,8 @@ void ScenePlay::init(const std::string& level_path) {
 
     m_grid_text.setCharacterSize(12);
     m_grid_text.setFont(m_engine->assets().getFont("Arial"));
+    m_pause_text.setCharacterSize(20);
+    m_pause_text.setFont(m_engine->assets().getFont("Arial"));
 
     loadLevel(level_path);
 }
@@ -56,7 +58,7 @@ void ScenePlay::loadLevel(const std::string& path) {
             float x, y;
             file >> animation >> x >> y;
 
-            auto tile = str == "Tile" ? m_entity_manager.addEntity(ETag::TILE) : m_entity_manager.addEntity(ETag::DEC);
+            auto tile = str == "Tile" ? m_entity_manager.addEntity(Tag::TILE) : m_entity_manager.addEntity(Tag::DEC);
             tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
             tile->addComponent<CTransform>(gridToMidPixel(x, y, tile));
 
@@ -80,7 +82,7 @@ void ScenePlay::loadLevel(const std::string& path) {
 }
 
 void ScenePlay::spawnPlayer() {
-    m_player = m_entity_manager.addEntity(ETag::PLAYER);
+    m_player = m_entity_manager.addEntity(Tag::PLAYER);
     m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Stand"), true);
     m_player->addComponent<CTransform>(gridToMidPixel(m_player_config.x, m_player_config.y, m_player));
     m_player->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y));
@@ -88,13 +90,17 @@ void ScenePlay::spawnPlayer() {
 }
 
 void ScenePlay::spawnBullet() {
-    // TODO: spawn a bullet at the given entity, going in the direction the entity is facing
-    // if space bar down can CInput.canShoot becomes false
-    // if it's up canShoot = true (only spawn bullet when canShoot = true
+    auto transform = m_player->getComponent<CTransform>();
 
-    auto bullet = m_entity_manager.addEntity(ETag::BULLET);
+    auto bullet = m_entity_manager.addEntity(Tag::BULLET);
     bullet->addComponent<CAnimation>(m_engine->assets().getAnimation("Fire"), true);
-    bullet->addComponent<CTransform>(m_player->getComponent<CTransform>());
+
+    constexpr float bullet_v = 3.0f; // TODO: Add to config file?
+    if (transform.scale.x < 0) {
+        bullet->addComponent<CTransform>(transform.pos, Vec2(-bullet_v, 0.0f));
+    } else {
+        bullet->addComponent<CTransform>(transform.pos, Vec2(bullet_v, 0.0f));
+    }
     // bullet->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y));
 }
 
@@ -113,19 +119,24 @@ void ScenePlay::update() {
 void ScenePlay::sMovement() {
     Vec2 player_v = m_player->getComponent<CTransform>().velocity;
 
+    auto& input = m_player->getComponent<CInput>();
+
     player_v.x = 0.0f;
-    if (m_player->getComponent<CInput>().up) {
-        m_player->getComponent<CState>().state = EState::JUMP;
+    if (input.up) {
+        m_player->getComponent<CState>().state = State::JUMP;
         player_v.y = -m_player_config.jump_v;
     }
-    if (m_player->getComponent<CInput>().left) {
+    if (input.left) {
         player_v.x = -m_player_config.v;
+        m_player->getComponent<CTransform>().scale = Vec2(-1, 1);
     }
-    if (m_player->getComponent<CInput>().right) {
+    if (input.right) {
         player_v.x = m_player_config.v;
+         m_player->getComponent<CTransform>().scale = Vec2(1, 1);
     }
-    if (m_player->getComponent<CInput>().shoot) {
-        m_player->getComponent<CInput>().shoot = false;
+    if (input.can_shoot && input.shoot) {
+        input.can_shoot = false;
+        input.shoot = false;
         spawnBullet();
     }
 
@@ -165,8 +176,8 @@ void ScenePlay::sLifespan() {
     }
 }
 
-void ScenePlay::sCollision() {
-    for (auto entity : m_entity_manager.getEntities(ETag::TILE)) {
+void ScenePlay::sCollision() { // TODO: Use EState to detect direction of the player etc. and utilize this in movement and spawn bullet also
+    for (auto entity : m_entity_manager.getEntities(Tag::TILE)) {
         Vec2 overlap = physics::getOverlap(m_player, entity);
         if (overlap.x > 0 && overlap.y > 0) {
             Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
@@ -220,6 +231,10 @@ void ScenePlay::sDoAction(const Action& action) {
                 case ActionName::RIGHT: m_player->getComponent<CInput>().right = false; break;
                 case ActionName::DOWN: m_player->getComponent<CInput>().down = false; break;
                 case ActionName::LEFT: m_player->getComponent<CInput>().left = false; break;
+                case ActionName::SHOOT:
+                    m_player->getComponent<CInput>().can_shoot = true;
+                    m_player->getComponent<CInput>().shoot = false; 
+                    break;
                 default: break;
             }
             break;
@@ -309,11 +324,11 @@ void ScenePlay::sRender() {
     }
 
     if (m_paused) {
-        const auto text_rect = m_grid_text.getLocalBounds();
-        m_grid_text.setString("PAUSE");
-        m_grid_text.setOrigin(text_rect.left + text_rect.width/2.0f, text_rect.top + text_rect.height/2.0f);
-        m_grid_text.setPosition(width()/2.0f, height()/2.0f);
-        m_engine->window().draw(m_grid_text);
+        const auto text_rect = m_pause_text.getLocalBounds();
+        m_pause_text.setString("PAUSE");
+        m_pause_text.setOrigin(text_rect.left + text_rect.width/2.0f, text_rect.top + text_rect.height/2.0f);
+        m_pause_text.setPosition(width()/2.0f, height()/2.0f);
+        m_engine->window().draw(m_pause_text);
     }
 }
 

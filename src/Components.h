@@ -4,13 +4,11 @@
 
 #include "Animation.h"
 
-enum class EState: unsigned char {
+enum class State: unsigned char {
 	NONE,
 	JUMP,
-	RIGHT,
-	DOWN,
-	LEFT,
-	SHOOT
+	STAND,
+	RUN
 };
 
 struct Component {
@@ -77,6 +75,7 @@ struct CInput: Component {
 	bool right{ false };
 	bool down{ false };
 	bool shoot{ false };
+	bool can_shoot{ true };
 
 	CInput() {}
 };
@@ -129,10 +128,10 @@ struct CGravity: Component {
 };
 
 struct CState: Component {
-	EState state{ EState::NONE };
+	State state{ State::NONE };
 
 	CState() {}
-	CState(EState state_in)
+	CState(State state_in)
 		: state(state_in)
 	{
 	}
