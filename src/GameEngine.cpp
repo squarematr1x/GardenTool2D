@@ -16,10 +16,10 @@ void GameEngine::init(const std::string& path) {
 	m_window.create(sf::VideoMode(m_screen_w, m_screen_h), m_title);
 	m_window.setFramerateLimit(m_framerate);
 
-	changeScene("MENU", std::make_shared<SceneMenu>(this));
+	changeScene(SceneType::MENU, std::make_shared<SceneMenu>(this));
 }
 
-void GameEngine::changeScene(const std::string& scene_name, std::shared_ptr<Scene> scene, bool end_current_scene) {
+void GameEngine::changeScene(SceneType scene_name, std::shared_ptr<Scene> scene, bool end_current_scene) {
 	(void)end_current_scene; // TODO: Use later if needed
 	m_scenes[scene_name] = scene;
 	m_cur_scene = scene_name;

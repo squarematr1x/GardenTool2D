@@ -4,6 +4,13 @@
 
 #include "Animation.h"
 
+enum class State: unsigned char {
+	NONE,
+	JUMP,
+	STAND,
+	RUN
+};
+
 struct Component {
 	bool has{ false };
 };
@@ -120,10 +127,10 @@ struct CGravity: Component {
 };
 
 struct CState: Component {
-	std::string state{ "JUMP" }; // TODO: switch to enums in the sort of things...
+	State state{ State::NONE };
 
 	CState() {}
-	CState(const std::string& state_in)
+	CState(State state_in)
 		: state(state_in)
 	{
 	}

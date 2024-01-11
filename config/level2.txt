@@ -11,4 +11,4 @@ Tile Brick 7 0
 Tile Brick 7 1
 Dec Bush 1 2
 Dec Bush 7 2
-Player 2 6 48 48 5 5 10 2 Fire
+Player 2 6 48 48 5 5 25 2 Fire

@@ -5,6 +5,8 @@
 
 class Scene;
 
+enum class SceneType: unsigned char;
+
 class GameEngine
 {
 	std::string m_title{ "2D Game" };
@@ -15,8 +17,8 @@ class GameEngine
 	unsigned int m_screen_h{ 768 };
 	unsigned int m_framerate{ 60 };
 
-	std::map<std::string, std::shared_ptr<Scene>> m_scenes;
-	std::string m_cur_scene;
+	std::map<SceneType, std::shared_ptr<Scene>> m_scenes;
+	SceneType m_cur_scene;
 
 	Assets m_assets;
 
@@ -34,7 +36,7 @@ public:
 	void run();
 	void quit();
 
-	void changeScene(const std::string& scene_name, std::shared_ptr<Scene> scene, bool end_current_scene = false);
+	void changeScene(const SceneType scene_name, std::shared_ptr<Scene> scene, bool end_current_scene = false);
 
 	sf::RenderWindow& window() { return m_window; };
 	const Assets& assets() const { return m_assets; };

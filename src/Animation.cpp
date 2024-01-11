@@ -34,6 +34,5 @@ void Animation::update() {
 
 bool Animation::hasEnded() {
 	// Detect when animation has ended (last frame was played) and return true
-
-	return false;
+	return static_cast<size_t>(m_current_frame) > m_frame_count;
 }

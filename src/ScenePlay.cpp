@@ -26,6 +26,8 @@ void ScenePlay::init(const std::string& level_path) {
 
     m_grid_text.setCharacterSize(12);
     m_grid_text.setFont(m_engine->assets().getFont("Arial"));
+    m_pause_text.setCharacterSize(20);
+    m_pause_text.setFont(m_engine->assets().getFont("Arial"));
 
     loadLevel(level_path);
 }
@@ -39,6 +41,15 @@ Vec2 ScenePlay::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entit
         return Vec2(x, y);
     }
     return Vec2(0, 0);
+}
+
+bool ScenePlay::canJump() const {
+    auto player_state = m_player->getComponent<CState>().state;
+    return m_can_jump && (player_state == State::STAND || player_state == State::RUN);
+}
+
+bool ScenePlay::canShoot() const {
+    return m_can_shoot;
 }
 
 void ScenePlay::loadLevel(const std::string& path) {
@@ -56,7 +67,7 @@ void ScenePlay::loadLevel(const std::string& path) {
             float x, y;
             file >> animation >> x >> y;
 
-            auto tile = str == "Tile" ? m_entity_manager.addEntity(ETag::TILE) : m_entity_manager.addEntity(ETag::DEC);
+            auto tile = str == "Tile" ? m_entity_manager.addEntity(Tag::TILE) : m_entity_manager.addEntity(Tag::DEC);
             tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
             tile->addComponent<CTransform>(gridToMidPixel(x, y, tile));
 
@@ -80,7 +91,7 @@ void ScenePlay::loadLevel(const std::string& path) {
 }
 
 void ScenePlay::spawnPlayer() {
-    m_player = m_entity_manager.addEntity(ETag::PLAYER);
+    m_player = m_entity_manager.addEntity(Tag::PLAYER);
     m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Stand"), true);
     m_player->addComponent<CTransform>(gridToMidPixel(m_player_config.x, m_player_config.y, m_player));
     m_player->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y));
@@ -88,14 +99,19 @@ void ScenePlay::spawnPlayer() {
 }
 
 void ScenePlay::spawnBullet() {
-    // TODO: spawn a bullet at the given entity, going in the direction the entity is facing
-    // if space bar down can CInput.canShoot becomes false
-    // if it's up canShoot = true (only spawn bullet when canShoot = true
+    auto transform = m_player->getComponent<CTransform>();
 
-    auto bullet = m_entity_manager.addEntity(ETag::BULLET);
+    auto bullet = m_entity_manager.addEntity(Tag::BULLET);
     bullet->addComponent<CAnimation>(m_engine->assets().getAnimation("Fire"), true);
-    bullet->addComponent<CTransform>(m_player->getComponent<CTransform>());
-    // bullet->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y));
+
+    constexpr float bullet_v = 3.0f; // TODO: Add to config file?
+    if (transform.scale.x < 0) {
+        bullet->addComponent<CTransform>(transform.pos, Vec2(-bullet_v, 0.0f));
+    } else {
+        bullet->addComponent<CTransform>(transform.pos, Vec2(bullet_v, 0.0f));
+    }
+    bullet->addComponent<CBBox>(Vec2(32.0f, 32.0f));
+    bullet->addComponent<CLifespan>(60);
 }
 
 void ScenePlay::update() {
@@ -112,20 +128,28 @@ void ScenePlay::update() {
 
 void ScenePlay::sMovement() {
     Vec2 player_v = m_player->getComponent<CTransform>().velocity;
+    auto& player_state = m_player->getComponent<CState>().state;
+    auto& input = m_player->getComponent<CInput>();
 
     player_v.x = 0.0f;
-    if (m_player->getComponent<CInput>().up) {
-        m_player->getComponent<CState>().state = "JUMP";
+    if (input.up && canJump()) {
+        m_can_jump = false;
+        player_state = State::JUMP;
         player_v.y = -m_player_config.jump_v;
     }
-    if (m_player->getComponent<CInput>().left) {
+    if (input.left) {
         player_v.x = -m_player_config.v;
+        m_player->getComponent<CTransform>().scale = Vec2(-1, 1); // TODO: Should only change the sign of scale.x
+        if (player_v.y == 0 && player_state != State::JUMP) { player_state = State::RUN; }
     }
-    if (m_player->getComponent<CInput>().right) {
+    if (input.right) {
         player_v.x = m_player_config.v;
+        m_player->getComponent<CTransform>().scale = Vec2(1, 1);
+        if (player_v.y == 0 && player_state != State::JUMP) { player_state = State::RUN; }
     }
-    if (m_player->getComponent<CInput>().shoot) {
-        m_player->getComponent<CInput>().shoot = false;
+    if (canShoot() && input.shoot) {
+        m_can_shoot = false;
+        input.shoot = false;
         spawnBullet();
     }
 
@@ -150,9 +174,6 @@ void ScenePlay::sMovement() {
         transform.prev_pos = transform.pos;
         transform.pos += transform.velocity;
     }
-
-    // TODO: Implement player movement/jumping based on its CInput component
-    // TODO: Setting an entity's scale.x to -1/1 will make it face to the left/right
 }
 
 void ScenePlay::sLifespan() {
@@ -161,39 +182,54 @@ void ScenePlay::sLifespan() {
             if (entity->getComponent<CLifespan>().remaining <= 0) {
                 entity->destroy();
             }
+            // Destroy bullets, if they don't collide with anything
+            entity->getComponent<CLifespan>().remaining--;
         }
     }
 }
 
 void ScenePlay::sCollision() {
-    for (auto entity : m_entity_manager.getEntities(ETag::TILE)) {
+    auto& p_transfrom = m_player->getComponent<CTransform>();
+    auto& p_state = m_player->getComponent<CState>();
+    auto& p_bbox = m_player->getComponent<CBBox>();
+
+    for (auto entity : m_entity_manager.getEntities(Tag::TILE)) {
+        // Player collision
         Vec2 overlap = physics::getOverlap(m_player, entity);
         if (overlap.x > 0 && overlap.y > 0) {
             Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
-            auto& transform = m_player->getComponent<CTransform>();
             if (prev_overlap.y > 0) {
-                if (transform.velocity.x > 0) { transform.pos.x -= overlap.x; }
-                else if (transform.velocity.x < 0) { transform.pos.x += overlap.x; }
-                transform.velocity.x = 0.0f;
+                if (p_transfrom.velocity.x > 0) { p_transfrom.pos.x -= overlap.x; }
+                else if (p_transfrom.velocity.x < 0) { p_transfrom.pos.x += overlap.x; }
+                p_transfrom.velocity.x = 0.0f;
             }
             if (prev_overlap.x > 0) {
-                if (transform.velocity.y > 0) { transform.pos.y -= overlap.y; }
-                else if (transform.velocity.y < 0) { transform.pos.y += overlap.y; }
-                transform.velocity.y = 0.0f;
+                if (p_transfrom.velocity.y > 0) {
+                    p_transfrom.pos.y -= overlap.y;
+                    p_state.state = State::STAND;
+                } else if (p_transfrom.velocity.y < 0) {
+                    p_transfrom.pos.y += overlap.y;
+                    entity->destroy();
+                }
+                p_transfrom.velocity.y = 0.0f;
+            }
+        }
+        // Bullet collision
+        for (auto bullet : m_entity_manager.getEntities(Tag::BULLET)) {
+            Vec2 overlap = physics::getOverlap(bullet, entity);
+            if (overlap.x > 0 && overlap.y > 0) {
+                entity->destroy();
+                bullet->destroy();
             }
         }
     }
 
-    if (m_player->getComponent<CTransform>().pos.y > height()) {
-        m_player->addComponent<CTransform>().pos = gridToMidPixel(m_player_config.x, m_player_config.y, m_player);
+    if (p_transfrom.pos.y > height()) {
+        p_transfrom.pos = gridToMidPixel(m_player_config.x, m_player_config.y, m_player);
     }
-    if (m_player->getComponent<CTransform>().pos.x < m_player->getComponent<CBBox>().half_size.x) {
-        m_player->getComponent<CTransform>().pos.x = m_player->getComponent<CBBox>().half_size.x;
+    if (p_transfrom.pos.x < p_bbox.half_size.x) {
+        p_transfrom.pos.x = p_bbox.half_size.x;
     }
-
-    // TODO: Implement bullet/tile collision (Destroy the tile if it has 'Brick' as animation)
-    // TODO: Implement player/tile collision and resolutions, update the CState component of the player to
-    // store whether it's currently on the ground or in the air. This will be used by the animation system.
 }
 
 void ScenePlay::sDoAction(const Action& action) {
@@ -216,10 +252,17 @@ void ScenePlay::sDoAction(const Action& action) {
         }
         case ActionType::END: {
             switch (action.getName()) {
-                case ActionName::UP: m_player->getComponent<CInput>().up = false; break;
                 case ActionName::RIGHT: m_player->getComponent<CInput>().right = false; break;
                 case ActionName::DOWN: m_player->getComponent<CInput>().down = false; break;
                 case ActionName::LEFT: m_player->getComponent<CInput>().left = false; break;
+                case ActionName::UP:
+                    m_player->getComponent<CInput>().up = false;
+                    m_can_jump = true;
+                    break;
+                case ActionName::SHOOT:
+                    m_can_shoot = true;
+                    m_player->getComponent<CInput>().shoot = false; 
+                    break;
                 default: break;
             }
             break;
@@ -309,11 +352,11 @@ void ScenePlay::sRender() {
     }
 
     if (m_paused) {
-        const auto text_rect = m_grid_text.getLocalBounds();
-        m_grid_text.setString("PAUSE");
-        m_grid_text.setOrigin(text_rect.left + text_rect.width/2.0f, text_rect.top + text_rect.height/2.0f);
-        m_grid_text.setPosition(width()/2.0f, height()/2.0f);
-        m_engine->window().draw(m_grid_text);
+        const auto text_rect = m_pause_text.getLocalBounds();
+        m_pause_text.setString("PAUSE");
+        m_pause_text.setOrigin(text_rect.left + text_rect.width/2.0f, text_rect.top + text_rect.height/2.0f);
+        m_pause_text.setPosition(width()/2.0f, height()/2.0f);
+        m_engine->window().draw(m_pause_text);
     }
 }
 
@@ -323,5 +366,5 @@ void ScenePlay::onEnd() {
     view.setCenter(m_engine->window().getSize().x / 2.0f, m_engine->window().getSize().y - view.getCenter().y);
     m_engine->window().setView(view);
 
-    m_engine->changeScene("MENU", std::make_shared<SceneMenu>(m_engine), true);
+    m_engine->changeScene(SceneType::MENU, std::make_shared<SceneMenu>(m_engine), true);
 }
