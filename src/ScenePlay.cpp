@@ -128,7 +128,7 @@ void ScenePlay::sMovement() {
     }
     if (input.left) {
         player_v.x = -m_player_config.v;
-        m_player->getComponent<CTransform>().scale = Vec2(-1, 1);
+        m_player->getComponent<CTransform>().scale = Vec2(-1, 1); // TODO: Should only change the sign of scale.x
     }
     if (input.right) {
         player_v.x = m_player_config.v;
@@ -161,9 +161,6 @@ void ScenePlay::sMovement() {
         transform.prev_pos = transform.pos;
         transform.pos += transform.velocity;
     }
-
-    // TODO: Implement player movement/jumping based on its CInput component
-    // TODO: Setting an entity's scale.x to -1/1 will make it face to the left/right
 }
 
 void ScenePlay::sLifespan() {
@@ -176,21 +173,28 @@ void ScenePlay::sLifespan() {
     }
 }
 
-void ScenePlay::sCollision() { // TODO: Use EState to detect direction of the player etc. and utilize this in movement and spawn bullet also
+void ScenePlay::sCollision() {
     for (auto entity : m_entity_manager.getEntities(Tag::TILE)) {
         Vec2 overlap = physics::getOverlap(m_player, entity);
         if (overlap.x > 0 && overlap.y > 0) {
             Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
             auto& transform = m_player->getComponent<CTransform>();
+            auto& state = m_player->getComponent<CState>();
             if (prev_overlap.y > 0) {
                 if (transform.velocity.x > 0) { transform.pos.x -= overlap.x; }
                 else if (transform.velocity.x < 0) { transform.pos.x += overlap.x; }
                 transform.velocity.x = 0.0f;
+                state.state = State::STAND;
             }
             if (prev_overlap.x > 0) {
-                if (transform.velocity.y > 0) { transform.pos.y -= overlap.y; }
-                else if (transform.velocity.y < 0) { transform.pos.y += overlap.y; }
+                if (transform.velocity.y > 0) {
+                    transform.pos.y -= overlap.y;
+                } else if (transform.velocity.y < 0) {
+                    transform.pos.y += overlap.y;
+                    entity->destroy();
+                }
                 transform.velocity.y = 0.0f;
+                state.state = State::STAND;
             }
         }
     }
