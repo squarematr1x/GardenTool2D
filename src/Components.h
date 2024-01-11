@@ -75,7 +75,6 @@ struct CInput: Component {
 	bool right{ false };
 	bool down{ false };
 	bool shoot{ false };
-	bool can_shoot{ true };
 
 	CInput() {}
 };

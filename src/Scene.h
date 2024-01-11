@@ -91,6 +91,8 @@ class ScenePlay: public Scene
 	bool m_draw_textures{ true };
 	bool m_draw_collision{ false };
 	bool m_draw_grid{ false };
+	bool m_can_shoot{ true };
+	bool m_can_jump{ true };
 	const Vec2 m_grid_size{ 64, 64 };
 	sf::Text m_grid_text;
 	sf::Text m_pause_text;
@@ -102,6 +104,9 @@ public:
 	void update();
 
 	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity);
+
+	bool canShoot() const;
+	bool canJump() const;
 
 	void loadLevel(const std::string& path);
 

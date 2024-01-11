@@ -43,6 +43,15 @@ Vec2 ScenePlay::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entit
     return Vec2(0, 0);
 }
 
+bool ScenePlay::canJump() const {
+    auto player_state = m_player->getComponent<CState>().state;
+    return m_can_jump && (player_state == State::STAND || player_state == State::RUN);
+}
+
+bool ScenePlay::canShoot() const {
+    return m_can_shoot;
+}
+
 void ScenePlay::loadLevel(const std::string& path) {
     // reset the entity manager every time we load a level
     m_entity_manager = EntityManager();
@@ -119,24 +128,27 @@ void ScenePlay::update() {
 
 void ScenePlay::sMovement() {
     Vec2 player_v = m_player->getComponent<CTransform>().velocity;
-
+    auto& player_state = m_player->getComponent<CState>().state;
     auto& input = m_player->getComponent<CInput>();
 
     player_v.x = 0.0f;
-    if (input.up) {
-        m_player->getComponent<CState>().state = State::JUMP;
+    if (input.up && canJump()) {
+        m_can_jump = false;
+        player_state = State::JUMP;
         player_v.y = -m_player_config.jump_v;
     }
     if (input.left) {
         player_v.x = -m_player_config.v;
         m_player->getComponent<CTransform>().scale = Vec2(-1, 1); // TODO: Should only change the sign of scale.x
+        if (player_v.y == 0 && player_state != State::JUMP) { player_state = State::RUN; }
     }
     if (input.right) {
         player_v.x = m_player_config.v;
-         m_player->getComponent<CTransform>().scale = Vec2(1, 1);
+        m_player->getComponent<CTransform>().scale = Vec2(1, 1);
+        if (player_v.y == 0 && player_state != State::JUMP) { player_state = State::RUN; }
     }
-    if (input.can_shoot && input.shoot) {
-        input.can_shoot = false;
+    if (canShoot() && input.shoot) {
+        m_can_shoot = false;
         input.shoot = false;
         spawnBullet();
     }
@@ -177,28 +189,29 @@ void ScenePlay::sLifespan() {
 }
 
 void ScenePlay::sCollision() {
+    auto& p_transfrom = m_player->getComponent<CTransform>();
+    auto& p_state = m_player->getComponent<CState>();
+    auto& p_bbox = m_player->getComponent<CBBox>();
+
     for (auto entity : m_entity_manager.getEntities(Tag::TILE)) {
         // Player collision
         Vec2 overlap = physics::getOverlap(m_player, entity);
         if (overlap.x > 0 && overlap.y > 0) {
             Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
-            auto& transform = m_player->getComponent<CTransform>();
-            auto& state = m_player->getComponent<CState>();
             if (prev_overlap.y > 0) {
-                if (transform.velocity.x > 0) { transform.pos.x -= overlap.x; }
-                else if (transform.velocity.x < 0) { transform.pos.x += overlap.x; }
-                transform.velocity.x = 0.0f;
-                state.state = State::STAND;
+                if (p_transfrom.velocity.x > 0) { p_transfrom.pos.x -= overlap.x; }
+                else if (p_transfrom.velocity.x < 0) { p_transfrom.pos.x += overlap.x; }
+                p_transfrom.velocity.x = 0.0f;
             }
             if (prev_overlap.x > 0) {
-                if (transform.velocity.y > 0) {
-                    transform.pos.y -= overlap.y;
-                } else if (transform.velocity.y < 0) {
-                    transform.pos.y += overlap.y;
+                if (p_transfrom.velocity.y > 0) {
+                    p_transfrom.pos.y -= overlap.y;
+                    p_state.state = State::STAND;
+                } else if (p_transfrom.velocity.y < 0) {
+                    p_transfrom.pos.y += overlap.y;
                     entity->destroy();
                 }
-                transform.velocity.y = 0.0f;
-                state.state = State::STAND;
+                p_transfrom.velocity.y = 0.0f;
             }
         }
         // Bullet collision
@@ -211,16 +224,12 @@ void ScenePlay::sCollision() {
         }
     }
 
-    if (m_player->getComponent<CTransform>().pos.y > height()) {
-        m_player->addComponent<CTransform>().pos = gridToMidPixel(m_player_config.x, m_player_config.y, m_player);
+    if (p_transfrom.pos.y > height()) {
+        p_transfrom.pos = gridToMidPixel(m_player_config.x, m_player_config.y, m_player);
     }
-    if (m_player->getComponent<CTransform>().pos.x < m_player->getComponent<CBBox>().half_size.x) {
-        m_player->getComponent<CTransform>().pos.x = m_player->getComponent<CBBox>().half_size.x;
+    if (p_transfrom.pos.x < p_bbox.half_size.x) {
+        p_transfrom.pos.x = p_bbox.half_size.x;
     }
-
-    // TODO: Implement bullet/tile collision (Destroy the tile if it has 'Brick' as animation)
-    // TODO: Implement player/tile collision and resolutions, update the CState component of the player to
-    // store whether it's currently on the ground or in the air. This will be used by the animation system.
 }
 
 void ScenePlay::sDoAction(const Action& action) {
@@ -243,12 +252,15 @@ void ScenePlay::sDoAction(const Action& action) {
         }
         case ActionType::END: {
             switch (action.getName()) {
-                case ActionName::UP: m_player->getComponent<CInput>().up = false; break;
                 case ActionName::RIGHT: m_player->getComponent<CInput>().right = false; break;
                 case ActionName::DOWN: m_player->getComponent<CInput>().down = false; break;
                 case ActionName::LEFT: m_player->getComponent<CInput>().left = false; break;
+                case ActionName::UP:
+                    m_player->getComponent<CInput>().up = false;
+                    m_can_jump = true;
+                    break;
                 case ActionName::SHOOT:
-                    m_player->getComponent<CInput>().can_shoot = true;
+                    m_can_shoot = true;
                     m_player->getComponent<CInput>().shoot = false; 
                     break;
                 default: break;
