@@ -101,7 +101,8 @@ void ScenePlay::spawnBullet() {
     } else {
         bullet->addComponent<CTransform>(transform.pos, Vec2(bullet_v, 0.0f));
     }
-    // bullet->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y));
+    bullet->addComponent<CBBox>(Vec2(32.0f, 32.0f));
+    bullet->addComponent<CLifespan>(60);
 }
 
 void ScenePlay::update() {
@@ -169,12 +170,15 @@ void ScenePlay::sLifespan() {
             if (entity->getComponent<CLifespan>().remaining <= 0) {
                 entity->destroy();
             }
+            // Destroy bullets, if they don't collide with anything
+            entity->getComponent<CLifespan>().remaining--;
         }
     }
 }
 
 void ScenePlay::sCollision() {
     for (auto entity : m_entity_manager.getEntities(Tag::TILE)) {
+        // Player collision
         Vec2 overlap = physics::getOverlap(m_player, entity);
         if (overlap.x > 0 && overlap.y > 0) {
             Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
@@ -195,6 +199,14 @@ void ScenePlay::sCollision() {
                 }
                 transform.velocity.y = 0.0f;
                 state.state = State::STAND;
+            }
+        }
+        // Bullet collision
+        for (auto bullet : m_entity_manager.getEntities(Tag::BULLET)) {
+            Vec2 overlap = physics::getOverlap(bullet, entity);
+            if (overlap.x > 0 && overlap.y > 0) {
+                entity->destroy();
+                bullet->destroy();
             }
         }
     }
