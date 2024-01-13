@@ -20,6 +20,7 @@ Animation::Animation(const std::string& name, const sf::Texture& texture, size_t
 }
 
 void Animation::update() {
+	if (m_frame_count == 1) { return; }
 	m_current_frame++;
 
 	auto animation_frame = (m_current_frame / m_speed) % static_cast<int>(m_frame_count);
