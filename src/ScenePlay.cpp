@@ -219,9 +219,8 @@ void ScenePlay::sCollision() {
             Vec2 overlap = physics::getOverlap(bullet, entity);
             if (overlap.x > 0 && overlap.y > 0) {
                 auto explosion = m_entity_manager.addEntity(Tag::EXPLOSION);
-                explosion->addComponent<CAnimation>(m_engine->assets().getAnimation("Explosion"), true);
+                explosion->addComponent<CAnimation>(m_engine->assets().getAnimation("Explosion"));
                 explosion->addComponent<CTransform>(entity->getComponent<CTransform>().pos, Vec2(0, 0));
-                explosion->addComponent<CLifespan>(60);
                 // Destroy tile and bullet
                 entity->destroy();
                 bullet->destroy();
@@ -277,20 +276,23 @@ void ScenePlay::sDoAction(const Action& action) {
 }
 
 void ScenePlay::sAnimation() {
-    // TODO: set the animation of the player based on its CState component
-    // TODO: for each entity with an animation, call entity->getComponent<CAnimation>().animation.update();
-    //       if the animation is not repeated, and it has ended, destroy the entity
     for (auto entity : m_entity_manager.getEntities()) {
         if (!entity->hasComponent<CAnimation>()) { continue; }
 
+        entity->getComponent<CAnimation>().animation.update();
+
+        if (!entity->getComponent<CAnimation>().repeat &&
+            entity->getComponent<CAnimation>().animation.hasEnded()) {
+            entity->destroy();
+        }
+
         if (entity->tag() == Tag::PLAYER) {
             if (m_player->getComponent<CState>().state == State::STAND) {
-                m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Stand"));
+                m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Stand"), true);
             } else if (m_player->getComponent<CState>().state == State::RUN) {
-                m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Run"));
+                m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Run"), true);
             }
         }
-        entity->getComponent<CAnimation>().animation.update();
     }
 }
 
