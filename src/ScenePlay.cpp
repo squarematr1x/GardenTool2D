@@ -272,18 +272,21 @@ void ScenePlay::sDoAction(const Action& action) {
 }
 
 void ScenePlay::sAnimation() {
-    // TODO: Complete the animation class code first
     // TODO: set the animation of the player based on its CState component
     // TODO: for each entity with an animation, call entity->getComponent<CAnimation>().animation.update();
     //       if the animation is not repeated, and it has ended, destroy the entity
+    for (auto entity : m_entity_manager.getEntities()) {
+        if (!entity->hasComponent<CAnimation>()) { continue; }
 
-    // if (m_player->getComponent<CState>().state == "JUMP") { // TODO: This cause segfault (source: lldb)
-    //     m_player->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Jump"));
-    // }
-
-    // if (m_player->getComponent<CState>().state == "RUN") {
-    //     m_player->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Run"));
-    // }
+        if (entity->tag() == Tag::PLAYER) {
+            if (m_player->getComponent<CState>().state == State::STAND) {
+                m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Stand"));
+            } else if (m_player->getComponent<CState>().state == State::RUN) {
+                m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Run"));
+            }
+        }
+        entity->getComponent<CAnimation>().animation.update();
+    }
 }
 
 void ScenePlay::sRender() {
