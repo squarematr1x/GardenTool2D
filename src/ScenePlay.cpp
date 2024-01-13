@@ -114,6 +114,12 @@ void ScenePlay::spawnBullet() {
     bullet->addComponent<CLifespan>(60);
 }
 
+void ScenePlay::spawnExplosion(const Vec2& pos) {
+    auto explosion = m_entity_manager.addEntity(Tag::EXPLOSION);
+    explosion->addComponent<CAnimation>(m_engine->assets().getAnimation("Explosion"));
+    explosion->addComponent<CTransform>(pos, Vec2(0, 0));
+}
+
 void ScenePlay::update() {
     if (!m_paused) {
         m_entity_manager.update();
@@ -209,6 +215,7 @@ void ScenePlay::sCollision() {
                     p_state.state = State::STAND;
                 } else if (p_transfrom.velocity.y < 0) {
                     p_transfrom.pos.y += overlap.y;
+                    spawnExplosion(entity->getComponent<CTransform>().pos);
                     entity->destroy();
                 }
                 p_transfrom.velocity.y = 0.0f;
@@ -218,9 +225,7 @@ void ScenePlay::sCollision() {
         for (auto bullet : m_entity_manager.getEntities(Tag::BULLET)) {
             Vec2 overlap = physics::getOverlap(bullet, entity);
             if (overlap.x > 0 && overlap.y > 0) {
-                auto explosion = m_entity_manager.addEntity(Tag::EXPLOSION);
-                explosion->addComponent<CAnimation>(m_engine->assets().getAnimation("Explosion"));
-                explosion->addComponent<CTransform>(entity->getComponent<CTransform>().pos, Vec2(0, 0));
+                spawnExplosion(entity->getComponent<CTransform>().pos);
                 // Destroy tile and bullet
                 entity->destroy();
                 bullet->destroy();
@@ -287,10 +292,14 @@ void ScenePlay::sAnimation() {
         }
 
         if (entity->tag() == Tag::PLAYER) {
-            if (m_player->getComponent<CState>().state == State::STAND) {
-                m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Stand"), true);
-            } else if (m_player->getComponent<CState>().state == State::RUN) {
-                m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Run"), true);
+            switch (m_player->getComponent<CState>().state) {
+                case State::STAND:
+                    m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Stand"), true); break;
+                case State::RUN:
+                    m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Run"), true); break;
+                case State::JUMP:
+                    m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Jump"), true); break;
+                default: break;
             }
         }
     }

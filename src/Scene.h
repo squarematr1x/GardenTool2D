@@ -112,6 +112,7 @@ public:
 
 	void spawnPlayer();
 	void spawnBullet();
+	void spawnExplosion(const Vec2& pos);
 
 	// Systems
 	void sAnimation();

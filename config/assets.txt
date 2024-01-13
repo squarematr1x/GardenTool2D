@@ -4,10 +4,12 @@ Texture PlayerStandText assets/images/thingstand.png
 Animation Stand PlayerStandText 4 10
 Texture PlayerRunText assets/images/thingrun.png
 Animation Run PlayerRunText 4 15
+Texture PlayerJumpText assets/images/thingjump.png
+Animation Jump PlayerJumpText 1 1
 Texture FireText assets/images/bullet.png
 Animation Fire FireText 1 1
 Texture BushText assets/images/bush.png
 Animation Bush BushText 4 15
 Texture ExplosionText assets/images/explosion.png
-Animation Explosion ExplosionText 4 15
+Animation Explosion ExplosionText 4 10
 Font Arial assets/fonts/arial.ttf
