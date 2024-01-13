@@ -23,7 +23,8 @@ enum class Tag : unsigned char {
 	DEC,
 	PLAYER,
 	ENEMY,
-	BULLET
+	BULLET,
+	EXPLOSION
 };
 
 class Entity

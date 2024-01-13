@@ -218,6 +218,10 @@ void ScenePlay::sCollision() {
         for (auto bullet : m_entity_manager.getEntities(Tag::BULLET)) {
             Vec2 overlap = physics::getOverlap(bullet, entity);
             if (overlap.x > 0 && overlap.y > 0) {
+                auto explosion = m_entity_manager.addEntity(Tag::EXPLOSION);
+                explosion->addComponent<CAnimation>(m_engine->assets().getAnimation("Explosion"));
+                explosion->addComponent<CTransform>(entity->getComponent<CTransform>().pos, Vec2(0, 0));
+                // Destroy tile and bullet
                 entity->destroy();
                 bullet->destroy();
             }
@@ -272,18 +276,24 @@ void ScenePlay::sDoAction(const Action& action) {
 }
 
 void ScenePlay::sAnimation() {
-    // TODO: Complete the animation class code first
-    // TODO: set the animation of the player based on its CState component
-    // TODO: for each entity with an animation, call entity->getComponent<CAnimation>().animation.update();
-    //       if the animation is not repeated, and it has ended, destroy the entity
+    for (auto entity : m_entity_manager.getEntities()) {
+        if (!entity->hasComponent<CAnimation>()) { continue; }
 
-    // if (m_player->getComponent<CState>().state == "JUMP") { // TODO: This cause segfault (source: lldb)
-    //     m_player->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Jump"));
-    // }
+        entity->getComponent<CAnimation>().animation.update();
 
-    // if (m_player->getComponent<CState>().state == "RUN") {
-    //     m_player->addComponent<CAnimation>(m_game_engine->assets().getAnimation("Run"));
-    // }
+        if (!entity->getComponent<CAnimation>().repeat &&
+            entity->getComponent<CAnimation>().animation.hasEnded()) {
+            entity->destroy();
+        }
+
+        if (entity->tag() == Tag::PLAYER) {
+            if (m_player->getComponent<CState>().state == State::STAND) {
+                m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Stand"), true);
+            } else if (m_player->getComponent<CState>().state == State::RUN) {
+                m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Run"), true);
+            }
+        }
+    }
 }
 
 void ScenePlay::sRender() {

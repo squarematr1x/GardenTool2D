@@ -1,9 +1,13 @@
 Texture BrickText assets/images/tile.png
 Animation Brick BrickText 1 1
-Texture PlayerText assets/images/thing.png
-Animation Stand PlayerText 1 1
+Texture PlayerStandText assets/images/thingstand.png
+Animation Stand PlayerStandText 4 10
+Texture PlayerRunText assets/images/thingrun.png
+Animation Run PlayerRunText 4 15
 Texture FireText assets/images/bullet.png
 Animation Fire FireText 1 1
 Texture BushText assets/images/bush.png
-Animation Bush BushText 1 1
+Animation Bush BushText 4 15
+Texture ExplosionText assets/images/explosion.png
+Animation Explosion ExplosionText 4 15
 Font Arial assets/fonts/arial.ttf
