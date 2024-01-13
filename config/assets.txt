@@ -6,6 +6,8 @@ Texture PlayerRunText assets/images/thingrun.png
 Animation Run PlayerRunText 4 15
 Texture FireText assets/images/bullet.png
 Animation Fire FireText 1 1
-Texture BushText assets/images/explosion.png
+Texture BushText assets/images/bush.png
 Animation Bush BushText 4 15
+Texture ExplosionText assets/images/explosion.png
+Animation Explosion ExplosionText 4 15
 Font Arial assets/fonts/arial.ttf

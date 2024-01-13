@@ -218,6 +218,11 @@ void ScenePlay::sCollision() {
         for (auto bullet : m_entity_manager.getEntities(Tag::BULLET)) {
             Vec2 overlap = physics::getOverlap(bullet, entity);
             if (overlap.x > 0 && overlap.y > 0) {
+                auto explosion = m_entity_manager.addEntity(Tag::EXPLOSION);
+                explosion->addComponent<CAnimation>(m_engine->assets().getAnimation("Explosion"), true);
+                explosion->addComponent<CTransform>(entity->getComponent<CTransform>().pos, Vec2(0, 0));
+                explosion->addComponent<CLifespan>(60);
+                // Destroy tile and bullet
                 entity->destroy();
                 bullet->destroy();
             }
