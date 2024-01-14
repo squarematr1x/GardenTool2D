@@ -10,6 +10,10 @@ Texture FireText assets/images/bullet.png
 Animation Fire FireText 1 1
 Texture BushText assets/images/bush.png
 Animation Bush BushText 4 15
+Texture CloudText1 assets/images/cloud1.png
+Animation Cloud1 CloudText1 1 1
+Texture CloudText2 assets/images/cloud2.png
+Animation Cloud2 CloudText2 1 1
 Texture ExplosionText assets/images/explosion.png
 Animation Explosion ExplosionText 4 10
 Font Arial assets/fonts/arial.ttf
