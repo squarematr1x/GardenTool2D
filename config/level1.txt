@@ -11,8 +11,21 @@ Tile Brick 4 0
 Tile Brick 4 1
 Tile Brick 6 0
 Tile Brick 6 1
+Tile Brick 6 3
+Tile Brick 6 4
 Tile Brick 7 0
 Tile Brick 7 1
+Tile Brick 7 4
+Tile Brick 8 0
+Tile Brick 8 1
+Tile Brick 9 0
+Tile Brick 10 0
+Tile Brick 13 0
+Tile Brick 14 0
 Dec Bush 1 2
 Dec Bush 7 2
+Dec Cloud1 3 8
+Dec Cloud1 8 9
+Dec Cloud2 11 10
+Dec Cloud2 14 7
 Player 2 6 48 48 5 5 25 2 Fire
