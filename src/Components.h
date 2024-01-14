@@ -128,6 +128,7 @@ struct CGravity: Component {
 
 struct CState: Component {
 	State state{ State::NONE };
+	State prev_state{ State::NONE };
 
 	CState() {}
 	CState(State state_in)
