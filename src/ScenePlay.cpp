@@ -311,8 +311,7 @@ void ScenePlay::sAnimation() {
 }
 
 void ScenePlay::sRender() {
-    if (m_paused) { m_engine->window().clear(sf::Color(50, 50, 150)); }
-    else { m_engine->window().clear(sf::Color(70, 80, 255)); }
+    m_engine->window().clear(sf::Color(70, 80, 255));
 
     // set the viewport of the window to be centered on the player if it's far enough right
     auto& p_pos = m_player->getComponent<CTransform>().pos;
@@ -377,9 +376,10 @@ void ScenePlay::sRender() {
 
     if (m_paused) {
         const auto text_rect = m_pause_text.getLocalBounds();
+        const auto center = m_engine->window().getView().getCenter();
         m_pause_text.setString("PAUSE");
         m_pause_text.setOrigin(text_rect.left + text_rect.width/2.0f, text_rect.top + text_rect.height/2.0f);
-        m_pause_text.setPosition(width()/2.0f, height()/2.0f);
+        m_pause_text.setPosition(center.x, center.y);
         m_engine->window().draw(m_pause_text);
     }
 }
