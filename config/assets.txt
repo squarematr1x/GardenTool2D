@@ -3,7 +3,7 @@ Animation Brick BrickText 1 1
 Texture PlayerStandText assets/images/thingstand.png
 Animation Stand PlayerStandText 4 10
 Texture PlayerRunText assets/images/thingrun.png
-Animation Run PlayerRunText 4 15
+Animation Run PlayerRunText 4 8
 Texture PlayerJumpText assets/images/thingjump.png
 Animation Jump PlayerJumpText 1 1
 Texture FireText assets/images/bullet.png
