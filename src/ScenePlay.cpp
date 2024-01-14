@@ -386,9 +386,7 @@ void ScenePlay::sRender() {
 
 void ScenePlay::onEnd() {
     // Reset view
-    sf::View view = m_engine->window().getView();
-    view.setCenter(m_engine->window().getSize().x / 2.0f, m_engine->window().getSize().y - view.getCenter().y);
-    m_engine->window().setView(view);
+    m_engine->window().setView(m_engine->window().getDefaultView());
 
     m_engine->changeScene(SceneType::MENU, std::make_shared<SceneMenu>(m_engine), true);
 }
