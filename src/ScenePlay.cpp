@@ -66,6 +66,16 @@ bool ScenePlay::canShoot() const {
     return m_can_shoot;
 }
 
+bool ScenePlay::isInside(const Vec2& pos, std::shared_ptr<Entity> entity) {
+    auto e_pos = entity->getComponent<CTransform>().pos;
+    auto size = entity->getComponent<CAnimation>().animation.getSize();
+
+    float dx = fabs(pos.x - e_pos.x);
+    float dy = fabs(pos.y - e_pos.y);
+
+    return (dx <= size.x/2) && (dy <= size.y/2);
+}
+
 void ScenePlay::loadLevel(const std::string& path) {
     // reset the entity manager every time we load a level
     m_entity_manager = EntityManager();
@@ -84,6 +94,7 @@ void ScenePlay::loadLevel(const std::string& path) {
             auto tile = str == "Tile" ? m_entity_manager.addEntity(Tag::TILE) : m_entity_manager.addEntity(Tag::DEC);
             tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
             tile->addComponent<CTransform>(gridToMidPixel(x, y, tile));
+            tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later
 
             if (tile->getComponent<CAnimation>().animation.getName() == "Brick") {
                 const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
@@ -142,6 +153,7 @@ void ScenePlay::update() {
         sLifespan();
         sCollision();
         sAnimation();
+        sDragAndDrop();
     }
     // sf::View mini_map = m_engine->window().getView();
     // mini_map.setViewport(sf::FloatRect(0.75f, 0.0f, 0.25f, 0.25f));
@@ -272,10 +284,19 @@ void ScenePlay::sDoAction(const Action& action) {
                 case ActionName::DOWN: m_player->getComponent<CInput>().down = true; break;
                 case ActionName::LEFT: m_player->getComponent<CInput>().left = true; break;
                 case ActionName::SHOOT: m_player->getComponent<CInput>().shoot = true; break;
-                case ActionName::LEFT_CLICK: std::cout << "Mouse clicked: " << mouseToWorldPos(action.pos) << '\n'; break;
+                case ActionName::MOUSE_MOVE: m_mouse_pos = action.pos; m_mouse_shape.setPosition(m_mouse_pos.x, m_mouse_pos.y); break;
+                case ActionName::LEFT_CLICK: {
+                    Vec2 world_pos = mouseToWorldPos(action.pos);
+                    for (auto e : m_entity_manager.getEntities()) {
+                        if (e->hasComponent<CDraggable>() && isInside(world_pos, e)) {
+                            auto& dragged = e->getComponent<CDraggable>().dragged;
+                            dragged = !dragged;
+                            std::cout << "Clicked entity: " << e->getComponent<CAnimation>().animation.getName() << '\n';
+                        }
+                    }
+                }
                 case ActionName::MIDDLE_CLICK: break;
                 case ActionName::RIGHT_CLICK: break;
-                case ActionName::MOUSE_MOVE: m_mouse_pos = action.pos; m_mouse_shape.setPosition(m_mouse_pos.x, m_mouse_pos.y); break;
                 case ActionName::QUIT: onEnd(); break;
                 default: break;
             }
@@ -410,6 +431,15 @@ void ScenePlay::sRender() {
     Vec2 world_pos = mouseToWorldPos(m_mouse_pos);
     m_mouse_shape.setPosition(world_pos.x, world_pos.y);
     m_engine->window().draw(m_mouse_shape);
+}
+
+void ScenePlay::sDragAndDrop() {
+    for (auto e : m_entity_manager.getEntities()) {
+        if (e->hasComponent<CDraggable>() && e->getComponent<CDraggable>().dragged) {
+            Vec2 world_pos = mouseToWorldPos(m_mouse_pos);
+            e->getComponent<CTransform>().pos = world_pos;
+        }
+    }
 }
 
 void ScenePlay::onEnd() {

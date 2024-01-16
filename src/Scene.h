@@ -112,6 +112,7 @@ public:
 
 	bool canShoot() const;
 	bool canJump() const;
+	bool isInside(const Vec2& pos, std::shared_ptr<Entity> entity);
 
 	void loadLevel(const std::string& path);
 
@@ -127,6 +128,7 @@ public:
 	void sCollision();
 	void sRender();
 	void sDoAction(const Action& action);
+	void sDragAndDrop();
 	void sDebug();
 
 	void onEnd();
