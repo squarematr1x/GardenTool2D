@@ -14,7 +14,8 @@ typedef std::tuple<
 	CBBox,
 	CAnimation,
 	CGravity,
-	CState
+	CState,
+	CDraggable
 > ComponentTuple;
 
 enum class Tag : unsigned char {

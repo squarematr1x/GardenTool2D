@@ -81,5 +81,28 @@ void GameEngine::sUserInput() {
 			// look up the action and send the action to the scene
 			currentScene()->sDoAction(Action(currentScene()->getActionMap().at(event.key.code), action_type));
 		}
+
+		auto mouse_pos = sf::Mouse::getPosition(m_window);
+		Vec2 pos(mouse_pos.x, mouse_pos.y);
+
+		if (event.type == sf::Event::MouseButtonPressed) {
+			switch (event.mouseButton.button) {
+				case sf::Mouse::Left: { currentScene()->sDoAction(Action(ActionName::LEFT_CLICK, ActionType::START, pos)); break; }
+				case sf::Mouse::Middle: { currentScene()->sDoAction(Action(ActionName::MIDDLE_CLICK, ActionType::START, pos)); break; }
+				case sf::Mouse::Right: { currentScene()->sDoAction(Action(ActionName::RIGHT_CLICK, ActionType::START, pos)); break; }
+				default: break;
+			}
+		}
+		if (event.type == sf::Event::MouseButtonReleased) {
+			switch (event.mouseButton.button) {
+				case sf::Mouse::Left: { currentScene()->sDoAction(Action(ActionName::LEFT_CLICK, ActionType::END, pos)); break; }
+				case sf::Mouse::Middle: { currentScene()->sDoAction(Action(ActionName::MIDDLE_CLICK, ActionType::END, pos)); break; }
+				case sf::Mouse::Right: { currentScene()->sDoAction(Action(ActionName::RIGHT_CLICK, ActionType::END, pos)); break; }
+				default: break;
+			}
+		}
+		if (event.type == sf::Event::MouseMoved) {
+			currentScene()->sDoAction(Action(ActionName::MOUSE_MOVE, ActionType::START, pos));
+		}
 	}
 }

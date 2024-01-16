@@ -24,6 +24,11 @@ void ScenePlay::init(const std::string& level_path) {
     registerAction(sf::Keyboard::Left, ActionName::LEFT);
     registerAction(sf::Keyboard::Z, ActionName::SHOOT);
 
+    registerAction(sf::Mouse::Button::Left, ActionName::LEFT_CLICK);
+    registerAction(sf::Mouse::Button::Middle, ActionName::MIDDLE_CLICK);
+    registerAction(sf::Mouse::Button::Right, ActionName::RIGHT_CLICK);
+    //registerAction(sf::Mouse::)
+
     m_grid_text.setCharacterSize(12);
     m_grid_text.setFont(m_engine->assets().getFont("Arial"));
     m_pause_text.setCharacterSize(20);
@@ -43,6 +48,15 @@ Vec2 ScenePlay::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entit
     return Vec2(0, 0);
 }
 
+// NOTE: Doesn't take zooming into account
+Vec2 ScenePlay::mouseToWorldPos(const Vec2& mouse_pos) const {
+    auto view = m_engine->window().getView();
+    float world_x = view.getCenter().x - (m_engine->window().getSize().x/2);
+    float world_y = view.getCenter().y - (m_engine->window().getSize().y/2);
+
+    return Vec2(mouse_pos.x + world_x, mouse_pos.y + world_y);
+}
+
 bool ScenePlay::canJump() const {
     auto player_state = m_player->getComponent<CState>().state;
     return m_can_jump && (player_state == State::STAND || player_state == State::RUN);
@@ -50,6 +64,16 @@ bool ScenePlay::canJump() const {
 
 bool ScenePlay::canShoot() const {
     return m_can_shoot;
+}
+
+bool ScenePlay::isInside(const Vec2& pos, std::shared_ptr<Entity> entity) {
+    auto e_pos = entity->getComponent<CTransform>().pos;
+    auto size = entity->getComponent<CAnimation>().animation.getSize();
+
+    float dx = fabs(pos.x - e_pos.x);
+    float dy = fabs(pos.y - e_pos.y);
+
+    return (dx <= size.x/2) && (dy <= size.y/2);
 }
 
 void ScenePlay::loadLevel(const std::string& path) {
@@ -70,6 +94,7 @@ void ScenePlay::loadLevel(const std::string& path) {
             auto tile = str == "Tile" ? m_entity_manager.addEntity(Tag::TILE) : m_entity_manager.addEntity(Tag::DEC);
             tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
             tile->addComponent<CTransform>(gridToMidPixel(x, y, tile));
+            tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later
 
             if (tile->getComponent<CAnimation>().animation.getName() == "Brick") {
                 const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
@@ -128,7 +153,11 @@ void ScenePlay::update() {
         sLifespan();
         sCollision();
         sAnimation();
+        sDragAndDrop();
     }
+    // sf::View mini_map = m_engine->window().getView();
+    // mini_map.setViewport(sf::FloatRect(0.75f, 0.0f, 0.25f, 0.25f));
+    // m_engine->window().setView(mini_map);
     sRender();
 }
 
@@ -255,6 +284,19 @@ void ScenePlay::sDoAction(const Action& action) {
                 case ActionName::DOWN: m_player->getComponent<CInput>().down = true; break;
                 case ActionName::LEFT: m_player->getComponent<CInput>().left = true; break;
                 case ActionName::SHOOT: m_player->getComponent<CInput>().shoot = true; break;
+                case ActionName::MOUSE_MOVE: m_mouse_pos = action.pos; m_mouse_shape.setPosition(m_mouse_pos.x, m_mouse_pos.y); break;
+                case ActionName::LEFT_CLICK: {
+                    Vec2 world_pos = mouseToWorldPos(action.pos);
+                    for (auto e : m_entity_manager.getEntities()) {
+                        if (e->hasComponent<CDraggable>() && isInside(world_pos, e)) {
+                            auto& dragged = e->getComponent<CDraggable>().dragged;
+                            dragged = !dragged;
+                            std::cout << "Clicked entity: " << e->getComponent<CAnimation>().animation.getName() << '\n';
+                        }
+                    }
+                }
+                case ActionName::MIDDLE_CLICK: break;
+                case ActionName::RIGHT_CLICK: break;
                 case ActionName::QUIT: onEnd(); break;
                 default: break;
             }
@@ -381,6 +423,22 @@ void ScenePlay::sRender() {
         m_pause_text.setOrigin(text_rect.left + text_rect.width/2.0f, text_rect.top + text_rect.height/2.0f);
         m_pause_text.setPosition(center.x, center.y);
         m_engine->window().draw(m_pause_text);
+    }
+
+    m_mouse_shape.setFillColor(sf::Color(255, 0, 0));
+    m_mouse_shape.setRadius(4);
+    m_mouse_shape.setOrigin(2, 2);
+    Vec2 world_pos = mouseToWorldPos(m_mouse_pos);
+    m_mouse_shape.setPosition(world_pos.x, world_pos.y);
+    m_engine->window().draw(m_mouse_shape);
+}
+
+void ScenePlay::sDragAndDrop() {
+    for (auto e : m_entity_manager.getEntities()) {
+        if (e->hasComponent<CDraggable>() && e->getComponent<CDraggable>().dragged) {
+            Vec2 world_pos = mouseToWorldPos(m_mouse_pos);
+            e->getComponent<CTransform>().pos = world_pos;
+        }
     }
 }
 

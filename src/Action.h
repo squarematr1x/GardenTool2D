@@ -20,19 +20,30 @@ enum class ActionName : unsigned char {
 	QUIT,
 	TOGGLE_TEXTURE,
 	TOGGLE_COLLISION,
-	TOGGLE_GRID
+	TOGGLE_GRID,
+	LEFT_CLICK,
+	MIDDLE_CLICK,
+	RIGHT_CLICK,
+	MOUSE_MOVE
 };
 
 struct Action
 {
 	ActionName name{ ActionName::NONE };
 	ActionType type{ ActionType::NONE };
+	Vec2 pos{ Vec2(0, 0) };
 
 	Action(ActionName name_in, ActionType type_in)
 		: name(name_in), type(type_in)
 	{
 	}
 
+	Action(ActionName name_in, ActionType type_in, const Vec2& pos_in)
+		: name(name_in), type(type_in), pos(pos_in)
+	{
+	}
+
 	ActionName getName() const { return name; }
 	ActionType getType() const { return type; }
+	const Vec2& getPos() const { return pos; }
 };
