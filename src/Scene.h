@@ -97,6 +97,9 @@ class ScenePlay: public Scene
 	sf::Text m_grid_text;
 	sf::Text m_pause_text;
 
+	Vec2 m_mouse_pos;
+	sf::CircleShape m_mouse_shape;
+
 public:
 	ScenePlay(GameEngine* engine, const std::string& level_path);
 
@@ -104,6 +107,8 @@ public:
 	void update();
 
 	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity);
+
+	Vec2 mouseToWorldPos(const Vec2& mouse_pos) const;
 
 	bool canShoot() const;
 	bool canJump() const;

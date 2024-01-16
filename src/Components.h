@@ -136,3 +136,10 @@ struct CState: Component {
 	{
 	}
 };
+
+struct CDraggable: Component {
+	bool dragged{ false };
+
+	CDraggable() {}
+	// To implement drag'n'drop or pick up and drop down later...
+};
