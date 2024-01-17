@@ -27,7 +27,6 @@ void ScenePlay::init(const std::string& level_path) {
     registerAction(sf::Mouse::Button::Left, ActionName::LEFT_CLICK);
     registerAction(sf::Mouse::Button::Middle, ActionName::MIDDLE_CLICK);
     registerAction(sf::Mouse::Button::Right, ActionName::RIGHT_CLICK);
-    //registerAction(sf::Mouse::)
 
     m_grid_text.setCharacterSize(12);
     m_grid_text.setFont(m_engine->assets().getFont("Arial"));
@@ -96,7 +95,8 @@ void ScenePlay::loadLevel(const std::string& path) {
             tile->addComponent<CTransform>(gridToMidPixel(x, y, tile));
             tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later
 
-            if (tile->getComponent<CAnimation>().animation.getName() == "Brick") {
+            if (tile->getComponent<CAnimation>().animation.getName() == "Brick" ||
+                tile->getComponent<CAnimation>().animation.getName() == "Question1") {
                 const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
                 tile->addComponent<CBBox>(animation_size);
             }
@@ -294,6 +294,7 @@ void ScenePlay::sDoAction(const Action& action) {
                             std::cout << "Clicked entity: " << e->getComponent<CAnimation>().animation.getName() << '\n';
                         }
                     }
+                    break;
                 }
                 case ActionName::MIDDLE_CLICK: break;
                 case ActionName::RIGHT_CLICK: break;

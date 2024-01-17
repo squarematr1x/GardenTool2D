@@ -1,13 +1,15 @@
 Texture BrickText assets/images/tile.png
 Animation Brick BrickText 1 1
+Texture Question1Text assets/images/question1.png
+Animation Question1 Question1Text 1 1
 Texture PlayerStandText assets/images/thingstand.png
 Animation Stand PlayerStandText 4 10
 Texture PlayerRunText assets/images/thingrun.png
 Animation Run PlayerRunText 4 8
 Texture PlayerJumpText assets/images/thingjump.png
 Animation Jump PlayerJumpText 1 1
-Texture FireText assets/images/bullet.png
-Animation Fire FireText 1 1
+Texture FireText assets/images/coin.png
+Animation Fire FireText 4 15
 Texture BushText assets/images/bush.png
 Animation Bush BushText 4 15
 Texture CloudText1 assets/images/cloud1.png
