@@ -5,12 +5,12 @@
 #include "GameEngine.h"
 #include "Physics.h"
 
-ScenePlay::ScenePlay(GameEngine* engine, const std::string& level_path)
+SceneSideScroller::SceneSideScroller(GameEngine* engine, const std::string& level_path)
     : Scene(engine), m_level_path(level_path) {
     init(level_path);
 }
 
-void ScenePlay::init(const std::string& level_path) {
+void SceneSideScroller::init(const std::string& level_path) {
     registerAction(sf::Keyboard::P, ActionName::PAUSE);
     registerAction(sf::Keyboard::Escape, ActionName::QUIT);
     registerAction(sf::Keyboard::T, ActionName::TOGGLE_TEXTURE);
@@ -36,7 +36,7 @@ void ScenePlay::init(const std::string& level_path) {
     loadLevel(level_path);
 }
 
-Vec2 ScenePlay::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entity> entity) {
+Vec2 SceneSideScroller::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entity> entity) {
     if (entity->hasComponent<CAnimation>()) {
         const auto& animation_size = entity->getComponent<CAnimation>().animation.getSize();
         const float x = grid_x * m_grid_size.x + (animation_size.x / 2.0f);
@@ -48,7 +48,7 @@ Vec2 ScenePlay::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entit
 }
 
 // NOTE: Doesn't take zooming into account
-Vec2 ScenePlay::mouseToWorldPos(const Vec2& mouse_pos) const {
+Vec2 SceneSideScroller::mouseToWorldPos(const Vec2& mouse_pos) const {
     auto view = m_engine->window().getView();
     float world_x = view.getCenter().x - (m_engine->window().getSize().x/2);
     float world_y = view.getCenter().y - (m_engine->window().getSize().y/2);
@@ -56,16 +56,16 @@ Vec2 ScenePlay::mouseToWorldPos(const Vec2& mouse_pos) const {
     return Vec2(mouse_pos.x + world_x, mouse_pos.y + world_y);
 }
 
-bool ScenePlay::canJump() const {
+bool SceneSideScroller::canJump() const {
     auto player_state = m_player->getComponent<CState>().state;
     return m_can_jump && (player_state == State::STAND || player_state == State::RUN);
 }
 
-bool ScenePlay::canShoot() const {
+bool SceneSideScroller::canShoot() const {
     return m_can_shoot;
 }
 
-bool ScenePlay::isInside(const Vec2& pos, std::shared_ptr<Entity> entity) {
+bool SceneSideScroller::isInside(const Vec2& pos, std::shared_ptr<Entity> entity) {
     auto e_pos = entity->getComponent<CTransform>().pos;
     auto size = entity->getComponent<CAnimation>().animation.getSize();
 
@@ -75,7 +75,7 @@ bool ScenePlay::isInside(const Vec2& pos, std::shared_ptr<Entity> entity) {
     return (dx <= size.x/2) && (dy <= size.y/2);
 }
 
-void ScenePlay::loadLevel(const std::string& path) {
+void SceneSideScroller::loadLevel(const std::string& path) {
     // reset the entity manager every time we load a level
     m_entity_manager = EntityManager();
 
@@ -115,7 +115,7 @@ void ScenePlay::loadLevel(const std::string& path) {
     spawnPlayer();
 }
 
-void ScenePlay::spawnPlayer() {
+void SceneSideScroller::spawnPlayer() {
     m_player = m_entity_manager.addEntity(Tag::PLAYER);
     m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Megaman"), true);
     m_player->addComponent<CTransform>(gridToMidPixel(m_player_config.x, m_player_config.y, m_player));
@@ -123,7 +123,7 @@ void ScenePlay::spawnPlayer() {
     m_player->addComponent<CGravity>(m_player_config.gravity);
 }
 
-void ScenePlay::spawnBullet() {
+void SceneSideScroller::spawnBullet() {
     auto transform = m_player->getComponent<CTransform>();
 
     auto bullet = m_entity_manager.addEntity(Tag::BULLET);
@@ -139,13 +139,13 @@ void ScenePlay::spawnBullet() {
     bullet->addComponent<CLifespan>(60);
 }
 
-void ScenePlay::spawnExplosion(const Vec2& pos) {
+void SceneSideScroller::spawnExplosion(const Vec2& pos) {
     auto explosion = m_entity_manager.addEntity(Tag::EXPLOSION);
     explosion->addComponent<CAnimation>(m_engine->assets().getAnimation("Explosion"));
     explosion->addComponent<CTransform>(pos, Vec2(0, 0));
 }
 
-void ScenePlay::update() {
+void SceneSideScroller::update() {
     if (!m_paused) {
         m_entity_manager.update();
 
@@ -161,7 +161,7 @@ void ScenePlay::update() {
     sRender();
 }
 
-void ScenePlay::sMovement() {
+void SceneSideScroller::sMovement() {
     Vec2 player_v = m_player->getComponent<CTransform>().velocity;
     auto& player_state = m_player->getComponent<CState>().state;
     auto& input = m_player->getComponent<CInput>();
@@ -211,7 +211,7 @@ void ScenePlay::sMovement() {
     }
 }
 
-void ScenePlay::sLifespan() {
+void SceneSideScroller::sLifespan() {
     for (auto entity : m_entity_manager.getEntities()) {
         if (entity->hasComponent<CLifespan>()) {
             if (entity->getComponent<CLifespan>().remaining <= 0) {
@@ -223,7 +223,7 @@ void ScenePlay::sLifespan() {
     }
 }
 
-void ScenePlay::sCollision() {
+void SceneSideScroller::sCollision() {
     auto& p_transfrom = m_player->getComponent<CTransform>();
     auto& p_state = m_player->getComponent<CState>();
     auto& p_bbox = m_player->getComponent<CBBox>();
@@ -274,7 +274,7 @@ void ScenePlay::sCollision() {
     }
 }
 
-void ScenePlay::sDoAction(const Action& action) {
+void SceneSideScroller::sDoAction(const Action& action) {
     switch (action.getType()) {
         case ActionType::START: {
             switch (action.getName()) {
@@ -327,7 +327,7 @@ void ScenePlay::sDoAction(const Action& action) {
     }
 }
 
-void ScenePlay::sAnimation() {
+void SceneSideScroller::sAnimation() {
     for (auto entity : m_entity_manager.getEntities()) {
         if (!entity->hasComponent<CAnimation>()) { continue; }
 
@@ -356,7 +356,7 @@ void ScenePlay::sAnimation() {
     }
 }
 
-void ScenePlay::sRender() {
+void SceneSideScroller::sRender() {
     m_engine->window().clear(sf::Color(70, 80, 255));
 
     // set the viewport of the window to be centered on the player if it's far enough right
@@ -437,7 +437,7 @@ void ScenePlay::sRender() {
     m_engine->window().draw(m_mouse_shape);
 }
 
-void ScenePlay::sDragAndDrop() {
+void SceneSideScroller::sDragAndDrop() {
     for (auto e : m_entity_manager.getEntities()) {
         if (e->hasComponent<CDraggable>() && e->getComponent<CDraggable>().dragged) {
             Vec2 world_pos = mouseToWorldPos(m_mouse_pos);
@@ -446,7 +446,7 @@ void ScenePlay::sDragAndDrop() {
     }
 }
 
-void ScenePlay::onEnd() {
+void SceneSideScroller::onEnd() {
     // Reset view
     m_engine->window().setView(m_engine->window().getDefaultView());
 

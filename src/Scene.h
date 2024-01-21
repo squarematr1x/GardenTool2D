@@ -72,7 +72,7 @@ public:
 	void sRender();
 };
 
-class ScenePlay: public Scene
+class SceneSideScroller: public Scene
 {
 	struct PlayerConfig {
 		float x{ 0.0f };
@@ -101,7 +101,7 @@ class ScenePlay: public Scene
 	sf::CircleShape m_mouse_shape;
 
 public:
-	ScenePlay(GameEngine* engine, const std::string& level_path);
+	SceneSideScroller(GameEngine* engine, const std::string& level_path);
 
 	void init(const std::string& level_path);
 	void update();
