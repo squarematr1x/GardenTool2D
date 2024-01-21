@@ -27,7 +27,7 @@ Tile Brick 14 0
 Tile Brick 15 0
 Tile Brick 15 1
 Tile Brick 15 4
-Dec Bush 1 2
+Dec Coin 10 4 
 Dec Bush 7 2
 Dec Cloud1 3 8
 Dec Cloud1 8 9

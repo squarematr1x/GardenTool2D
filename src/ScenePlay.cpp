@@ -117,7 +117,7 @@ void ScenePlay::loadLevel(const std::string& path) {
 
 void ScenePlay::spawnPlayer() {
     m_player = m_entity_manager.addEntity(Tag::PLAYER);
-    m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Stand"), true);
+    m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Megaman"), true);
     m_player->addComponent<CTransform>(gridToMidPixel(m_player_config.x, m_player_config.y, m_player));
     m_player->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y));
     m_player->addComponent<CGravity>(m_player_config.gravity);
@@ -247,6 +247,9 @@ void ScenePlay::sCollision() {
                     p_transfrom.pos.y += overlap.y;
                     spawnExplosion(entity->getComponent<CTransform>().pos);
                     entity->destroy();
+
+                    // Implement question box collision:
+                    // Spawn coin animation
                 }
                 p_transfrom.velocity.y = 0.0f;
             }
@@ -340,11 +343,11 @@ void ScenePlay::sAnimation() {
             if (p_state.state != p_state.prev_state) {
                 switch (p_state.state) {
                     case State::STAND:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Stand"), true); break;
+                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Megaman"), true); break;
                     case State::RUN:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Run"), true); break;
+                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("MegamanRun"), true); break;
                     case State::JUMP:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Jump"), true); break;
+                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("MegamanJump"), true); break;
                     default: break;
                 }
             }

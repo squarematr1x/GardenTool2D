@@ -8,8 +8,8 @@ Texture PlayerRunText assets/images/thingrun.png
 Animation Run PlayerRunText 4 8
 Texture PlayerJumpText assets/images/thingjump.png
 Animation Jump PlayerJumpText 1 1
-Texture FireText assets/images/coin.png
-Animation Fire FireText 4 15
+Texture FireText assets/images/bullet.png
+Animation Fire FireText 1 1
 Texture BushText assets/images/bush.png
 Animation Bush BushText 4 15
 Texture CloudText1 assets/images/cloud1.png
@@ -18,4 +18,12 @@ Texture CloudText2 assets/images/cloud2.png
 Animation Cloud2 CloudText2 1 1
 Texture ExplosionText assets/images/explosion.png
 Animation Explosion ExplosionText 4 10
+Texture CoinText assets/images/coin.png
+Animation Coin CoinText 4 10
+Texture MegamanText assets/images/megamanstand.png
+Animation Megaman MegamanText 4 20
+Texture MegamanJumpText assets/images/megamanjump.png
+Animation MegamanJump MegamanJumpText 1 1
+Texture MegamanRunText assets/images/megamanrun.png
+Animation MegamanRun MegamanRunText 4 10
 Font Arial assets/fonts/arial.ttf
