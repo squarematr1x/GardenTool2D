@@ -170,3 +170,22 @@ struct CDraggable: Component {
 
 	CDraggable() {}
 };
+
+struct CFollowPlayer: Component {
+	Vec2 home = { 0, 0 };
+	float velocity{ 0.0f };
+
+	CFollowPlayer() {}
+	CFollowPlayer(Vec2 home_in, float velocity_in)
+		: home(home_in), velocity(velocity_in) {}
+};
+
+struct CPatrol: Component {
+	std::vector<Vec2> positions;
+	size_t cur_pos{ 0 };
+	float velocity{ 0.0f };
+
+	CPatrol() {}
+	CPatrol(const std::vector<Vec2>& positions_in, float velocity_in)
+		: positions(positions_in), velocity(velocity_in) {}
+};
