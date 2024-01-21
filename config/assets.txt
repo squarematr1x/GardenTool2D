@@ -19,5 +19,5 @@ Animation Megaman MegamanText 4 20
 Texture MegamanJumpText assets/images/megamanjump.png
 Animation MegamanJump MegamanJumpText 1 1
 Texture MegamanRunText assets/images/megamanrun.png
-Animation MegamanRun MegamanRunText 4 10
+Animation MegamanRun MegamanRunText 3 10
 Font Arial assets/fonts/arial.ttf
