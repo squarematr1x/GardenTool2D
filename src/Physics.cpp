@@ -38,4 +38,16 @@ Vec2 getPrevOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
 	return Vec2(overlap_x, overlap_y);
 }
 
+bool isInside(const Vec2& pos, std::shared_ptr<Entity> e) {
+	return false;
+}
+
+bool entityIntersect(const Vec2& a, const Vec2& b, std::shared_ptr<Entity> e) {
+	return false;
+}
+
+Intersect lineIntersect(const Vec2& a, const Vec2& b, const Vec2& c, const Vec2& d) {
+	return { false, Vec2(0, 0) };
+}
+
 } // namespace physics

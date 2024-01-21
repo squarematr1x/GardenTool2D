@@ -275,55 +275,49 @@ void SceneSideScroller::sCollision() {
 }
 
 void SceneSideScroller::sDoAction(const Action& action) {
-    switch (action.getType()) {
-        case ActionType::START: {
-            switch (action.getName()) {
-                case ActionName::TOGGLE_TEXTURE: m_draw_textures = !m_draw_textures; break;
-                case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
-                case ActionName::TOGGLE_GRID: m_draw_grid = !m_draw_grid; break;
-                case ActionName::PAUSE: setPaused(!m_paused); break;
-                case ActionName::UP: m_player->getComponent<CInput>().up = true; break;
-                case ActionName::RIGHT: m_player->getComponent<CInput>().right = true; break;
-                case ActionName::DOWN: m_player->getComponent<CInput>().down = true; break;
-                case ActionName::LEFT: m_player->getComponent<CInput>().left = true; break;
-                case ActionName::SHOOT: m_player->getComponent<CInput>().shoot = true; break;
-                case ActionName::MOUSE_MOVE: m_mouse_pos = action.pos; m_mouse_shape.setPosition(m_mouse_pos.x, m_mouse_pos.y); break;
-                case ActionName::LEFT_CLICK: {
-                    Vec2 world_pos = mouseToWorldPos(action.pos);
-                    for (auto e : m_entity_manager.getEntities()) {
-                        if (e->hasComponent<CDraggable>() && isInside(world_pos, e)) {
-                            auto& dragged = e->getComponent<CDraggable>().dragged;
-                            dragged = !dragged;
-                            std::cout << "Clicked entity: " << e->getComponent<CAnimation>().animation.getName() << '\n';
-                        }
+    if (action.getType() == ActionType::START) {
+        switch (action.getName()) {
+            case ActionName::TOGGLE_TEXTURE: m_draw_textures = !m_draw_textures; break;
+            case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
+            case ActionName::TOGGLE_GRID: m_draw_grid = !m_draw_grid; break;
+            case ActionName::PAUSE: setPaused(!m_paused); break;
+            case ActionName::UP: m_player->getComponent<CInput>().up = true; break;
+            case ActionName::RIGHT: m_player->getComponent<CInput>().right = true; break;
+            case ActionName::DOWN: m_player->getComponent<CInput>().down = true; break;
+            case ActionName::LEFT: m_player->getComponent<CInput>().left = true; break;
+            case ActionName::SHOOT: m_player->getComponent<CInput>().shoot = true; break;
+            case ActionName::MOUSE_MOVE: m_mouse_pos = action.pos; m_mouse_shape.setPosition(m_mouse_pos.x, m_mouse_pos.y); break;
+            case ActionName::LEFT_CLICK: {
+                Vec2 world_pos = mouseToWorldPos(action.pos);
+                for (auto e : m_entity_manager.getEntities()) {
+                    if (e->hasComponent<CDraggable>() && isInside(world_pos, e)) {
+                        auto& dragged = e->getComponent<CDraggable>().dragged;
+                        dragged = !dragged;
+                        std::cout << "Clicked entity: " << e->getComponent<CAnimation>().animation.getName() << '\n';
                     }
-                    break;
                 }
-                case ActionName::MIDDLE_CLICK: break;
-                case ActionName::RIGHT_CLICK: break;
-                case ActionName::QUIT: onEnd(); break;
-                default: break;
+                break;
             }
-            break;
+            case ActionName::MIDDLE_CLICK: break;
+            case ActionName::RIGHT_CLICK: break;
+            case ActionName::QUIT: onEnd(); break;
+            default: break;
+        } 
+    } else if (action.getType() == ActionType::END) {
+        switch (action.getName()) {
+            case ActionName::RIGHT: m_player->getComponent<CInput>().right = false; break;
+            case ActionName::DOWN: m_player->getComponent<CInput>().down = false; break;
+            case ActionName::LEFT: m_player->getComponent<CInput>().left = false; break;
+            case ActionName::UP:
+                m_player->getComponent<CInput>().up = false;
+                m_can_jump = true;
+                break;
+            case ActionName::SHOOT:
+                m_can_shoot = true;
+                m_player->getComponent<CInput>().shoot = false; 
+                break;
+            default: break;
         }
-        case ActionType::END: {
-            switch (action.getName()) {
-                case ActionName::RIGHT: m_player->getComponent<CInput>().right = false; break;
-                case ActionName::DOWN: m_player->getComponent<CInput>().down = false; break;
-                case ActionName::LEFT: m_player->getComponent<CInput>().left = false; break;
-                case ActionName::UP:
-                    m_player->getComponent<CInput>().up = false;
-                    m_can_jump = true;
-                    break;
-                case ActionName::SHOOT:
-                    m_can_shoot = true;
-                    m_player->getComponent<CInput>().shoot = false; 
-                    break;
-                default: break;
-            }
-            break;
-        }
-        default: break;
     }
 }
 

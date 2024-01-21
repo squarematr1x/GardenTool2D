@@ -72,3 +72,20 @@ const sf::Font& Assets::getFont(const std::string& font_name) const {
 	assert(m_font_map.find(font_name) != m_font_map.end());
 	return m_font_map.at(font_name);
 }
+
+void Assets::addSound(const std::string& sound_name, const std::string& path) {
+
+	// m_sound_map[sound_name] = sf::SoundBuffer();
+
+	// if (!m_sound_map[sound_name].loadFromFile(path)) {
+	// 	std::cerr << "Cannot load font file: " << path << '\n';
+	// 	m_font_map.erase(sound_name);
+	// } else {
+	// 	std::cout << "Loaded Font: " << path << '\n';
+	// }
+}
+
+const sf::Sound& Assets::getSound(const std::string& sound_name) const {
+	assert(m_sound_map.find(sound_name) != m_sound_map.end());
+	return m_sound_map.at(sound_name);
+}
