@@ -27,7 +27,6 @@ void ScenePlay::init(const std::string& level_path) {
     registerAction(sf::Mouse::Button::Left, ActionName::LEFT_CLICK);
     registerAction(sf::Mouse::Button::Middle, ActionName::MIDDLE_CLICK);
     registerAction(sf::Mouse::Button::Right, ActionName::RIGHT_CLICK);
-    //registerAction(sf::Mouse::)
 
     m_grid_text.setCharacterSize(12);
     m_grid_text.setFont(m_engine->assets().getFont("Arial"));
@@ -96,7 +95,8 @@ void ScenePlay::loadLevel(const std::string& path) {
             tile->addComponent<CTransform>(gridToMidPixel(x, y, tile));
             tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later
 
-            if (tile->getComponent<CAnimation>().animation.getName() == "Brick") {
+            if (tile->getComponent<CAnimation>().animation.getName() == "Brick" ||
+                tile->getComponent<CAnimation>().animation.getName() == "Question1") {
                 const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
                 tile->addComponent<CBBox>(animation_size);
             }
@@ -117,7 +117,7 @@ void ScenePlay::loadLevel(const std::string& path) {
 
 void ScenePlay::spawnPlayer() {
     m_player = m_entity_manager.addEntity(Tag::PLAYER);
-    m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Stand"), true);
+    m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Megaman"), true);
     m_player->addComponent<CTransform>(gridToMidPixel(m_player_config.x, m_player_config.y, m_player));
     m_player->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y));
     m_player->addComponent<CGravity>(m_player_config.gravity);
@@ -247,6 +247,9 @@ void ScenePlay::sCollision() {
                     p_transfrom.pos.y += overlap.y;
                     spawnExplosion(entity->getComponent<CTransform>().pos);
                     entity->destroy();
+
+                    // Implement question box collision:
+                    // Spawn coin animation
                 }
                 p_transfrom.velocity.y = 0.0f;
             }
@@ -294,6 +297,7 @@ void ScenePlay::sDoAction(const Action& action) {
                             std::cout << "Clicked entity: " << e->getComponent<CAnimation>().animation.getName() << '\n';
                         }
                     }
+                    break;
                 }
                 case ActionName::MIDDLE_CLICK: break;
                 case ActionName::RIGHT_CLICK: break;
@@ -339,11 +343,11 @@ void ScenePlay::sAnimation() {
             if (p_state.state != p_state.prev_state) {
                 switch (p_state.state) {
                     case State::STAND:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Stand"), true); break;
+                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Megaman"), true); break;
                     case State::RUN:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Run"), true); break;
+                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("MegamanRun"), true); break;
                     case State::JUMP:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Jump"), true); break;
+                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("MegamanJump"), true); break;
                     default: break;
                 }
             }
