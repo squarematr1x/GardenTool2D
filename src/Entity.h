@@ -10,7 +10,10 @@
 typedef std::tuple<
 	CTransform,
 	CLifespan,
+	CHealth,
 	CInput,
+	CDamage,
+	CInvicibility,
 	CBBox,
 	CAnimation,
 	CGravity,
