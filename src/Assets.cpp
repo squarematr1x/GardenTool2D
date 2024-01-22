@@ -74,7 +74,8 @@ const sf::Font& Assets::getFont(const std::string& font_name) const {
 }
 
 void Assets::addSound(const std::string& sound_name, const std::string& path) {
-
+	(void)sound_name;
+	(void)path;
 	// m_sound_map[sound_name] = sf::SoundBuffer();
 
 	// if (!m_sound_map[sound_name].loadFromFile(path)) {

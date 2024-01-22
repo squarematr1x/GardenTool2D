@@ -6,7 +6,7 @@ SceneRPG::SceneRPG(GameEngine* engine, const std::string& level_path)
     init(level_path);
 }
 
-void SceneSideScroller::init(const std::string& level_path) {
+void SceneRPG::init(const std::string& level_path) {
     registerAction(sf::Keyboard::P, ActionName::PAUSE);
     registerAction(sf::Keyboard::Escape, ActionName::QUIT);
     registerAction(sf::Keyboard::T, ActionName::TOGGLE_TEXTURE);
@@ -33,11 +33,16 @@ void SceneSideScroller::init(const std::string& level_path) {
 }
 
 void SceneRPG::loadLevel(const std::string& path) {
+    (void)path;
     // TODO: load level from file
     spawnPlayer();
 }
 
 Vec2 SceneRPG::getPosition(int rx, int ry, int tx, int ty) const {
+    (void)rx;
+    (void)ry;
+    (void)tx;
+    (void)ty;
     return Vec2(0, 0);
 }
 
@@ -50,6 +55,7 @@ void SceneRPG::spawnPlayer() {
 }
 
 void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) {
+    (void)entity;
     // CTransform facing example: left: (-1, 0), up: (0, -1), right: (1, 0), down (0, 1)
 	// facing can be used to calculate offset of a weapon from player pos
 	// e.g. spawn sword pos = (ppos.x + facing.x*grid_x, ppos.y +facing.y*grid_y)
@@ -88,6 +94,7 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::TOGGLE_FOLLOW: m_follow = !m_follow; break;
             case ActionName::TOGGLE_TEXTURE: break;
             case ActionName::TOGGLE_COLLISION: break;
+            default: break;
         }
     } else if (action.getType() == ActionType::END) {
 
