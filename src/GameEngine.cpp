@@ -106,3 +106,8 @@ void GameEngine::sUserInput() {
 		}
 	}
 }
+
+void GameEngine::playeSound(const std::string& sound_name) {
+	(void)sound_name;
+	// m_assets.getSound(sound_name).play();
+}

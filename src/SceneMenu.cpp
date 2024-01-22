@@ -29,7 +29,7 @@ void SceneMenu::sDoAction(const Action& action) {
     } else if (action.getName() == ActionName::DOWN) {
         m_menu_index = (m_menu_index + 1) % m_menu_strings.size();
     } else if (action.getName() == ActionName::PLAY) {
-        m_engine->changeScene(SceneType::SIDE_SCROLL, std::make_shared<ScenePlay>(m_engine, m_level_paths[m_menu_index]));
+        m_engine->changeScene(SceneType::SIDE_SCROLL, std::make_shared<SceneSideScroller>(m_engine, m_level_paths[m_menu_index]));
     } else if (action.getName() == ActionName::QUIT) {
         onEnd();
     }

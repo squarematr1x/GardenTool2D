@@ -72,7 +72,7 @@ public:
 	void sRender();
 };
 
-class ScenePlay: public Scene
+class SceneSideScroller: public Scene
 {
 	struct PlayerConfig {
 		float x{ 0.0f };
@@ -101,7 +101,7 @@ class ScenePlay: public Scene
 	sf::CircleShape m_mouse_shape;
 
 public:
-	ScenePlay(GameEngine* engine, const std::string& level_path);
+	SceneSideScroller(GameEngine* engine, const std::string& level_path);
 
 	void init(const std::string& level_path);
 	void update();
@@ -132,4 +132,33 @@ public:
 	void sDebug();
 
 	void onEnd();
+};
+
+class SceneRPG: public Scene
+{
+	std::string m_level_path{ "" };
+	std::shared_ptr<Entity> m_player;
+	bool m_follow{ false };
+
+public:
+	SceneRPG(GameEngine* engine, const std::string& level_path);
+
+	void init(const std::string& level_path);
+	void update();
+
+	void loadLevel(const std::string& path);
+
+	void spawnPlayer();
+	void spawnSword(std::shared_ptr<Entity> entity);
+
+	Vec2 getPosition(int rx, int ry, int tx, int ty) const; // return Vec2 game world positon of the center of the entity (use this in loadLevel())
+
+	void sAI();
+	void sMovement();
+	void sStatus();
+	void sCollision();
+	void sAnimation();
+	void sCamera();
+	void sDoAction(const Action& action);
+	// With most of the things just mimick SceneSideScroller
 };

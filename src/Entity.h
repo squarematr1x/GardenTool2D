@@ -10,12 +10,17 @@
 typedef std::tuple<
 	CTransform,
 	CLifespan,
+	CHealth,
 	CInput,
+	CDamage,
+	CInvicibility,
 	CBBox,
 	CAnimation,
 	CGravity,
 	CState,
-	CDraggable
+	CDraggable,
+	CFollowPlayer,
+	CPatrol
 > ComponentTuple;
 
 enum class Tag : unsigned char {

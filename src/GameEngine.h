@@ -27,6 +27,7 @@ class GameEngine
 	void update();
 
 	void sUserInput();
+	void playeSound(const std::string& sound_name);
 
 	std::shared_ptr<Scene> currentScene() { return m_scenes[m_cur_scene]; }
 
