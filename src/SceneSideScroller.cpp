@@ -65,16 +65,6 @@ bool SceneSideScroller::canShoot() const {
     return m_can_shoot;
 }
 
-bool SceneSideScroller::isInside(const Vec2& pos, std::shared_ptr<Entity> entity) {
-    auto e_pos = entity->getComponent<CTransform>().pos;
-    auto size = entity->getComponent<CAnimation>().animation.getSize();
-
-    float dx = fabs(pos.x - e_pos.x);
-    float dy = fabs(pos.y - e_pos.y);
-
-    return (dx <= size.x/2) && (dy <= size.y/2);
-}
-
 void SceneSideScroller::loadLevel(const std::string& path) {
     // reset the entity manager every time we load a level
     m_entity_manager = EntityManager();
@@ -290,7 +280,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::LEFT_CLICK: {
                 Vec2 world_pos = mouseToWorldPos(action.pos);
                 for (auto e : m_entity_manager.getEntities()) {
-                    if (e->hasComponent<CDraggable>() && isInside(world_pos, e)) {
+                    if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
                         auto& dragged = e->getComponent<CDraggable>().dragged;
                         dragged = !dragged;
                         std::cout << "Clicked entity: " << e->getComponent<CAnimation>().animation.getName() << '\n';

@@ -112,7 +112,6 @@ public:
 
 	bool canShoot() const;
 	bool canJump() const;
-	bool isInside(const Vec2& pos, std::shared_ptr<Entity> entity);
 
 	void loadLevel(const std::string& path);
 
