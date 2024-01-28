@@ -110,3 +110,15 @@ void GameEngine::sUserInput() {
 void GameEngine::playSound(const std::string& sound_name) {
 	m_assets.getSound(sound_name).play();
 }
+
+// TODO: When switching song, stop the previous song
+void GameEngine::playMusic(const std::string& music_name) {
+	auto music = m_assets.getMusic(music_name);
+	music->setVolume(25.0f);
+	music->setLoop(true);
+	music->play();
+}
+
+void GameEngine::stopMusic(const std::string& music_name) {
+	m_assets.getMusic(music_name)->stop();
+}

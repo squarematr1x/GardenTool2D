@@ -34,6 +34,8 @@ void SceneSideScroller::init(const std::string& level_path) {
     m_pause_text.setFont(m_engine->assets().getFont("Arial"));
 
     loadLevel(level_path);
+
+    m_engine->playMusic("Level1Music");
 }
 
 Vec2 SceneSideScroller::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entity> entity) {
@@ -433,8 +435,12 @@ void SceneSideScroller::sDragAndDrop() {
 }
 
 void SceneSideScroller::onEnd() {
+    // Stop music
+    m_engine->stopMusic("Level1Music");
+
     // Reset view
     m_engine->window().setView(m_engine->window().getDefaultView());
 
+    // Go back to menu
     m_engine->changeScene(SceneType::MENU, std::make_shared<SceneMenu>(m_engine), true);
 }

@@ -38,6 +38,8 @@ public:
 
 	void changeScene(const SceneType scene_name, std::shared_ptr<Scene> scene, bool end_current_scene = false);
 	void playSound(const std::string& sound_name);
+	void playMusic(const std::string& music_name);
+	void stopMusic(const std::string& music_name);
 
 	sf::RenderWindow& window() { return m_window; };
 	const Assets& assets() const { return m_assets; };
