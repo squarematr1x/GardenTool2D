@@ -153,6 +153,7 @@ void SceneSideScroller::update() {
 
 void SceneSideScroller::sMovement() {
     Vec2 player_v = m_player->getComponent<CTransform>().velocity;
+    Vec2 player_scale = m_player->getComponent<CTransform>().scale;
     auto& player_state = m_player->getComponent<CState>().state;
     auto& input = m_player->getComponent<CInput>();
 
@@ -164,12 +165,12 @@ void SceneSideScroller::sMovement() {
     }
     if (input.left) {
         player_v.x = -m_player_config.v;
-        m_player->getComponent<CTransform>().scale = Vec2(-1, 1); // TODO: Should only change the sign of scale.x
+        m_player->getComponent<CTransform>().scale = Vec2(-fabsf(player_scale.x), player_scale.y);
         if (player_v.y == 0 && player_state != State::JUMP) { player_state = State::RUN; }
     }
     if (input.right) {
         player_v.x = m_player_config.v;
-        m_player->getComponent<CTransform>().scale = Vec2(1, 1);
+        m_player->getComponent<CTransform>().scale = Vec2(fabsf(player_scale.x), player_scale.y);
         if (player_v.y == 0 && player_state != State::JUMP) { player_state = State::RUN; }
     }
     if (canShoot() && input.shoot) {
