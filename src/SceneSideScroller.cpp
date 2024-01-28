@@ -162,6 +162,7 @@ void SceneSideScroller::sMovement() {
         m_can_jump = false;
         player_state = State::JUMP;
         player_v.y = -m_player_config.jump_v;
+        m_engine->playSound("SoundJump");
     }
     if (input.left) {
         player_v.x = -m_player_config.v;
