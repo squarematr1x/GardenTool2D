@@ -29,6 +29,10 @@ void Assets::loadFromFile(const std::string& path) {
 			std::string name, sound_path;
 			file >> name >> sound_path;
 			addSound(name, sound_path);
+		} else if (str == "Music") { 
+			std::string name, music_path;
+			file >> name >> music_path;
+			addMusic(name, music_path);
 		} else {
 			std::cerr << "Unknown asset type: " << str << '\n';
 		}
@@ -81,7 +85,7 @@ void Assets::addSoundBuffer(const std::string& sound_name, const std::string& pa
 	m_sound_buffer_map[sound_name] = sf::SoundBuffer();
 
 	if (!m_sound_buffer_map[sound_name].loadFromFile(path)) {
-		std::cerr << "Cannot sound file: " << path << '\n';
+		std::cerr << "Cannot load sound file: " << path << '\n';
 		m_font_map.erase(sound_name);
 	} else {
 		std::cout << "Loaded Sound: " << path << '\n';
@@ -101,4 +105,19 @@ void Assets::addSound(const std::string& sound_name, const std::string& path) {
 sf::Sound Assets::getSound(const std::string& sound_name) const {
 	assert(m_sound_map.find(sound_name) != m_sound_map.end());
 	return m_sound_map.at(sound_name);
+}
+
+void Assets::addMusic(const std::string& music_name, const std::string& path) {
+	m_music_map[music_name] = std::make_shared<sf::Music>();
+	if (!m_music_map[music_name]->openFromFile(path)) {
+		std::cerr << "Cannot load music file: " << path << '\n';
+		m_music_map.erase(music_name);
+	} else {
+		std::cout << "Loaded Music: " << path << '\n';
+	}
+}
+
+const std::shared_ptr<sf::Music> Assets::getMusic(const std::string& music_name) const {
+	assert(m_music_map.find(music_name) != m_music_map.end());
+	return m_music_map.at(music_name);
 }

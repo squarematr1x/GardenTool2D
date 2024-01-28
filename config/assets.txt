@@ -22,3 +22,4 @@ Texture MegamanRunText assets/images/megamanrun.png
 Animation MegamanRun MegamanRunText 3 10
 Font Arial assets/fonts/arial.ttf
 Sound SoundJump assets/sounds/jump.wav
+Music Level1Music assets/music/level1.wav
