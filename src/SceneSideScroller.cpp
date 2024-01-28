@@ -65,16 +65,6 @@ bool SceneSideScroller::canShoot() const {
     return m_can_shoot;
 }
 
-bool SceneSideScroller::isInside(const Vec2& pos, std::shared_ptr<Entity> entity) {
-    auto e_pos = entity->getComponent<CTransform>().pos;
-    auto size = entity->getComponent<CAnimation>().animation.getSize();
-
-    float dx = fabs(pos.x - e_pos.x);
-    float dy = fabs(pos.y - e_pos.y);
-
-    return (dx <= size.x/2) && (dy <= size.y/2);
-}
-
 void SceneSideScroller::loadLevel(const std::string& path) {
     // reset the entity manager every time we load a level
     m_entity_manager = EntityManager();
@@ -163,6 +153,7 @@ void SceneSideScroller::update() {
 
 void SceneSideScroller::sMovement() {
     Vec2 player_v = m_player->getComponent<CTransform>().velocity;
+    Vec2 player_scale = m_player->getComponent<CTransform>().scale;
     auto& player_state = m_player->getComponent<CState>().state;
     auto& input = m_player->getComponent<CInput>();
 
@@ -174,12 +165,12 @@ void SceneSideScroller::sMovement() {
     }
     if (input.left) {
         player_v.x = -m_player_config.v;
-        m_player->getComponent<CTransform>().scale = Vec2(-1, 1); // TODO: Should only change the sign of scale.x
+        m_player->getComponent<CTransform>().scale = Vec2(-fabsf(player_scale.x), player_scale.y);
         if (player_v.y == 0 && player_state != State::JUMP) { player_state = State::RUN; }
     }
     if (input.right) {
         player_v.x = m_player_config.v;
-        m_player->getComponent<CTransform>().scale = Vec2(1, 1);
+        m_player->getComponent<CTransform>().scale = Vec2(fabsf(player_scale.x), player_scale.y);
         if (player_v.y == 0 && player_state != State::JUMP) { player_state = State::RUN; }
     }
     if (canShoot() && input.shoot) {
@@ -290,7 +281,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::LEFT_CLICK: {
                 Vec2 world_pos = mouseToWorldPos(action.pos);
                 for (auto e : m_entity_manager.getEntities()) {
-                    if (e->hasComponent<CDraggable>() && isInside(world_pos, e)) {
+                    if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
                         auto& dragged = e->getComponent<CDraggable>().dragged;
                         dragged = !dragged;
                         std::cout << "Clicked entity: " << e->getComponent<CAnimation>().animation.getName() << '\n';
