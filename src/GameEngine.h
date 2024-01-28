@@ -27,7 +27,6 @@ class GameEngine
 	void update();
 
 	void sUserInput();
-	void playeSound(const std::string& sound_name);
 
 	std::shared_ptr<Scene> currentScene() { return m_scenes[m_cur_scene]; }
 
@@ -38,6 +37,7 @@ public:
 	void quit();
 
 	void changeScene(const SceneType scene_name, std::shared_ptr<Scene> scene, bool end_current_scene = false);
+	void playSound(const std::string& sound_name);
 
 	sf::RenderWindow& window() { return m_window; };
 	const Assets& assets() const { return m_assets; };
