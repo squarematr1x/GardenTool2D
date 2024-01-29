@@ -10,6 +10,7 @@ enum class SceneType: unsigned char;
 class GameEngine
 {
 	std::string m_title{ "2D Game" };
+	std::string m_cur_song_name{ "" };
 	sf::RenderWindow m_window;
 	bool m_paused{ false };
 	bool m_running{ true };
