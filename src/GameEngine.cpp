@@ -60,7 +60,7 @@ void GameEngine::sUserInput() {
 		}
 
 		if (event.type == sf::Event::KeyPressed) {
-			if (event.key.code == sf::Keyboard::X) {
+			if (event.key.code == sf::Keyboard::F12) {
 				sf::Texture texture;
 				texture.create(m_window.getSize().x, m_window.getSize().y);
 				texture.update(m_window);

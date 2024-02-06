@@ -77,20 +77,20 @@ void SceneSideScroller::loadLevel(const std::string& path) {
     while (file.good()) {
         file >> str;
 
-        if (str == "Tile" || str == "Dec") {
+        if (str == "Tile") {
             std::string animation;
             float x, y;
-            file >> animation >> x >> y;
+            bool block_movement, block_vision;
+            file >> animation >> x >> y >> block_movement >> block_vision;
 
-            auto tile = str == "Tile" ? m_entity_manager.addEntity(Tag::TILE) : m_entity_manager.addEntity(Tag::DEC);
+            auto tile = block_movement ? m_entity_manager.addEntity(Tag::TILE) : m_entity_manager.addEntity(Tag::DEC);
             tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
             tile->addComponent<CTransform>(gridToMidPixel(x, y, tile));
             tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later
-
-            if (tile->getComponent<CAnimation>().animation.getName() == "Brick" ||
-                tile->getComponent<CAnimation>().animation.getName() == "Question1") {
+            if (block_movement) {
                 const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
                 tile->addComponent<CBBox>(animation_size);
+                m_entity_manager.addEntity(Tag::TILE);
             }
         } else if (str == "Player") {
             float x, y, bbox_w, bbox_h, v, jump_v, max_v, gravity;

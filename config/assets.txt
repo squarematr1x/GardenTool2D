@@ -1,25 +1,53 @@
-Texture BrickText assets/images/tile.png
+Texture BrickText assets/sidescroll-images/tile.png
 Animation Brick BrickText 1 1
-Texture Question1Text assets/images/question1.png
+Texture Question1Text assets/sidescroll-images/question1.png
 Animation Question1 Question1Text 1 1
-Texture FireText assets/images/bullet.png
+Texture FireText assets/sidescroll-images/bullet.png
 Animation Fire FireText 1 1
-Texture BushText assets/images/bush.png
+Texture BushText assets/sidescroll-images/bush.png
 Animation Bush BushText 4 15
-Texture CloudText1 assets/images/cloud1.png
+Texture CloudText1 assets/sidescroll-images/cloud1.png
 Animation Cloud1 CloudText1 1 1
-Texture CloudText2 assets/images/cloud2.png
+Texture CloudText2 assets/sidescroll-images/cloud2.png
 Animation Cloud2 CloudText2 1 1
-Texture ExplosionText assets/images/explosion.png
+Texture ExplosionText assets/sidescroll-images/explosion.png
 Animation Explosion ExplosionText 4 10
-Texture CoinText assets/images/coin.png
+Texture CoinText assets/sidescroll-images/coin.png
 Animation Coin CoinText 4 10
-Texture MegamanText assets/images/megamanstand.png
+Texture MegamanText assets/sidescroll-images/megamanstand.png
 Animation Megaman MegamanText 4 20
-Texture MegamanJumpText assets/images/megamanjump.png
+Texture MegamanJumpText assets/sidescroll-images/megamanjump.png
 Animation MegamanJump MegamanJumpText 1 1
-Texture MegamanRunText assets/images/megamanrun.png
+Texture MegamanRunText assets/sidescroll-images/megamanrun.png
 Animation MegamanRun MegamanRunText 3 10
 Font Arial assets/fonts/arial.ttf
 Sound SoundJump assets/sounds/jump.wav
 Music Level1Music assets/music/level1.wav
+Texture RockText assets/rpg-images/rock.png
+Animation Rock RockText 1 1
+Texture WaterText assets/rpg-images/water.png
+Animation Water WaterText 1 1
+Texture DarkBushText assets/rpg-images/darkbush.png
+Animation DarkBush DarkBushText 1 1
+Texture HeartText assets/rpg-images/heart.png
+Animation Heart HeartText 1 1
+Texture DoorwayText assets/rpg-images/doorway.png
+Animation DoorWay DoorwayText 1 1
+Texture PUpText assets/rpg-images/playerup.png
+Animation PUp PUpText 2 10
+Texture PDownText assets/rpg-images/playerdown.png
+Animation PDown PDownText 2 10
+Texture PSideText assets/rpg-images/playerside.png
+Animation PSide PSideText 2 10
+Texture PAttackUpText assets/rpg-images/playerattackup.png
+Animation PAttackUp PAttackUpText 1 1
+Texture PAttackDownText assets/rpg-images/playerattackdown.png
+Animation PAttackDown PAttackDownText 1 1
+Texture PAttackSideText assets/rpg-images/playerattackside.png
+Animation PAttackSide PAttackSideText 1 1
+Texture SwordUpText assets/rpg-images/swordup.png
+Animation SwordUp SwordUpText 1 1
+Texture SwordDownText assets/rpg-images/sworddown.png
+Animation SwordDown SwordDownText 1 1
+Texture SwordSideText assets/rpg-images/swordside.png
+Animation SwordSide SwordSideText 1 1
