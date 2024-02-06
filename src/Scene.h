@@ -53,8 +53,8 @@ protected:
 class SceneMenu: public Scene
 {
 	std::string m_title { "Menu" };
-	std::vector<std::string> m_menu_strings{ "level 1", "level 2" };
-	std::vector<std::string> m_level_paths{ "config/level1.txt", "config/level2.txt" }; // TODO: load paths from a file?
+	std::vector<std::string> m_menu_strings{ "level 1", "level 2", "level 3" };
+	std::vector<std::string> m_level_paths{ "config/level1.txt", "config/level2.txt", "config/level3.txt" }; // TODO: load paths from a file?
 	sf::Text m_menu_text;
 	sf::Color m_background_color{ 20, 20, 20 };
 	size_t m_menu_index{ 0 }; // selected menu item
@@ -135,9 +135,20 @@ public:
 
 class SceneRPG: public Scene
 {
+	struct PlayerConfig {
+		float x{ 0.0f };
+		float y{ 0.0f };
+		float bbox_x{ 0.0f };
+		float bbox_y{ 0.0f };
+		float v{ 0.0f };
+		int health{ 4 };
+	};
+	PlayerConfig m_player_config;
 	std::string m_level_path{ "" };
 	std::shared_ptr<Entity> m_player;
 	bool m_follow{ false };
+	const Vec2 m_grid_size{ 64, 64 };
+	const Vec2 m_room_size{ 20, 12 }; // 20x12 grids
 
 public:
 	SceneRPG(GameEngine* engine, const std::string& level_path);
@@ -150,7 +161,7 @@ public:
 	void spawnPlayer();
 	void spawnSword(std::shared_ptr<Entity> entity);
 
-	Vec2 getPosition(int rx, int ry, int tx, int ty) const; // return Vec2 game world positon of the center of the entity (use this in loadLevel())
+	Vec2 getPosition(float rx, float ry, float tx, float ty) const; // return Vec2 game world positon of the center of the entity (use this in loadLevel())
 
 	void sAI();
 	void sMovement();
@@ -159,5 +170,7 @@ public:
 	void sAnimation();
 	void sCamera();
 	void sDoAction(const Action& action);
-	// With most of the things just mimick SceneSideScroller
+	void sRender();
+
+	void onEnd();
 };

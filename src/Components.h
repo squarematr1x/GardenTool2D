@@ -6,9 +6,19 @@
 
 enum class State: unsigned char {
 	NONE,
+	// Side scroller
 	JUMP,
 	STAND,
-	RUN
+	RUN,
+	// Top down RPG
+	UP,
+	DOWN,
+	RIGHT,
+	LEFT,
+	ATTACK_UP,
+	ATTACK_DOWN,
+	ATTACK_RIGHT,
+	ATTACKT_LEFT
 };
 
 struct Component {
@@ -83,7 +93,7 @@ struct CInput: Component {
 	bool left{ false };
 	bool right{ false };
 	bool down{ false };
-	bool shoot{ false };
+	bool attack{ false };
 
 	CInput() {}
 };
