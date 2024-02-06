@@ -14,7 +14,7 @@ void SceneSideScroller::init(const std::string& level_path) {
     registerAction(sf::Keyboard::P, ActionName::PAUSE);
     registerAction(sf::Keyboard::Escape, ActionName::QUIT);
     registerAction(sf::Keyboard::T, ActionName::TOGGLE_TEXTURE);
-    registerAction(sf::Keyboard::C, ActionName::TOGGLE_COLLISION);
+    registerAction(sf::Keyboard::X, ActionName::TOGGLE_COLLISION);
     registerAction(sf::Keyboard::G, ActionName::TOGGLE_GRID);
 
     registerAction(sf::Keyboard::Space, ActionName::UP);
@@ -89,7 +89,7 @@ void SceneSideScroller::loadLevel(const std::string& path) {
             tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later
             if (block_movement) {
                 const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
-                tile->addComponent<CBBox>(animation_size);
+                tile->addComponent<CBBox>(animation_size, block_movement, block_vision);
                 m_entity_manager.addEntity(Tag::TILE);
             }
         } else if (str == "Player") {
@@ -176,9 +176,9 @@ void SceneSideScroller::sMovement() {
         m_player->getComponent<CTransform>().scale = Vec2(fabsf(player_scale.x), player_scale.y);
         if (player_v.y == 0 && player_state != State::JUMP) { player_state = State::RUN; }
     }
-    if (canShoot() && input.shoot) {
+    if (canShoot() && input.attack) {
         m_can_shoot = false;
-        input.shoot = false;
+        input.attack = false;
         spawnBullet();
     }
 
@@ -279,7 +279,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::RIGHT: m_player->getComponent<CInput>().right = true; break;
             case ActionName::DOWN: m_player->getComponent<CInput>().down = true; break;
             case ActionName::LEFT: m_player->getComponent<CInput>().left = true; break;
-            case ActionName::SHOOT: m_player->getComponent<CInput>().shoot = true; break;
+            case ActionName::SHOOT: m_player->getComponent<CInput>().attack = true; break;
             case ActionName::MOUSE_MOVE: m_mouse_pos = action.pos; m_mouse_shape.setPosition(m_mouse_pos.x, m_mouse_pos.y); break;
             case ActionName::LEFT_CLICK: {
                 Vec2 world_pos = mouseToWorldPos(action.pos);
@@ -308,7 +308,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
                 break;
             case ActionName::SHOOT:
                 m_can_shoot = true;
-                m_player->getComponent<CInput>().shoot = false; 
+                m_player->getComponent<CInput>().attack = false; 
                 break;
             default: break;
         }

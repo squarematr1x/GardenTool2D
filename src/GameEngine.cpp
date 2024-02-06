@@ -42,6 +42,7 @@ void GameEngine::run() {
 		if (!m_paused) {
 			update();
 			currentScene()->update();
+			// TODO: Add render() <- common function for all scenes?
 		}
 		m_window.display();
 	}
