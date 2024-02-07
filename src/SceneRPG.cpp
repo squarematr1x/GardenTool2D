@@ -109,7 +109,7 @@ void SceneRPG::update() {
     sStatus();
     sCollision();
     sAnimation();
-    // sCamera();
+    sCamera();
     sRender();
 
     m_current_frame++;
@@ -265,13 +265,11 @@ void SceneRPG::sAnimation() {
 }
 
 void SceneRPG::sCamera() {
-    // Implement camera view logic
-
-    // get the current view, which we will modify in the if-statement below
     sf::View view = m_engine->window().getView();
-
     if (m_follow) {
         // Get view from player follow camera
+        auto& p_pos = m_player->getComponent<CTransform>().pos;
+        view.setCenter(p_pos.x, p_pos.y);
     } else {
         // Get view for room-based camera
     }
