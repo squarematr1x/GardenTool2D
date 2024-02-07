@@ -15,6 +15,7 @@ enum class ActionName : unsigned char {
 	DOWN,
 	LEFT,
 	SHOOT,
+	ATTACK,
 	PLAY,
 	PAUSE,
 	QUIT,

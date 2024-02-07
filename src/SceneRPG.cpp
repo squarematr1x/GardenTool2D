@@ -9,6 +9,7 @@ SceneRPG::SceneRPG(GameEngine* engine, const std::string& level_path)
     init(level_path);
 }
 
+// TODO: Init common actions in base class?
 void SceneRPG::init(const std::string& level_path) {
     registerAction(sf::Keyboard::P, ActionName::PAUSE);
     registerAction(sf::Keyboard::Escape, ActionName::QUIT);
@@ -16,12 +17,11 @@ void SceneRPG::init(const std::string& level_path) {
     registerAction(sf::Keyboard::C, ActionName::TOGGLE_COLLISION);
     registerAction(sf::Keyboard::Y, ActionName::TOGGLE_FOLLOW);
 
-    registerAction(sf::Keyboard::Space, ActionName::UP);
+    registerAction(sf::Keyboard::Space, ActionName::ATTACK);
     registerAction(sf::Keyboard::Up, ActionName::UP);
     registerAction(sf::Keyboard::Right, ActionName::RIGHT);
     registerAction(sf::Keyboard::Down, ActionName::DOWN);
     registerAction(sf::Keyboard::Left, ActionName::LEFT);
-    registerAction(sf::Keyboard::Z, ActionName::SHOOT);
 
     registerAction(sf::Mouse::Button::Left, ActionName::LEFT_CLICK);
     registerAction(sf::Mouse::Button::Middle, ActionName::MIDDLE_CLICK);
@@ -115,20 +115,34 @@ void SceneRPG::update() {
 }
 
 void SceneRPG::sMovement() {
-    // TODO: Implement player movement functionality based on input
     auto input = m_player->getComponent<CInput>();
-    auto& state = m_player->getComponent<CState>();
-    auto& scale = m_player->getComponent<CTransform>().scale;
-    if (input.up) { state = State::UP; }
-    if (input.down) { state = State::DOWN; }
+    auto& state = m_player->getComponent<CState>().state;
+    auto& transform = m_player->getComponent<CTransform>();
+    Vec2 new_velocity(0.0f, 0.0f);
+
+    if (input.up) {
+        state = State::UP;
+        new_velocity.y -= m_player_config.v;
+    }
+    if (input.down) {
+        state = State::DOWN;
+        new_velocity.y += m_player_config.v;
+    }
     if (input.left) {
-        scale = Vec2(fabsf(scale.x), scale.y);
-        state = State::LEFT; 
+        state = State::LEFT;
+        transform.scale = Vec2(fabsf(transform.scale.x), transform.scale.y);
+        new_velocity.x -= m_player_config.v;
     }
     if (input.right) {
-        scale = Vec2(-fabsf(scale.x), scale.y);
         state = State::RIGHT;
+        transform.scale = Vec2(-fabsf(transform.scale.x), transform.scale.y);
+        new_velocity.x += m_player_config.v;
     }
+    
+    if (new_velocity.x == 0.0f && new_velocity.y == 0.0f) {
+        state = State::STAND;
+    }
+    transform.pos += new_velocity;
 }
 
 void SceneRPG::sDoAction(const Action& action) {
@@ -177,18 +191,10 @@ void SceneRPG::sCollision() {
 }
 
 void SceneRPG::sAnimation() {
-    // Implement player facing direction animation
     // Implement sword animation based on player direction (sword should also move if the player changes direction mid swing)
     // Implement destruction of entities with non-repeating finished animations
     for (auto entity : m_entity_manager.getEntities()) {
         if (!entity->hasComponent<CAnimation>()) { continue; }
-
-        entity->getComponent<CAnimation>().animation.update();
-
-        if (!entity->getComponent<CAnimation>().repeat &&
-            entity->getComponent<CAnimation>().animation.hasEnded()) {
-            entity->destroy();
-        }
 
         if (entity->tag() == Tag::PLAYER) {
             auto& p_state = m_player->getComponent<CState>();
@@ -206,6 +212,17 @@ void SceneRPG::sAnimation() {
                 }
             }
             p_state.prev_state = p_state.state;
+
+            if (p_state.state != State::STAND) {
+                entity->getComponent<CAnimation>().animation.update();
+            }
+        } else {
+            entity->getComponent<CAnimation>().animation.update();
+        }
+
+        if (!entity->getComponent<CAnimation>().repeat &&
+            entity->getComponent<CAnimation>().animation.hasEnded()) {
+            entity->destroy();
         }
     }
 }
