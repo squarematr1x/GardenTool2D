@@ -3,6 +3,7 @@
 
 #include "Scene.h"
 #include "GameEngine.h"
+#include "Physics.h"
 
 SceneRPG::SceneRPG(GameEngine* engine, const std::string& level_path)
     : Scene(engine), m_level_path(level_path) {
@@ -116,33 +117,39 @@ void SceneRPG::update() {
 
 void SceneRPG::sMovement() {
     auto input = m_player->getComponent<CInput>();
-    auto& state = m_player->getComponent<CState>().state;
-    auto& transform = m_player->getComponent<CTransform>();
+    auto& p_state = m_player->getComponent<CState>().state;
+    auto& p_transform = m_player->getComponent<CTransform>();
     Vec2 new_velocity(0.0f, 0.0f);
 
     if (input.up) {
-        state = State::UP;
+        p_state = State::UP;
         new_velocity.y -= m_player_config.v;
     }
     if (input.down) {
-        state = State::DOWN;
+        p_state = State::DOWN;
         new_velocity.y += m_player_config.v;
     }
     if (input.left) {
-        state = State::LEFT;
-        transform.scale = Vec2(fabsf(transform.scale.x), transform.scale.y);
+        p_state = State::LEFT;
+        p_transform.scale = Vec2(fabsf(p_transform.scale.x), p_transform.scale.y);
         new_velocity.x -= m_player_config.v;
     }
     if (input.right) {
-        state = State::RIGHT;
-        transform.scale = Vec2(-fabsf(transform.scale.x), transform.scale.y);
+        p_state = State::RIGHT;
+        p_transform.scale = Vec2(-fabsf(p_transform.scale.x), p_transform.scale.y);
         new_velocity.x += m_player_config.v;
     }
     
     if (new_velocity.x == 0.0f && new_velocity.y == 0.0f) {
-        state = State::STAND;
+        p_state = State::STAND;
     }
-    transform.pos += new_velocity;
+    p_transform.velocity = new_velocity;
+
+    for (auto e : m_entity_manager.getEntities()){
+        auto& transform = e->getComponent<CTransform>();
+        transform.prev_pos = transform.pos;
+        transform.pos += transform.velocity;
+    }
 }
 
 void SceneRPG::sDoAction(const Action& action) {
@@ -160,6 +167,7 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::RIGHT: m_player->getComponent<CInput>().right = true; break;
             case ActionName::DOWN: m_player->getComponent<CInput>().down = true; break;
             case ActionName::LEFT: m_player->getComponent<CInput>().left = true; break;
+            case ActionName::ATTACK: m_player->getComponent<CInput>().attack = true; break;
             default: break;
         }
     } else if (action.getType() == ActionType::END) {
@@ -168,6 +176,7 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::DOWN: m_player->getComponent<CInput>().down = false; break;
             case ActionName::RIGHT: m_player->getComponent<CInput>().right = false; break;
             case ActionName::LEFT: m_player->getComponent<CInput>().left = false; break;
+            case ActionName::ATTACK: m_player->getComponent<CInput>().attack = false; break;
             default: break;
         }
     }
@@ -188,6 +197,34 @@ void SceneRPG::sCollision() {
     // Implement black tile collision/teleporting
     // Implement entity -heart collisions and life gain logic
     // Implement util functions for beforementioned logic when needed
+    auto& transfrom = m_player->getComponent<CTransform>();
+
+    for (auto entity : m_entity_manager.getEntities(Tag::TILE)) {
+        if (!entity->getComponent<CBBox>().block_movement) {
+            continue;
+        }
+        // Player - tile collision
+        Vec2 overlap = physics::getOverlap(m_player, entity);
+        if (overlap.x > 0 && overlap.y > 0) {
+            Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
+            if (prev_overlap.y > 0) {
+                if (transfrom.velocity.x > 0) {
+                    transfrom.pos.x -= overlap.x;
+                } else if (transfrom.velocity.x < 0) {
+                    transfrom.pos.x += overlap.x;
+                }
+                transfrom.velocity.x = 0.0f;
+            }
+            if (prev_overlap.x > 0) {
+                if (transfrom.velocity.y > 0) {
+                    transfrom.pos.y -= overlap.y;
+                } else if (transfrom.velocity.y < 0) {
+                    transfrom.pos.y += overlap.y;
+                }
+                transfrom.velocity.y = 0.0f;
+            }
+        }
+    }
 }
 
 void SceneRPG::sAnimation() {
