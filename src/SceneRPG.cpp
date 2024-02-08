@@ -82,6 +82,11 @@ Vec2 SceneRPG::getPosition(float rx, float ry, float tx, float ty) const {
     return Vec2(room_start_x + tx*m_grid_size.x, room_start_y + ty*m_grid_size.y);
 }
 
+Vec2 SceneRPG::getCurrentRoom() const {
+    Vec2 p_pos = m_player->getComponent<CTransform>().pos;
+    return Vec2(floorf(p_pos.x/(m_room_size.x*m_grid_size.x)), floorf(p_pos.y/(m_room_size.y*m_grid_size.y)));
+}
+
 void SceneRPG::spawnPlayer() {
     m_player = m_entity_manager.addEntity(Tag::PLAYER);
     m_player->addComponent<CTransform>(Vec2(m_player_config.x*m_grid_size.x, m_player_config.y*m_grid_size.y));
@@ -153,9 +158,6 @@ void SceneRPG::sMovement() {
 }
 
 void SceneRPG::sDoAction(const Action& action) {
-    // TODO: Setting of the player's input component variables only
-    //       use minimalistic logic
-
     if (action.getType() == ActionType::START) {
         switch (action.getName()) {
             case ActionName::PAUSE: break;
@@ -191,7 +193,6 @@ void SceneRPG::sStatus() {
 }
 
 void SceneRPG::sCollision() {
-    // Implement entity - tile collision
     // Implement player - enemy collision with damage calculations
     // Implement sword - enemy collisions
     // Implement black tile collision/teleporting
@@ -272,6 +273,12 @@ void SceneRPG::sCamera() {
         view.setCenter(p_pos.x, p_pos.y);
     } else {
         // Get view for room-based camera
+        auto window_size = m_engine->window().getSize();
+        Vec2 room = getCurrentRoom();
+        view.setCenter(
+            static_cast<float>((window_size.x/2) + room.x*window_size.x),
+            static_cast<float>((window_size.y/2) + room.y*window_size.y)
+        );
     }
     m_engine->window().setView(view);
 }

@@ -344,6 +344,7 @@ void SceneSideScroller::sAnimation() {
     }
 }
 
+// TODO: Some these could be more generic and used in other scenes
 void SceneSideScroller::sRender() {
     m_engine->window().clear(sf::Color(70, 80, 255));
 
