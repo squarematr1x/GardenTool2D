@@ -232,7 +232,9 @@ void SceneRPG::sAnimation() {
     // Implement sword animation based on player direction (sword should also move if the player changes direction mid swing)
     // Implement destruction of entities with non-repeating finished animations
     for (auto entity : m_entity_manager.getEntities()) {
-        if (!entity->hasComponent<CAnimation>()) { continue; }
+        if (!entity->hasComponent<CAnimation>()) {
+            continue;
+        }
 
         if (entity->tag() == Tag::PLAYER) {
             auto& p_state = m_player->getComponent<CState>();

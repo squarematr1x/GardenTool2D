@@ -21,11 +21,16 @@ void SceneMenu::update() {
 }
 
 void SceneMenu::sDoAction(const Action& action) {
-    if (action.getType() != ActionType::START) { return; }
+    if (action.getType() != ActionType::START) {
+        return;
+    }
     
     if (action.getName() == ActionName::UP) {
-        if (m_menu_index > 0) { m_menu_index--; } 
-        else { m_menu_index = m_menu_strings.size() - 1; }
+        if (m_menu_index > 0) {
+            m_menu_index--;
+        } else {
+            m_menu_index = m_menu_strings.size() - 1;
+        }
     } else if (action.getName() == ActionName::DOWN) {
         m_menu_index = (m_menu_index + 1) % m_menu_strings.size();
     } else if (action.getName() == ActionName::PLAY) {
@@ -44,8 +49,11 @@ void SceneMenu::sRender() {
     for (const std::string& item : m_menu_strings) {
         const auto text_rect = m_menu_text.getLocalBounds();
 
-        if (index == m_menu_index) { m_menu_text.setFillColor(sf::Color(255, 255, 255)); }
-        else { m_menu_text.setFillColor(sf::Color(125, 125, 125)); }
+        if (index == m_menu_index) {
+            m_menu_text.setFillColor(sf::Color(255, 255, 255));
+        } else {
+            m_menu_text.setFillColor(sf::Color(125, 125, 125));
+        }
 
         m_menu_text.setString(item);
         m_menu_text.setOrigin(text_rect.left + text_rect.width/2.0f, text_rect.top + text_rect.height/2.0f);

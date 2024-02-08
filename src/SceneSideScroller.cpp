@@ -169,12 +169,16 @@ void SceneSideScroller::sMovement() {
     if (input.left) {
         player_v.x = -m_player_config.v;
         m_player->getComponent<CTransform>().scale = Vec2(-fabsf(player_scale.x), player_scale.y);
-        if (player_v.y == 0 && player_state != State::JUMP) { player_state = State::RUN; }
+        if (player_v.y == 0 && player_state != State::JUMP) {
+            player_state = State::RUN;
+        }
     }
     if (input.right) {
         player_v.x = m_player_config.v;
         m_player->getComponent<CTransform>().scale = Vec2(fabsf(player_scale.x), player_scale.y);
-        if (player_v.y == 0 && player_state != State::JUMP) { player_state = State::RUN; }
+        if (player_v.y == 0 && player_state != State::JUMP) {
+            player_state = State::RUN;
+        }
     }
     if (canShoot() && input.attack) {
         m_can_shoot = false;
@@ -228,15 +232,23 @@ void SceneSideScroller::sCollision() {
         if (overlap.x > 0 && overlap.y > 0) {
             Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
             if (prev_overlap.y > 0) {
-                if (p_transfrom.velocity.x > 0) { p_transfrom.pos.x -= overlap.x; }
-                else if (p_transfrom.velocity.x < 0) { p_transfrom.pos.x += overlap.x; }
+                if (p_transfrom.velocity.x > 0) {
+                    p_transfrom.pos.x -= overlap.x;
+                }
+                else if (p_transfrom.velocity.x < 0) {
+                    p_transfrom.pos.x += overlap.x;
+                }
                 p_transfrom.velocity.x = 0.0f;
             }
             if (prev_overlap.x > 0) {
                 if (p_transfrom.velocity.y > 0) {
                     p_transfrom.pos.y -= overlap.y;
-                    if (p_transfrom.velocity.x != 0.0f) { p_state.state = State::RUN; }
-                    else { p_state.state = State::STAND; }
+                    if (p_transfrom.velocity.x != 0.0f) {
+                        p_state.state = State::RUN;
+                    }
+                    else {
+                        p_state.state = State::STAND;
+                    }
                 } else if (p_transfrom.velocity.y < 0) {
                     p_transfrom.pos.y += overlap.y;
                     spawnExplosion(entity->getComponent<CTransform>().pos);
@@ -317,7 +329,9 @@ void SceneSideScroller::sDoAction(const Action& action) {
 
 void SceneSideScroller::sAnimation() {
     for (auto entity : m_entity_manager.getEntities()) {
-        if (!entity->hasComponent<CAnimation>()) { continue; }
+        if (!entity->hasComponent<CAnimation>()) {
+            continue;
+        }
 
         entity->getComponent<CAnimation>().animation.update();
 
