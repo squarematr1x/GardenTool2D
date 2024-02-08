@@ -161,7 +161,8 @@ public:
 	void spawnPlayer();
 	void spawnSword(std::shared_ptr<Entity> entity);
 
-	Vec2 getPosition(float rx, float ry, float tx, float ty) const; // return Vec2 game world positon of the center of the entity (use this in loadLevel())
+	Vec2 getPosition(float rx, float ry, float tx, float ty) const;
+	Vec2 getCurrentRoom() const;
 
 	void sAI();
 	void sMovement();

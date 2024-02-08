@@ -1,8 +1,14 @@
 Tile Rock 0 0 10 5 1 1
 Tile Rock 0 0 10 6 1 1
+Tile Rock 0 0 10 7 1 1
+Tile Rock 0 0 11 5 1 1
 Tile Rock 0 0 11 6 1 1
+Tile Doorway 0 0 11 7 0 0
+Tile Rock 0 0 12 5 1 1
+Tile Rock 0 0 12 6 1 1
+Tile Rock 0 0 12 7 1 1
 Tile DarkBush 0 0 11 9 0 1
 Tile Water 0 0 0 4 1 0
 Tile Water 0 0 0 5 1 0
 Tile Water 0 0 0 6 1 0
-Player 2 2 64 64 5 20
+Player 11 7 64 64 5 20
