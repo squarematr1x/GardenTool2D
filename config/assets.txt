@@ -25,8 +25,24 @@ Sound SoundJump assets/sounds/jump.wav
 Music Level1Music assets/music/level1.wav
 Texture RockText assets/rpg-images/rock.png
 Animation Rock RockText 1 1
+Texture RockURCornerText assets/rpg-images/rockurcorner.png
+Animation RockURCorner RockURCornerText 1 1
+Texture RockULCornerText assets/rpg-images/rockulcorner.png
+Animation RockULCorner RockULCornerText 1 1
+Texture RockLLCornerText assets/rpg-images/rockllcorner.png
+Animation RockLLCorner RockLLCornerText 1 1
+Texture RockLRCornerText assets/rpg-images/rocklrcorner.png
+Animation RockLRCorner RockLRCornerText 1 1
 Texture WaterText assets/rpg-images/water.png
 Animation Water WaterText 1 1
+Texture WaterULCornerText assets/rpg-images/waterulcorner.png
+Animation WaterULCorner WaterULCornerText 1 1
+Texture WaterURCornerText assets/rpg-images/waterurcorner.png
+Animation WaterURCorner WaterURCornerText 1 1
+Texture WaterLLCornerText assets/rpg-images/waterllcorner.png
+Animation WaterLLCorner WaterLLCornerText 1 1
+Texture WaterLRCornerText assets/rpg-images/waterlrcorner.png
+Animation WaterLRCorner WaterLRCornerText 1 1
 Texture DarkBushText assets/rpg-images/bushdark.png
 Animation DarkBush DarkBushText 1 1
 Texture HeartText assets/rpg-images/heart.png

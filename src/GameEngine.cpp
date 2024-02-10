@@ -74,7 +74,9 @@ void GameEngine::sUserInput() {
 		// New action based handling
 		if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased) {
 			// if the current scene does not have an axction associated with this key, skip the event
-			if (currentScene()->getActionMap().find(event.key.code) == currentScene()->getActionMap().end()) { continue; }
+			if (currentScene()->getActionMap().find(event.key.code) == currentScene()->getActionMap().end()) {
+				continue;
+			}
 
 			// determine start or end action by whether it was press or realease
 			const ActionType action_type = (event.type == sf::Event::KeyPressed) ? ActionType::START : ActionType::END;
@@ -114,7 +116,9 @@ void GameEngine::playSound(const std::string& sound_name) {
 
 void GameEngine::playMusic(const std::string& music_name) {
 	// Stop previous song
-	if (!m_cur_song_name.empty()) { stopMusic(m_cur_song_name); }
+	if (!m_cur_song_name.empty()) {
+		stopMusic(m_cur_song_name);
+	}
 	m_cur_song_name = music_name;
 
 	auto music = m_assets.getMusic(music_name);

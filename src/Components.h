@@ -39,10 +39,12 @@ struct CTransform: Component {
 		: pos(p)
 	{
 	}
+
 	CTransform(const Vec2& p, const Vec2& v) 
 		: pos(p), velocity(v) 
 	{
 	}
+
 	CTransform(const Vec2& p, const Vec2& v, float a)
 		: pos(p), velocity(v), angle(a)
 	{
@@ -85,7 +87,10 @@ struct CHealth: Component {
 	int current{ 4 };
 
 	CHealth() {}
-	CHealth(int max_in, int current_in) : max(max_in), current(current_in) {} 
+	CHealth(int max_in, int current_in)
+		: max(max_in), current(current_in)
+	{
+	} 
 };
 
 struct CInput: Component {
@@ -103,21 +108,30 @@ struct CLifespan: Component {
 	int total{ 0 }; // TODO: change to frame_created
 
 	CLifespan() {}
-	CLifespan(int total) : remaining(total), total(total) {}
+	CLifespan(int total)
+		: remaining(total), total(total)
+	{
+	}
 };
 
 struct CDamage: Component {
 	int damage{ 1 };
 
 	CDamage() {}
-	CDamage(int damage_in) : damage(damage_in) {}
+	CDamage(int damage_in)
+		: damage(damage_in)
+	{
+	}
 };
 
 struct CInvicibility: Component {
 	int i_frames{ 30 };
 
 	CInvicibility() {}
-	CInvicibility(int i_frames_in) : i_frames(i_frames_in) {}
+	CInvicibility(int i_frames_in)
+		: i_frames(i_frames_in)
+	{
+	}
 };
 
 struct CBBox: Component {
@@ -131,6 +145,7 @@ struct CBBox: Component {
 		: size(size_in), half_size(size_in / 2)
 	{
 	}
+
 	CBBox(Vec2 size_in, bool block_movement_in, bool block_vision_in)
 		: size(size_in),
 		half_size(size_in / 2),
@@ -149,6 +164,7 @@ struct CAnimation: Component {
 		: animation(animation_in)
 	{
 	}
+
 	CAnimation(const Animation& animation_in, bool repeat_in)
 		: animation(animation_in), repeat(repeat_in)
 	{
@@ -188,7 +204,9 @@ struct CFollowPlayer: Component {
 
 	CFollowPlayer() {}
 	CFollowPlayer(Vec2 home_in, float velocity_in)
-		: home(home_in), velocity(velocity_in) {}
+		: home(home_in), velocity(velocity_in) 
+	{
+	}
 };
 
 struct CPatrol: Component {
@@ -198,5 +216,7 @@ struct CPatrol: Component {
 
 	CPatrol() {}
 	CPatrol(const std::vector<Vec2>& positions_in, float velocity_in)
-		: positions(positions_in), velocity(velocity_in) {}
+		: positions(positions_in), velocity(velocity_in)
+	{
+	}
 };

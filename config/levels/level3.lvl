@@ -1,14 +1,17 @@
-Tile Rock 0 0 10 5 1 1
+Tile RockULCorner 0 0 10 5 1 1
 Tile Rock 0 0 10 6 1 1
 Tile Rock 0 0 10 7 1 1
 Tile Rock 0 0 11 5 1 1
 Tile Rock 0 0 11 6 1 1
 Tile Doorway 0 0 11 7 0 0
-Tile Rock 0 0 12 5 1 1
+Tile RockURCorner 0 0 12 5 1 1
 Tile Rock 0 0 12 6 1 1
 Tile Rock 0 0 12 7 1 1
 Tile DarkBush 0 0 11 9 0 1
-Tile Water 0 0 0 4 1 0
+Tile WaterURCorner 0 0 0 4 1 0
 Tile Water 0 0 0 5 1 0
-Tile Water 0 0 0 6 1 0
+Tile WaterLRCorner 0 0 0 6 1 0
+Tile WaterULCorner 0 0 -1 4 1 0
+Tile Water 0 0 -1 5 1 0
+Tile WaterLLCorner 0 0 -1 6 1 0
 Player 11 7 64 64 5 20
