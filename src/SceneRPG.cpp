@@ -96,10 +96,27 @@ void SceneRPG::spawnPlayer() {
 }
 
 void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) {
-    (void)entity;
-    // CTransform facing example: left: (-1, 0), up: (0, -1), right: (1, 0), down (0, 1)
-	// facing can be used to calculate offset of a weapon from player pos
-	// e.g. spawn sword pos = (ppos.x + facing.x*grid_x, ppos.y +facing.y*grid_y)
+    const auto state = entity->getComponent<CState>().state;
+    const auto pos = entity->getComponent<CTransform>().pos;
+    Vec2 facing(0.0f, 0.0f);
+
+    switch (state)  {
+        case State::UP: facing = Vec2(0.0f, -1.0f); break;
+        case State::DOWN: facing = Vec2(0.0f, 1.0f); break;
+        case State::RIGHT: facing = Vec2(1.0f, 0.0f); break;
+        case State::LEFT: facing = Vec2(-1.0f, 0.0f); break;
+        default: break;
+    }
+
+    Vec2 swor_pos = Vec2(
+        pos.x + facing.x*m_grid_size.x,
+        pos.y + facing.y*m_grid_size.y
+    );
+
+    auto sword = m_entity_manager.addEntity(Tag::SWORD);
+    sword->addComponent<CAnimation>(m_engine->assets().getAnimation("SwordUp"));
+    sword->addComponent<CTransform>(swor_pos);
+    sword->addComponent<CDamage>();
 
     // Sword should appropriate lifespan, location based on player's facing dir, damage value of 1
     // and play "Slash" sound
@@ -144,11 +161,11 @@ void SceneRPG::sMovement() {
         p_transform.scale = Vec2(-fabsf(p_transform.scale.x), p_transform.scale.y);
         new_velocity.x += m_player_config.v;
     }
-    
-    if (new_velocity.x == 0.0f && new_velocity.y == 0.0f) {
-        p_state = State::STAND;
-    }
     p_transform.velocity = new_velocity;
+
+    if (input.attack) {
+        spawnSword(m_player);
+    }
 
     for (auto e : m_entity_manager.getEntities()){
         auto& transform = e->getComponent<CTransform>();
