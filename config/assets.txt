@@ -48,7 +48,7 @@ Animation DarkBush DarkBushText 1 1
 Texture HeartText assets/rpg-images/heart.png
 Animation Heart HeartText 1 1
 Texture DoorwayText assets/rpg-images/doorway.png
-Animation Doorway DoorwayText 1 1
+Animation Doorway DoorwayText 1 0
 Texture PUpText assets/rpg-images/playerup.png
 Animation PUp PUpText 2 8
 Texture PDownText assets/rpg-images/playerdown.png
@@ -56,14 +56,14 @@ Animation PDown PDownText 2 8
 Texture PSideText assets/rpg-images/playerside.png
 Animation PSide PSideText 2 8
 Texture PAttackUpText assets/rpg-images/playerattackup.png
-Animation PAttackUp PAttackUpText 1 1
+Animation PAttackUp PAttackUpText 1 0
 Texture PAttackDownText assets/rpg-images/playerattackdown.png
-Animation PAttackDown PAttackDownText 1 1
+Animation PAttackDown PAttackDownText 1 0
 Texture PAttackSideText assets/rpg-images/playerattackside.png
-Animation PAttackSide PAttackSideText 1 1
+Animation PAttackSide PAttackSideText 1 0
 Texture SwordUpText assets/rpg-images/swordup.png
-Animation SwordUp SwordUpText 1 1
+Animation SwordUp SwordUpText 1 10
 Texture SwordDownText assets/rpg-images/sworddown.png
-Animation SwordDown SwordDownText 1 1
+Animation SwordDown SwordDownText 1 10
 Texture SwordSideText assets/rpg-images/swordside.png
-Animation SwordSide SwordSideText 1 1
+Animation SwordSide SwordSideText 1 10

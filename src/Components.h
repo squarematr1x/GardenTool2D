@@ -18,7 +18,7 @@ enum class State: unsigned char {
 	ATTACK_UP,
 	ATTACK_DOWN,
 	ATTACK_RIGHT,
-	ATTACKT_LEFT
+	ATTACK_LEFT
 };
 
 struct Component {
