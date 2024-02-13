@@ -333,10 +333,10 @@ void SceneSideScroller::sAnimation() {
             continue;
         }
 
-        entity->getComponent<CAnimation>().animation.update();
+        auto& e_animation = entity->getComponent<CAnimation>();
+        e_animation.animation.update();
 
-        if (!entity->getComponent<CAnimation>().repeat &&
-            entity->getComponent<CAnimation>().animation.hasEnded()) {
+        if (!e_animation.repeat && e_animation.animation.hasEnded()) {
             entity->destroy();
         }
 
