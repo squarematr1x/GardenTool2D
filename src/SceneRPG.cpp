@@ -123,17 +123,18 @@ void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) {
 }
 
 void SceneRPG::update() {
-    m_entity_manager.update();
-    // TODO: Implement pause
+    if (!m_paused) {
+        m_entity_manager.update();
 
-    sAI();
-    sMovement();
-    sStatus();
-    sCollision();
-    sAnimation();
-    sCamera();
+        sAI();
+        sMovement();
+        sStatus();
+        sCollision();
+        sAnimation();
+        sCamera();
+    }
+
     sRender();
-
     m_current_frame++;
 }
 
@@ -177,7 +178,7 @@ void SceneRPG::sMovement() {
 void SceneRPG::sDoAction(const Action& action) {
     if (action.getType() == ActionType::START) {
         switch (action.getName()) {
-            case ActionName::PAUSE: break;
+            case ActionName::PAUSE: m_paused = !m_paused; break;
             case ActionName::QUIT: onEnd(); break;
             case ActionName::TOGGLE_FOLLOW: m_follow = !m_follow; break;
             case ActionName::TOGGLE_TEXTURE: break;
@@ -279,6 +280,7 @@ void SceneRPG::sAnimation() {
 
         if (!entity->getComponent<CAnimation>().repeat &&
             entity->getComponent<CAnimation>().animation.hasEnded()) {
+            std::cout << "Destroy animation \n";
             entity->destroy();
         }
     }
