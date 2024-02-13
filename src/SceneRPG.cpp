@@ -93,47 +93,74 @@ void SceneRPG::spawnPlayer() {
     m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PDown"), true);
     m_player->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y), true, false);
     m_player->addComponent<CHealth>(m_player_config.health, m_player_config.health);
+    m_player->addComponent<CState>(State::DOWN);
 }
 
 void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) {
-    const auto state = entity->getComponent<CState>().state;
+    auto& state = entity->getComponent<CState>().state;
     const auto pos = entity->getComponent<CTransform>().pos;
     Vec2 facing(0.0f, 0.0f);
+    Vec2 scale(1.0f, 1.0f); // TODO: Could just add more textures?
+    std::string sword_animation = "";
 
-    switch (state)  {
-        case State::UP: facing = Vec2(0.0f, -1.0f); break;
-        case State::DOWN: facing = Vec2(0.0f, 1.0f); break;
-        case State::RIGHT: facing = Vec2(1.0f, 0.0f); break;
-        case State::LEFT: facing = Vec2(-1.0f, 0.0f); break;
+    switch (state) {
+        case State::ATTACK_UP:
+        case State::ATTACK_DOWN:
+        case State::ATTACK_RIGHT:
+        case State::ATTACK_LEFT:
+            return;
+        case State::UP:
+            facing = Vec2(0.0f, -1.0f);
+            state = State::ATTACK_UP;
+            sword_animation = "SwordUp";
+            break;
+        case State::DOWN:
+            facing = Vec2(0.0f, 1.0f);
+            state = State::ATTACK_DOWN;
+            sword_animation = "SwordDown";
+            break;
+        case State::RIGHT:
+            facing = Vec2(1.0f, 0.0f);
+            state = State::ATTACK_RIGHT;
+            sword_animation = "SwordSide";
+            scale.x = -1.0f;
+            break;
+        case State::LEFT:
+            facing = Vec2(-1.0f, 0.0f);
+            state = State::ATTACK_LEFT;
+            sword_animation = "SwordSide";
+            break;
         default: break;
     }
 
-    Vec2 swor_pos = Vec2(
+    Vec2 swor_pos(
         pos.x + facing.x*m_grid_size.x,
         pos.y + facing.y*m_grid_size.y
     );
 
     auto sword = m_entity_manager.addEntity(Tag::SWORD);
-    sword->addComponent<CAnimation>(m_engine->assets().getAnimation("SwordUp"));
+    sword->addComponent<CAnimation>(m_engine->assets().getAnimation(sword_animation));
     sword->addComponent<CTransform>(swor_pos);
     sword->addComponent<CDamage>();
+    sword->addComponent<CBBox>(Vec2(64.0f, 32.0f), true, false);
 
-    // Sword should appropriate lifespan, location based on player's facing dir, damage value of 1
-    // and play "Slash" sound
+    sword->getComponent<CTransform>().scale = scale;
+    // Sword should appropriate lifespan, location based on player's facing dir, damage value of 1 and play "Slash" sound
 }
 
 void SceneRPG::update() {
-    m_entity_manager.update();
-    // TODO: Implement pause
+    if (!m_paused) {
+        m_entity_manager.update();
 
-    sAI();
-    sMovement();
-    sStatus();
-    sCollision();
-    sAnimation();
-    sCamera();
+        sAI();
+        sMovement();
+        sStatus();
+        sCollision();
+        sAnimation();
+        sCamera();
+    }
+
     sRender();
-
     m_current_frame++;
 }
 
@@ -145,10 +172,12 @@ void SceneRPG::sMovement() {
 
     if (input.up) {
         p_state = State::UP;
+        p_transform.scale = Vec2(fabsf(p_transform.scale.x), p_transform.scale.y);
         new_velocity.y -= m_player_config.v;
     }
     if (input.down) {
         p_state = State::DOWN;
+        p_transform.scale = Vec2(fabsf(p_transform.scale.x), p_transform.scale.y);
         new_velocity.y += m_player_config.v;
     }
     if (input.left) {
@@ -158,7 +187,7 @@ void SceneRPG::sMovement() {
     }
     if (input.right) {
         p_state = State::RIGHT;
-        p_transform.scale = Vec2(-fabsf(p_transform.scale.x), p_transform.scale.y);
+        p_transform.scale = Vec2(-fabsf(p_transform.scale.x), p_transform.scale.y); // TODO: Just add more texture (kinda dislike this scaling...)?
         new_velocity.x += m_player_config.v;
     }
     p_transform.velocity = new_velocity;
@@ -177,7 +206,7 @@ void SceneRPG::sMovement() {
 void SceneRPG::sDoAction(const Action& action) {
     if (action.getType() == ActionType::START) {
         switch (action.getName()) {
-            case ActionName::PAUSE: break;
+            case ActionName::PAUSE: m_paused = !m_paused; break;
             case ActionName::QUIT: onEnd(); break;
             case ActionName::TOGGLE_FOLLOW: m_follow = !m_follow; break;
             case ActionName::TOGGLE_TEXTURE: break;
@@ -259,18 +288,26 @@ void SceneRPG::sAnimation() {
                 switch (p_state.state) {
                     case State::UP:
                         m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PUp"), true); break;
+                    case State::ATTACK_UP:
+                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackUp"), true); break;
                     case State::DOWN:
                         m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PDown"), true); break;
+                    case State::ATTACK_DOWN:
+                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackDown"), true); break;
                     case State::LEFT:
                         m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PSide"), true); break;
+                    case State::ATTACK_LEFT:
+                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackSide"), true); break;
                     case State::RIGHT:
                         m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PSide"), true); break;
+                    case State::ATTACK_RIGHT:
+                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackSide"), true); break;
                     default: break;
                 }
             }
             p_state.prev_state = p_state.state;
 
-            if (p_state.state != State::STAND) {
+            if (m_player->getComponent<CTransform>().velocity != Vec2(0.0f, 0.0f)) {
                 entity->getComponent<CAnimation>().animation.update();
             }
         } else {
@@ -279,6 +316,7 @@ void SceneRPG::sAnimation() {
 
         if (!entity->getComponent<CAnimation>().repeat &&
             entity->getComponent<CAnimation>().animation.hasEnded()) {
+            std::cout << "Destroy animation \n";
             entity->destroy();
         }
     }

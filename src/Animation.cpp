@@ -20,7 +20,7 @@ Animation::Animation(const std::string& name, const sf::Texture& texture, size_t
 }
 
 void Animation::update() {
-	if (m_frame_count == 1) {
+	if (m_frame_count == 0) {
 		return;
 	}
 	m_current_frame++;
