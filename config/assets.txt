@@ -56,11 +56,11 @@ Animation PDown PDownText 2 8
 Texture PSideText assets/rpg-images/playerside.png
 Animation PSide PSideText 2 8
 Texture PAttackUpText assets/rpg-images/playerattackup.png
-Animation PAttackUp PAttackUpText 1 0
+Animation PAttackUp PAttackUpText 1 10
 Texture PAttackDownText assets/rpg-images/playerattackdown.png
-Animation PAttackDown PAttackDownText 1 0
+Animation PAttackDown PAttackDownText 1 10
 Texture PAttackSideText assets/rpg-images/playerattackside.png
-Animation PAttackSide PAttackSideText 1 0
+Animation PAttackSide PAttackSideText 1 10
 Texture SwordUpText assets/rpg-images/swordup.png
 Animation SwordUp SwordUpText 1 10
 Texture SwordDownText assets/rpg-images/sworddown.png

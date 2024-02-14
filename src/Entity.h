@@ -31,7 +31,8 @@ enum class Tag : unsigned char {
 	ENEMY,
 	BULLET,
 	EXPLOSION,
-	SWORD
+	SWORD,
+	HEART
 };
 
 class Entity
