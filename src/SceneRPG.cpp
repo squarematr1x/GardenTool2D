@@ -284,7 +284,7 @@ void SceneRPG::sCollision() {
         Vec2 overlap = physics::getOverlap(m_player, entity);
         if (overlap.x > 0 && overlap.y > 0) {
             auto& p_health = m_player->getComponent<CHealth>();
-            p_health.current = std::max(p_health.current + 1, p_health.max);
+            p_health.current = std::min(p_health.current + 1, p_health.max);
             entity->destroy();
         }
     }
