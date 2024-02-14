@@ -17,6 +17,7 @@ void SceneRPG::init(const std::string& level_path) {
     registerAction(sf::Keyboard::T, ActionName::TOGGLE_TEXTURE);
     registerAction(sf::Keyboard::C, ActionName::TOGGLE_COLLISION);
     registerAction(sf::Keyboard::Y, ActionName::TOGGLE_FOLLOW);
+    registerAction(sf::Keyboard::H, ActionName::TOGGLE_HEALTH);
 
     registerAction(sf::Keyboard::Space, ActionName::ATTACK);
     registerAction(sf::Keyboard::Up, ActionName::UP);
@@ -98,7 +99,7 @@ void SceneRPG::spawnPlayer() {
     m_player->addComponent<CTransform>(Vec2(m_player_config.x*m_grid_size.x, m_player_config.y*m_grid_size.y));
     m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PDown"), true);
     m_player->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y), true, false);
-    m_player->addComponent<CHealth>(m_player_config.health, m_player_config.health);
+    m_player->addComponent<CHealth>(m_player_config.health, m_player_config.health - 1);
     m_player->addComponent<CState>(State::DOWN);
 }
 
@@ -206,6 +207,7 @@ void SceneRPG::sMovement() {
         auto& transform = e->getComponent<CTransform>();
         transform.prev_pos = transform.pos;
         transform.pos += transform.velocity;
+        // transform.angle += 0.1f; // NOTE: For crazy effects
     }
 }
 
@@ -215,6 +217,7 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::PAUSE: m_paused = !m_paused; break;
             case ActionName::QUIT: onEnd(); break;
             case ActionName::TOGGLE_FOLLOW: m_follow = !m_follow; break;
+            case ActionName::TOGGLE_HEALTH: m_show_health = !m_show_health; break;
             case ActionName::TOGGLE_TEXTURE: break;
             case ActionName::TOGGLE_COLLISION: break;
             case ActionName::UP: m_player->getComponent<CInput>().up = true; break;
@@ -284,7 +287,8 @@ void SceneRPG::sCollision() {
         Vec2 overlap = physics::getOverlap(m_player, entity);
         if (overlap.x > 0 && overlap.y > 0) {
             auto& p_health = m_player->getComponent<CHealth>();
-            p_health.current = std::max(p_health.current + 1, p_health.max);
+            p_health.current = std::min(p_health.current + 1, p_health.max);
+            p_health.percentage = static_cast<float>(p_health.current)/static_cast<float>(p_health.max);
             entity->destroy();
         }
     }
@@ -366,6 +370,10 @@ void SceneRPG::sRender() {
             animation.getSprite().setPosition(transform.pos.x, transform.pos.y);
             animation.getSprite().setScale(transform.scale.x, transform.scale.y);
             m_engine->window().draw(animation.getSprite());
+
+            if (m_show_health) {
+                renderHealth(e);
+            }
         }
     }
 }

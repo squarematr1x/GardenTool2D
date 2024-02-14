@@ -30,7 +30,7 @@ struct CTransform: Component {
 	Vec2 velocity{ 0.0f, 0.0f };
 	Vec2 prev_pos{ 0.0f, 0.0f };
 	Vec2 scale{ 1.0f, 1.0f };
-	Vec2 facing{ 0.0f, 1.0f };
+	Vec2 facing{ 0.0f, 1.0f }; // TODO: I guess I missed this!?
 
 	float angle{ 0.0f };
 
@@ -85,10 +85,13 @@ struct CScore: Component {
 struct CHealth: Component {
 	int max{ 4 };
 	int current{ 4 };
+	float percentage{ 1.0f }; // Store for rendering purposes
 
 	CHealth() {}
 	CHealth(int max_in, int current_in)
-		: max(max_in), current(current_in)
+		: max(max_in),
+		current(current_in),
+		percentage(static_cast<float>(current_in) / static_cast<float>(max_in))
 	{
 	} 
 };

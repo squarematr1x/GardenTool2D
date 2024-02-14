@@ -36,7 +36,11 @@ public:
 
 	bool hasEnded() const { return m_has_ended; }
 	const std::map<int, ActionName>& getActionMap() const { return m_action_map; }
+
+	// Rendering helpers
 	void drawLine(const Vec2& p1, const Vec2& p2);
+	void renderHealth(std::shared_ptr<Entity> e);
+	// TODO: Add texture/collsion/grid rendering also here
 
 protected:
 	GameEngine* m_engine{ nullptr };
@@ -150,6 +154,7 @@ class SceneRPG: public Scene
 	std::string m_level_path{ "" };
 	std::shared_ptr<Entity> m_player;
 	bool m_follow{ false };
+	bool m_show_health{ true };
 	const Vec2 m_grid_size{ 64, 64 };
 	const Vec2 m_room_size{ 20, 12 }; // 20x12 grids
 
