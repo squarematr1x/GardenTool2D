@@ -14,4 +14,5 @@ Tile WaterLRCorner 0 0 0 6 1 0
 Tile WaterULCorner 0 0 -1 4 1 0
 Tile Water 0 0 -1 5 1 0
 Tile WaterLLCorner 0 0 -1 6 1 0
+Tile Heart 0 0 2 2 0 0
 Player 11 7 64 64 5 20

@@ -51,14 +51,20 @@ void SceneRPG::loadLevel(const std::string& path) {
             bool block_movement, block_vision;
             file >> animation >> room_x >> room_y >> x >> y >> block_movement >> block_vision;
 
-            auto tile = block_movement ? m_entity_manager.addEntity(Tag::TILE) : m_entity_manager.addEntity(Tag::DEC);
+            auto tag = Tag::DEC;
+            if (block_movement) {
+                tag = Tag::TILE;
+            } else if (animation == "Heart") {
+                tag = Tag::HEART;
+            }
+
+            auto tile = m_entity_manager.addEntity(tag);
             tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
             tile->addComponent<CTransform>(getPosition(room_x, room_y, x, y));
             tile->addComponent<CDraggable>();
             if (block_movement) {
                 const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
                 tile->addComponent<CBBox>(animation_size, block_movement, block_vision);
-                m_entity_manager.addEntity(Tag::TILE);
             }
         } else if (str == "Player") {
             float x, y, bbox_w, bbox_h, v;
@@ -96,7 +102,7 @@ void SceneRPG::spawnPlayer() {
     m_player->addComponent<CState>(State::DOWN);
 }
 
-void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) {
+void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) { // TODO: Still plenty to do with this one...
     auto& state = entity->getComponent<CState>().state;
     const auto pos = entity->getComponent<CTransform>().pos;
     Vec2 facing(0.0f, 0.0f);
@@ -272,6 +278,16 @@ void SceneRPG::sCollision() {
             }
         }
     }
+
+    // Player heart collision
+    for (auto entity : m_entity_manager.getEntities(Tag::HEART)) {
+        Vec2 overlap = physics::getOverlap(m_player, entity);
+        if (overlap.x > 0 && overlap.y > 0) {
+            auto& p_health = m_player->getComponent<CHealth>();
+            p_health.current = std::max(p_health.current + 1, p_health.max);
+            entity->destroy();
+        }
+    }
 }
 
 void SceneRPG::sAnimation() {
@@ -289,19 +305,19 @@ void SceneRPG::sAnimation() {
                     case State::UP:
                         m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PUp"), true); break;
                     case State::ATTACK_UP:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackUp"), true); break;
+                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackUp")); break;
                     case State::DOWN:
                         m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PDown"), true); break;
                     case State::ATTACK_DOWN:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackDown"), true); break;
+                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackDown")); break;
                     case State::LEFT:
                         m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PSide"), true); break;
                     case State::ATTACK_LEFT:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackSide"), true); break;
+                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackSide")); break;
                     case State::RIGHT:
                         m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PSide"), true); break;
                     case State::ATTACK_RIGHT:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackSide"), true); break;
+                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackSide")); break;
                     default: break;
                 }
             }
@@ -314,9 +330,7 @@ void SceneRPG::sAnimation() {
             entity->getComponent<CAnimation>().animation.update();
         }
 
-        if (!entity->getComponent<CAnimation>().repeat &&
-            entity->getComponent<CAnimation>().animation.hasEnded()) {
-            std::cout << "Destroy animation \n";
+        if (!entity->getComponent<CAnimation>().repeat && entity->getComponent<CAnimation>().animation.hasEnded()) {
             entity->destroy();
         }
     }
