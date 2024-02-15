@@ -39,8 +39,11 @@ public:
 
 	// Rendering helpers
 	void drawLine(const Vec2& p1, const Vec2& p2);
+
+	void renderGrid(const Vec2& grid_size, sf::Text& grid_text);
+	void renderBBoxes();
+	void renderCursor();
 	void renderHealth(std::shared_ptr<Entity> e);
-	// TODO: Add texture/collsion/grid rendering also here
 
 protected:
 	GameEngine* m_engine{ nullptr };
@@ -132,6 +135,7 @@ public:
 	void sLifespan();
 	void sEnemySpawner();
 	void sCollision();
+	void sCamera();
 	void sRender();
 	void sDoAction(const Action& action);
 	void sDragAndDrop();
