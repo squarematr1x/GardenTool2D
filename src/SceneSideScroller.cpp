@@ -146,6 +146,7 @@ void SceneSideScroller::update() {
         sCollision();
         sAnimation();
         sDragAndDrop();
+        sCamera();
     }
     // sf::View mini_map = m_engine->window().getView();
     // mini_map.setViewport(sf::FloatRect(0.75f, 0.0f, 0.25f, 0.25f));
@@ -358,18 +359,19 @@ void SceneSideScroller::sAnimation() {
     }
 }
 
-// TODO: Some these could be more generic and used in other scenes
-void SceneSideScroller::sRender() {
-    m_engine->window().clear(sf::Color(70, 80, 255));
-
-    // set the viewport of the window to be centered on the player if it's far enough right
+void SceneSideScroller::sCamera() {
     auto& p_pos = m_player->getComponent<CTransform>().pos;
     float window_center_x = std::max(m_engine->window().getSize().x / 2.0f, p_pos.x);
     sf::View view = m_engine->window().getView();
+
     view.setCenter(window_center_x, m_engine->window().getSize().y - view.getCenter().y);
     m_engine->window().setView(view);
+}
 
-    // draw all Entity textures/animations
+void SceneSideScroller::sRender() {
+    m_engine->window().clear(sf::Color(70, 80, 255));
+
+    // Draw all Entity textures/animations
     if (m_draw_textures) {
         for (auto e : m_entity_manager.getEntities()) {
             auto& transform = e->getComponent<CTransform>();
@@ -383,44 +385,12 @@ void SceneSideScroller::sRender() {
         }
     }
 
-    // draw all Entity collision bounding boxes with a rectangle shape
     if (m_draw_collision) {
-        for (auto e : m_entity_manager.getEntities()) {
-            if (e->hasComponent<CBBox>()) {
-                auto& box = e->getComponent<CBBox>();
-                auto& transform = e->getComponent<CTransform>();
-                sf::RectangleShape rect;
-                rect.setSize(sf::Vector2f(box.size.x-1, box.size.y-1));
-                rect.setOrigin(sf::Vector2f(box.half_size.x, box.half_size.y));
-                rect.setPosition(transform.pos.x, transform.pos.y);
-                rect.setFillColor(sf::Color(255, 255, 255, 0));
-                rect.setOutlineColor(sf::Color(255, 255, 255, 255));
-                rect.setOutlineThickness(1);
-                m_engine->window().draw(rect);
-            }
-        }
+        renderBBoxes();
     }
 
     if (m_draw_grid) {
-        float left_x = m_engine->window().getView().getCenter().x - width() / 2;
-        float right_x = left_x + width() + m_grid_size.x;
-        float next_grid_x = left_x - (static_cast<int>(left_x) % static_cast<int>(m_grid_size.x));
-
-        for (float x = next_grid_x; x < right_x; x += m_grid_size.x) {
-            drawLine(Vec2(x, 0.0f), Vec2(x, height()));
-        }
-
-        for (float y = 0; y < height(); y += m_grid_size.y) {
-            drawLine(Vec2(left_x, height() - y), Vec2(right_x, height() - y));
-
-            for (float x = next_grid_x; x < right_x; x += m_grid_size.x) {
-                std::string x_cell = std::to_string(static_cast<int>(x) / static_cast<int>(m_grid_size.x));
-                std::string y_cell = std::to_string(static_cast<int>(y) / static_cast<int>(m_grid_size.y));
-                m_grid_text.setString("(" + x_cell + "," + y_cell + ")");
-                m_grid_text.setPosition(x + 3, height() - y - m_grid_size.y + 2);
-                m_engine->window().draw(m_grid_text);
-            }
-        }
+        renderGrid(m_grid_size, m_grid_text);
     }
 
     if (m_paused) {
