@@ -10,7 +10,7 @@ size_t Scene::height() const {
 }
 
 void Scene::drawLine(const Vec2& p1, const Vec2& p2) {
-    sf::Vertex line[] = {
+    const sf::Vertex line[] = {
         {{p1.x, p1.y}, sf::Color(255, 255, 255)},
         {{p2.x, p2.y}, sf::Color(255, 255, 255)}
     };
@@ -18,9 +18,9 @@ void Scene::drawLine(const Vec2& p1, const Vec2& p2) {
 }
 
 void Scene::renderGrid(const Vec2& grid_size, sf::Text& grid_text) {
-    float left_x = m_engine->window().getView().getCenter().x - width() / 2;
-    float right_x = left_x + width() + grid_size.x;
-    float next_grid_x = left_x - (static_cast<int>(left_x) % static_cast<int>(grid_size.x));
+    const float left_x = m_engine->window().getView().getCenter().x - width() / 2;
+    const float right_x = left_x + width() + grid_size.x;
+    const float next_grid_x = left_x - (static_cast<int>(left_x) % static_cast<int>(grid_size.x));
 
     for (float x = next_grid_x; x < right_x; x += grid_size.x) {
         drawLine(Vec2(x, 0.0f), Vec2(x, height()));
