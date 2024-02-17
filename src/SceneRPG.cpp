@@ -163,17 +163,18 @@ void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) { // TODO: Still plent
         default: break;
     }
 
-    // TODO: Bug, vertically spawned sword BBox is the same as in horizontal
     Vec2 swor_pos(
         pos.x + facing.x*m_grid_size.x,
         pos.y + facing.y*m_grid_size.y
     );
 
+    Vec2 sword_bbox = facing.x == 0.0f ? Vec2(32.0f, 64.0f) : Vec2(64.0f, 32.0f);
+
     auto sword = m_entity_manager.addEntity(Tag::SWORD);
     sword->addComponent<CAnimation>(m_engine->assets().getAnimation(sword_animation));
     sword->addComponent<CTransform>(swor_pos);
     sword->addComponent<CDamage>();
-    sword->addComponent<CBBox>(Vec2(64.0f, 32.0f), true, false);
+    sword->addComponent<CBBox>(sword_bbox, true, false);
 
     sword->getComponent<CTransform>().scale = scale;
     // Sword should appropriate lifespan, location based on player's facing dir, damage value of 1 and play "Slash" sound
