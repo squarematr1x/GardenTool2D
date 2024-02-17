@@ -15,7 +15,7 @@ void SceneRPG::init(const std::string& level_path) {
     registerAction(sf::Keyboard::P, ActionName::PAUSE);
     registerAction(sf::Keyboard::Escape, ActionName::QUIT);
     registerAction(sf::Keyboard::T, ActionName::TOGGLE_TEXTURE);
-    registerAction(sf::Keyboard::C, ActionName::TOGGLE_COLLISION);
+    registerAction(sf::Keyboard::X, ActionName::TOGGLE_COLLISION);
     registerAction(sf::Keyboard::Y, ActionName::TOGGLE_FOLLOW);
     registerAction(sf::Keyboard::H, ActionName::TOGGLE_HEALTH);
 
@@ -245,8 +245,8 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::QUIT: onEnd(); break;
             case ActionName::TOGGLE_FOLLOW: m_follow = !m_follow; break;
             case ActionName::TOGGLE_HEALTH: m_show_health = !m_show_health; break;
-            case ActionName::TOGGLE_TEXTURE: break;
-            case ActionName::TOGGLE_COLLISION: break;
+            case ActionName::TOGGLE_TEXTURE: m_draw_textures = !m_draw_textures; break;
+            case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
             case ActionName::UP: m_player->getComponent<CInput>().up = true; break;
             case ActionName::RIGHT: m_player->getComponent<CInput>().right = true; break;
             case ActionName::DOWN: m_player->getComponent<CInput>().down = true; break;
@@ -416,19 +416,25 @@ void SceneRPG::sRender() {
     m_engine->window().clear(sf::Color(215, 189, 164));
 
     // draw all Entity textures/animations
-    for (auto e : m_entity_manager.getEntities()) {
-        auto& transform = e->getComponent<CTransform>();
-        if (e->hasComponent<CAnimation>()) {
-            auto& animation = e->getComponent<CAnimation>().animation;
-            animation.getSprite().setRotation(transform.angle);
-            animation.getSprite().setPosition(transform.pos.x, transform.pos.y);
-            animation.getSprite().setScale(transform.scale.x, transform.scale.y);
-            m_engine->window().draw(animation.getSprite());
+    if (m_draw_textures) {
+        for (auto e : m_entity_manager.getEntities()) {
+            auto& transform = e->getComponent<CTransform>();
+            if (e->hasComponent<CAnimation>()) {
+                auto& animation = e->getComponent<CAnimation>().animation;
+                animation.getSprite().setRotation(transform.angle);
+                animation.getSprite().setPosition(transform.pos.x, transform.pos.y);
+                animation.getSprite().setScale(transform.scale.x, transform.scale.y);
+                m_engine->window().draw(animation.getSprite());
 
-            if (m_show_health) {
-                renderHealth(e);
+                if (m_show_health) {
+                    renderHealth(e);
+                }
             }
         }
+    }
+
+    if (m_draw_collision) {
+        renderBBoxes();
     }
 }
 
