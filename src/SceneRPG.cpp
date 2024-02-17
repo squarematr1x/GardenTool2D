@@ -271,12 +271,12 @@ void SceneRPG::sAI() {
 }
 
 void SceneRPG::sStatus() {
-    if (!m_player->hasComponent<CInvicibility>()) {
+    if (!m_player->hasComponent<CInvincibility>()) {
         return;
     }
 
-    if (m_player->getComponent<CInvicibility>().i_frames-- <= 0) {
-        m_player->removeComponent<CInvicibility>();
+    if (m_player->getComponent<CInvincibility>().i_frames-- <= 0) {
+        m_player->removeComponent<CInvincibility>();
     }
 }
 
@@ -326,7 +326,7 @@ void SceneRPG::sCollision() {
             }
         }
 
-        if (m_player->hasComponent<CInvicibility>()) {
+        if (m_player->hasComponent<CInvincibility>()) {
             continue;
         }
 
@@ -340,7 +340,7 @@ void SceneRPG::sCollision() {
                 m_player->destroy();
                 spawnPlayer();
             } else {
-                m_player->addComponent<CInvicibility>();
+                m_player->addComponent<CInvincibility>();
             }
         }
     }
@@ -397,7 +397,7 @@ void SceneRPG::sAnimation() {
                 entity->getComponent<CAnimation>().animation.update();
             }
 
-            if (m_player->hasComponent<CInvicibility>()) {
+            if (m_player->hasComponent<CInvincibility>()) {
 		        entity->getComponent<CAnimation>().animation.getSprite().setColor(sf::Color(255, 255, 255, 128));
 	        } else {
                 entity->getComponent<CAnimation>().animation.getSprite().setColor(sf::Color(255, 255, 255));
