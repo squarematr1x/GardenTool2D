@@ -52,6 +52,9 @@ protected:
 	std::map<int, ActionName> m_action_map;
 	bool m_paused{ false };
 	bool m_has_ended{ false };
+	bool m_draw_textures{ true };
+	bool m_draw_collision{ false };
+	bool m_draw_grid{ false };
 
 	virtual void onEnd() = 0;
 	void setPaused(bool paused) { m_paused = paused; }
@@ -99,9 +102,6 @@ class SceneSideScroller: public Scene
 	std::string m_level_path{ "" };
 	std::shared_ptr<Entity> m_player;
 	PlayerConfig m_player_config;
-	bool m_draw_textures{ true };
-	bool m_draw_collision{ false };
-	bool m_draw_grid{ false };
 	bool m_can_shoot{ true };
 	bool m_can_jump{ true };
 	const Vec2 m_grid_size{ 64, 64 };
