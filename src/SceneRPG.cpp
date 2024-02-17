@@ -271,7 +271,13 @@ void SceneRPG::sAI() {
 }
 
 void SceneRPG::sStatus() {
-    // Implement lifespan and invicibility frames here
+    if (!m_player->hasComponent<CInvicibility>()) {
+        return;
+    }
+
+    if (m_player->getComponent<CInvicibility>().i_frames-- <= 0) {
+        m_player->removeComponent<CInvicibility>();
+    }
 }
 
 void SceneRPG::sCollision() {
@@ -319,6 +325,11 @@ void SceneRPG::sCollision() {
                 }
             }
         }
+
+        if (m_player->hasComponent<CInvicibility>()) {
+            continue;
+        }
+
         Vec2 player_overlap = physics::getOverlap(m_player, enemy);
         if (player_overlap.x > 0 && player_overlap.y > 0) {
             auto& hp = m_player->getComponent<CHealth>();
@@ -326,9 +337,10 @@ void SceneRPG::sCollision() {
             hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
 
             if (hp.current <= 0) {
-                // Player dies (respawn)
                 m_player->destroy();
                 spawnPlayer();
+            } else {
+                m_player->addComponent<CInvicibility>();
             }
         }
     }
@@ -383,6 +395,12 @@ void SceneRPG::sAnimation() {
 
             if (m_player->getComponent<CTransform>().velocity != Vec2(0.0f, 0.0f)) {
                 entity->getComponent<CAnimation>().animation.update();
+            }
+
+            if (m_player->hasComponent<CInvicibility>()) {
+		        entity->getComponent<CAnimation>().animation.getSprite().setColor(sf::Color(255, 255, 255, 128));
+	        } else {
+                entity->getComponent<CAnimation>().animation.getSprite().setColor(sf::Color(255, 255, 255));
             }
         } else {
             entity->getComponent<CAnimation>().animation.update();

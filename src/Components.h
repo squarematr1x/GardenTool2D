@@ -133,7 +133,7 @@ struct CDamage: Component {
 };
 
 struct CInvicibility: Component {
-	int i_frames{ 30 };
+	int i_frames{ 60 };
 
 	CInvicibility() {}
 	CInvicibility(int i_frames_in)
