@@ -77,11 +77,16 @@ void SceneRPG::loadLevel(const std::string& path) {
                 x, y, bbox_w, bbox_h, v, health
             };
         } else if (str == "NPC") { 
-            std::string animation;
+            std::string animation, mode;
             float room_x, room_y, x, y;
             bool block_movement, block_vision;
             int hp, damage;
-            file >> animation >> room_x >> room_y >> x >> y >> block_movement >> block_vision >> hp >> damage;
+            file >> animation >> room_x >> room_y >> x >> y >> block_movement >> block_vision >> hp >> damage; //  >> mode;
+            // if (mode == "Patrol") {
+            //     int speed, n_positions;
+            //     std::vector<int> positions;
+            //     file >> speed >> n_positions 
+            // }
             auto enemy = m_entity_manager.addEntity(Tag::ENEMY);
             enemy->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
             enemy->addComponent<CTransform>(getPosition(room_x, room_y, x, y));
@@ -95,6 +100,7 @@ void SceneRPG::loadLevel(const std::string& path) {
             std::cerr << "Unknown level object: " << str << '\n';
         }
     }
+    file.close();
 
     spawnPlayer();
 }
@@ -157,6 +163,7 @@ void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) { // TODO: Still plent
         default: break;
     }
 
+    // TODO: Bug, vertically spawned sword BBox is the same as in horizontal
     Vec2 swor_pos(
         pos.x + facing.x*m_grid_size.x,
         pos.y + facing.y*m_grid_size.y
@@ -398,7 +405,7 @@ void SceneRPG::sAnimation() {
             }
 
             if (m_player->hasComponent<CInvincibility>()) {
-		        entity->getComponent<CAnimation>().animation.getSprite().setColor(sf::Color(255, 255, 255, 128));
+		        entity->getComponent<CAnimation>().animation.getSprite().setColor(sf::Color(255, 128, 128, 128));
 	        } else {
                 entity->getComponent<CAnimation>().animation.getSprite().setColor(sf::Color(255, 255, 255));
             }

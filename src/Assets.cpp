@@ -37,6 +37,7 @@ void Assets::loadFromFile(const std::string& path) {
 			std::cerr << "Unknown asset type: " << str << '\n';
 		}
 	}
+	file.close();
 }
 
 void Assets::addTexture(const std::string& texture_name, const std::string& path, bool smooth) {

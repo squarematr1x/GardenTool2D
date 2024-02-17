@@ -103,6 +103,7 @@ void SceneSideScroller::loadLevel(const std::string& path) {
             std::cerr << "Unknown level object: " << str << '\n';
         }
     }
+    file.close();
 
     spawnPlayer();
 }
