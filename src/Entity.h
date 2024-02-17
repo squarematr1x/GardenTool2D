@@ -13,7 +13,7 @@ typedef std::tuple<
 	CHealth,
 	CInput,
 	CDamage,
-	CInvicibility,
+	CInvincibility,
 	CBBox,
 	CAnimation,
 	CGravity,
