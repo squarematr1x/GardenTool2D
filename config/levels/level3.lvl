@@ -15,4 +15,6 @@ Tile WaterULCorner 0 0 -1 4 1 0
 Tile Water 0 0 -1 5 1 0
 Tile WaterLLCorner 0 0 -1 6 1 0
 Tile Heart 0 0 2 2 0 0
-Player 11 7 64 64 5 20
+Tile Doorway 0 -1 11 7 0 0
+Player 11 9 64 64 5 20
+NPC PDown 0 0 3 3 1 0 30 1

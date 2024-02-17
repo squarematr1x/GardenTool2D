@@ -88,6 +88,11 @@ struct CHealth: Component {
 	float percentage{ 1.0f }; // Store for rendering purposes
 
 	CHealth() {}
+	CHealth(int max_in)
+		: max(max_in), current(max_in)
+	{
+	} 
+
 	CHealth(int max_in, int current_in)
 		: max(max_in),
 		current(current_in),

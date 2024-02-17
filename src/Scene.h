@@ -173,6 +173,8 @@ public:
 	void spawnPlayer();
 	void spawnSword(std::shared_ptr<Entity> entity);
 
+	void teleport();
+
 	Vec2 getPosition(float rx, float ry, float tx, float ty) const;
 	Vec2 getCurrentRoom() const;
 
