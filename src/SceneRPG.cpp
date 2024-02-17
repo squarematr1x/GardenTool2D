@@ -57,6 +57,8 @@ void SceneRPG::loadLevel(const std::string& path) {
                 tag = Tag::TILE;
             } else if (animation == "Heart") {
                 tag = Tag::HEART;
+            } else if (animation == "Doorway") {
+                tag = Tag::TELEPORT;
             }
 
             auto tile = m_entity_manager.addEntity(tag);
@@ -74,6 +76,21 @@ void SceneRPG::loadLevel(const std::string& path) {
             m_player_config = {
                 x, y, bbox_w, bbox_h, v, health
             };
+        } else if (str == "NPC") { 
+            std::string animation;
+            float room_x, room_y, x, y;
+            bool block_movement, block_vision;
+            int hp, damage;
+            file >> animation >> room_x >> room_y >> x >> y >> block_movement >> block_vision >> hp >> damage;
+            auto enemy = m_entity_manager.addEntity(Tag::ENEMY);
+            enemy->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
+            enemy->addComponent<CTransform>(getPosition(room_x, room_y, x, y));
+            enemy->addComponent<CHealth>(hp);
+            enemy->addComponent<CDamage>(damage);
+            if (block_movement) {
+                const auto& animation_size = enemy->getComponent<CAnimation>().animation.getSize();
+                enemy->addComponent<CBBox>(animation_size, block_movement, block_vision);
+            }
         } else {
             std::cerr << "Unknown level object: " << str << '\n';
         }
@@ -153,6 +170,16 @@ void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) { // TODO: Still plent
 
     sword->getComponent<CTransform>().scale = scale;
     // Sword should appropriate lifespan, location based on player's facing dir, damage value of 1 and play "Slash" sound
+}
+
+void SceneRPG::teleport() {
+    std::vector<Vec2> doorways{};
+    for (auto e : m_entity_manager.getEntities(Tag::TELEPORT)) {
+        doorways.push_back(e->getComponent<CTransform>().pos);
+    }
+
+    // TODO: get random pos from doorways and set as player pos
+    // TODO: Make sure that player is not teleported back (the destionation tile is teleport after all...)
 }
 
 void SceneRPG::update() {
@@ -248,18 +275,13 @@ void SceneRPG::sStatus() {
 }
 
 void SceneRPG::sCollision() {
-    // Implement player - enemy collision with damage calculations
-    // Implement sword - enemy collisions
-    // Implement black tile collision/teleporting
-    // Implement entity -heart collisions and life gain logic
-    // Implement util functions for beforementioned logic when needed
     auto& transfrom = m_player->getComponent<CTransform>();
 
+    // Player - tile collision
     for (auto entity : m_entity_manager.getEntities(Tag::TILE)) {
         if (!entity->getComponent<CBBox>().block_movement) {
             continue;
         }
-        // Player - tile collision
         Vec2 overlap = physics::getOverlap(m_player, entity);
         if (overlap.x > 0 && overlap.y > 0) {
             Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
@@ -282,7 +304,36 @@ void SceneRPG::sCollision() {
         }
     }
 
-    // Player heart collision
+    // Player - enemy collision
+    for (auto enemy : m_entity_manager.getEntities(Tag::ENEMY)) {
+        auto enemy_damage = enemy->getComponent<CDamage>().damage;
+        for (auto sword : m_entity_manager.getEntities(Tag::SWORD)) {
+            Vec2 sword_overlap = physics::getOverlap(sword, enemy);
+            if (sword_overlap.x > 0 && sword_overlap.y > 0) {
+                auto& hp = enemy->getComponent<CHealth>();
+                hp.current -= sword->getComponent<CDamage>().damage;
+                hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
+
+                if (hp.current <= 0) {
+                    enemy->destroy();
+                }
+            }
+        }
+        Vec2 player_overlap = physics::getOverlap(m_player, enemy);
+        if (player_overlap.x > 0 && player_overlap.y > 0) {
+            auto& hp = m_player->getComponent<CHealth>();
+            hp.current -= enemy_damage;
+            hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
+
+            if (hp.current <= 0) {
+                // Player dies (respawn)
+                m_player->destroy();
+                spawnPlayer();
+            }
+        }
+    }
+
+    // Player - heart collision
     for (auto entity : m_entity_manager.getEntities(Tag::HEART)) {
         Vec2 overlap = physics::getOverlap(m_player, entity);
         if (overlap.x > 0 && overlap.y > 0) {
@@ -292,6 +343,9 @@ void SceneRPG::sCollision() {
             entity->destroy();
         }
     }
+
+    // Player - teleport collision
+    // TODO: Implement teleporting here
 }
 
 void SceneRPG::sAnimation() {
