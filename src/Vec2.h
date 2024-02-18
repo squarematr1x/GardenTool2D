@@ -44,7 +44,7 @@ public:
 	Vec2& add(const float value);
 
 	float distance(const Vec2& p) const;
-	float Vec2::length() const;
+	float length() const;
 
 	Vec2 normalize() const;
 
