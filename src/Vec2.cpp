@@ -73,6 +73,10 @@ float Vec2::distance(const Vec2& p) const {
 	return sqrtf(dx*dx + dy*dy);
 }
 
+float Vec2::length() const {
+	return sqrtf(x*x + y*y);
+}
+
 Vec2 Vec2::normalize() const {
-	return *this / sqrtf(x * x + y * y);
+	return *this / sqrtf(x*x + y*y);
 }
