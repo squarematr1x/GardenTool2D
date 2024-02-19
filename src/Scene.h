@@ -178,6 +178,8 @@ public:
 	Vec2 getPosition(float rx, float ry, float tx, float ty) const;
 	Vec2 getCurrentRoom() const;
 
+	bool targetReached(const Vec2& pos, const Vec2& target) const;
+
 	void sAI();
 	void sMovement();
 	void sStatus();
