@@ -81,12 +81,7 @@ void SceneRPG::loadLevel(const std::string& path) {
             float room_x, room_y, x, y;
             bool block_movement, block_vision;
             int hp, damage;
-            file >> animation >> room_x >> room_y >> x >> y >> block_movement >> block_vision >> hp >> damage; //  >> mode;
-            // if (mode == "Patrol") {
-            //     int speed, n_positions;
-            //     std::vector<int> positions;
-            //     file >> speed >> n_positions 
-            // }
+            file >> animation >> room_x >> room_y >> x >> y >> block_movement >> block_vision >> hp >> damage;
             auto enemy = m_entity_manager.addEntity(Tag::ENEMY);
             enemy->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
             enemy->addComponent<CTransform>(getPosition(room_x, room_y, x, y));
@@ -95,6 +90,22 @@ void SceneRPG::loadLevel(const std::string& path) {
             if (block_movement) {
                 const auto& animation_size = enemy->getComponent<CAnimation>().animation.getSize();
                 enemy->addComponent<CBBox>(animation_size, block_movement, block_vision);
+            }
+
+            file >> mode;
+            if (mode == "Patrol") {
+                float speed;
+                int n_positions;
+                std::vector<Vec2> positions;
+                file >> speed >> n_positions;
+                for (int i = 0; i < n_positions; i++) {
+                    file >> x >> y;
+                    positions.push_back(getPosition(room_x, room_y, x, y));
+                }
+                enemy->addComponent<CPatrol>(positions, speed);
+                enemy->getComponent<CTransform>().velocity =  Vec2(speed, speed);
+            } else if (mode == "Follow") {
+                // TODO: parse follow player config
             }
         } else {
             std::cerr << "Unknown level object: " << str << '\n';
@@ -274,8 +285,40 @@ void SceneRPG::sDoAction(const Action& action) {
     }
 }
 
+bool SceneRPG::targetReached(const Vec2& pos, const Vec2& target) const {
+    float distance = pos.distance(target);
+    return fabs(distance) <= 5.0f;
+}
+
 void SceneRPG::sAI() {
-    // Implement follow and patrol behavior
+    for (auto e : m_entity_manager.getEntities(Tag::ENEMY)) {
+        // Patrol
+        if (e->hasComponent<CPatrol>()) {
+            auto& patrol = e->getComponent<CPatrol>();
+            auto& transform = e->getComponent<CTransform>();
+
+            Vec2 target = patrol.positions[patrol.cur_pos];
+            if (targetReached(transform.pos, target)) {
+                patrol.cur_pos = patrol.cur_pos + 1 < patrol.positions.size() ? patrol.cur_pos + 1 : 0;
+                target = patrol.positions[patrol.cur_pos];
+            }
+
+            Vec2 desired = target - transform.pos;
+            desired = desired.normalize();
+            desired = desired*transform.velocity.length();
+            transform.velocity = desired;
+
+            // TODO: implement steering:
+            // Vec2 steering = desired - transform.velocity;
+            // steering.scale(0.5f);
+            // Vec2 actual = transform.velocity + steering;
+        }
+
+        // Follow
+        if (e->hasComponent<CFollowPlayer>()) {
+            // TODO: Implement follow logic
+        }
+    }
 }
 
 void SceneRPG::sStatus() {
