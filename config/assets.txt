@@ -67,3 +67,7 @@ Texture SwordDownText assets/rpg-images/sworddown.png
 Animation SwordDown SwordDownText 1 10
 Texture SwordSideText assets/rpg-images/swordside.png
 Animation SwordSide SwordSideText 1 10
+Texture SpiderText assets/rpg-images/spider.png
+Animation Spider SpiderText 2 15
+Texture GhostText assets/rpg-images/ghost.png
+Animation Ghost GhostText 1 1

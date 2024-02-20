@@ -105,7 +105,10 @@ void SceneRPG::loadLevel(const std::string& path) {
                 enemy->addComponent<CPatrol>(positions, speed);
                 enemy->getComponent<CTransform>().velocity =  Vec2(speed, speed);
             } else if (mode == "Follow") {
-                // TODO: parse follow player config
+                float speed, y, x;
+                file >> speed >> x >> y;
+                enemy->addComponent<CFollowPlayer>(getPosition(0, -1, x, y), speed);
+                enemy->getComponent<CTransform>().velocity =  Vec2(speed, speed);
             }
         } else {
             std::cerr << "Unknown level object: " << str << '\n';
@@ -307,16 +310,21 @@ void SceneRPG::sAI() {
             desired = desired.normalize();
             desired = desired*transform.velocity.length();
             transform.velocity = desired;
+        }
+
+        // Follow
+        if (e->hasComponent<CFollowPlayer>()) {
+            auto& transform = e->getComponent<CTransform>();
+            const Vec2 target = m_player->getComponent<CTransform>().pos;
+            Vec2 desired = target - transform.pos;
+            desired = desired.normalize();
+            desired = desired*transform.velocity.length();
+            transform.velocity = desired;
 
             // TODO: implement steering:
             // Vec2 steering = desired - transform.velocity;
             // steering.scale(0.5f);
             // Vec2 actual = transform.velocity + steering;
-        }
-
-        // Follow
-        if (e->hasComponent<CFollowPlayer>()) {
-            // TODO: Implement follow logic
         }
     }
 }
