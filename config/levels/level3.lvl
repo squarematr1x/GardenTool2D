@@ -17,5 +17,5 @@ Tile WaterLLCorner 0 0 -1 6 1 0
 Tile Heart 0 0 2 2 0 0
 Tile Doorway 0 -1 11 7 0 0
 Player 11 9 64 64 5 5
-NPC Spider 0 0 3 3 1 0 30 1 Patrol 2 2 3 3 7 3
-NPC Ghost 0 -1 5 3 1 0 30 1
+NPC Spider 0 0 3 3 1 0 30 1 Patrol 2 3 3 3 7 3 7 6
+NPC Ghost 0 -1 5 3 1 0 30 1 Follow 2 9 7
