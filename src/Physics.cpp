@@ -42,25 +42,80 @@ bool isInside(const Vec2& pos, std::shared_ptr<Entity> entity) {
 	auto e_pos = entity->getComponent<CTransform>().pos;
     auto size = entity->getComponent<CAnimation>().animation.getSize();
 
-    float dx = fabs(pos.x - e_pos.x);
-    float dy = fabs(pos.y - e_pos.y);
+    const float dx = fabs(pos.x - e_pos.x);
+    const float dy = fabs(pos.y - e_pos.y);
 
     return (dx <= size.x/2) && (dy <= size.y/2);
 }
 
-bool entityIntersect(const Vec2& a, const Vec2& b, std::shared_ptr<Entity> entity) {
-	(void)a;
-	(void)b;
-	(void)entity;
+Orientation orientation(const Vec2& a, const Vec2& b, const Vec2& c) {
+	const float val = (b.y - a.y)*(c.x - b.x) - (b.x - a.x)*(c.y - b.y);
+
+	if (val == 0.0f) {
+		return Orientation::COLLINEAR;
+	}
+	if (val > 0.0f) {
+		return Orientation::CLOCKWISE;
+	}
+
+	return Orientation::COUNTERCLOCKWISE;
+}
+
+bool onSegement(const Vec2& a, const Vec2& b, const Vec2& c) {
+	return (
+		b.x <= std::max(a.x, c.x) && b.x >= std::min(a.x, c.x) &&
+		b.y <= std::max(a.y, c.y) && b.y >= std::min(a.y, c.y)
+	);
+}
+
+bool lineIntersect(const Vec2& a, const Vec2& b, const Vec2& c, const Vec2& d) {
+	const Orientation o1 = orientation(a, c, b);
+	const Orientation o2 = orientation(a, c, d);
+	const Orientation o3 = orientation(b, d, a);
+	const Orientation o4 = orientation(b, d, c);
+
+	if (o1 != o2 && o3 != o4) {
+		return true;
+	}
+
+	if (o1 == Orientation::COLLINEAR && onSegement(a, b, c)) {
+		return true;
+	}
+	if (o2 == Orientation::COLLINEAR && onSegement(a, d, c)) {
+		return true;
+	}
+	if (o3 == Orientation::COLLINEAR && onSegement(b, a, d)) {
+		return true;
+	}
+	if (o4 == Orientation::COLLINEAR && onSegement(b, c, d)) {
+		return true;
+	}
+
 	return false;
 }
 
-Intersect lineIntersect(const Vec2& a, const Vec2& b, const Vec2& c, const Vec2& d) {
-	(void)a;
-	(void)b;
-	(void)c;
-	(void)d;
-	return { false, Vec2(0, 0) };
+bool entityIntersect(const Vec2& a, const Vec2& b, std::shared_ptr<Entity> entity) {
+	const Vec2 half_size = entity->getComponent<CBBox>().half_size;
+	const Vec2 pos = entity->getComponent<CTransform>().pos;
+	const Vec2 p1(pos.x - half_size.x, pos.y - half_size.y);
+	const Vec2 p2(pos.x + half_size.x, pos.y - half_size.y);
+	const Vec2 p3(pos.x + half_size.x, pos.y + half_size.y);
+	const Vec2 p4(pos.x - half_size.x, pos.y + half_size.y);
+
+	if (lineIntersect(a, b, p1, p2)) {
+		return true;
+	}
+	if (lineIntersect(a, b, p2, p3)) {
+		return true;
+	}
+	if (lineIntersect(a, b, p3, p4)) {
+		return true;
+	}
+	if (lineIntersect(a, b, p1, p4)) {
+		return true;
+	}
+
+	return false;
 }
 
 } // namespace physics
