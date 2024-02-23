@@ -209,6 +209,7 @@ struct CDraggable: Component {
 struct CFollowPlayer: Component {
 	Vec2 home{ 0, 0 };
 	float speed{ 0.0f };
+	bool detected{ false };
 
 	CFollowPlayer() {}
 	CFollowPlayer(Vec2 home_in, float velocity_in)

@@ -18,6 +18,7 @@ void SceneRPG::init(const std::string& level_path) {
     registerAction(sf::Keyboard::X, ActionName::TOGGLE_COLLISION);
     registerAction(sf::Keyboard::Y, ActionName::TOGGLE_FOLLOW);
     registerAction(sf::Keyboard::H, ActionName::TOGGLE_HEALTH);
+    registerAction(sf::Keyboard::Q, ActionName::TOGGLE_AI_INFO);
 
     registerAction(sf::Keyboard::Space, ActionName::ATTACK);
     registerAction(sf::Keyboard::Up, ActionName::UP);
@@ -65,7 +66,7 @@ void SceneRPG::loadLevel(const std::string& path) {
             tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
             tile->addComponent<CTransform>(getPosition(room_x, room_y, x, y));
             tile->addComponent<CDraggable>();
-            if (block_movement) {
+            if (block_movement || block_vision) {
                 const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
                 tile->addComponent<CBBox>(animation_size, block_movement, block_vision);
             }
@@ -103,12 +104,10 @@ void SceneRPG::loadLevel(const std::string& path) {
                     positions.push_back(getPosition(room_x, room_y, x, y));
                 }
                 enemy->addComponent<CPatrol>(positions, speed);
-                enemy->getComponent<CTransform>().velocity =  Vec2(speed, speed);
             } else if (mode == "Follow") {
                 float speed, y, x;
                 file >> speed >> x >> y;
-                enemy->addComponent<CFollowPlayer>(getPosition(0, -1, x, y), speed);
-                enemy->getComponent<CTransform>().velocity =  Vec2(speed, speed);
+                enemy->addComponent<CFollowPlayer>(getPosition(room_x, room_y, x, y), speed);
             }
         } else {
             std::cerr << "Unknown level object: " << str << '\n';
@@ -269,6 +268,7 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::TOGGLE_HEALTH: m_show_health = !m_show_health; break;
             case ActionName::TOGGLE_TEXTURE: m_draw_textures = !m_draw_textures; break;
             case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
+            case ActionName::TOGGLE_AI_INFO: m_show_ai_info = !m_show_ai_info; break;
             case ActionName::UP: m_player->getComponent<CInput>().up = true; break;
             case ActionName::RIGHT: m_player->getComponent<CInput>().right = true; break;
             case ActionName::DOWN: m_player->getComponent<CInput>().down = true; break;
@@ -308,18 +308,39 @@ void SceneRPG::sAI() {
 
             Vec2 desired = target - transform.pos;
             desired = desired.normalize();
-            desired = desired*transform.velocity.length();
+            desired = desired*patrol.speed;
             transform.velocity = desired;
         }
 
         // Follow
         if (e->hasComponent<CFollowPlayer>()) {
+            Vec2 target = m_player->getComponent<CTransform>().pos;
             auto& transform = e->getComponent<CTransform>();
-            const Vec2 target = m_player->getComponent<CTransform>().pos;
-            Vec2 desired = target - transform.pos;
-            desired = desired.normalize();
-            desired = desired*transform.velocity.length();
-            transform.velocity = desired;
+            e->getComponent<CFollowPlayer>().detected = true;
+
+            for (auto tile : m_entity_manager.getEntities(Tag::TILE)) {
+                if (!tile->hasComponent<CBBox>()) {
+                    continue;
+                }
+                if (!tile->getComponent<CBBox>().block_vision) {
+                    continue;
+                }
+
+                if (physics::entityIntersect(transform.pos, target, tile)) {
+                    target = e->getComponent<CFollowPlayer>().home;
+                    e->getComponent<CFollowPlayer>().detected = false;
+                    break;
+                }
+            }
+
+            if (!targetReached(transform.pos, target)) {
+                Vec2 desired = target - transform.pos;
+                desired = desired.normalize();
+                desired = desired*e->getComponent<CFollowPlayer>().speed;
+                transform.velocity = desired;
+            } else {
+                transform.velocity = Vec2(0.0f, 0.0f);
+            }
 
             // TODO: implement steering:
             // Vec2 steering = desired - transform.velocity;
@@ -505,6 +526,10 @@ void SceneRPG::sRender() {
 
                 if (m_show_health) {
                     renderHealth(e);
+                }
+
+	            if (m_show_ai_info && e->tag() == Tag::ENEMY) {
+                    renderInfoAI(e, m_player);
                 }
             }
         }

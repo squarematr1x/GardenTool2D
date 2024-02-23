@@ -57,7 +57,7 @@ void Scene::renderBBoxes() {
 }
 
 void Scene::renderCursor() {
-
+    // TODO: Implement cursor rendering here
 }
 
 void Scene::renderHealth(std::shared_ptr<Entity> e) {
@@ -81,4 +81,36 @@ void Scene::renderHealth(std::shared_ptr<Entity> e) {
 
     m_engine->window().draw(hbox_back);
     m_engine->window().draw(hbox_front);
+}
+
+void Scene::renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> player) {
+    const auto e_pos = e->getComponent<CTransform>().pos;
+    const auto p_pos = player->getComponent<CTransform>().pos;
+    sf::CircleShape center;
+    center.setFillColor(sf::Color(255, 255, 255));
+    center.setRadius(4);
+    center.setOrigin(2, 2);
+    center.setPosition(e_pos.x, e_pos.y);
+    m_engine->window().draw(center);
+    center.setPosition(p_pos.x, p_pos.y);
+    m_engine->window().draw(center);
+
+    if (e->hasComponent<CFollowPlayer>()) {
+        if (e->getComponent<CFollowPlayer>().detected == true) {
+            drawLine(e_pos, p_pos);
+        }
+    }
+
+    if (e->hasComponent<CPatrol>()) {
+        auto positions = e->getComponent<CPatrol>().positions;
+        sf::CircleShape patrol_pos;
+        patrol_pos.setFillColor(sf::Color(255, 255, 255));
+        patrol_pos.setRadius(4);
+        patrol_pos.setOrigin(2, 2);
+
+        for (const Vec2& pos : positions) {
+            patrol_pos.setPosition(pos.x, pos.y);
+            m_engine->window().draw(patrol_pos);
+        }
+    }
 }
