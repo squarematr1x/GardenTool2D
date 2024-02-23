@@ -44,6 +44,7 @@ public:
 	void renderBBoxes();
 	void renderCursor();
 	void renderHealth(std::shared_ptr<Entity> e);
+	void renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> player);
 
 protected:
 	GameEngine* m_engine{ nullptr };
@@ -55,6 +56,7 @@ protected:
 	bool m_draw_textures{ true };
 	bool m_draw_collision{ false };
 	bool m_draw_grid{ false };
+	bool m_show_ai_info{ false };
 
 	virtual void onEnd() = 0;
 	void setPaused(bool paused) { m_paused = paused; }
