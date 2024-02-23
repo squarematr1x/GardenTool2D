@@ -69,25 +69,25 @@ bool onSegement(const Vec2& a, const Vec2& b, const Vec2& c) {
 }
 
 bool lineIntersect(const Vec2& a, const Vec2& b, const Vec2& c, const Vec2& d) {
-	const Orientation o1 = orientation(a, c, b);
-	const Orientation o2 = orientation(a, c, d);
-	const Orientation o3 = orientation(b, d, a);
-	const Orientation o4 = orientation(b, d, c);
+	const Orientation o1 = orientation(a, b, c);
+	const Orientation o2 = orientation(a, b, d);
+	const Orientation o3 = orientation(c, d, a);
+	const Orientation o4 = orientation(c, d, b);
 
 	if (o1 != o2 && o3 != o4) {
 		return true;
 	}
 
-	if (o1 == Orientation::COLLINEAR && onSegement(a, b, c)) {
+	if (o1 == Orientation::COLLINEAR && onSegement(a, c, b)) {
 		return true;
 	}
-	if (o2 == Orientation::COLLINEAR && onSegement(a, d, c)) {
+	if (o2 == Orientation::COLLINEAR && onSegement(a, d, b)) {
 		return true;
 	}
-	if (o3 == Orientation::COLLINEAR && onSegement(b, a, d)) {
+	if (o3 == Orientation::COLLINEAR && onSegement(c, a, d)) {
 		return true;
 	}
-	if (o4 == Orientation::COLLINEAR && onSegement(b, c, d)) {
+	if (o4 == Orientation::COLLINEAR && onSegement(c, b, d)) {
 		return true;
 	}
 
