@@ -34,8 +34,13 @@ void SceneMenu::sDoAction(const Action& action) {
     } else if (action.getName() == ActionName::DOWN) {
         m_menu_index = (m_menu_index + 1) % m_menu_strings.size();
     } else if (action.getName() == ActionName::PLAY) {
-        // TODO: Find method to distinguish between rpg and side scroller scenes
-        m_engine->changeScene(SceneType::TOP_DOWN_RPG, std::make_shared<SceneRPG>(m_engine, m_level_paths[m_menu_index]));
+        const std::string file_name = m_level_paths[m_menu_index];
+        const std::string extension(std::find(file_name.begin(), file_name.end(), '.'), file_name.end());
+        if (extension == ".sc.lvl") {
+            m_engine->changeScene(SceneType::SIDE_SCROLL, std::make_shared<SceneSideScroller>(m_engine, file_name));
+        } else if (extension == ".rpg.lvl") {
+            m_engine->changeScene(SceneType::TOP_DOWN_RPG, std::make_shared<SceneRPG>(m_engine, file_name));
+        }
     } else if (action.getName() == ActionName::QUIT) {
         onEnd();
     }
