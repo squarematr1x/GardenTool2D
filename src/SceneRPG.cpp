@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "GameEngine.h"
 #include "Physics.h"
+#include "Random.h"
 
 SceneRPG::SceneRPG(GameEngine* engine, const std::string& level_path)
     : Scene(engine), m_level_path(level_path) {
@@ -30,11 +31,6 @@ void SceneRPG::init(const std::string& level_path) {
     registerAction(sf::Mouse::Button::Middle, ActionName::MIDDLE_CLICK);
     registerAction(sf::Mouse::Button::Right, ActionName::RIGHT_CLICK);
 
-    // m_grid_text.setCharacterSize(12);
-    // m_grid_text.setFont(m_engine->assets().getFont("Arial"));
-    // m_pause_text.setCharacterSize(20);
-    // m_pause_text.setFont(m_engine->assets().getFont("Arial"));
-
     loadLevel(level_path);
 }
 
@@ -53,18 +49,20 @@ void SceneRPG::loadLevel(const std::string& path) {
             bool block_movement, block_vision;
             file >> animation >> room_x >> room_y >> x >> y >> block_movement >> block_vision;
 
-            auto tag = Tag::DEC;
+            Vec2 pos = getPosition(room_x, room_y, x, y);
+            Tag tag = Tag::DEC;
             if (block_movement) {
                 tag = Tag::TILE;
             } else if (animation == "Heart") {
                 tag = Tag::HEART;
             } else if (animation == "Doorway") {
                 tag = Tag::TELEPORT;
+                m_doorways.push_back(pos);
             }
 
             auto tile = m_entity_manager.addEntity(tag);
             tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
-            tile->addComponent<CTransform>(getPosition(room_x, room_y, x, y));
+            tile->addComponent<CTransform>(pos);
             tile->addComponent<CDraggable>();
             if (block_movement || block_vision) {
                 const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
@@ -194,13 +192,11 @@ void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) { // TODO: Still plent
 }
 
 void SceneRPG::teleport() {
-    std::vector<Vec2> doorways{};
-    for (auto e : m_entity_manager.getEntities(Tag::TELEPORT)) {
-        doorways.push_back(e->getComponent<CTransform>().pos);
+    if (m_doorways.size() <= 0) {
+        return;
     }
-
-    // TODO: get random pos from doorways and set as player pos
-    // TODO: Make sure that player is not teleported back (the destionation tile is teleport after all...)
+    Vec2 next_door = *math::getRandomElement(m_doorways.begin(), m_doorways.end());
+    m_player->getComponent<CTransform>().pos = next_door;
 }
 
 void SceneRPG::update() {
@@ -393,9 +389,9 @@ void SceneRPG::sCollision() {
     // Player - enemy collision
     for (auto enemy : m_entity_manager.getEntities(Tag::ENEMY)) {
         auto enemy_damage = enemy->getComponent<CDamage>().damage;
+
         for (auto sword : m_entity_manager.getEntities(Tag::SWORD)) {
-            Vec2 sword_overlap = physics::getOverlap(sword, enemy);
-            if (sword_overlap.x > 0 && sword_overlap.y > 0) {
+            if (physics::overlapping(enemy, sword)) {
                 auto& hp = enemy->getComponent<CHealth>();
                 hp.current -= sword->getComponent<CDamage>().damage;
                 hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
@@ -410,8 +406,7 @@ void SceneRPG::sCollision() {
             continue;
         }
 
-        Vec2 player_overlap = physics::getOverlap(m_player, enemy);
-        if (player_overlap.x > 0 && player_overlap.y > 0) {
+        if (physics::overlapping(m_player, enemy)) {
             auto& hp = m_player->getComponent<CHealth>();
             hp.current -= enemy_damage;
             hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
@@ -426,18 +421,21 @@ void SceneRPG::sCollision() {
     }
 
     // Player - heart collision
-    for (auto entity : m_entity_manager.getEntities(Tag::HEART)) {
-        Vec2 overlap = physics::getOverlap(m_player, entity);
-        if (overlap.x > 0 && overlap.y > 0) {
+    for (auto heart : m_entity_manager.getEntities(Tag::HEART)) {
+        if (physics::overlapping(m_player, heart)) {
             auto& p_health = m_player->getComponent<CHealth>();
             p_health.current = std::min(p_health.current + 1, p_health.max);
             p_health.percentage = static_cast<float>(p_health.current)/static_cast<float>(p_health.max);
-            entity->destroy();
+            heart->destroy();
         }
     }
 
-    // Player - teleport collision
-    // TODO: Implement teleporting here
+    // Player doorway/teleport collision
+    for (auto doorway : m_entity_manager.getEntities(Tag::TELEPORT)) {
+        if (physics::overlapping(m_player, doorway) && !physics::previouslyOverlapping(m_player, doorway)) {
+            teleport();
+        }
+    }
 }
 
 void SceneRPG::sAnimation() {

@@ -38,6 +38,18 @@ Vec2 getPrevOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
 	return Vec2(overlap_x, overlap_y);
 }
 
+bool overlapping(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
+	const Vec2 overlap = getOverlap(a, b);
+	
+	return (overlap.x > 0 && overlap.y > 0);
+}
+
+bool previouslyOverlapping(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
+	const Vec2 prev_overlap = getPrevOverlap(a, b);
+	
+	return (prev_overlap.x > 0 && prev_overlap.y > 0);
+}
+
 bool isInside(const Vec2& pos, std::shared_ptr<Entity> entity) {
 	auto e_pos = entity->getComponent<CTransform>().pos;
     auto size = entity->getComponent<CAnimation>().animation.getSize();
