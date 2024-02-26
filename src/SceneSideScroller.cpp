@@ -58,6 +58,7 @@ Vec2 SceneSideScroller::mouseToWorldPos(const Vec2& mouse_pos) const {
     return Vec2(mouse_pos.x + world_x, mouse_pos.y + world_y);
 }
 
+// TODO: Probably should refactor this and canShoot()
 bool SceneSideScroller::canJump() const {
     auto player_state = m_player->getComponent<CState>().state;
     return m_can_jump && (player_state == State::STAND || player_state == State::RUN);
@@ -262,10 +263,10 @@ void SceneSideScroller::sCollision() {
                 p_transfrom.velocity.y = 0.0f;
             }
         }
+
         // Bullet collision
         for (auto bullet : m_entity_manager.getEntities(Tag::BULLET)) {
-            Vec2 overlap = physics::getOverlap(bullet, entity);
-            if (overlap.x > 0 && overlap.y > 0) {
+            if (physics::overlapping(bullet, entity)) {
                 spawnExplosion(entity->getComponent<CTransform>().pos);
                 // Destroy tile and bullet
                 entity->destroy();
