@@ -163,6 +163,7 @@ class SceneRPG: public Scene
 	bool m_show_health{ true };
 	const Vec2 m_grid_size{ 64, 64 };
 	const Vec2 m_room_size{ 20, 12 }; // 20x12 grids
+	std::vector<Vec2> m_doorways;
 
 public:
 	SceneRPG(GameEngine* engine, const std::string& level_path);
