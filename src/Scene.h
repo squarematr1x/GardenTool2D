@@ -122,9 +122,6 @@ public:
 	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity);
 	Vec2 mouseToWorldPos(const Vec2& mouse_pos) const;
 
-	bool canShoot() const;
-	bool canJump() const;
-
 	void loadLevel(const std::string& path);
 
 	void spawnPlayer();

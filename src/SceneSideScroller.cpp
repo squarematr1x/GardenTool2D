@@ -58,16 +58,6 @@ Vec2 SceneSideScroller::mouseToWorldPos(const Vec2& mouse_pos) const {
     return Vec2(mouse_pos.x + world_x, mouse_pos.y + world_y);
 }
 
-// TODO: Probably should refactor this and canShoot()
-bool SceneSideScroller::canJump() const {
-    auto player_state = m_player->getComponent<CState>().state;
-    return m_can_jump && (player_state == State::STAND || player_state == State::RUN);
-}
-
-bool SceneSideScroller::canShoot() const {
-    return m_can_shoot;
-}
-
 void SceneSideScroller::loadLevel(const std::string& path) {
     // reset the entity manager every time we load a level
     m_entity_manager = EntityManager();
@@ -163,12 +153,19 @@ void SceneSideScroller::sMovement() {
     auto& input = m_player->getComponent<CInput>();
 
     player_v.x = 0.0f;
-    if (input.up && canJump()) {
+
+    if (!input.up && player_state != State::JUMP) {
+        m_can_jump = true;
+    } else if (input.up && m_can_jump && player_state != State::JUMP) {
         m_can_jump = false;
-        player_state = State::JUMP;
         player_v.y = -m_player_config.jump_v;
         m_engine->playSound("SoundJump");
     }
+
+    if (player_v.y != 0.0f) {
+        player_state = State::JUMP;
+    }
+    
     if (input.left) {
         player_v.x = -m_player_config.v;
         m_player->getComponent<CTransform>().scale = Vec2(-fabsf(player_scale.x), player_scale.y);
@@ -183,9 +180,11 @@ void SceneSideScroller::sMovement() {
             player_state = State::RUN;
         }
     }
-    if (canShoot() && input.attack) {
+
+    if (!input.attack) {
+        m_can_shoot = true;
+    } else if (input.attack && m_can_shoot) {
         m_can_shoot = false;
-        input.attack = false;
         spawnBullet();
     }
 
@@ -290,12 +289,15 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
             case ActionName::TOGGLE_GRID: m_draw_grid = !m_draw_grid; break;
             case ActionName::PAUSE: setPaused(!m_paused); break;
+            case ActionName::QUIT: onEnd(); break;
             case ActionName::UP: m_player->getComponent<CInput>().up = true; break;
             case ActionName::RIGHT: m_player->getComponent<CInput>().right = true; break;
             case ActionName::DOWN: m_player->getComponent<CInput>().down = true; break;
             case ActionName::LEFT: m_player->getComponent<CInput>().left = true; break;
             case ActionName::SHOOT: m_player->getComponent<CInput>().attack = true; break;
             case ActionName::MOUSE_MOVE: m_mouse_pos = action.pos; m_mouse_shape.setPosition(m_mouse_pos.x, m_mouse_pos.y); break;
+            case ActionName::MIDDLE_CLICK: break;
+            case ActionName::RIGHT_CLICK: break;
             case ActionName::LEFT_CLICK: {
                 Vec2 world_pos = mouseToWorldPos(action.pos);
                 for (auto e : m_entity_manager.getEntities()) {
@@ -307,9 +309,6 @@ void SceneSideScroller::sDoAction(const Action& action) {
                 }
                 break;
             }
-            case ActionName::MIDDLE_CLICK: break;
-            case ActionName::RIGHT_CLICK: break;
-            case ActionName::QUIT: onEnd(); break;
             default: break;
         } 
     } else if (action.getType() == ActionType::END) {
@@ -317,14 +316,8 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::RIGHT: m_player->getComponent<CInput>().right = false; break;
             case ActionName::DOWN: m_player->getComponent<CInput>().down = false; break;
             case ActionName::LEFT: m_player->getComponent<CInput>().left = false; break;
-            case ActionName::UP:
-                m_player->getComponent<CInput>().up = false;
-                m_can_jump = true;
-                break;
-            case ActionName::SHOOT:
-                m_can_shoot = true;
-                m_player->getComponent<CInput>().attack = false; 
-                break;
+            case ActionName::UP: m_player->getComponent<CInput>().up = false; break;
+            case ActionName::SHOOT: m_player->getComponent<CInput>().attack = false; break;
             default: break;
         }
     }
