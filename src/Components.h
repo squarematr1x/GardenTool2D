@@ -21,6 +21,11 @@ enum class State: unsigned char {
 	ATTACK_LEFT
 };
 
+enum class WeaponType: unsigned char {
+	MELEE,
+	RANGED
+};
+
 struct Component {
 	bool has{ false };
 };
@@ -147,6 +152,7 @@ struct CBBox: Component {
 	Vec2 half_size{ 0.0f, 0.0f }; // To reduce computations
 	bool block_movement{ false };
 	bool block_vision{ false };
+	bool movable{ false }; // Allow the player to move objects
 
 	CBBox() {}
 	CBBox(Vec2 size_in)
@@ -226,6 +232,18 @@ struct CPatrol: Component {
 	CPatrol() {}
 	CPatrol(const std::vector<Vec2>& positions_in, float speed_in)
 		: positions(positions_in), speed(speed_in)
+	{
+	}
+};
+
+// NOTE: only a suggestion at this point
+struct CWeapon: Component {
+	WeaponType type{ WeaponType::MELEE };
+
+
+	CWeapon() {}
+	CWeapon(WeaponType type_in) 
+		: type(type_in)
 	{
 	}
 };
