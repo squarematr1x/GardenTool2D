@@ -13,6 +13,7 @@ typedef std::tuple<
 	CHealth,
 	CInput,
 	CDamage,
+	CWeapon,
 	CInvincibility,
 	CBBox,
 	CAnimation,
@@ -44,7 +45,7 @@ class Entity
 		: m_id(id), m_tag(tag) {
     }
 
-	const size_t m_id{ 0 };
+	const size_t m_id{ 0 }; // TODO: Only use this in the future and remove other stuff?
 	const Tag m_tag{ Tag::DEFAULT };
 	bool m_alive{ true };
 	ComponentTuple m_components;
@@ -58,6 +59,7 @@ public:
 
 	template<typename T>
 	bool hasComponent() const { return getComponent<T>().has; }
+	// bool hasComponent() const { return EntityMemoryPool::Instance().hasComponents<T>(m_id); }
 
 	template<typename T, typename... TArgs>
 	T& addComponent(TArgs&&... args) { // Overwrites the previous component
@@ -72,6 +74,7 @@ public:
 
 	template<typename T>
 	T& getComponent() { return std::get<T>(m_components); }
+	// T& getComponent() { return EntityMemoryPool::Instance().getComponent(m_id); }
 
 	template<typename T>
 	void removeComponent() { getComponent<T>() = T(); }

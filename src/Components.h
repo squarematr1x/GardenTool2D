@@ -239,11 +239,17 @@ struct CPatrol: Component {
 // NOTE: only a suggestion at this point
 struct CWeapon: Component {
 	WeaponType type{ WeaponType::MELEE };
-
+	int max_cooldown{ 20 };
+	int remaining_cooldown{ 0 };
 
 	CWeapon() {}
 	CWeapon(WeaponType type_in) 
 		: type(type_in)
+	{
+	}
+
+	CWeapon(WeaponType type_in, int cooldown_in) 
+		: type(type_in), max_cooldown(cooldown_in)
 	{
 	}
 };
