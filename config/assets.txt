@@ -22,6 +22,7 @@ Texture MegamanRunText assets/sidescroll-images/megamanrun.png
 Animation MegamanRun MegamanRunText 3 10
 Font Arial assets/fonts/arial.ttf
 Sound SoundJump assets/sounds/jump.wav
+Sound SoundSword assets/sounds/sword.wav
 Music Level1Music assets/music/level1.wav
 Texture RockText assets/rpg-images/rock.png
 Animation Rock RockText 1 1
