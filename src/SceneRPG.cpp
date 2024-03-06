@@ -134,44 +134,33 @@ void SceneRPG::spawnPlayer() {
     m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PDown"), true);
     m_player->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y), true, false);
     m_player->addComponent<CHealth>(m_player_config.health, m_player_config.health - 1);
-    m_player->addComponent<CState>(State::DOWN);
+    m_player->addComponent<CState>(State::RUN);
+    m_player->addComponent<CWeapon>();
 }
 
-void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) { // TODO: Still plenty to do with this one...
-    auto& state = entity->getComponent<CState>().state;
+void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) {
+    if (!entity->hasComponent<CWeapon>()) {
+        return;
+    }
+    if (entity->getComponent<CWeapon>().remaining_cooldown != 0) {
+        return;
+    }
+
+    entity->getComponent<CState>().state = State::ATTACK;
     const auto pos = entity->getComponent<CTransform>().pos;
-    Vec2 facing(0.0f, 0.0f);
-    Vec2 scale(1.0f, 1.0f); // TODO: Could just add more textures?
+    const auto facing = entity->getComponent<CTransform>().facing;
+    Vec2 scale(1.0f, 1.0f);
     std::string sword_animation = "";
 
-    switch (state) {
-        case State::ATTACK_UP:
-        case State::ATTACK_DOWN:
-        case State::ATTACK_RIGHT:
-        case State::ATTACK_LEFT:
-            return;
-        case State::UP:
-            facing = Vec2(0.0f, -1.0f);
-            state = State::ATTACK_UP;
-            sword_animation = "SwordUp";
-            break;
-        case State::DOWN:
-            facing = Vec2(0.0f, 1.0f);
-            state = State::ATTACK_DOWN;
-            sword_animation = "SwordDown";
-            break;
-        case State::RIGHT:
-            facing = Vec2(1.0f, 0.0f);
-            state = State::ATTACK_RIGHT;
-            sword_animation = "SwordSide";
-            scale.x = -1.0f;
-            break;
-        case State::LEFT:
-            facing = Vec2(-1.0f, 0.0f);
-            state = State::ATTACK_LEFT;
-            sword_animation = "SwordSide";
-            break;
-        default: break;
+    if (facing == Vec2(0.0f, -1.0f)) {
+        sword_animation = "SwordUp";
+    } else if (facing == Vec2(0.0f, 1.0f)) {
+        sword_animation = "SwordDown";
+    } else if (facing == Vec2(1.0f, 0.0f)) {
+        sword_animation = "SwordSide";
+        scale.x = -1.0f;
+    } else if (facing == Vec2(-1.0f, 0.0f)) {
+        sword_animation = "SwordSide";
     }
 
     Vec2 swor_pos(
@@ -188,7 +177,17 @@ void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) { // TODO: Still plent
     sword->addComponent<CBBox>(sword_bbox, true, false);
 
     sword->getComponent<CTransform>().scale = scale;
-    // Sword should appropriate lifespan, location based on player's facing dir, damage value of 1 and play "Slash" sound
+
+    // Set  weapon cooldown
+    auto& weapon = entity->getComponent<CWeapon>();
+    weapon.remaining_cooldown = weapon.max_cooldown;
+    weapon.current_weapon_id = sword->id();
+
+    // Play sword sound
+    m_engine->playSound("SoundSword");
+}
+void SceneRPG::setSwordPos(std::shared_ptr<Entity> entity) {
+    (void)entity;
 }
 
 void SceneRPG::teleport() {
@@ -217,34 +216,42 @@ void SceneRPG::update() {
 
 void SceneRPG::sMovement() {
     auto input = m_player->getComponent<CInput>();
-    auto& p_state = m_player->getComponent<CState>().state;
     auto& p_transform = m_player->getComponent<CTransform>();
     Vec2 new_velocity(0.0f, 0.0f);
 
     if (input.up) {
-        p_state = State::UP;
         p_transform.scale = Vec2(fabsf(p_transform.scale.x), p_transform.scale.y);
+        p_transform.facing = Vec2(0.0f, -1.0f);
         new_velocity.y -= m_player_config.v;
+        new_velocity.x = 0.0f;
     }
     if (input.down) {
-        p_state = State::DOWN;
         p_transform.scale = Vec2(fabsf(p_transform.scale.x), p_transform.scale.y);
+        p_transform.facing = Vec2(0.0f, 1.0f);
         new_velocity.y += m_player_config.v;
+        new_velocity.x = 0.0f;
     }
     if (input.left) {
-        p_state = State::LEFT;
         p_transform.scale = Vec2(fabsf(p_transform.scale.x), p_transform.scale.y);
+        p_transform.facing = Vec2(-1.0f, 0.0f);
         new_velocity.x -= m_player_config.v;
+        new_velocity.y = 0.0f;
     }
     if (input.right) {
-        p_state = State::RIGHT;
-        p_transform.scale = Vec2(-fabsf(p_transform.scale.x), p_transform.scale.y); // TODO: Just add more texture (kinda dislike this scaling...)?
+        p_transform.scale = Vec2(-fabsf(p_transform.scale.x), p_transform.scale.y);
+        p_transform.facing = Vec2(1.0f, 0.0f);
         new_velocity.x += m_player_config.v;
+        new_velocity.y = 0.0f;
     }
     p_transform.velocity = new_velocity;
 
     if (input.attack) {
-        spawnSword(m_player);
+        if (m_can_attack) {
+            spawnSword(m_player);
+        }
+        m_can_attack = false;
+    } else {
+        m_can_attack = true;
     }
 
     for (auto e : m_entity_manager.getEntities()){
@@ -252,7 +259,18 @@ void SceneRPG::sMovement() {
         transform.prev_pos = transform.pos;
         transform.pos += transform.velocity;
         // transform.angle += 0.1f; // NOTE: For crazy effects
+
+        if (e->hasComponent<CWeapon>()) {
+            auto weapon = e->getComponent<CWeapon>();
+            auto weapon_e = m_entity_manager.getEntity(weapon.current_weapon_id);
+            if (weapon_e) {
+                // weapon
+            }
+        }
     }
+
+    // TODO: Weapon facing update
+
 }
 
 void SceneRPG::sDoAction(const Action& action) {
@@ -347,12 +365,20 @@ void SceneRPG::sAI() {
 }
 
 void SceneRPG::sStatus() {
-    if (!m_player->hasComponent<CInvincibility>()) {
-        return;
+    if (m_player->hasComponent<CInvincibility>()) {
+        if (m_player->getComponent<CInvincibility>().i_frames-- <= 0) {
+            m_player->removeComponent<CInvincibility>();
+        }
     }
 
-    if (m_player->getComponent<CInvincibility>().i_frames-- <= 0) {
-        m_player->removeComponent<CInvincibility>();
+    if (m_player->hasComponent<CWeapon>()) {
+        auto& weapon = m_player->getComponent<CWeapon>();
+        if (weapon.remaining_cooldown > 0) {
+            weapon.remaining_cooldown--;
+            if (weapon.remaining_cooldown == 0) {
+                m_player->getComponent<CState>().state = State::RUN;
+            }
+        }
     }
 }
 
@@ -430,7 +456,7 @@ void SceneRPG::sCollision() {
         }
     }
 
-    // Player doorway/teleport collision
+    // Player - doorway/teleport collision
     for (auto doorway : m_entity_manager.getEntities(Tag::TELEPORT)) {
         if (physics::overlapping(m_player, doorway) && !physics::previouslyOverlapping(m_player, doorway)) {
             teleport();
@@ -449,24 +475,32 @@ void SceneRPG::sAnimation() {
         if (entity->tag() == Tag::PLAYER) {
             auto& p_state = m_player->getComponent<CState>();
             if (p_state.state != p_state.prev_state) {
+                auto& facing = m_player->getComponent<CTransform>().facing;
                 switch (p_state.state) {
-                    case State::UP:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PUp"), true); break;
-                    case State::ATTACK_UP:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackUp")); break;
-                    case State::DOWN:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PDown"), true); break;
-                    case State::ATTACK_DOWN:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackDown")); break;
-                    case State::LEFT:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PSide"), true); break;
-                    case State::ATTACK_LEFT:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackSide")); break;
-                    case State::RIGHT:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PSide"), true); break;
-                    case State::ATTACK_RIGHT:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackSide")); break;
-                    default: break;
+                    case State::RUN:
+                        if (facing == Vec2(0.0f, -1.0f)) {
+                            m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PUp"), true);
+                        } else if (facing == Vec2(0.0f, 1.0f)) {
+                            m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PDown"), true); break;
+                        } else if (facing == Vec2(1.0f, 0.0f)) {
+                            m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PSide"), true); break;
+                        } else if (facing == Vec2(-1.0f, 0.0f)) {
+                            m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PSide"), true); break;
+                        }
+                        break;
+                    case State::ATTACK:
+                        if (facing == Vec2(0.0f, -1.0f)) {
+                            m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackUp"), true);
+                        } else if (facing == Vec2(0.0f, 1.0f)) {
+                            m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackDown"), true); break;
+                        } else if (facing == Vec2(1.0f, 0.0f)) {
+                            m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackSide"), true); break;
+                        } else if (facing == Vec2(-1.0f, 0.0f)) {
+                            m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackSide"), true); break;
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
             p_state.prev_state = p_state.state;

@@ -6,19 +6,10 @@
 
 enum class State: unsigned char {
 	NONE,
-	// Side scroller
 	JUMP,
 	STAND,
 	RUN,
-	// Top down RPG
-	UP,
-	DOWN,
-	RIGHT,
-	LEFT,
-	ATTACK_UP,
-	ATTACK_DOWN,
-	ATTACK_RIGHT,
-	ATTACK_LEFT
+	ATTACK,
 };
 
 // NOTE: just a suggestion
@@ -43,7 +34,7 @@ struct CTransform: Component {
 	Vec2 velocity{ 0.0f, 0.0f };
 	Vec2 prev_pos{ 0.0f, 0.0f };
 	Vec2 scale{ 1.0f, 1.0f };
-	Vec2 facing{ 0.0f, 1.0f }; // TODO: I guess I missed this!?
+	Vec2 facing{ 1.0f, 0.0f };
 
 	float angle{ 0.0f };
 
