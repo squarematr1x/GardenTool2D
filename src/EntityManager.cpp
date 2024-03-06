@@ -6,6 +6,15 @@ std::shared_ptr<Entity> EntityManager::addEntity(const Tag tag) {
 	return e;
 }
 
+std::shared_ptr<Entity> EntityManager::getEntity(const size_t id) {
+	for (auto& e : m_entities) {
+		if (e->id() == id) {
+			return e;
+		}
+	}
+	return nullptr;
+}
+
 void EntityManager::update() {
 	for (auto& e : m_entities_to_add) {
 		m_entities.push_back(e);

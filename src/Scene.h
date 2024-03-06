@@ -129,6 +129,7 @@ public:
 	void spawnExplosion(const Vec2& pos);
 
 	// Systems
+	void sAI();
 	void sAnimation();
 	void sMovement();
 	void sLifespan();
@@ -158,6 +159,7 @@ class SceneRPG: public Scene
 	std::shared_ptr<Entity> m_player;
 	bool m_follow{ false };
 	bool m_show_health{ true };
+	bool m_can_attack{ true };
 	const Vec2 m_grid_size{ 64, 64 };
 	const Vec2 m_room_size{ 20, 12 }; // 20x12 grids
 	std::vector<Vec2> m_doorways;
@@ -172,6 +174,7 @@ public:
 
 	void spawnPlayer();
 	void spawnSword(std::shared_ptr<Entity> entity);
+	void setSwordPos(std::shared_ptr<Entity> entity);
 
 	void teleport();
 

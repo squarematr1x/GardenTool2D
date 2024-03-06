@@ -6,19 +6,18 @@
 
 enum class State: unsigned char {
 	NONE,
-	// Side scroller
 	JUMP,
 	STAND,
 	RUN,
-	// Top down RPG
+	ATTACK,
+};
+
+// NOTE: just a suggestion
+enum class Facing: unsigned char {
 	UP,
 	DOWN,
-	RIGHT,
 	LEFT,
-	ATTACK_UP,
-	ATTACK_DOWN,
-	ATTACK_RIGHT,
-	ATTACK_LEFT
+	RIGHT
 };
 
 enum class WeaponType: unsigned char {
@@ -35,7 +34,7 @@ struct CTransform: Component {
 	Vec2 velocity{ 0.0f, 0.0f };
 	Vec2 prev_pos{ 0.0f, 0.0f };
 	Vec2 scale{ 1.0f, 1.0f };
-	Vec2 facing{ 0.0f, 1.0f }; // TODO: I guess I missed this!?
+	Vec2 facing{ 1.0f, 0.0f };
 
 	float angle{ 0.0f };
 
@@ -199,6 +198,11 @@ struct CState: Component {
 	State state{ State::NONE };
 	State prev_state{ State::NONE };
 
+	// TODO: Add direction variable here
+	//       which can be used for animations (facing Vec2 also be used)
+	//       Maybe more complex states such as ATTACK_UP etc. could be removed.
+	//       This could in the end solve sword logic/animation bugs
+
 	CState() {}
 	CState(State state_in)
 		: state(state_in)
@@ -236,11 +240,11 @@ struct CPatrol: Component {
 	}
 };
 
-// NOTE: only a suggestion at this point
 struct CWeapon: Component {
 	WeaponType type{ WeaponType::MELEE };
 	int max_cooldown{ 20 };
 	int remaining_cooldown{ 0 };
+	size_t current_weapon_id{ 0 };
 
 	CWeapon() {}
 	CWeapon(WeaponType type_in) 
@@ -250,6 +254,11 @@ struct CWeapon: Component {
 
 	CWeapon(WeaponType type_in, int cooldown_in) 
 		: type(type_in), max_cooldown(cooldown_in)
+	{
+	}
+
+	CWeapon(WeaponType type_in, int cooldown_in, size_t weapon_id_in) 
+		: type(type_in), max_cooldown(cooldown_in), current_weapon_id(weapon_id_in)
 	{
 	}
 };
