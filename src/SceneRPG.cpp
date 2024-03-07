@@ -220,6 +220,7 @@ void SceneRPG::update() {
 void SceneRPG::sMovement() {
     auto input = m_player->getComponent<CInput>();
     auto& p_transform = m_player->getComponent<CTransform>();
+    p_transform.prev_facing = p_transform.facing;
     Vec2 new_velocity(0.0f, 0.0f);
 
     if (input.up) {
@@ -365,12 +366,14 @@ void SceneRPG::sAI() {
 }
 
 void SceneRPG::sStatus() {
+    // Invicibility frames
     if (m_player->hasComponent<CInvincibility>()) {
         if (m_player->getComponent<CInvincibility>().i_frames-- <= 0) {
             m_player->removeComponent<CInvincibility>();
         }
     }
 
+    // Weapon cooldowns
     if (m_player->hasComponent<CWeapon>()) {
         auto& weapon = m_player->getComponent<CWeapon>();
         if (weapon.remaining_cooldown > 0) {
@@ -381,6 +384,7 @@ void SceneRPG::sStatus() {
         }
     }
 
+    // Lifespans
     for (auto entity : m_entity_manager.getEntities()) {
         if (!entity->hasComponent<CLifespan>()) {
             continue;
@@ -475,8 +479,6 @@ void SceneRPG::sCollision() {
 }
 
 void SceneRPG::sAnimation() {
-    // Implement sword animation based on player direction (sword should also move if the player changes direction mid swing)
-    // Implement destruction of entities with non-repeating finished animations
     for (auto entity : m_entity_manager.getEntities()) {
         if (!entity->hasComponent<CAnimation>()) {
             continue;
@@ -484,28 +486,28 @@ void SceneRPG::sAnimation() {
 
         if (entity->tag() == Tag::PLAYER) {
             auto& p_state = m_player->getComponent<CState>();
-            if (p_state.state != p_state.prev_state) {
-                auto& facing = m_player->getComponent<CTransform>().facing;
+            auto p_transform = m_player->getComponent<CTransform>();
+            if (p_transform.facing != p_transform.prev_facing || p_state.state != p_state.prev_state) {
                 switch (p_state.state) {
                     case State::RUN:
-                        if (facing == Vec2(0.0f, -1.0f)) {
+                        if (p_transform.facing == Vec2(0.0f, -1.0f)) {
                             m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PUp"), true); break;
-                        } else if (facing == Vec2(0.0f, 1.0f)) {
+                        } else if (p_transform.facing == Vec2(0.0f, 1.0f)) {
                             m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PDown"), true); break;
-                        } else if (facing == Vec2(1.0f, 0.0f)) {
+                        } else if (p_transform.facing == Vec2(1.0f, 0.0f)) {
                             m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PSide"), true); break;
-                        } else if (facing == Vec2(-1.0f, 0.0f)) {
+                        } else if (p_transform.facing == Vec2(-1.0f, 0.0f)) {
                             m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PSide"), true); break;
                         }
                         break;
                     case State::ATTACK:
-                        if (facing == Vec2(0.0f, -1.0f)) {
+                        if (p_transform.facing == Vec2(0.0f, -1.0f)) {
                             m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackUp"), true); break;
-                        } else if (facing == Vec2(0.0f, 1.0f)) {
+                        } else if (p_transform.facing == Vec2(0.0f, 1.0f)) {
                             m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackDown"), true); break;
-                        } else if (facing == Vec2(1.0f, 0.0f)) {
+                        } else if (p_transform.facing == Vec2(1.0f, 0.0f)) {
                             m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackSide"), true); break;
-                        } else if (facing == Vec2(-1.0f, 0.0f)) {
+                        } else if (p_transform.facing == Vec2(-1.0f, 0.0f)) {
                             m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackSide"), true); break;
                         }
                         break;
