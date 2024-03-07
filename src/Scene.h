@@ -174,7 +174,7 @@ public:
 
 	void spawnPlayer();
 	void spawnSword(std::shared_ptr<Entity> entity);
-	void setSwordPos(std::shared_ptr<Entity> entity);
+	void setSwordPos(std::shared_ptr<Entity> entity, const Vec2& facing, const Vec2& pos);
 
 	void teleport();
 
