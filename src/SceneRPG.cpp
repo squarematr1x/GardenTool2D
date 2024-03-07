@@ -149,8 +149,23 @@ void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) {
     entity->getComponent<CState>().state = State::ATTACK;
     const auto pos = entity->getComponent<CTransform>().pos;
     const auto facing = entity->getComponent<CTransform>().facing;
-    Vec2 scale(1.0f, 1.0f);
+
+    auto sword = m_entity_manager.addEntity(Tag::SWORD);
+    sword->addComponent<CLifespan>(20);
+    setSwordPos(sword, facing, pos);
+
+    // Set  weapon cooldown
+    auto& weapon = entity->getComponent<CWeapon>();
+    weapon.remaining_cooldown = weapon.max_cooldown;
+    weapon.current_weapon_id = sword->id();
+
+    // Play sword sound
+    m_engine->playSound("SoundSword");
+}
+
+void SceneRPG::setSwordPos(std::shared_ptr<Entity> sword, const Vec2& facing, const Vec2& pos) {
     std::string sword_animation = "";
+    Vec2 scale(1.0f, 1.0f);
 
     if (facing == Vec2(0.0f, -1.0f)) {
         sword_animation = "SwordUp";
@@ -170,24 +185,12 @@ void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) {
 
     Vec2 sword_bbox = facing.x == 0.0f ? Vec2(32.0f, 64.0f) : Vec2(64.0f, 32.0f);
 
-    auto sword = m_entity_manager.addEntity(Tag::SWORD);
     sword->addComponent<CAnimation>(m_engine->assets().getAnimation(sword_animation));
     sword->addComponent<CTransform>(swor_pos);
     sword->addComponent<CDamage>();
     sword->addComponent<CBBox>(sword_bbox, true, false);
 
     sword->getComponent<CTransform>().scale = scale;
-
-    // Set  weapon cooldown
-    auto& weapon = entity->getComponent<CWeapon>();
-    weapon.remaining_cooldown = weapon.max_cooldown;
-    weapon.current_weapon_id = sword->id();
-
-    // Play sword sound
-    m_engine->playSound("SoundSword");
-}
-void SceneRPG::setSwordPos(std::shared_ptr<Entity> entity) {
-    (void)entity;
 }
 
 void SceneRPG::teleport() {
@@ -217,6 +220,7 @@ void SceneRPG::update() {
 void SceneRPG::sMovement() {
     auto input = m_player->getComponent<CInput>();
     auto& p_transform = m_player->getComponent<CTransform>();
+    p_transform.prev_facing = p_transform.facing;
     Vec2 new_velocity(0.0f, 0.0f);
 
     if (input.up) {
@@ -264,13 +268,10 @@ void SceneRPG::sMovement() {
             auto weapon = e->getComponent<CWeapon>();
             auto weapon_e = m_entity_manager.getEntity(weapon.current_weapon_id);
             if (weapon_e) {
-                // weapon
+                setSwordPos(weapon_e, transform.facing, transform.pos);
             }
         }
     }
-
-    // TODO: Weapon facing update
-
 }
 
 void SceneRPG::sDoAction(const Action& action) {
@@ -365,12 +366,14 @@ void SceneRPG::sAI() {
 }
 
 void SceneRPG::sStatus() {
+    // Invicibility frames
     if (m_player->hasComponent<CInvincibility>()) {
         if (m_player->getComponent<CInvincibility>().i_frames-- <= 0) {
             m_player->removeComponent<CInvincibility>();
         }
     }
 
+    // Weapon cooldowns
     if (m_player->hasComponent<CWeapon>()) {
         auto& weapon = m_player->getComponent<CWeapon>();
         if (weapon.remaining_cooldown > 0) {
@@ -378,6 +381,17 @@ void SceneRPG::sStatus() {
             if (weapon.remaining_cooldown == 0) {
                 m_player->getComponent<CState>().state = State::RUN;
             }
+        }
+    }
+
+    // Lifespans
+    for (auto entity : m_entity_manager.getEntities()) {
+        if (!entity->hasComponent<CLifespan>()) {
+            continue;
+        }
+
+        if (entity->getComponent<CLifespan>().remaining-- <= 0) {
+            entity->destroy();
         }
     }
 }
@@ -465,8 +479,6 @@ void SceneRPG::sCollision() {
 }
 
 void SceneRPG::sAnimation() {
-    // Implement sword animation based on player direction (sword should also move if the player changes direction mid swing)
-    // Implement destruction of entities with non-repeating finished animations
     for (auto entity : m_entity_manager.getEntities()) {
         if (!entity->hasComponent<CAnimation>()) {
             continue;
@@ -474,28 +486,28 @@ void SceneRPG::sAnimation() {
 
         if (entity->tag() == Tag::PLAYER) {
             auto& p_state = m_player->getComponent<CState>();
-            if (p_state.state != p_state.prev_state) {
-                auto& facing = m_player->getComponent<CTransform>().facing;
+            auto p_transform = m_player->getComponent<CTransform>();
+            if (p_transform.facing != p_transform.prev_facing || p_state.state != p_state.prev_state) {
                 switch (p_state.state) {
                     case State::RUN:
-                        if (facing == Vec2(0.0f, -1.0f)) {
-                            m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PUp"), true);
-                        } else if (facing == Vec2(0.0f, 1.0f)) {
+                        if (p_transform.facing == Vec2(0.0f, -1.0f)) {
+                            m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PUp"), true); break;
+                        } else if (p_transform.facing == Vec2(0.0f, 1.0f)) {
                             m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PDown"), true); break;
-                        } else if (facing == Vec2(1.0f, 0.0f)) {
+                        } else if (p_transform.facing == Vec2(1.0f, 0.0f)) {
                             m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PSide"), true); break;
-                        } else if (facing == Vec2(-1.0f, 0.0f)) {
+                        } else if (p_transform.facing == Vec2(-1.0f, 0.0f)) {
                             m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PSide"), true); break;
                         }
                         break;
                     case State::ATTACK:
-                        if (facing == Vec2(0.0f, -1.0f)) {
-                            m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackUp"), true);
-                        } else if (facing == Vec2(0.0f, 1.0f)) {
+                        if (p_transform.facing == Vec2(0.0f, -1.0f)) {
+                            m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackUp"), true); break;
+                        } else if (p_transform.facing == Vec2(0.0f, 1.0f)) {
                             m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackDown"), true); break;
-                        } else if (facing == Vec2(1.0f, 0.0f)) {
+                        } else if (p_transform.facing == Vec2(1.0f, 0.0f)) {
                             m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackSide"), true); break;
-                        } else if (facing == Vec2(-1.0f, 0.0f)) {
+                        } else if (p_transform.facing == Vec2(-1.0f, 0.0f)) {
                             m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackSide"), true); break;
                         }
                         break;

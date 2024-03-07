@@ -35,6 +35,7 @@ struct CTransform: Component {
 	Vec2 prev_pos{ 0.0f, 0.0f };
 	Vec2 scale{ 1.0f, 1.0f };
 	Vec2 facing{ 1.0f, 0.0f };
+	Vec2 prev_facing{ 1.0f, 0.0f };
 
 	float angle{ 0.0f };
 
