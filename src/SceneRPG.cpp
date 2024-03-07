@@ -149,8 +149,23 @@ void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) {
     entity->getComponent<CState>().state = State::ATTACK;
     const auto pos = entity->getComponent<CTransform>().pos;
     const auto facing = entity->getComponent<CTransform>().facing;
-    Vec2 scale(1.0f, 1.0f);
+
+    auto sword = m_entity_manager.addEntity(Tag::SWORD);
+    sword->addComponent<CLifespan>(20);
+    setSwordPos(sword, facing, pos);
+
+    // Set  weapon cooldown
+    auto& weapon = entity->getComponent<CWeapon>();
+    weapon.remaining_cooldown = weapon.max_cooldown;
+    weapon.current_weapon_id = sword->id();
+
+    // Play sword sound
+    m_engine->playSound("SoundSword");
+}
+
+void SceneRPG::setSwordPos(std::shared_ptr<Entity> sword, const Vec2& facing, const Vec2& pos) {
     std::string sword_animation = "";
+    Vec2 scale(1.0f, 1.0f);
 
     if (facing == Vec2(0.0f, -1.0f)) {
         sword_animation = "SwordUp";
@@ -170,24 +185,12 @@ void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) {
 
     Vec2 sword_bbox = facing.x == 0.0f ? Vec2(32.0f, 64.0f) : Vec2(64.0f, 32.0f);
 
-    auto sword = m_entity_manager.addEntity(Tag::SWORD);
     sword->addComponent<CAnimation>(m_engine->assets().getAnimation(sword_animation));
     sword->addComponent<CTransform>(swor_pos);
     sword->addComponent<CDamage>();
     sword->addComponent<CBBox>(sword_bbox, true, false);
 
     sword->getComponent<CTransform>().scale = scale;
-
-    // Set  weapon cooldown
-    auto& weapon = entity->getComponent<CWeapon>();
-    weapon.remaining_cooldown = weapon.max_cooldown;
-    weapon.current_weapon_id = sword->id();
-
-    // Play sword sound
-    m_engine->playSound("SoundSword");
-}
-void SceneRPG::setSwordPos(std::shared_ptr<Entity> entity) {
-    (void)entity;
 }
 
 void SceneRPG::teleport() {
@@ -264,13 +267,10 @@ void SceneRPG::sMovement() {
             auto weapon = e->getComponent<CWeapon>();
             auto weapon_e = m_entity_manager.getEntity(weapon.current_weapon_id);
             if (weapon_e) {
-                // weapon
+                setSwordPos(weapon_e, transform.facing, transform.pos);
             }
         }
     }
-
-    // TODO: Weapon facing update
-
 }
 
 void SceneRPG::sDoAction(const Action& action) {
@@ -380,6 +380,16 @@ void SceneRPG::sStatus() {
             }
         }
     }
+
+    for (auto entity : m_entity_manager.getEntities()) {
+        if (!entity->hasComponent<CLifespan>()) {
+            continue;
+        }
+
+        if (entity->getComponent<CLifespan>().remaining-- <= 0) {
+            entity->destroy();
+        }
+    }
 }
 
 void SceneRPG::sCollision() {
@@ -479,7 +489,7 @@ void SceneRPG::sAnimation() {
                 switch (p_state.state) {
                     case State::RUN:
                         if (facing == Vec2(0.0f, -1.0f)) {
-                            m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PUp"), true);
+                            m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PUp"), true); break;
                         } else if (facing == Vec2(0.0f, 1.0f)) {
                             m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PDown"), true); break;
                         } else if (facing == Vec2(1.0f, 0.0f)) {
@@ -490,7 +500,7 @@ void SceneRPG::sAnimation() {
                         break;
                     case State::ATTACK:
                         if (facing == Vec2(0.0f, -1.0f)) {
-                            m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackUp"), true);
+                            m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackUp"), true); break;
                         } else if (facing == Vec2(0.0f, 1.0f)) {
                             m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PAttackDown"), true); break;
                         } else if (facing == Vec2(1.0f, 0.0f)) {
