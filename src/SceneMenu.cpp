@@ -14,6 +14,8 @@ void SceneMenu::init() {
 
     m_menu_text.setCharacterSize(m_font_size);
     m_menu_text.setFont(m_engine->assets().getFont("Arial"));
+
+    m_particles.init(m_engine->window().getSize());
 }
 
 void SceneMenu::update() {
@@ -47,6 +49,7 @@ void SceneMenu::sDoAction(const Action& action) {
 }
 
 void SceneMenu::sRender() {
+    m_particles.update();
     m_engine->window().clear(m_background_color);
 
     float offset = 64.0f;
@@ -67,6 +70,8 @@ void SceneMenu::sRender() {
         offset += 64.0f;
         index++;
     }
+
+    m_particles.draw(m_engine->window());
 }
 
 void SceneMenu::onEnd() {
