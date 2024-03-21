@@ -390,7 +390,13 @@ void SceneRPG::sStatus() {
             continue;
         }
 
-        if (entity->getComponent<CLifespan>().remaining-- <= 0) {
+        auto& lifespan = entity->getComponent<CLifespan>();
+
+        if (entity->tag() == Tag::SWORD && lifespan.remaining < lifespan.total) {
+            entity->removeComponent<CDamage>();
+        }
+
+        if (lifespan.remaining-- <= 0) {
             entity->destroy();
         }
     }
@@ -432,6 +438,9 @@ void SceneRPG::sCollision() {
 
         for (auto sword : m_entity_manager.getEntities(Tag::SWORD)) {
             if (physics::overlapping(enemy, sword)) {
+                if (!sword->hasComponent<CDamage>()) {
+                    continue;
+                }
                 auto& hp = enemy->getComponent<CHealth>();
                 hp.current -= sword->getComponent<CDamage>().damage;
                 hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
