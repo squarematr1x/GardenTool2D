@@ -4,7 +4,7 @@
 #include "Scene.h"
 #include "GameEngine.h"
 #include "Physics.h"
-#include "Random.h"
+#include "math/Random.h"
 
 SceneRPG::SceneRPG(GameEngine* engine, const std::string& level_path)
     : Scene(engine), m_level_path(level_path) {
