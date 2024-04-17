@@ -1,7 +1,7 @@
 #pragma once
 
-#include "EntityManager.h"
-#include "Assets.h"
+#include "EntityManager.hpp"
+#include "Assets.hpp"
 
 class Scene;
 

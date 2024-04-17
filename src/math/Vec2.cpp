@@ -1,4 +1,4 @@
-#include "Vec2.h"
+#include "Vec2.hpp"
 
 Vec2 Vec2::operator+ (const Vec2& p) const {
 	return Vec2(x + p.x, y + p.y);

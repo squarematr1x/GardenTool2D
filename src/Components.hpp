@@ -1,8 +1,8 @@
 #pragma once
 
-#include "math/Vec2.h"
+#include "math/Vec2.hpp"
 
-#include "Animation.h"
+#include "Animation.hpp"
 
 enum class State: unsigned char {
 	NONE,

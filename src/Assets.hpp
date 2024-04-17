@@ -6,7 +6,7 @@
 
 #include <SFML/Audio.hpp>
 
-#include "Animation.h"
+#include "Animation.hpp"
 
 class Assets
 {

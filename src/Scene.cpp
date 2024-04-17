@@ -1,5 +1,5 @@
-#include "Scene.h"
-#include "GameEngine.h"
+#include "Scene.hpp"
+#include "GameEngine.hpp"
 
 size_t Scene::width() const {
     return m_engine->window().getSize().x;

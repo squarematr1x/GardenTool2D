@@ -1,9 +1,9 @@
 #include <string>
 #include <fstream>
 
-#include "Scene.h"
-#include "GameEngine.h"
-#include "Physics.h"
+#include "Scene.hpp"
+#include "GameEngine.hpp"
+#include "Physics.hpp"
 
 SceneSideScroller::SceneSideScroller(GameEngine* engine, const std::string& level_path)
     : Scene(engine), m_level_path(level_path) {
