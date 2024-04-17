@@ -1,5 +1,5 @@
-#include "Physics.h"
-#include "Entity.h"
+#include "Physics.hpp"
+#include "Entity.hpp"
 
 namespace physics
 {

@@ -1,4 +1,4 @@
-#include "EntityManager.h"
+#include "EntityManager.hpp"
 
 std::shared_ptr<Entity> EntityManager::addEntity(const Tag tag) {
 	auto e = std::shared_ptr<Entity>(new Entity(++m_total_entities, tag));

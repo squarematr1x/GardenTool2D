@@ -1,10 +1,13 @@
-#include "Assets.h"
+#include "Assets.hpp"
 
 #include <fstream>
 #include <iostream>
 #include <cassert>
 
+#include "util/Profiler.hpp"
+
 void Assets::loadFromFile(const std::string& path) {
+	PROFILE_FUNCTION();
 	std::ifstream file(path);
 	std::string str;
 
@@ -41,6 +44,7 @@ void Assets::loadFromFile(const std::string& path) {
 }
 
 void Assets::addTexture(const std::string& texture_name, const std::string& path, bool smooth) {
+	PROFILE_SCOPE(path);
 	m_texture_map[texture_name] = sf::Texture();
 
 	if (!m_texture_map[texture_name].loadFromFile(path)) {
@@ -53,6 +57,7 @@ void Assets::addTexture(const std::string& texture_name, const std::string& path
 }
 
 void Assets::addAnimation(const std::string& animation_name, const std::string& texture_name, size_t frame_count, int speed) {
+	PROFILE_FUNCTION();
 	m_animation_map[animation_name] = Animation(animation_name, getTexture(texture_name), frame_count, speed);
 }
 
@@ -67,6 +72,7 @@ const Animation& Assets::getAnimation(const std::string& animation_name) const {
 }
 
 void Assets::addFont(const std::string& font_name, const std::string& path) {
+	PROFILE_FUNCTION();
 	m_font_map[font_name] = sf::Font();
 
 	if (!m_font_map[font_name].loadFromFile(path)) {
@@ -83,6 +89,7 @@ const sf::Font& Assets::getFont(const std::string& font_name) const {
 }
 
 void Assets::addSoundBuffer(const std::string& sound_name, const std::string& path) {
+	PROFILE_FUNCTION();
 	m_sound_buffer_map[sound_name] = sf::SoundBuffer();
 
 	if (!m_sound_buffer_map[sound_name].loadFromFile(path)) {
@@ -99,6 +106,7 @@ const sf::SoundBuffer& Assets::getSoundBuffer(const std::string& sound_name) con
 }
 
 void Assets::addSound(const std::string& sound_name, const std::string& path) {
+	PROFILE_FUNCTION();
 	addSoundBuffer(sound_name, path);
 	m_sound_map[sound_name] = sf::Sound(getSoundBuffer(sound_name));
 }
@@ -109,6 +117,7 @@ sf::Sound Assets::getSound(const std::string& sound_name) const {
 }
 
 void Assets::addMusic(const std::string& music_name, const std::string& path) {
+	PROFILE_FUNCTION();
 	m_music_map[music_name] = std::make_shared<sf::Music>();
 	if (!m_music_map[music_name]->openFromFile(path)) {
 		std::cerr << "Cannot load music file: " << path << '\n';

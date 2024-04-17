@@ -4,9 +4,9 @@
 #include <memory>
 #include <string>
 
-#include "EntityManager.h"
-#include "Action.h"
-#include "ParticleSystem.h"
+#include "EntityManager.hpp"
+#include "Action.hpp"
+#include "ParticleSystem.hpp"
 
 class GameEngine;
 

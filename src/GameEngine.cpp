@@ -1,20 +1,31 @@
-#include "GameEngine.h"
-#include "Scene.h"
+#include "GameEngine.hpp"
+#include "Scene.hpp"
 
 #include <fstream>
 #include <sstream>
 #include <random>
 #include <chrono>
 
+#include "util/Profiler.hpp"
+
 GameEngine::GameEngine(const std::string& config) {
+	PROFILE_FUNCTION();
 	init(config);
 }
 
 void GameEngine::init(const std::string& path) {
-	m_assets.loadFromFile(path);
+	PROFILE_FUNCTION();
 
-	m_window.create(sf::VideoMode(m_screen_w, m_screen_h), m_title);
-	m_window.setFramerateLimit(m_framerate);
+	{
+		PROFILE_SCOPE("Load Assets");
+		m_assets.loadFromFile(path);
+	}
+
+	{
+		PROFILE_SCOPE("SFML Window");
+		m_window.create(sf::VideoMode(m_screen_w, m_screen_h), m_title);
+		m_window.setFramerateLimit(m_framerate);
+	}
 
 	changeScene(SceneType::MENU, std::make_shared<SceneMenu>(this));
 }
