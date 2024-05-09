@@ -41,3 +41,6 @@ Tile Cloud2 14 7 0 0
 
 # Player
 Player 2 6 48 48 5 5 25 2 Fire
+
+# Moving objects
+Elevator Brick 16 1 1 1 Patrol 2 2 16 1 20 1

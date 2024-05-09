@@ -326,11 +326,6 @@ void SceneRPG::sDoAction(const Action& action) {
     }
 }
 
-bool SceneRPG::targetReached(const Vec2& pos, const Vec2& target) const {
-    float distance = pos.distance(target);
-    return fabs(distance) <= 5.0f;
-}
-
 void SceneRPG::sAI() {
     for (auto e : m_entity_manager.getEntities(Tag::ENEMY)) {
         // Patrol

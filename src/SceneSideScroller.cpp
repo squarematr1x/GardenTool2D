@@ -97,6 +97,35 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                 m_player_config = {
                     x, y, bbox_w, bbox_h, v, max_v, jump_v, gravity, weapon_animation
                 };
+            } else if (str == "Elevator") {
+                std::string animation, mode;
+                float x, y;
+                bool block_movement, block_vision;
+                text_stream >> animation >> x >> y >> block_movement >> block_vision;
+                auto tile = m_entity_manager.addEntity(Tag::ELEVATOR);
+                tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
+                tile->addComponent<CTransform>(gridToMidPixel(x, y, tile));
+                if (block_movement) {
+                    const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
+                    tile->addComponent<CBBox>(animation_size, block_movement, block_vision);
+                }
+
+                text_stream >> mode;
+                if (mode == "Patrol") {
+                    float speed;
+                    int n_positions;
+                    std::vector<Vec2> positions;
+                    text_stream >> speed >> n_positions;
+                    for (int i = 0; i < n_positions; i++) {
+                        text_stream >> x >> y;
+                        positions.push_back(gridToMidPixel(x, y, tile));
+                    }
+                    tile->addComponent<CPatrol>(positions, speed);
+                } else if (mode == "Follow") {
+                    float speed, y, x;
+                    text_stream >> speed >> x >> y;
+                    tile->addComponent<CFollowPlayer>(gridToMidPixel(x, y, tile), speed);
+                }
             } else {
                 std::cerr << "Unknown level object: " << str << '\n';
                 // TODO: handle this error
@@ -142,6 +171,7 @@ void SceneSideScroller::update() {
     if (!m_paused) {
         m_entity_manager.update();
 
+        sAI();
         sMovement();
         sLifespan();
         sCollision();
@@ -153,6 +183,27 @@ void SceneSideScroller::update() {
     // mini_map.setViewport(sf::FloatRect(0.75f, 0.0f, 0.25f, 0.25f));
     // m_engine->window().setView(mini_map);
     sRender();
+}
+
+void SceneSideScroller::sAI() {
+    for (auto e : m_entity_manager.getEntities(Tag::ELEVATOR)) {
+        // Patrol
+        if (e->hasComponent<CPatrol>()) {
+            auto& patrol = e->getComponent<CPatrol>();
+            auto& transform = e->getComponent<CTransform>();
+
+            Vec2 target = patrol.positions[patrol.cur_pos];
+            if (targetReached(transform.pos, target)) {
+                patrol.cur_pos = patrol.cur_pos + 1 < patrol.positions.size() ? patrol.cur_pos + 1 : 0;
+                target = patrol.positions[patrol.cur_pos];
+            }
+
+            Vec2 desired = target - transform.pos;
+            desired = desired.normalize();
+            desired = desired*patrol.speed;
+            transform.velocity = desired;
+        }
+    }
 }
 
 void SceneSideScroller::sMovement() {

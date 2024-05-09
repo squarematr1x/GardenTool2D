@@ -114,3 +114,8 @@ void Scene::renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> play
         }
     }
 }
+
+bool Scene::targetReached(const Vec2& pos, const Vec2& target) const {
+    float distance = pos.distance(target);
+    return fabs(distance) <= 5.0f;
+}
