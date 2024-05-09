@@ -122,14 +122,21 @@ void GameEngine::sUserInput() {
 }
 
 void GameEngine::playSound(const std::string& sound_name) {
+	if (!m_enable_sound) {
+		return;
+	}
 	m_assets.getSound(sound_name).play();
 }
 
 void GameEngine::playMusic(const std::string& music_name) {
-	// Stop previous song
 	if (!m_cur_song_name.empty()) {
+		// Stop previous song
 		stopMusic(m_cur_song_name);
 	}
+	if (!m_enable_music) {
+		return;
+	}
+
 	m_cur_song_name = music_name;
 
 	auto music = m_assets.getMusic(music_name);
