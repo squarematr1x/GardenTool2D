@@ -179,7 +179,7 @@ public:
 	void spawnSword(std::shared_ptr<Entity> entity);
 	void setSwordPos(std::shared_ptr<Entity> entity, const Vec2& facing, const Vec2& pos);
 
-	void teleport();
+	void teleport(const Vec2& cur_doorway);
 
 	Vec2 getPosition(float rx, float ry, float tx, float ty) const;
 	Vec2 getCurrentRoom() const;

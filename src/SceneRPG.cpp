@@ -193,11 +193,24 @@ void SceneRPG::setSwordPos(std::shared_ptr<Entity> sword, const Vec2& facing, co
     sword->getComponent<CTransform>().scale = scale;
 }
 
-void SceneRPG::teleport() {
-    if (m_doorways.size() <= 0) {
+void SceneRPG::teleport(const Vec2& cur_doorway) {
+    if (m_doorways.size() == 0) {
         return;
     }
-    Vec2 next_door = *math::getRandomElement(m_doorways.begin(), m_doorways.end());
+
+    // Don't include the doorway the player just entered in the list
+    std::vector<Vec2> reduced_doorways;
+    for (const auto& doorway : m_doorways) {
+        if (doorway != cur_doorway) {
+            reduced_doorways.push_back(doorway);
+        }
+    }
+
+    if (reduced_doorways.size() == 0) {
+        return;
+    }
+
+    Vec2 next_door = *math::getRandomElement(reduced_doorways.begin(), reduced_doorways.end());
     m_player->getComponent<CTransform>().pos = next_door;
 }
 
@@ -482,7 +495,8 @@ void SceneRPG::sCollision() {
     // Player - doorway/teleport collision
     for (auto doorway : m_entity_manager.getEntities(Tag::TELEPORT)) {
         if (physics::overlapping(m_player, doorway) && !physics::previouslyOverlapping(m_player, doorway)) {
-            teleport();
+            teleport(doorway->getComponent<CTransform>().pos);
+            break;
         }
     }
 }
