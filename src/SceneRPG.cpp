@@ -1,5 +1,6 @@
 #include <string>
 #include <fstream>
+#include <sstream>
 
 #include "Scene.hpp"
 #include "GameEngine.hpp"
@@ -35,80 +36,89 @@ void SceneRPG::init(const std::string& level_path) {
 }
 
 void SceneRPG::loadLevel(const std::string& path) {
+    // Reset the entity manager every time we load a level
     m_entity_manager = EntityManager();
-
     std::ifstream file(path);
-    std::string str;
+    std::string line;
 
-    while (file.good()) {
-        file >> str;
+    while (getline(file, line)) {
+        if (line.empty() || line[0] == '#') {
+            // Skip comments and empty lines
+            continue;
+        }
 
-        if (str == "Tile") {
-            std::string animation;
-            float room_x, room_y, x, y;
-            bool block_movement, block_vision;
-            file >> animation >> room_x >> room_y >> x >> y >> block_movement >> block_vision;
+        std::string str;
+        std::istringstream text_stream(line);
 
-            Vec2 pos = getPosition(room_x, room_y, x, y);
-            Tag tag = Tag::DEC;
-            if (block_movement) {
-                tag = Tag::TILE;
-            } else if (animation == "Heart") {
-                tag = Tag::HEART;
-            } else if (animation == "Doorway") {
-                tag = Tag::TELEPORT;
-                m_doorways.push_back(pos);
-            }
+        while (text_stream >> str) {
+            if (str == "Tile") {
+                std::string animation;
+                float room_x, room_y, x, y;
+                bool block_movement, block_vision;
+                text_stream >> animation >> room_x >> room_y >> x >> y >> block_movement >> block_vision;
 
-            auto tile = m_entity_manager.addEntity(tag);
-            tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
-            tile->addComponent<CTransform>(pos);
-            tile->addComponent<CDraggable>();
-            if (block_movement || block_vision) {
-                const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
-                tile->addComponent<CBBox>(animation_size, block_movement, block_vision);
-            }
-        } else if (str == "Player") {
-            float x, y, bbox_w, bbox_h, v;
-            int health;
-            file >> x >> y >> bbox_w >> bbox_h >> v >> health;
-            m_player_config = {
-                x, y, bbox_w, bbox_h, v, health
-            };
-        } else if (str == "NPC") { 
-            std::string animation, mode;
-            float room_x, room_y, x, y;
-            bool block_movement, block_vision;
-            int hp, damage;
-            file >> animation >> room_x >> room_y >> x >> y >> block_movement >> block_vision >> hp >> damage;
-            auto enemy = m_entity_manager.addEntity(Tag::ENEMY);
-            enemy->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
-            enemy->addComponent<CTransform>(getPosition(room_x, room_y, x, y));
-            enemy->addComponent<CHealth>(hp);
-            enemy->addComponent<CDamage>(damage);
-            if (block_movement) {
-                const auto& animation_size = enemy->getComponent<CAnimation>().animation.getSize();
-                enemy->addComponent<CBBox>(animation_size, block_movement, block_vision);
-            }
-
-            file >> mode;
-            if (mode == "Patrol") {
-                float speed;
-                int n_positions;
-                std::vector<Vec2> positions;
-                file >> speed >> n_positions;
-                for (int i = 0; i < n_positions; i++) {
-                    file >> x >> y;
-                    positions.push_back(getPosition(room_x, room_y, x, y));
+                Vec2 pos = getPosition(room_x, room_y, x, y);
+                Tag tag = Tag::DEC;
+                if (block_movement) {
+                    tag = Tag::TILE;
+                } else if (animation == "Heart") {
+                    tag = Tag::HEART;
+                } else if (animation == "Doorway") {
+                    tag = Tag::TELEPORT;
+                    m_doorways.push_back(pos);
                 }
-                enemy->addComponent<CPatrol>(positions, speed);
-            } else if (mode == "Follow") {
-                float speed, y, x;
-                file >> speed >> x >> y;
-                enemy->addComponent<CFollowPlayer>(getPosition(room_x, room_y, x, y), speed);
+
+                auto tile = m_entity_manager.addEntity(tag);
+                tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
+                tile->addComponent<CTransform>(pos);
+                tile->addComponent<CDraggable>();
+                if (block_movement || block_vision) {
+                    const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
+                    tile->addComponent<CBBox>(animation_size, block_movement, block_vision);
+                }
+            } else if (str == "Player") {
+                float x, y, bbox_w, bbox_h, v;
+                int health;
+                text_stream >> x >> y >> bbox_w >> bbox_h >> v >> health;
+                m_player_config = {
+                    x, y, bbox_w, bbox_h, v, health
+                };
+            } else if (str == "NPC") { 
+                std::string animation, mode;
+                float room_x, room_y, x, y;
+                bool block_movement, block_vision;
+                int hp, damage;
+                text_stream >> animation >> room_x >> room_y >> x >> y >> block_movement >> block_vision >> hp >> damage;
+                auto enemy = m_entity_manager.addEntity(Tag::ENEMY);
+                enemy->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
+                enemy->addComponent<CTransform>(getPosition(room_x, room_y, x, y));
+                enemy->addComponent<CHealth>(hp);
+                enemy->addComponent<CDamage>(damage);
+                if (block_movement) {
+                    const auto& animation_size = enemy->getComponent<CAnimation>().animation.getSize();
+                    enemy->addComponent<CBBox>(animation_size, block_movement, block_vision);
+                }
+
+                text_stream >> mode;
+                if (mode == "Patrol") {
+                    float speed;
+                    int n_positions;
+                    std::vector<Vec2> positions;
+                    text_stream >> speed >> n_positions;
+                    for (int i = 0; i < n_positions; i++) {
+                        text_stream >> x >> y;
+                        positions.push_back(getPosition(room_x, room_y, x, y));
+                    }
+                    enemy->addComponent<CPatrol>(positions, speed);
+                } else if (mode == "Follow") {
+                    float speed, y, x;
+                    text_stream >> speed >> x >> y;
+                    enemy->addComponent<CFollowPlayer>(getPosition(room_x, room_y, x, y), speed);
+                }
+            } else {
+                std::cerr << "Unknown level object: " << str << '\n';
+                // TODO: handle this error
             }
-        } else {
-            std::cerr << "Unknown level object: " << str << '\n';
         }
     }
     file.close();

@@ -1,3 +1,4 @@
+# Tiles
 Tile Rock 1 0 1 1
 Tile Rock 1 1 1 1
 Tile Rock 2 0 1 1
@@ -14,4 +15,6 @@ Tile Bush 7 2 0 0
 Tile Cloud1 3 8 0 0
 Tile Cloud1 8 9 0 0
 Tile Cloud2 11 10 0 0
+
+# Player
 Player 2 6 48 48 5 5 25 2 Fire

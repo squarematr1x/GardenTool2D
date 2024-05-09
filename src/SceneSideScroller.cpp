@@ -1,5 +1,6 @@
 #include <string>
 #include <fstream>
+#include <sstream>
 
 #include "Scene.hpp"
 #include "GameEngine.hpp"
@@ -59,39 +60,47 @@ Vec2 SceneSideScroller::mouseToWorldPos(const Vec2& mouse_pos) const {
 }
 
 void SceneSideScroller::loadLevel(const std::string& path) {
-    // reset the entity manager every time we load a level
+    // Reset the entity manager every time we load a level
     m_entity_manager = EntityManager();
-
     std::ifstream file(path);
-    std::string str;
+    std::string line;
 
-    while (file.good()) {
-        file >> str;
+    while (getline(file, line)) {
+        if (line.empty() || line[0] == '#') {
+            // Skip comments and empty lines
+            continue;
+        }
 
-        if (str == "Tile") {
-            std::string animation;
-            float x, y;
-            bool block_movement, block_vision;
-            file >> animation >> x >> y >> block_movement >> block_vision;
+        std::string str;
+        std::istringstream text_stream(line);
 
-            auto tile = block_movement ? m_entity_manager.addEntity(Tag::TILE) : m_entity_manager.addEntity(Tag::DEC);
-            tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
-            tile->addComponent<CTransform>(gridToMidPixel(x, y, tile));
-            tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later
-            if (block_movement) {
-                const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
-                tile->addComponent<CBBox>(animation_size, block_movement, block_vision);
-                m_entity_manager.addEntity(Tag::TILE);
+        while (text_stream >> str) {
+            if (str == "Tile") {
+                std::string animation;
+                float x, y;
+                bool block_movement, block_vision;
+                text_stream >> animation >> x >> y >> block_movement >> block_vision;
+
+                auto tile = block_movement ? m_entity_manager.addEntity(Tag::TILE) : m_entity_manager.addEntity(Tag::DEC);
+                tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
+                tile->addComponent<CTransform>(gridToMidPixel(x, y, tile));
+                tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later
+                if (block_movement) {
+                    const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
+                    tile->addComponent<CBBox>(animation_size, block_movement, block_vision);
+                    m_entity_manager.addEntity(Tag::TILE);
+                }
+            } else if (str == "Player") {
+                float x, y, bbox_w, bbox_h, v, jump_v, max_v, gravity;
+                std::string weapon_animation;
+                text_stream >> x >> y >> bbox_w >> bbox_h >> v >> max_v >> jump_v >> gravity >> weapon_animation;
+                m_player_config = {
+                    x, y, bbox_w, bbox_h, v, max_v, jump_v, gravity, weapon_animation
+                };
+            } else {
+                std::cerr << "Unknown level object: " << str << '\n';
+                // TODO: handle this error
             }
-        } else if (str == "Player") {
-            float x, y, bbox_w, bbox_h, v, jump_v, max_v, gravity;
-            std::string weapon_animation;
-            file >> x >> y >> bbox_w >> bbox_h >> v >> max_v >> jump_v >> gravity >> weapon_animation;
-            m_player_config = {
-                x, y, bbox_w, bbox_h, v, max_v, jump_v, gravity, weapon_animation
-            };
-        } else {
-            std::cerr << "Unknown level object: " << str << '\n';
         }
     }
     file.close();

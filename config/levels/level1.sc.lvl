@@ -1,3 +1,4 @@
+# Tiles
 Tile Brick 0 0 1 1
 Tile Brick 0 1 1 1
 Tile Brick 1 0 1 1
@@ -37,4 +38,6 @@ Tile Cloud1 3 8 0 0
 Tile Cloud1 8 9 0 0
 Tile Cloud2 11 10 0 0
 Tile Cloud2 14 7 0 0
+
+# Player
 Player 2 6 48 48 5 5 25 2 Fire

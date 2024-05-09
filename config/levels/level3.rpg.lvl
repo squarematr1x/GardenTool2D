@@ -1,3 +1,4 @@
+# Tiles
 Tile RockULCorner 0 0 10 5 1 1
 Tile Rock 0 0 10 6 1 1
 Tile Rock 0 0 10 7 1 1
@@ -34,6 +35,10 @@ Tile RockURCorner 1 0  12 5 1 1
 Tile Rock 1 0 12 6 1 1
 Tile Rock 1 0  12 7 1 1
 Tile DarkBush 1 0 15 9 0 1
+
+# Player
 Player 11 9 64 64 5 5
+
+# NPCs
 NPC Spider 0 0 3 3 0 0 3 1 Patrol 2 3 3 3 7 3 7 6
 NPC Ghost 0 0 14 3 0 0 3 1 Follow 2 14 3
