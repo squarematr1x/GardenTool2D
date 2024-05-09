@@ -288,7 +288,10 @@ void SceneSideScroller::sCollision() {
     auto& p_state = m_player->getComponent<CState>();
     auto& p_bbox = m_player->getComponent<CBBox>();
 
-    for (auto entity : m_entity_manager.getEntities(Tag::TILE)) {
+    for (auto entity : m_entity_manager.getEntities()) {
+        if (entity->tag() != Tag::TILE && entity->tag() != Tag::ELEVATOR) {
+            continue;
+        }
         // Player collision
         Vec2 overlap = physics::getOverlap(m_player, entity);
         if (overlap.x > 0 && overlap.y > 0) {
@@ -310,6 +313,9 @@ void SceneSideScroller::sCollision() {
                     }
                     else {
                         p_state.state = State::STAND;
+                    }
+                    if (entity->tag() == Tag::ELEVATOR) {
+                        p_transfrom.pos.x += entity->getComponent<CTransform>().velocity.x;
                     }
                 } else if (p_transfrom.velocity.y < 0) {
                     p_transfrom.pos.y += overlap.y;
