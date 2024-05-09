@@ -48,6 +48,8 @@ public:
 	void renderHealth(std::shared_ptr<Entity> e);
 	void renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> player);
 
+	bool targetReached(const Vec2& pos, const Vec2& target) const;
+
 protected:
 	GameEngine* m_engine{ nullptr };
 	EntityManager m_entity_manager;
@@ -179,12 +181,10 @@ public:
 	void spawnSword(std::shared_ptr<Entity> entity);
 	void setSwordPos(std::shared_ptr<Entity> entity, const Vec2& facing, const Vec2& pos);
 
-	void teleport();
+	void teleport(const Vec2& cur_doorway);
 
 	Vec2 getPosition(float rx, float ry, float tx, float ty) const;
 	Vec2 getCurrentRoom() const;
-
-	bool targetReached(const Vec2& pos, const Vec2& target) const;
 
 	void sAI();
 	void sMovement();

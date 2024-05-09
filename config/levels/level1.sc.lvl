@@ -1,3 +1,4 @@
+# Tiles
 Tile Brick 0 0 1 1
 Tile Brick 0 1 1 1
 Tile Brick 1 0 1 1
@@ -27,10 +28,19 @@ Tile Brick 14 0 1 1
 Tile Brick 15 0 1 1
 Tile Brick 15 1 1 1
 Tile Brick 15 4 1 1
+Tile Brick 21 0 1 1
+Tile Brick 22 0 1 1
+Tile Brick 23 0 1 1
+
 Tile Coin 10 4 0 0
 Tile Bush 7 2 0 0
 Tile Cloud1 3 8 0 0
 Tile Cloud1 8 9 0 0
 Tile Cloud2 11 10 0 0
 Tile Cloud2 14 7 0 0
+
+# Player
 Player 2 6 48 48 5 5 25 2 Fire
+
+# Moving objects
+Elevator Brick 16 1 1 1 Patrol 2 2 16 1 20 1
