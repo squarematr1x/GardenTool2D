@@ -14,6 +14,8 @@ class GameEngine
 	sf::RenderWindow m_window;
 	bool m_paused{ false };
 	bool m_running{ true };
+	bool m_enable_sound{ true };
+	bool m_enable_music{ true };
 	unsigned int m_screen_w{ 1280 };
 	unsigned int m_screen_h{ 768 };
 	unsigned int m_framerate{ 60 };
@@ -41,6 +43,9 @@ public:
 	void playSound(const std::string& sound_name);
 	void playMusic(const std::string& music_name);
 	void stopMusic(const std::string& music_name);
+
+	void toggleSound() { m_enable_sound = !m_enable_sound; }
+	void toggleMusic() { m_enable_music = !m_enable_music; }
 
 	sf::RenderWindow& window() { return m_window; };
 	const Assets& assets() const { return m_assets; };
