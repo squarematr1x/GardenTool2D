@@ -41,9 +41,16 @@ void SceneSideScroller::init(const std::string& level_path) {
 
 Vec2 SceneSideScroller::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entity> entity) {
     if (entity->hasComponent<CAnimation>()) {
-        const auto& animation_size = entity->getComponent<CAnimation>().animation.getSize();
+        const auto animation_size = entity->getComponent<CAnimation>().animation.getSize();
         const float x = grid_x * m_grid_size.x + (animation_size.x / 2.0f);
         const float y = height() - (grid_y * m_grid_size.y + (animation_size.y / 2.0f));
+
+        return Vec2(x, y);
+    }
+    if (entity->hasComponent<CBBox>()) {
+        const auto half_size = entity->getComponent<CBBox>().half_size;
+        const float x = grid_x * m_grid_size.x + half_size.x;
+        const float y = height() - (grid_y * m_grid_size.y + half_size.y);
 
         return Vec2(x, y);
     }
@@ -71,11 +78,11 @@ void SceneSideScroller::loadLevel(const std::string& path) {
             continue;
         }
 
-        std::string str;
+        std::string asset_type;
         std::istringstream text_stream(line);
 
-        while (text_stream >> str) {
-            if (str == "Tile") {
+        while (text_stream >> asset_type) {
+            if (asset_type == "Tile") {
                 std::string animation;
                 float x, y;
                 bool block_movement, block_vision;
@@ -90,14 +97,14 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                     tile->addComponent<CBBox>(animation_size, block_movement, block_vision);
                     m_entity_manager.addEntity(Tag::TILE);
                 }
-            } else if (str == "Player") {
+            } else if (asset_type == "Player") {
                 float x, y, bbox_w, bbox_h, v, jump_v, max_v, gravity;
                 std::string weapon_animation;
                 text_stream >> x >> y >> bbox_w >> bbox_h >> v >> max_v >> jump_v >> gravity >> weapon_animation;
                 m_player_config = {
                     x, y, bbox_w, bbox_h, v, max_v, jump_v, gravity, weapon_animation
                 };
-            } else if (str == "Elevator") {
+            } else if (asset_type == "Elevator") {
                 std::string animation, mode;
                 float x, y;
                 bool block_movement, block_vision;
@@ -126,8 +133,46 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                     text_stream >> speed >> x >> y;
                     tile->addComponent<CFollowPlayer>(gridToMidPixel(x, y, tile), speed);
                 }
+            } else if (asset_type == "NPC") { 
+                std::string animation, mode;
+                float x, y;
+                bool block_movement, block_vision;
+                int hp, damage;
+                text_stream >> animation >> x >> y >> block_movement >> block_vision >> hp >> damage;
+                auto enemy = m_entity_manager.addEntity(Tag::ENEMY);
+                enemy->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
+                enemy->addComponent<CTransform>(gridToMidPixel(x, y, enemy));
+                enemy->addComponent<CHealth>(hp);
+                enemy->addComponent<CDamage>(damage);
+                if (block_movement) {
+                    const auto& animation_size = enemy->getComponent<CAnimation>().animation.getSize();
+                    enemy->addComponent<CBBox>(animation_size, block_movement, block_vision);
+                }
+
+                text_stream >> mode;
+                if (mode == "Patrol") {
+                    float speed;
+                    int n_positions;
+                    std::vector<Vec2> positions;
+                    text_stream >> speed >> n_positions;
+                    for (int i = 0; i < n_positions; i++) {
+                        text_stream >> x >> y;
+                        positions.push_back(gridToMidPixel(x, y, enemy));
+                    }
+                    enemy->addComponent<CPatrol>(positions, speed);
+                } else if (mode == "Follow") {
+                    float speed, y, x;
+                    text_stream >> speed >> x >> y;
+                    enemy->addComponent<CFollowPlayer>(gridToMidPixel(x, y, enemy), speed);
+                }
+            } else if (asset_type == "Checkpoint") {
+                float x, y, bbox_w, bbox_h;
+                text_stream >> x >> y >> bbox_w >> bbox_h;
+                auto checkpoint = m_entity_manager.addEntity(Tag::CHECKPOINT);
+                checkpoint->addComponent<CBBox>(Vec2(bbox_w, bbox_h));
+                checkpoint->addComponent<CTransform>(gridToMidPixel(x, y, checkpoint));
             } else {
-                std::cerr << "Unknown level object: " << str << '\n';
+                std::cerr << "Unknown level object: " << asset_type << '\n';
                 // TODO: handle this error
             }
         }
@@ -289,9 +334,25 @@ void SceneSideScroller::sCollision() {
     auto& p_bbox = m_player->getComponent<CBBox>();
 
     for (auto entity : m_entity_manager.getEntities()) {
-        if (entity->tag() != Tag::TILE && entity->tag() != Tag::ELEVATOR) {
+        if (entity->tag() != Tag::TILE &&
+            entity->tag() != Tag::ELEVATOR &&
+            entity->tag() != Tag::CHECKPOINT) {
             continue;
         }
+
+        // Checkpoint
+        if (entity->tag() == Tag::CHECKPOINT) {
+            if (physics::overlapping(m_player, entity)) {
+                auto checkpointPos = entity->getComponent<CTransform>().pos;
+                m_player_config.x = (checkpointPos.x - (m_grid_size.x / 2.0f)) / m_grid_size.x;
+                m_player_config.y = ((height() - checkpointPos.y - (m_grid_size.y / 2.0f)) / m_grid_size.y);
+            }
+        }
+
+        if (!entity->getComponent<CBBox>().block_movement) {
+            continue;
+        }
+    
         // Player collision
         Vec2 overlap = physics::getOverlap(m_player, entity);
         if (overlap.x > 0 && overlap.y > 0) {
