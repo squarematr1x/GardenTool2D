@@ -20,6 +20,8 @@ Texture MegamanJumpText assets/sidescroll-images/megamanjump.png
 Animation MegamanJump MegamanJumpText 1 1
 Texture MegamanRunText assets/sidescroll-images/megamanrun.png
 Animation MegamanRun MegamanRunText 3 10
+Texture DemonRunText assets/sidescroll-images/demon.png
+Animation DemonRun DemonRunText 3 10
 Font Arial assets/fonts/arial.ttf
 Sound SoundJump assets/sounds/jump.wav
 Sound SoundSword assets/sounds/sword.wav
