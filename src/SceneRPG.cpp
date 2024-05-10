@@ -47,11 +47,11 @@ void SceneRPG::loadLevel(const std::string& path) {
             continue;
         }
 
-        std::string str;
+        std::string asset_type;
         std::istringstream text_stream(line);
 
-        while (text_stream >> str) {
-            if (str == "Tile") {
+        while (text_stream >> asset_type) {
+            if (asset_type == "Tile") {
                 std::string animation;
                 float room_x, room_y, x, y;
                 bool block_movement, block_vision;
@@ -76,14 +76,14 @@ void SceneRPG::loadLevel(const std::string& path) {
                     const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
                     tile->addComponent<CBBox>(animation_size, block_movement, block_vision);
                 }
-            } else if (str == "Player") {
+            } else if (asset_type == "Player") {
                 float x, y, bbox_w, bbox_h, v;
                 int health;
                 text_stream >> x >> y >> bbox_w >> bbox_h >> v >> health;
                 m_player_config = {
                     x, y, bbox_w, bbox_h, v, health
                 };
-            } else if (str == "NPC") { 
+            } else if (asset_type == "NPC") { 
                 std::string animation, mode;
                 float room_x, room_y, x, y;
                 bool block_movement, block_vision;
@@ -116,7 +116,7 @@ void SceneRPG::loadLevel(const std::string& path) {
                     enemy->addComponent<CFollowPlayer>(getPosition(room_x, room_y, x, y), speed);
                 }
             } else {
-                std::cerr << "Unknown level object: " << str << '\n';
+                std::cerr << "Unknown level object: " << asset_type << '\n';
                 // TODO: handle this error
             }
         }
