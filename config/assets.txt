@@ -14,14 +14,14 @@ Texture ExplosionText assets/sidescroll-images/explosion.png
 Animation Explosion ExplosionText 4 10
 Texture CoinText assets/sidescroll-images/coin.png
 Animation Coin CoinText 4 10
-Texture MegamanText assets/sidescroll-images/megamanstand.png
-Animation Megaman MegamanText 4 20
-Texture MegamanJumpText assets/sidescroll-images/megamanjump.png
-Animation MegamanJump MegamanJumpText 1 1
-Texture MegamanRunText assets/sidescroll-images/megamanrun.png
-Animation MegamanRun MegamanRunText 3 10
-Texture DemonRunText assets/sidescroll-images/demon.png
-Animation DemonRun DemonRunText 3 10
+Texture ToothText assets/sidescroll-images/tooth.png
+Animation Tooth ToothText 4 30
+Texture ToothJumpText assets/sidescroll-images/tooth-jump.png
+Animation ToothJump ToothJumpText 2 15
+Texture ToothRunText assets/sidescroll-images/tooth-run.png
+Animation ToothRun ToothRunText 4 10
+Texture CreepRunText assets/sidescroll-images/creep.png
+Animation CreepRun CreepRunText 4 10
 Font Arial assets/fonts/arial.ttf
 Sound SoundJump assets/sounds/jump.wav
 Sound SoundSword assets/sounds/sword.wav
