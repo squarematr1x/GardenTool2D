@@ -18,6 +18,8 @@ class Assets
 	std::map<std::string, sf::Sound> m_sound_map;
 	std::map<std::string, std::shared_ptr<sf::Music>> m_music_map;
 
+	// sf::Texture m_texture_atlas;
+
 	void addTexture(const std::string& texture_name, const std::string& path, bool smooth = true);
 	void addAnimation(const std::string& animation_name, const std::string& texture_name, size_t frame_count, int speed);
 	void addFont(const std::string& font_name, const std::string& path);

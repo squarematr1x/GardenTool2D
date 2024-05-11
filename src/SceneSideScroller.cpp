@@ -144,10 +144,8 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                 enemy->addComponent<CTransform>(gridToMidPixel(x, y, enemy));
                 enemy->addComponent<CHealth>(hp);
                 enemy->addComponent<CDamage>(damage);
-                if (block_movement) {
-                    const auto& animation_size = enemy->getComponent<CAnimation>().animation.getSize();
-                    enemy->addComponent<CBBox>(animation_size, block_movement, block_vision);
-                }
+                const auto& animation_size = enemy->getComponent<CAnimation>().animation.getSize();
+                enemy->addComponent<CBBox>(animation_size, block_movement, block_vision);
 
                 text_stream >> mode;
                 if (mode == "Patrol") {
@@ -184,7 +182,7 @@ void SceneSideScroller::loadLevel(const std::string& path) {
 
 void SceneSideScroller::spawnPlayer() {
     m_player = m_entity_manager.addEntity(Tag::PLAYER);
-    m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Megaman"), true);
+    m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Tooth"), true);
     m_player->addComponent<CTransform>(gridToMidPixel(m_player_config.x, m_player_config.y, m_player));
     m_player->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y));
     m_player->addComponent<CGravity>(m_player_config.gravity);
@@ -231,7 +229,10 @@ void SceneSideScroller::update() {
 }
 
 void SceneSideScroller::sAI() {
-    for (auto e : m_entity_manager.getEntities(Tag::ELEVATOR)) {
+    for (auto e : m_entity_manager.getEntities()) {
+        if (e->tag() != Tag::ENEMY && e->tag() != Tag::ELEVATOR) {
+            continue;
+        }
         // Patrol
         if (e->hasComponent<CPatrol>()) {
             auto& patrol = e->getComponent<CPatrol>();
@@ -468,11 +469,11 @@ void SceneSideScroller::sAnimation() {
             if (p_state.state != p_state.prev_state) {
                 switch (p_state.state) {
                     case State::STAND:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Megaman"), true); break;
+                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Tooth"), true); break;
                     case State::RUN:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("MegamanRun"), true); break;
+                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("ToothRun"), true); break;
                     case State::JUMP:
-                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("MegamanJump"), true); break;
+                        m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("ToothJump"), true); break;
                     default: break;
                 }
             }

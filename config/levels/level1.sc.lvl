@@ -41,10 +41,10 @@ Tile Cloud2 14 7 0 0
 Tile Cloud1 23 8 0 0
 
 # Player, X, Y, BBoxW, BBoxH, Speed, Jump Speed, Max Speed, Gravity, Weapon
-Player 2 6 48 48 5 5 25 2 Fire
+Player 2 6 64 64 5 5 25 2 Fire
 
 # NPCs
-NPC DemonRun 7 2 0 0 1 1 Patrol 2 2 7 2 7 2
+NPC CreepRun 7 2 0 0 1 1 Patrol 2 2 6 2 8 2
 
 # Moving objects
 Elevator Brick 16 1 1 1 Patrol 2 2 16 1 20 1
