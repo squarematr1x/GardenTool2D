@@ -74,3 +74,5 @@ Texture SpiderText assets/rpg-images/spider.png
 Animation Spider SpiderText 2 15
 Texture GhostText assets/rpg-images/ghost.png
 Animation Ghost GhostText 1 1
+Texture GitText assets/sidescroll-images/git.png
+Animation GitRun GitText 4 20
