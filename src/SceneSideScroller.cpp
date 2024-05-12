@@ -314,7 +314,7 @@ void SceneSideScroller::sMovement() {
 
         if (transform.velocity.x < 0) {
             transform.scale.x = -fabsf(transform.scale.x);
-        } else {
+        } else if (transform.velocity.x > 0)  {
            transform.scale.x = fabsf(transform.scale.x); 
         }
     }
