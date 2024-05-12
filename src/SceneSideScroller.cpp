@@ -254,7 +254,6 @@ void SceneSideScroller::sAI() {
 
 void SceneSideScroller::sMovement() {
     Vec2 player_v = m_player->getComponent<CTransform>().velocity;
-    Vec2 player_scale = m_player->getComponent<CTransform>().scale;
     auto& player_state = m_player->getComponent<CState>().state;
     auto& input = m_player->getComponent<CInput>();
 
@@ -274,14 +273,12 @@ void SceneSideScroller::sMovement() {
     
     if (input.left) {
         player_v.x = -m_player_config.v;
-        m_player->getComponent<CTransform>().scale = Vec2(-fabsf(player_scale.x), player_scale.y);
         if (player_v.y == 0 && player_state != State::JUMP) {
             player_state = State::RUN;
         }
     }
     if (input.right) {
         player_v.x = m_player_config.v;
-        m_player->getComponent<CTransform>().scale = Vec2(fabsf(player_scale.x), player_scale.y);
         if (player_v.y == 0 && player_state != State::JUMP) {
             player_state = State::RUN;
         }
@@ -314,6 +311,12 @@ void SceneSideScroller::sMovement() {
         auto& transform = e->getComponent<CTransform>();
         transform.prev_pos = transform.pos;
         transform.pos += transform.velocity;
+
+        if (transform.velocity.x < 0) {
+            transform.scale.x = -fabsf(transform.scale.x);
+        } else {
+           transform.scale.x = fabsf(transform.scale.x); 
+        }
     }
 }
 
