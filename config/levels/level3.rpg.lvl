@@ -9,6 +9,8 @@ Tile RockURCorner 0 0 12 5 1 1
 Tile Rock 0 0 12 6 1 1
 Tile Rock 0 0 12 7 1 1
 Tile DarkBush 0 0 11 9 0 1
+Tile Grass 0 0 9 10 0 0
+Tile Grass 0 0 11 12 0 0
 Tile WaterURCorner 0 0 0 4 1 0
 Tile Water 0 0 0 5 1 0
 Tile WaterLRCorner 0 0 0 6 1 0
@@ -50,6 +52,6 @@ Tile Grass 0 0 1 1 0 0
 Player 11 9 64 64 5 5
 
 # NPCs
-NPC Spider 0 0 3 3 0 0 3 1 Patrol 2 3 3 3 7 3 7 6
+NPC Jelly 0 0 3 3 0 0 3 1 Patrol 2 3 3 3 7 3 7 6
 NPC Ghost 0 0 14 3 0 0 3 1 Follow 2 14 3
 NPC Angry 0 0 3 8 0 0 3 1 Patrol 2 2 3 8 6 8
