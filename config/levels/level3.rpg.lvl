@@ -31,10 +31,20 @@ Tile Rock 1 0  10 7 1 1
 Tile Rock 1 0  11 5 1 1
 Tile Rock 1 0  11 6 1 1
 Tile Doorway 1 0 11 7 0 1
-Tile RockURCorner 1 0  12 5 1 1
+Tile RockURCorner 1 0 12 5 1 1
 Tile Rock 1 0 12 6 1 1
 Tile Rock 1 0  12 7 1 1
-Tile DarkBush 1 0 15 9 0 1
+Tile Grass 1 0 15 9 0 0
+Tile Grass 1 0 16 9 0 0
+Tile Grass 1 0 17 9 0 0
+Tile Grass 1 0 15 10 0 0
+Tile Grass 1 0 16 10 0 0
+Tile Grass 1 0 17 10 0 0
+
+Tile Grass 0 0 0 0 0 0
+Tile Grass 0 0 1 0 0 0
+Tile Grass 0 0 0 1 0 0
+Tile Grass 0 0 1 1 0 0
 
 # Player
 Player 11 9 64 64 5 5
@@ -42,3 +52,4 @@ Player 11 9 64 64 5 5
 # NPCs
 NPC Spider 0 0 3 3 0 0 3 1 Patrol 2 3 3 3 7 3 7 6
 NPC Ghost 0 0 14 3 0 0 3 1 Follow 2 14 3
+NPC Angry 0 0 3 8 0 0 3 1 Patrol 2 2 3 8 6 8

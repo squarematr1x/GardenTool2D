@@ -22,6 +22,10 @@ Texture ToothRunText assets/sidescroll-images/tooth-run.png
 Animation ToothRun ToothRunText 4 10
 Texture CreepRunText assets/sidescroll-images/creep.png
 Animation CreepRun CreepRunText 4 10
+Texture GitText assets/sidescroll-images/git.png
+Animation GitRun GitText 4 20
+Texture Droolext assets/sidescroll-images/drool.png
+Animation Drool Droolext 4 20
 Font Arial assets/fonts/arial.ttf
 Sound SoundJump assets/sounds/jump.wav
 Sound SoundSword assets/sounds/sword.wav
@@ -70,9 +74,11 @@ Texture SwordDownText assets/rpg-images/sworddown.png
 Animation SwordDown SwordDownText 1 10
 Texture SwordSideText assets/rpg-images/swordside.png
 Animation SwordSide SwordSideText 1 10
-Texture SpiderText assets/rpg-images/spider.png
-Animation Spider SpiderText 2 15
+Texture SpiderText assets/rpg-images/jelly.png
+Animation Spider SpiderText 4 20
 Texture GhostText assets/rpg-images/ghost.png
 Animation Ghost GhostText 1 1
-Texture GitText assets/sidescroll-images/git.png
-Animation GitRun GitText 4 20
+Texture AngryText assets/rpg-images/angry.png
+Animation Angry AngryText 4 20
+Texture GrassText assets/rpg-images/grass.png
+Animation Grass GrassText 1 1
