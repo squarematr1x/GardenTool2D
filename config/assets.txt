@@ -1,84 +1,45 @@
-Texture BrickText assets/sidescroll-images/tile.png
-Animation Brick BrickText 1 1
-Texture Question1Text assets/sidescroll-images/question1.png
-Animation Question1 Question1Text 1 1
-Texture FireText assets/sidescroll-images/bullet.png
-Animation Fire FireText 1 1
-Texture BushText assets/sidescroll-images/bush.png
-Animation Bush BushText 4 15
-Texture CloudText1 assets/sidescroll-images/cloud1.png
-Animation Cloud1 CloudText1 1 1
-Texture CloudText2 assets/sidescroll-images/cloud2.png
-Animation Cloud2 CloudText2 1 1
-Texture ExplosionText assets/sidescroll-images/explosion.png
-Animation Explosion ExplosionText 4 10
-Texture CoinText assets/sidescroll-images/coin.png
-Animation Coin CoinText 4 10
-Texture ToothText assets/sidescroll-images/tooth.png
-Animation Tooth ToothText 4 30
-Texture ToothJumpText assets/sidescroll-images/tooth-jump.png
-Animation ToothJump ToothJumpText 2 15
-Texture ToothRunText assets/sidescroll-images/tooth-run.png
-Animation ToothRun ToothRunText 4 10
-Texture CreepRunText assets/sidescroll-images/creep.png
-Animation CreepRun CreepRunText 4 10
-Texture GitText assets/sidescroll-images/git.png
-Animation GitRun GitText 4 20
-Texture Droolext assets/sidescroll-images/drool.png
-Animation Drool Droolext 4 20
+Texture Tilemap assets/tilemap.png
+Animation Rock Tilemap 1 1 64 64 0 0
+Animation RockURCorner Tilemap 1 1 64 64 64 0
+Animation RockLRCorner Tilemap 1 1 64 64 128 0
+Animation RockLLCorner Tilemap 1 1 64 64 196 0
+Animation RockULCorner Tilemap 1 1 64 64 256 0
+Animation Water Tilemap 1 1 64 64 0 64
+Animation WaterURCorner Tilemap 1 1 64 64 64 64
+Animation WaterLRCorner Tilemap 1 1 64 64 128 64
+Animation WaterLLCorner Tilemap 1 1 64 64 196 64
+Animation WaterULCorner Tilemap 1 1 64 64 256 64
+Animation Grass Tilemap 1 1 64 64 0 128
+Animation DarkBush Tilemap 1 1 64 64 0 196
+Animation Doorway Tilemap 1 0 64 64 0 256
+Animation Brick Tilemap 1 1 64 64 0 320
+Animation Question1 Tilemap 1 1 64 64 0 384
+Animation Bush Tilemap 4 15 256 64 0 448
+Animation Cloud1 Tilemap 1 1 128 64 0 512
+Animation Cloud2 Tilemap 1 1 128 64 0 576
+Animation PUp Tilemap 2 8 128 64 320 0
+Animation PAttackUp Tilemap 1 10 64 64 448 0
+Animation SwordUp Tilemap 1 10 64 64 512 0
+Animation PSide Tilemap 2 8 128 64 320 64
+Animation PAttackSide Tilemap 1 10 64 64 448 64
+Animation SwordSide Tilemap 1 10 64 64 512 64
+Animation PDown Tilemap 2 8 128 64 320 128
+Animation PAttackDown Tilemap 1 10 64 64 448 128
+Animation SwordDown Tilemap 1 10 64 64 512 128
+Animation Angry Tilemap 4 20 256 64 320 196
+Animation Ghost Tilemap 4 20 256 64 320 256
+Animation Jelly Tilemap 4 20 256 64 320 320
+Animation Tooth Tilemap 4 30 256 64 320 384
+Animation ToothRun Tilemap 4 10 256 64 320 448
+Animation ToothJump Tilemap 2 15 128 64 320 512
+Animation GitRun Tilemap 4 20 256 64 320 576
+Animation CreepRun Tilemap 4 10 256 64 320 640
+Animation Drool Tilemap 4 20 256 64 320 704
+Animation Coin Tilemap 4 10 256 64 576 0
+Animation Explosion Tilemap 4 10 256 64 576 64
+Animation Fire Tilemap 1 1 64 64 576 128
+Animation Heart Tilemap 1 1 64 64 576 196
 Font Arial assets/fonts/arial.ttf
 Sound SoundJump assets/sounds/jump.wav
 Sound SoundSword assets/sounds/sword.wav
 Music Level1Music assets/music/level1.wav
-Texture RockText assets/rpg-images/rock.png
-Animation Rock RockText 1 1
-Texture RockURCornerText assets/rpg-images/rockurcorner.png
-Animation RockURCorner RockURCornerText 1 1
-Texture RockULCornerText assets/rpg-images/rockulcorner.png
-Animation RockULCorner RockULCornerText 1 1
-Texture RockLLCornerText assets/rpg-images/rockllcorner.png
-Animation RockLLCorner RockLLCornerText 1 1
-Texture RockLRCornerText assets/rpg-images/rocklrcorner.png
-Animation RockLRCorner RockLRCornerText 1 1
-Texture WaterText assets/rpg-images/water.png
-Animation Water WaterText 1 1
-Texture WaterULCornerText assets/rpg-images/waterulcorner.png
-Animation WaterULCorner WaterULCornerText 1 1
-Texture WaterURCornerText assets/rpg-images/waterurcorner.png
-Animation WaterURCorner WaterURCornerText 1 1
-Texture WaterLLCornerText assets/rpg-images/waterllcorner.png
-Animation WaterLLCorner WaterLLCornerText 1 1
-Texture WaterLRCornerText assets/rpg-images/waterlrcorner.png
-Animation WaterLRCorner WaterLRCornerText 1 1
-Texture DarkBushText assets/rpg-images/bushdark.png
-Animation DarkBush DarkBushText 1 1
-Texture HeartText assets/rpg-images/heart.png
-Animation Heart HeartText 1 1
-Texture DoorwayText assets/rpg-images/doorway.png
-Animation Doorway DoorwayText 1 0
-Texture PUpText assets/rpg-images/playerup.png
-Animation PUp PUpText 2 8
-Texture PDownText assets/rpg-images/playerdown.png
-Animation PDown PDownText 2 8
-Texture PSideText assets/rpg-images/playerside.png
-Animation PSide PSideText 2 8
-Texture PAttackUpText assets/rpg-images/playerattackup.png
-Animation PAttackUp PAttackUpText 1 10
-Texture PAttackDownText assets/rpg-images/playerattackdown.png
-Animation PAttackDown PAttackDownText 1 10
-Texture PAttackSideText assets/rpg-images/playerattackside.png
-Animation PAttackSide PAttackSideText 1 10
-Texture SwordUpText assets/rpg-images/swordup.png
-Animation SwordUp SwordUpText 1 10
-Texture SwordDownText assets/rpg-images/sworddown.png
-Animation SwordDown SwordDownText 1 10
-Texture SwordSideText assets/rpg-images/swordside.png
-Animation SwordSide SwordSideText 1 10
-Texture JellyText assets/rpg-images/jelly.png
-Animation Jelly JellyText 4 20
-Texture GhostText assets/rpg-images/ghost.png
-Animation Ghost GhostText 4 20
-Texture AngryText assets/rpg-images/angry.png
-Animation Angry AngryText 4 20
-Texture GrassText assets/rpg-images/grass.png
-Animation Grass GrassText 1 1

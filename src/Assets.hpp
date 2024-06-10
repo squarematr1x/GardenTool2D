@@ -7,6 +7,7 @@
 #include <SFML/Audio.hpp>
 
 #include "Animation.hpp"
+#include "math/Vec2.hpp"
 
 class Assets
 {
@@ -21,7 +22,7 @@ class Assets
 	// sf::Texture m_texture_atlas;
 
 	void addTexture(const std::string& texture_name, const std::string& path, bool smooth = true);
-	void addAnimation(const std::string& animation_name, const std::string& texture_name, size_t frame_count, int speed);
+	void addAnimation(const std::string& animation_name, const std::string& texture_name, size_t frame_count, int speed, Vec2 size, Vec2 offset);
 	void addFont(const std::string& font_name, const std::string& path);
 	void addSoundBuffer(const std::string& sound_name, const std::string& path);
 	void addSound(const std::string& sound_name, const std::string& path);

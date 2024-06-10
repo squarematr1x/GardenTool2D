@@ -43,6 +43,16 @@ Tile Grass 1 0 15 10 0 0
 Tile Grass 1 0 16 10 0 0
 Tile Grass 1 0 17 10 0 0
 
+Tile WaterULCorner 0 0 16 9 1 0
+Tile WaterURCorner 0 0 18 9 1 0
+Tile Water 0 0 17 9 1 0
+Tile Water 0 0 17 10 1 0
+Tile Water 0 0 17 11 1 0
+Tile Water 0 0 18 10 1 0
+Tile Water 0 0 16 10 1 0
+Tile WaterLLCorner 0 0 16 11 1 0
+Tile WaterLRCorner 0 0 18 11 1 0
+
 Tile Grass 0 0 0 0 0 0
 Tile Grass 0 0 1 0 0 0
 Tile Grass 0 0 0 1 0 0
@@ -53,5 +63,5 @@ Player 11 9 64 64 5 5
 
 # NPCs
 NPC Jelly 0 0 3 3 0 0 3 1 Patrol 2 3 3 3 7 3 7 6
-NPC Ghost 0 0 14 3 0 0 3 1 Follow 2 14 3
+NPC Ghost 0 0 14 3 1 0 3 1 Follow 2 14 3
 NPC Angry 0 0 3 8 0 0 3 1 Patrol 2 2 3 8 6 8
