@@ -1,6 +1,7 @@
 #include "Assets.hpp"
 
 #include <fstream>
+#include <sstream>
 #include <iostream>
 #include <cassert>
 
@@ -9,35 +10,43 @@
 void Assets::loadFromFile(const std::string& path) {
 	PROFILE_FUNCTION();
 	std::ifstream file(path);
-	std::string str;
+	std::string line;
 
-	while (file.good()) {
-		file >> str;
+	while (getline(file, line)) {
+        if (line.empty() || line[0] == '#') {
+            // Skip comments and empty lines
+            continue;
+        }
 
-		if (str == "Texture") {
-			std::string name, texture_path;
-			file >> name >> texture_path;
-			addTexture(name, texture_path);
-		} else if (str == "Animation") {
-			std::string name, texture;
-			size_t frames;
-			int speed, w, h, offset_x, offset_y;
-			file >> name >> texture >> frames >> speed >> w >> h >> offset_x >> offset_y;
-			addAnimation(name, texture, frames, speed, Vec2(w, h), Vec2(offset_x, offset_y));
-		} else if (str == "Font") {
-			std::string name, font_path;
-			file >> name >> font_path;
-			addFont(name, font_path);
-		} else if (str == "Sound") { 
-			std::string name, sound_path;
-			file >> name >> sound_path;
-			addSound(name, sound_path);
-		} else if (str == "Music") { 
-			std::string name, music_path;
-			file >> name >> music_path;
-			addMusic(name, music_path);
-		} else {
-			std::cerr << "Unknown asset type: " << str << '\n';
+        std::string asset_type;
+        std::istringstream text_stream(line);
+
+        while (text_stream >> asset_type) {
+			if (asset_type == "Texture") {
+				std::string name, texture_path;
+				text_stream >> name >> texture_path;
+				addTexture(name, texture_path);
+			} else if (asset_type == "Animation") {
+				std::string name, texture;
+				size_t frames;
+				int speed, w, h, offset_x, offset_y;
+				text_stream >> name >> texture >> frames >> speed >> w >> h >> offset_x >> offset_y;
+				addAnimation(name, texture, frames, speed, Vec2(w, h), Vec2(offset_x, offset_y));
+			} else if (asset_type == "Font") {
+				std::string name, font_path;
+				text_stream >> name >> font_path;
+				addFont(name, font_path);
+			} else if (asset_type == "Sound") { 
+				std::string name, sound_path;
+				text_stream >> name >> sound_path;
+				addSound(name, sound_path);
+			} else if (asset_type == "Music") { 
+				std::string name, music_path;
+				text_stream >> name >> music_path;
+				addMusic(name, music_path);
+			} else {
+				std::cerr << "Unknown asset type: " << asset_type << '\n';
+			}
 		}
 	}
 	file.close();

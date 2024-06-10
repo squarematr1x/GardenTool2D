@@ -1,4 +1,8 @@
+# Tilemap
 Texture Tilemap assets/tilemap.png
+
+# Animations
+# Name texture block frames speed width height atlas x-offset atlas y-offset
 Animation Rock Tilemap 1 1 64 64 0 0
 Animation RockURCorner Tilemap 1 1 64 64 64 0
 Animation RockLRCorner Tilemap 1 1 64 64 128 0
@@ -17,6 +21,7 @@ Animation Question1 Tilemap 1 1 64 64 0 384
 Animation Bush Tilemap 4 15 256 64 0 448
 Animation Cloud1 Tilemap 1 1 128 64 0 512
 Animation Cloud2 Tilemap 1 1 128 64 0 576
+
 Animation PUp Tilemap 2 8 128 64 320 0
 Animation PAttackUp Tilemap 1 10 64 64 448 0
 Animation SwordUp Tilemap 1 10 64 64 512 0
@@ -35,11 +40,18 @@ Animation ToothJump Tilemap 2 15 128 64 320 512
 Animation GitRun Tilemap 4 20 256 64 320 576
 Animation CreepRun Tilemap 4 10 256 64 320 640
 Animation Drool Tilemap 4 20 256 64 320 704
+
 Animation Coin Tilemap 4 10 256 64 576 0
 Animation Explosion Tilemap 4 10 256 64 576 64
 Animation Fire Tilemap 1 1 64 64 576 128
 Animation Heart Tilemap 1 1 64 64 576 196
+
+# Fonts
 Font Arial assets/fonts/arial.ttf
+
+# Sounds
 Sound SoundJump assets/sounds/jump.wav
 Sound SoundSword assets/sounds/sword.wav
+
+# Music
 Music Level1Music assets/music/level1.wav
