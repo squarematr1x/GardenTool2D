@@ -21,9 +21,9 @@ void Assets::loadFromFile(const std::string& path) {
 		} else if (str == "Animation") {
 			std::string name, texture;
 			size_t frames;
-			int speed;
-			file >> name >> texture >> frames >> speed;
-			addAnimation(name, texture, frames, speed);
+			int speed, w, h, offset_x, offset_y;
+			file >> name >> texture >> frames >> speed >> w >> h >> offset_x >> offset_y;
+			addAnimation(name, texture, frames, speed, Vec2(w, h), Vec2(offset_x, offset_y));
 		} else if (str == "Font") {
 			std::string name, font_path;
 			file >> name >> font_path;
@@ -56,9 +56,9 @@ void Assets::addTexture(const std::string& texture_name, const std::string& path
 	}
 }
 
-void Assets::addAnimation(const std::string& animation_name, const std::string& texture_name, size_t frame_count, int speed) {
+void Assets::addAnimation(const std::string& animation_name, const std::string& texture_name, size_t frame_count, int speed, Vec2 size, Vec2 offset) {
 	PROFILE_FUNCTION();
-	m_animation_map[animation_name] = Animation(animation_name, getTexture(texture_name), frame_count, speed);
+	m_animation_map[animation_name] = Animation(animation_name, getTexture(texture_name), frame_count, speed, size, offset);
 }
 
 const sf::Texture& Assets::getTexture(const std::string& texture_name) const {

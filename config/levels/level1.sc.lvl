@@ -31,6 +31,9 @@ Tile Brick 15 4 1 1
 Tile Brick 21 0 1 1
 Tile Rock 22 0 1 1
 Tile Brick 23 0 1 1
+Tile Brick 30 0 1 1
+Tile Brick 31 0 1 1
+
 
 Tile Coin 10 4 0 0
 Tile Bush 7 2 0 0
@@ -41,7 +44,7 @@ Tile Cloud2 14 7 0 0
 Tile Cloud1 23 8 0 0
 
 # Player, X, Y, BBoxW, BBoxH, Speed, Jump Speed, Max Speed, Gravity, Weapon
-Player 2 6 64 64 5 5 25 2 Fire
+Player 2 6 56 62 5 5 25 2 Fire
 
 # NPCs
 NPC CreepRun 7 2 0 0 1 1 Patrol 2 2 6 2 8 2
@@ -50,6 +53,7 @@ NPC GitRun 13 1 0 0 1 1 Patrol 2 2 13 1 14 1
 # Moving objects
 Elevator Brick 16 1 1 1 Patrol 2 2 16 1 20 1
 Elevator Rock 25 1 1 1 Patrol 2 2 25 1 25 5
+Elevator Rock 27 5 1 1 Patrol 2 2 27 5 27 1
 
 # Checkpoint X, Y, BBoxW, BBoxH
 Checkpoint 22 1 64 64

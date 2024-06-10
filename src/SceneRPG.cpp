@@ -94,10 +94,8 @@ void SceneRPG::loadLevel(const std::string& path) {
                 enemy->addComponent<CTransform>(getPosition(room_x, room_y, x, y));
                 enemy->addComponent<CHealth>(hp);
                 enemy->addComponent<CDamage>(damage);
-                if (block_movement) {
-                    const auto& animation_size = enemy->getComponent<CAnimation>().animation.getSize();
-                    enemy->addComponent<CBBox>(animation_size, block_movement, block_vision);
-                }
+                const auto& animation_size = enemy->getComponent<CAnimation>().animation.getSize();
+                enemy->addComponent<CBBox>(animation_size, block_movement, block_vision);
 
                 text_stream >> mode;
                 if (mode == "Patrol") {
@@ -583,7 +581,7 @@ void SceneRPG::sCamera() {
 }
 
 void SceneRPG::sRender() {
-    m_engine->window().clear(sf::Color(215, 189, 164));
+    m_engine->window().clear(sf::Color(113, 166, 50));
 
     // draw all Entity textures/animations
     if (m_draw_textures) {
