@@ -4,10 +4,10 @@
 #include <memory>
 #include <string>
 
-#include "EntityManager.hpp"
-#include "Action.hpp"
-#include "ParticleSystem.hpp"
-#include "Layer.hpp"
+#include "entity-manager.hpp"
+#include "action.hpp"
+#include "particle-system.hpp"
+#include "layer.hpp"
 
 class GameEngine;
 

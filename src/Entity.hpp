@@ -4,7 +4,7 @@
 #include <string>
 #include <tuple>
 
-#include "Components.hpp"
+#include "components.hpp"
 
 // Get stuff from tuple std::get<typename>(my_tuple)
 typedef std::tuple<

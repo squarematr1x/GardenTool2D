@@ -1,12 +1,12 @@
-#include "GameEngine.hpp"
-#include "Scene.hpp"
+#include "engine.hpp"
+#include "scene.hpp"
 
 #include <fstream>
 #include <sstream>
 #include <random>
 #include <chrono>
 
-#include "util/Profiler.hpp"
+#include "util/profiler.hpp"
 
 GameEngine::GameEngine(const std::string& config) {
 	PROFILE_FUNCTION();

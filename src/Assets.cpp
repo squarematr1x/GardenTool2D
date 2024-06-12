@@ -1,11 +1,11 @@
-#include "Assets.hpp"
+#include "assets.hpp"
 
 #include <fstream>
 #include <sstream>
 #include <iostream>
 #include <cassert>
 
-#include "util/Profiler.hpp"
+#include "util/profiler.hpp"
 
 void Assets::loadFromFile(const std::string& path) {
 	PROFILE_FUNCTION();

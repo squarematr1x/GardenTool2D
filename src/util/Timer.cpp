@@ -1,4 +1,4 @@
-#include "Timer.hpp"
+#include "timer.hpp"
 
 long long Timer::elapsed() {
     auto etp = std::chrono::high_resolution_clock::now();

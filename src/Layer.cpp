@@ -1,4 +1,4 @@
-#include "Layer.hpp"
+#include "layer.hpp"
 
 Layer::Layer(const std::string& name, const sf::Texture& texture, Vec2 size, Vec2 offset)
     : m_name(name), m_sprite(texture), m_size(size), m_offset(offset), m_x_pos(offset.x) {

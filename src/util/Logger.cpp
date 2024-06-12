@@ -1,4 +1,4 @@
-#include "Logger.hpp"
+#include "logger.hpp"
 
 void Logger::log(const std::string& str) {
     m_fout << str << '\n';

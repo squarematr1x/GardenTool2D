@@ -6,9 +6,9 @@
 
 #include <SFML/Audio.hpp>
 
-#include "Animation.hpp"
-#include "Layer.hpp"
-#include "math/Vec2.hpp"
+#include "animation.hpp"
+#include "layer.hpp"
+#include "math/vec2.hpp"
 
 class Assets
 {

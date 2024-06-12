@@ -1,4 +1,4 @@
-#include "Animation.hpp"
+#include "animation.hpp"
 
 Animation::Animation(const std::string& name, const sf::Texture& texture)
 	: Animation(name, texture, 1, 0) {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EntityManager.hpp"
+#include "entity-manager.hpp"
 
 constexpr size_t MAX_ENTITIES{ 1000 }; // TODO: Use something else than global variable?
 
