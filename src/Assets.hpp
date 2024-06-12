@@ -6,8 +6,9 @@
 
 #include <SFML/Audio.hpp>
 
-#include "Animation.hpp"
-#include "math/Vec2.hpp"
+#include "animation.hpp"
+#include "layer.hpp"
+#include "math/vec2.hpp"
 
 class Assets
 {
@@ -18,15 +19,15 @@ class Assets
 	std::map<std::string, sf::SoundBuffer> m_sound_buffer_map;
 	std::map<std::string, sf::Sound> m_sound_map;
 	std::map<std::string, std::shared_ptr<sf::Music>> m_music_map;
+	std::map<std::string, Layer> m_layer_map;
 
-	// sf::Texture m_texture_atlas;
-
-	void addTexture(const std::string& texture_name, const std::string& path, bool smooth = true);
+	void addTexture(const std::string& texture_name, const std::string& path, bool smooth = false);
 	void addAnimation(const std::string& animation_name, const std::string& texture_name, size_t frame_count, int speed, Vec2 size, Vec2 offset);
 	void addFont(const std::string& font_name, const std::string& path);
 	void addSoundBuffer(const std::string& sound_name, const std::string& path);
 	void addSound(const std::string& sound_name, const std::string& path);
 	void addMusic(const std::string& music_name, const std::string& path);
+	void addLayer(const std::string& layer_name, const std::string& texture_name, Vec2 size, Vec2 offset);
 
 	const sf::SoundBuffer& getSoundBuffer(const std::string& sound_name) const;
 
@@ -38,4 +39,5 @@ public:
 	const sf::Font& getFont(const std::string& font_name) const;
 	sf::Sound getSound(const std::string& sound_name) const;
 	const std::shared_ptr<sf::Music> getMusic(const std::string& music_name) const;
+	const Layer& getLayer(const std::string& layer_name) const;
 };

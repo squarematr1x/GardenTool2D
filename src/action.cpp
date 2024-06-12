@@ -1,4 +1,4 @@
-#include "Animation.hpp"
+#include "animation.hpp"
 
 Animation::Animation(const std::string& name, const sf::Texture& texture)
 	: Animation(name, texture, 1, 0) {
@@ -27,7 +27,7 @@ void Animation::update() {
 
 	auto animation_frame = (m_current_frame / m_speed) % static_cast<int>(m_frame_count);
 	m_sprite.setTextureRect(sf::IntRect(
-		static_cast<int>(m_offset.x) + static_cast<int>(static_cast<int>(animation_frame)) * static_cast<int>(m_size.x),
+		static_cast<int>(m_offset.x) + animation_frame * static_cast<int>(m_size.x),
 		static_cast<int>(m_offset.y),
 		static_cast<int>(m_size.x),
 		static_cast<int>(m_size.y)

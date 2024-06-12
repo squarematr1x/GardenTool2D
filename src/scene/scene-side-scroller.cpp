@@ -2,9 +2,9 @@
 #include <fstream>
 #include <sstream>
 
-#include "Scene.hpp"
-#include "GameEngine.hpp"
-#include "Physics.hpp"
+#include "scene.hpp"
+#include "../engine.hpp"
+#include "../physics.hpp"
 
 SceneSideScroller::SceneSideScroller(GameEngine* engine, const std::string& level_path)
     : Scene(engine), m_level_path(level_path) {
@@ -36,7 +36,7 @@ void SceneSideScroller::init(const std::string& level_path) {
 
     loadLevel(level_path);
 
-    m_engine->playMusic("Level1Music");
+    // m_engine->playMusic("Level1Music");
 }
 
 Vec2 SceneSideScroller::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entity> entity) {
@@ -169,6 +169,10 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                 auto checkpoint = m_entity_manager.addEntity(Tag::CHECKPOINT);
                 checkpoint->addComponent<CBBox>(Vec2(bbox_w, bbox_h));
                 checkpoint->addComponent<CTransform>(gridToMidPixel(x, y, checkpoint));
+            } else if (asset_type == "Background") {
+                std::string layer;
+                text_stream >> layer;
+                m_backgrounds.push_back(m_engine->assets().getLayer(layer));
             } else {
                 std::cerr << "Unknown level object: " << asset_type << '\n';
                 // TODO: handle this error
@@ -226,6 +230,8 @@ void SceneSideScroller::update() {
     // mini_map.setViewport(sf::FloatRect(0.75f, 0.0f, 0.25f, 0.25f));
     // m_engine->window().setView(mini_map);
     sRender();
+
+    m_current_frame++;
 }
 
 void SceneSideScroller::sAI() {
@@ -410,6 +416,7 @@ void SceneSideScroller::sCollision() {
     }
     if (p_transfrom.pos.x < p_bbox.half_size.x) {
         p_transfrom.pos.x = p_bbox.half_size.x;
+        p_transfrom.velocity.x = 0.0f;
     }
 }
 
@@ -495,7 +502,23 @@ void SceneSideScroller::sCamera() {
 }
 
 void SceneSideScroller::sRender() {
-    m_engine->window().clear(sf::Color(70, 80, 255));
+    m_engine->window().clear(sf::Color(236, 115, 22));
+
+    // Draw backgrounds
+    float parallax_velocity = 0.05f;
+    for (auto& background : m_backgrounds) { // TODO: clean this mess
+        if (m_current_frame == 0) {
+            background.getSprite().setPosition(0, 0);
+            background.getSprite().scale(m_engine->window().getSize().x /128, m_engine->window().getSize().y/64);
+        }
+        auto& p_pos = m_player->getComponent<CTransform>().pos;
+        if (m_engine->window().getSize().x /2.0f < p_pos.x) {
+            background.getSprite().setPosition(p_pos.x - m_engine->window().getSize().x/2, 0);
+        }
+        background.update(m_player->getComponent<CTransform>().velocity.x, parallax_velocity);
+        parallax_velocity += 0.05f;
+        m_engine->window().draw(background.getSprite());
+    }
 
     // Draw all Entity textures/animations
     if (m_draw_textures) {

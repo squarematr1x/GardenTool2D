@@ -1,5 +1,5 @@
-#include "Scene.hpp"
-#include "GameEngine.hpp"
+#include "scene.hpp"
+#include "../engine.hpp"
 
 SceneMenu::SceneMenu(GameEngine* engine)
     : Scene(engine) {

@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include "Entity.hpp"
+#include "entity.hpp"
 
 typedef std::vector<std::shared_ptr<Entity>> EntityVec;
 

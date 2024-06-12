@@ -1,4 +1,4 @@
-#include "ParticleSystem.hpp"
+#include "particle-system.hpp"
 
 void ParticleSystem::resetParticle(size_t index, bool first) {
     // Initial position at the center of the screen

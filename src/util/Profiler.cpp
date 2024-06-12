@@ -1,4 +1,4 @@
-#include "Profiler.hpp"
+#include "profiler.hpp"
 
 #include <thread>
 #include <algorithm>

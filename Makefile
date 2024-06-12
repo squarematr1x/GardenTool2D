@@ -8,7 +8,7 @@ TARGET := engine
 INCLUDE := -Iinclude/
 SFML_INCLUDE := -I /opt/homebrew/Cellar/sfml/2.6.1/include/
 SFML_LIB := -L /opt/homebrew/Cellar/sfml/2.6.1/lib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
-SRC := $(wildcard src/*.cpp) $(wildcard src/util/*.cpp) $(wildcard src/math/*.cpp) 
+SRC := $(wildcard src/*.cpp) $(wildcard src/util/*.cpp) $(wildcard src/math/*.cpp) $(wildcard src/ecs/*.cpp) $(wildcard src/scene/*.cpp) 
 
 OBJECTS := $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 DEPENDENCIES := $(OBJECTS:.o=.d)

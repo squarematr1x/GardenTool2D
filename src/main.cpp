@@ -1,6 +1,6 @@
-#include "GameEngine.hpp"
+#include "engine.hpp"
 
-#include "util/Profiler.hpp"
+#include "util/profiler.hpp"
 
 int main() {
     PROFILE_FUNCTION();
