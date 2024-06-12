@@ -169,6 +169,10 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                 auto checkpoint = m_entity_manager.addEntity(Tag::CHECKPOINT);
                 checkpoint->addComponent<CBBox>(Vec2(bbox_w, bbox_h));
                 checkpoint->addComponent<CTransform>(gridToMidPixel(x, y, checkpoint));
+            } else if (asset_type == "Background") {
+                std::string layer;
+                text_stream >> layer;
+                m_backgrounds.push_back(m_engine->assets().getLayer(layer));
             } else {
                 std::cerr << "Unknown level object: " << asset_type << '\n';
                 // TODO: handle this error
@@ -496,6 +500,13 @@ void SceneSideScroller::sCamera() {
 
 void SceneSideScroller::sRender() {
     m_engine->window().clear(sf::Color(70, 80, 255));
+
+    // Draw backgrounds
+    for (auto background : m_backgrounds) {
+        background.getSprite().scale(m_engine->window().getSize().x / 128, m_engine->window().getSize().y / 64);
+        background.getSprite().setPosition(m_engine->window().getSize().x/2, m_engine->window().getSize().y/2);
+        m_engine->window().draw(background.getSprite());
+    }
 
     // Draw all Entity textures/animations
     if (m_draw_textures) {

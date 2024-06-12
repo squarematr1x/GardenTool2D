@@ -2,7 +2,7 @@
 Texture Tilemap assets/tilemap.png
 
 # Animations
-# Name texture block frames speed width height atlas x-offset atlas y-offset
+# Name texture frames speed width height atlas x-offset atlas y-offset
 Animation Rock Tilemap 1 1 64 64 0 0
 Animation RockURCorner Tilemap 1 1 64 64 64 0
 Animation RockLRCorner Tilemap 1 1 64 64 128 0
@@ -45,6 +45,9 @@ Animation Coin Tilemap 4 10 256 64 576 0
 Animation Explosion Tilemap 4 10 256 64 576 64
 Animation Fire Tilemap 1 1 64 64 576 128
 Animation Heart Tilemap 1 1 64 64 576 196
+
+# Layers for parallax scrolling
+Layer Landscape Tilemap 128 64 0 640
 
 # Fonts
 Font Arial assets/fonts/arial.ttf

@@ -44,6 +44,11 @@ void Assets::loadFromFile(const std::string& path) {
 				std::string name, music_path;
 				text_stream >> name >> music_path;
 				addMusic(name, music_path);
+			} else if (asset_type == "Layer") {
+				std::string name, texture;
+				int w, h, offset_x, offset_y;
+				text_stream >> name >> texture >> w >> h >> offset_x >> offset_y;
+				addLayer(name, texture, Vec2(w, h), Vec2(offset_x, offset_y));
 			} else {
 				std::cerr << "Unknown asset type: " << asset_type << '\n';
 			}
@@ -139,4 +144,14 @@ void Assets::addMusic(const std::string& music_name, const std::string& path) {
 const std::shared_ptr<sf::Music> Assets::getMusic(const std::string& music_name) const {
 	assert(m_music_map.find(music_name) != m_music_map.end());
 	return m_music_map.at(music_name);
+}
+
+
+void Assets::addLayer(const std::string& layer_name, const std::string& texture_name, Vec2 size, Vec2 offset) {
+	m_layer_map[layer_name] = Layer(layer_name, getTexture(texture_name), size, offset);
+}
+
+const Layer& Assets::getLayer(const std::string& layer_name) const {
+	assert(m_layer_map.find(layer_name) != m_layer_map.end());
+	return m_layer_map.at(layer_name);
 }
