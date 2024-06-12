@@ -44,7 +44,8 @@ Tile Cloud2 14 7 0 0
 Tile Cloud1 23 8 0 0
 
 # Background parallax
-Background Landscape
+Background Landscape1
+Background Landscape2
 
 # Player, X, Y, BBoxW, BBoxH, Speed, Jump Speed, Max Speed, Gravity, Weapon
 Player 2 6 56 62 5 5 25 2 Fire

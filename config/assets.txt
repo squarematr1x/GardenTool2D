@@ -47,7 +47,8 @@ Animation Fire Tilemap 1 1 64 64 576 128
 Animation Heart Tilemap 1 1 64 64 576 196
 
 # Layers for parallax scrolling
-Layer Landscape Tilemap 128 64 0 640
+Layer Landscape1 Tilemap 128 64 0 640
+Layer Landscape2 Tilemap 128 64 0 704
 
 # Fonts
 Font Arial assets/fonts/arial.ttf

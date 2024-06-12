@@ -36,7 +36,7 @@ void SceneSideScroller::init(const std::string& level_path) {
 
     loadLevel(level_path);
 
-    m_engine->playMusic("Level1Music");
+    // m_engine->playMusic("Level1Music");
 }
 
 Vec2 SceneSideScroller::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entity> entity) {
@@ -230,6 +230,8 @@ void SceneSideScroller::update() {
     // mini_map.setViewport(sf::FloatRect(0.75f, 0.0f, 0.25f, 0.25f));
     // m_engine->window().setView(mini_map);
     sRender();
+
+    m_current_frame++;
 }
 
 void SceneSideScroller::sAI() {
@@ -414,6 +416,7 @@ void SceneSideScroller::sCollision() {
     }
     if (p_transfrom.pos.x < p_bbox.half_size.x) {
         p_transfrom.pos.x = p_bbox.half_size.x;
+        p_transfrom.velocity.x = 0.0f;
     }
 }
 
@@ -499,12 +502,21 @@ void SceneSideScroller::sCamera() {
 }
 
 void SceneSideScroller::sRender() {
-    m_engine->window().clear(sf::Color(70, 80, 255));
+    m_engine->window().clear(sf::Color(236, 115, 22));
 
     // Draw backgrounds
-    for (auto background : m_backgrounds) {
-        background.getSprite().scale(m_engine->window().getSize().x / 128, m_engine->window().getSize().y / 64);
-        background.getSprite().setPosition(m_engine->window().getSize().x/2, m_engine->window().getSize().y/2);
+    float parallax_velocity = 0.05f;
+    for (auto& background : m_backgrounds) { // TODO: clean this mess
+        if (m_current_frame == 0) {
+            background.getSprite().setPosition(0, 0);
+            background.getSprite().scale(m_engine->window().getSize().x /128, m_engine->window().getSize().y/64);
+        }
+        auto& p_pos = m_player->getComponent<CTransform>().pos;
+        if (m_engine->window().getSize().x /2.0f < p_pos.x) {
+            background.getSprite().setPosition(p_pos.x - m_engine->window().getSize().x/2, 0);
+        }
+        background.update(m_player->getComponent<CTransform>().velocity.x, parallax_velocity);
+        parallax_velocity += 0.05f;
         m_engine->window().draw(background.getSprite());
     }
 
