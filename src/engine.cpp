@@ -1,5 +1,5 @@
 #include "engine.hpp"
-#include "scene.hpp"
+#include "scene/scene.hpp"
 
 #include <fstream>
 #include <sstream>

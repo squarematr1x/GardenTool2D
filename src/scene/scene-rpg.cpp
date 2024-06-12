@@ -3,9 +3,9 @@
 #include <sstream>
 
 #include "scene.hpp"
-#include "engine.hpp"
-#include "physics.hpp"
-#include "math/random.hpp"
+#include "../engine.hpp"
+#include "../physics.hpp"
+#include "../math/random.hpp"
 
 SceneRPG::SceneRPG(GameEngine* engine, const std::string& level_path)
     : Scene(engine), m_level_path(level_path) {

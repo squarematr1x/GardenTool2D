@@ -1,6 +1,6 @@
 #pragma once
 
-#include "entity-manager.hpp"
+#include "ecs/entity-manager.hpp"
 #include "assets.hpp"
 
 class Scene;

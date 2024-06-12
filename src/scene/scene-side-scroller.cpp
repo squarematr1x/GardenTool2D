@@ -3,8 +3,8 @@
 #include <sstream>
 
 #include "scene.hpp"
-#include "engine.hpp"
-#include "physics.hpp"
+#include "../engine.hpp"
+#include "../physics.hpp"
 
 SceneSideScroller::SceneSideScroller(GameEngine* engine, const std::string& level_path)
     : Scene(engine), m_level_path(level_path) {
