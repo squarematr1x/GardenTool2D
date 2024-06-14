@@ -153,6 +153,7 @@ struct CBBox: Component {
 	bool block_movement{ false };
 	bool block_vision{ false };
 	bool movable{ false }; // Allow the player to move objects
+	bool breakable{ false }; // Destroy on collision
 
 	CBBox() {}
 	CBBox(Vec2 size_in)
@@ -165,6 +166,15 @@ struct CBBox: Component {
 		half_size(size_in / 2),
 		block_movement(block_movement_in),
 		block_vision(block_vision_in)
+	{
+	}
+
+	CBBox(Vec2 size_in, bool block_movement_in, bool block_vision_in, bool breakable_in)
+		: size(size_in),
+		half_size(size_in / 2),
+		block_movement(block_movement_in),
+		block_vision(block_vision_in),
+		breakable(breakable_in)
 	{
 	}
 };

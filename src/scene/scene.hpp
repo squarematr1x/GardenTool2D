@@ -134,6 +134,7 @@ public:
 	void spawnPlayer();
 	void spawnBullet();
 	void spawnExplosion(const Vec2& pos);
+	void spawnItem(const Vec2& pos, const std::string& animation_name, Tag tag);
 
 	// Systems
 	void sAI();

@@ -94,7 +94,11 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                 tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later
                 if (block_movement) {
                     const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
-                    tile->addComponent<CBBox>(animation_size, block_movement, block_vision);
+                    if (animation == "Brick") {
+                        tile->addComponent<CBBox>(animation_size, block_movement, block_vision, true);
+                    } else {
+                        tile->addComponent<CBBox>(animation_size, block_movement, block_vision);
+                    }
                     m_entity_manager.addEntity(Tag::TILE);
                 }
             } else if (asset_type == "Player") {
@@ -212,6 +216,12 @@ void SceneSideScroller::spawnExplosion(const Vec2& pos) {
     auto explosion = m_entity_manager.addEntity(Tag::EXPLOSION);
     explosion->addComponent<CAnimation>(m_engine->assets().getAnimation("Explosion"));
     explosion->addComponent<CTransform>(pos, Vec2(0, 0));
+}
+
+void SceneSideScroller::spawnItem(const Vec2& pos, const std::string& animation_name, Tag tag) {
+    auto item = m_entity_manager.addEntity(tag);
+    item->addComponent<CAnimation>(m_engine->assets().getAnimation(animation_name), true);
+    item->addComponent<CTransform>(pos, Vec2(0, 0));
 }
 
 void SceneSideScroller::update() {
@@ -390,11 +400,14 @@ void SceneSideScroller::sCollision() {
                     }
                 } else if (p_transfrom.velocity.y < 0) {
                     p_transfrom.pos.y += overlap.y;
-                    spawnExplosion(entity->getComponent<CTransform>().pos);
-                    entity->destroy();
-
-                    // Implement question box collision:
-                    // Spawn coin animation
+                    if (entity->getComponent<CBBox>().breakable) {
+                        spawnExplosion(entity->getComponent<CTransform>().pos);
+                        entity->destroy();
+                    } else if (entity->getComponent<CAnimation>().animation.getName() == "Question1") {
+                        auto e_pos = entity->getComponent<CTransform>().pos;
+                        spawnItem(Vec2(e_pos.x, e_pos.y - 64.0f), "Heart", Tag::HEART);
+                        entity->addComponent<CAnimation>(m_engine->assets().getAnimation("Question2"), true);
+                    }
                 }
                 p_transfrom.velocity.y = 0.0f;
             }
@@ -403,9 +416,13 @@ void SceneSideScroller::sCollision() {
         // Bullet collision
         for (auto bullet : m_entity_manager.getEntities(Tag::BULLET)) {
             if (physics::overlapping(bullet, entity)) {
-                spawnExplosion(entity->getComponent<CTransform>().pos);
-                // Destroy tile and bullet
-                entity->destroy();
+                if (entity->getComponent<CBBox>().breakable) {
+                    // Destroy tile and bullet
+                    spawnExplosion(entity->getComponent<CTransform>().pos);
+                    entity->destroy();
+                } else {
+                    spawnExplosion(bullet->getComponent<CTransform>().pos);
+                }
                 bullet->destroy();
             }
         }
