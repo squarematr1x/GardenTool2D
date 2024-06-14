@@ -45,7 +45,7 @@ Animation Drool Tilemap 4 20 256 64 320 704
 
 Animation Coin Tilemap 4 10 256 64 576 0
 Animation Explosion Tilemap 4 10 256 64 576 64
-Animation Fire Tilemap 1 1 64 64 576 128
+Animation Fire Tilemap 4 10 256 64 576 128
 Animation Heart Tilemap 2 20 128 64 576 196
 
 # Layer: name, texture
