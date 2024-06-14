@@ -1,8 +1,9 @@
-# Tilemap
-Texture Tilemap assets/tilemap.png
+# Texture: name, path, repeating
+Texture Tilemap assets/tilemap.png 0
+Texture Layer1 assets/background1.png 1
+Texture Layer2 assets/background2.png 1
 
-# Animations
-# Name texture frames speed width height atlas x-offset atlas y-offset
+# Animation: name, texture frames speed width height atlas x-offset atlas y-offset
 Animation Rock Tilemap 1 1 64 64 0 0
 Animation RockURCorner Tilemap 1 1 64 64 64 0
 Animation RockLRCorner Tilemap 1 1 64 64 128 0
@@ -46,16 +47,16 @@ Animation Explosion Tilemap 4 10 256 64 576 64
 Animation Fire Tilemap 1 1 64 64 576 128
 Animation Heart Tilemap 1 1 64 64 576 196
 
-# Layers for parallax scrolling
-Layer Landscape1 Tilemap 128 64 0 640
-Layer Landscape2 Tilemap 128 64 0 704
+# Layer: name, texture
+Layer Landscape1 Layer1
+Layer Landscape2 Layer2
 
-# Fonts
+# Font: name, path
 Font Arial assets/fonts/arial.ttf
 
-# Sounds
+# Sound: name, path
 Sound SoundJump assets/sounds/jump.wav
 Sound SoundSword assets/sounds/sword.wav
 
-# Music
+# Music: name, path
 Music Level1Music assets/music/level1.wav

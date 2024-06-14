@@ -172,7 +172,7 @@ void SceneSideScroller::loadLevel(const std::string& path) {
             } else if (asset_type == "Background") {
                 std::string layer;
                 text_stream >> layer;
-                m_backgrounds.push_back(m_engine->assets().getLayer(layer));
+                m_background_layers.push_back(m_engine->assets().getLayer(layer));
             } else {
                 std::cerr << "Unknown level object: " << asset_type << '\n';
                 // TODO: handle this error
@@ -505,20 +505,19 @@ void SceneSideScroller::sRender() {
     m_engine->window().clear(sf::Color(236, 115, 22));
 
     // Draw backgrounds
-    float parallax_velocity = 0.05f;
-    for (auto& background : m_backgrounds) { // TODO: clean this mess
-        if (m_current_frame == 0) {
-            background.getSprite().setPosition(0, 0);
-            background.getSprite().scale(m_engine->window().getSize().x /128, m_engine->window().getSize().y/64);
-        }
-        auto& p_pos = m_player->getComponent<CTransform>().pos;
-        if (m_engine->window().getSize().x /2.0f < p_pos.x) {
-            background.getSprite().setPosition(p_pos.x - m_engine->window().getSize().x/2, 0);
-        }
-        background.update(m_player->getComponent<CTransform>().velocity.x, parallax_velocity);
+    sf::View view = m_engine->window().getView();
+    float parallax_velocity = 0.01f;
+    const auto p_transform = m_player->getComponent<CTransform>();
+    for (auto& layer : m_background_layers) {
+        layer.update(p_transform.velocity.x, parallax_velocity);
         parallax_velocity += 0.05f;
-        m_engine->window().draw(background.getSprite());
+        if (m_current_frame == 0) {
+            layer.scale(m_engine->window().getSize().x, m_engine->window().getSize().y);
+        }
+        m_engine->window().setView(layer.getView());
+        m_engine->window().draw(layer.getSprite());
     }
+    m_engine->window().setView(view);
 
     // Draw all Entity textures/animations
     if (m_draw_textures) {
