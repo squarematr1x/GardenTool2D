@@ -36,9 +36,10 @@ Animation SwordDown Tilemap 1 10 64 64 512 128
 Animation Angry Tilemap 4 20 256 64 320 196
 Animation Ghost Tilemap 4 20 256 64 320 256
 Animation Jelly Tilemap 4 20 256 64 320 320
-Animation Tooth Tilemap 4 30 256 64 320 384
+# Animation Tooth Tilemap 4 30 256 64 320 384
 Animation ToothRun Tilemap 4 10 256 64 320 448
 Animation ToothJump Tilemap 2 15 128 64 320 512
+Animation Tooth Tilemap 2 30 128 64 448 512
 Animation GitRun Tilemap 4 20 256 64 320 576
 Animation CreepRun Tilemap 4 10 256 64 320 640
 Animation Drool Tilemap 4 20 256 64 320 704
@@ -48,7 +49,7 @@ Animation Explosion Tilemap 4 10 256 64 576 64
 Animation Fire Tilemap 4 10 256 64 576 128
 Animation Heart Tilemap 2 20 128 64 576 196
 
-# Layer: name, texture
+# Layer: name, texture name
 Layer Landscape1 Layer1
 Layer Landscape2 Layer2
 

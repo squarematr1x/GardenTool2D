@@ -76,8 +76,15 @@ void GameEngine::sUserInput() {
 				sf::Texture texture;
 				texture.create(m_window.getSize().x, m_window.getSize().y);
 				texture.update(m_window);
-				if (texture.copyToImage().saveToFile("demo/test.png")) {
-					std::cout << "Screenshot saved to " << "test.png\n";
+
+				auto t = std::time(nullptr);
+				auto tm = *std::localtime(&t);
+				std::ostringstream oss;
+				oss << std::put_time(&tm, "%d-%m-%Y-%H-%M-%S");
+				auto screenshot_path = "demo/screenshot-" + oss.str() + ".png";
+	
+				if (texture.copyToImage().saveToFile(screenshot_path)) {
+					std::cout << "Screenshot saved to " << screenshot_path;
 				}
 			}
 		}
