@@ -91,7 +91,7 @@ void GameEngine::sUserInput() {
 
 		// New action based handling
 		if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased) {
-			// if the current scene does not have an axction associated with this key, skip the event
+			// if the current scene does not have an action associated with this key, skip the event
 			if (currentScene()->getActionMap().find(event.key.code) == currentScene()->getActionMap().end()) {
 				continue;
 			}
