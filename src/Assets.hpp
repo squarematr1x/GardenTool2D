@@ -21,13 +21,13 @@ class Assets
 	std::map<std::string, std::shared_ptr<sf::Music>> m_music_map;
 	std::map<std::string, Layer> m_layer_map;
 
-	void addTexture(const std::string& texture_name, const std::string& path, bool smooth = false);
+	void addTexture(const std::string& texture_name, const std::string& path, bool repeating, bool smooth = false);
 	void addAnimation(const std::string& animation_name, const std::string& texture_name, size_t frame_count, int speed, Vec2 size, Vec2 offset);
 	void addFont(const std::string& font_name, const std::string& path);
 	void addSoundBuffer(const std::string& sound_name, const std::string& path);
 	void addSound(const std::string& sound_name, const std::string& path);
 	void addMusic(const std::string& music_name, const std::string& path);
-	void addLayer(const std::string& layer_name, const std::string& texture_name, Vec2 size, Vec2 offset);
+	void addLayer(const std::string& layer_name, const std::string& texture_name);
 
 	const sf::SoundBuffer& getSoundBuffer(const std::string& sound_name) const;
 

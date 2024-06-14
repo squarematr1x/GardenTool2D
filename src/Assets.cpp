@@ -24,8 +24,9 @@ void Assets::loadFromFile(const std::string& path) {
         while (text_stream >> asset_type) {
 			if (asset_type == "Texture") {
 				std::string name, texture_path;
-				text_stream >> name >> texture_path;
-				addTexture(name, texture_path);
+				bool repeating;
+				text_stream >> name >> texture_path >> repeating;
+				addTexture(name, texture_path, repeating);
 			} else if (asset_type == "Animation") {
 				std::string name, texture;
 				size_t frames;
@@ -46,9 +47,8 @@ void Assets::loadFromFile(const std::string& path) {
 				addMusic(name, music_path);
 			} else if (asset_type == "Layer") {
 				std::string name, texture;
-				int w, h, offset_x, offset_y;
-				text_stream >> name >> texture >> w >> h >> offset_x >> offset_y;
-				addLayer(name, texture, Vec2(w, h), Vec2(offset_x, offset_y));
+				text_stream >> name >> texture;
+				addLayer(name, texture);
 			} else {
 				std::cerr << "Unknown asset type: " << asset_type << '\n';
 			}
@@ -57,9 +57,11 @@ void Assets::loadFromFile(const std::string& path) {
 	file.close();
 }
 
-void Assets::addTexture(const std::string& texture_name, const std::string& path, bool smooth) {
+void Assets::addTexture(const std::string& texture_name, const std::string& path, bool repeating, bool smooth) {
 	PROFILE_SCOPE(path);
-	m_texture_map[texture_name] = sf::Texture();
+	sf::Texture texture;
+	texture.setRepeated(repeating);
+	m_texture_map[texture_name] = texture;
 
 	if (!m_texture_map[texture_name].loadFromFile(path)) {
 		std::cerr << "Cannot load texture file: " << path << '\n';
@@ -147,8 +149,8 @@ const std::shared_ptr<sf::Music> Assets::getMusic(const std::string& music_name)
 }
 
 
-void Assets::addLayer(const std::string& layer_name, const std::string& texture_name, Vec2 size, Vec2 offset) {
-	m_layer_map[layer_name] = Layer(layer_name, getTexture(texture_name), size, offset);
+void Assets::addLayer(const std::string& layer_name, const std::string& texture_name) {
+	m_layer_map[layer_name] = Layer(layer_name, getTexture(texture_name));
 }
 
 const Layer& Assets::getLayer(const std::string& layer_name) const {

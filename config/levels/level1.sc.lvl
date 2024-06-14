@@ -1,4 +1,4 @@
-# Tile, Animation, X, Y, Block movement, Block vision
+# Tile: animation name, x, y, block movement, block vision
 Tile Brick 0 0 1 1
 Tile Brick 0 1 1 1
 Tile Brick 1 0 1 1
@@ -43,21 +43,21 @@ Tile Cloud2 11 10 0 0
 Tile Cloud2 14 7 0 0
 Tile Cloud1 23 8 0 0
 
-# Background parallax
+# Background: layer name
 Background Landscape1
 Background Landscape2
 
-# Player, X, Y, BBoxW, BBoxH, Speed, Jump Speed, Max Speed, Gravity, Weapon
+# Player: x, y, bboxw, bboxh, speed, jump speed, max speed, gravity, animation name
 Player 2 6 56 62 5 5 25 2 Fire
 
-# NPCs
+# NPC: animation name, x, y, block movement, block vision, behavior
 NPC CreepRun 7 2 0 0 1 1 Patrol 2 2 6 2 8 2
 NPC GitRun 13 1 0 0 1 1 Patrol 2 2 13 1 14 1
 
-# Moving objects
+# Elevator: animation name, x, y, block movement, block vision, behavior
 Elevator Brick 16 1 1 1 Patrol 2 2 16 1 20 1
 Elevator Rock 25 1 1 1 Patrol 2 2 25 1 25 5
 Elevator Rock 27 5 1 1 Patrol 2 2 27 5 27 1
 
-# Checkpoint X, Y, BBoxW, BBoxH
+# Checkpoint: x, y, bboxw, bboxh
 Checkpoint 22 1 64 64

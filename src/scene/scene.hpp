@@ -115,7 +115,7 @@ class SceneSideScroller: public Scene
 	const Vec2 m_grid_size{ 64, 64 };
 	sf::Text m_grid_text;
 	sf::Text m_pause_text;
-	std::vector<Layer> m_backgrounds;
+	std::vector<Layer> m_background_layers;
 
 	Vec2 m_mouse_pos;
 	sf::CircleShape m_mouse_shape;
