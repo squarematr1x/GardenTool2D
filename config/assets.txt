@@ -1,9 +1,9 @@
 # Texture: name, path, repeating
-Texture Tilemap assets/tilemap.png 0
-Texture Layer1 assets/background1.png 1
-Texture Layer2 assets/background2.png 1
+Texture Tilemap assets/textures/tilemap.png 0
+Texture Layer1 assets/textures/background1.png 1
+Texture Layer2 assets/textures/background2.png 1
 
-# Animation: name, texture frames speed width height atlas x-offset atlas y-offset
+# Animation: name, texture name, frames speed width height atlas x-offset atlas y-offset
 Animation Rock Tilemap 1 1 64 64 0 0
 Animation RockURCorner Tilemap 1 1 64 64 64 0
 Animation RockLRCorner Tilemap 1 1 64 64 128 0
