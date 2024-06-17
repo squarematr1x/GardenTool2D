@@ -1,4 +1,7 @@
 #include "scene.hpp"
+
+#include <filesystem>
+
 #include "../engine.hpp"
 
 SceneMenu::SceneMenu(GameEngine* engine)
@@ -16,6 +19,11 @@ void SceneMenu::init() {
     m_menu_text.setFont(m_engine->assets().getFont("Arial"));
 
     m_particles.init(m_engine->window().getSize());
+
+    std::string path = "config/levels";
+    for (const auto & entry : std::filesystem::directory_iterator(path)) {
+        m_level_paths.push_back(entry.path());
+    }
 }
 
 void SceneMenu::update() {
