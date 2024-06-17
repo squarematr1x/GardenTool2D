@@ -115,7 +115,58 @@ void Scene::renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> play
     }
 }
 
+// TODO: this still needs to be investigated/refactored
+void Scene::updateZoom(float scroll_delta) {
+    float delta = 0.01f;
+    int level = 1;
+    if (scroll_delta > 0.0f) {
+        delta = -0.01f;
+        level = -1;
+    }
+    if (m_zoom.delta * delta < 0.0f) {
+        m_zoom.value = 1.0f;
+    }
+    m_zoom.delta = delta;
+    const float new_zoom = m_zoom.value + delta;
+    const int new_level = m_zoom.level + level;
+    if (new_level >= -m_zoom.max_level && new_level <= m_zoom.max_level) {
+        m_zoom.value = new_zoom;
+        m_zoom.level = new_level;
+    }
+}
+
 bool Scene::targetReached(const Vec2& pos, const Vec2& target) const {
     float distance = pos.distance(target);
     return fabs(distance) <= 5.0f;
+}
+
+void Scene::addVertexData(const Vec2& pos, const sf::IntRect& texture_rect_in, sf::VertexArray& vertices) {
+    // Add all entities that are not individually target of some transform into same vertex array to reduce draw() calls
+    auto texture_rect = sf::FloatRect(texture_rect_in);
+    float half_w = texture_rect.width / 2.0f;
+    float half_h = texture_rect.height / 2.0f;
+    vertices.append(sf::Vertex(
+        sf::Vector2f(pos.x - half_w, pos.y - half_h),
+        sf::Vector2f(texture_rect.left, texture_rect.top)
+    ));
+    vertices.append(sf::Vertex(
+        sf::Vector2f(pos.x + half_w, pos.y - half_h),
+        sf::Vector2f(texture_rect.left + texture_rect.width, texture_rect.top)
+    ));
+    vertices.append(sf::Vertex(
+        sf::Vector2f(pos.x + half_w, pos.y + half_h),
+        sf::Vector2f(texture_rect.left + texture_rect.width, texture_rect.top + texture_rect.height)
+    ));
+    vertices.append(sf::Vertex(
+        sf::Vector2f(pos.x - half_w, pos.y - half_h),
+        sf::Vector2f(texture_rect.left, texture_rect.top)
+    ));
+    vertices.append(sf::Vertex(
+        sf::Vector2f(pos.x + half_w, pos.y + half_h),
+        sf::Vector2f(texture_rect.left + texture_rect.width, texture_rect.top + texture_rect.height)
+    ));
+    vertices.append(sf::Vertex(
+        sf::Vector2f(pos.x - half_w, pos.y  + half_h),
+        sf::Vector2f(texture_rect.left, texture_rect.top + texture_rect.height)
+    ));
 }

@@ -31,6 +31,7 @@ void SceneRPG::init(const std::string& level_path) {
     registerAction(sf::Mouse::Button::Left, ActionName::LEFT_CLICK);
     registerAction(sf::Mouse::Button::Middle, ActionName::MIDDLE_CLICK);
     registerAction(sf::Mouse::Button::Right, ActionName::RIGHT_CLICK);
+    registerAction(sf::Mouse::Wheel::VerticalWheel, ActionName::MOUSE_SCROLL);
 
     loadLevel(level_path);
 }
@@ -91,7 +92,7 @@ void SceneRPG::loadLevel(const std::string& path) {
                 text_stream >> animation >> room_x >> room_y >> x >> y >> block_movement >> block_vision >> hp >> damage;
                 auto enemy = m_entity_manager.addEntity(Tag::ENEMY);
                 enemy->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
-                enemy->addComponent<CTransform>(getPosition(room_x, room_y, x, y));
+                enemy->addComponent<CTransform>(getPosition(room_x, room_y, x, y), true);
                 enemy->addComponent<CHealth>(hp);
                 enemy->addComponent<CDamage>(damage);
                 const auto& animation_size = enemy->getComponent<CAnimation>().animation.getSize();
@@ -138,7 +139,7 @@ Vec2 SceneRPG::getCurrentRoom() const {
 
 void SceneRPG::spawnPlayer() {
     m_player = m_entity_manager.addEntity(Tag::PLAYER);
-    m_player->addComponent<CTransform>(Vec2(m_player_config.x*m_grid_size.x, m_player_config.y*m_grid_size.y));
+    m_player->addComponent<CTransform>(Vec2(m_player_config.x*m_grid_size.x, m_player_config.y*m_grid_size.y), true);
     m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PDown"), true);
     m_player->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y), true, false);
     m_player->addComponent<CHealth>(m_player_config.health, m_player_config.health - 1);
@@ -300,6 +301,7 @@ void SceneRPG::sDoAction(const Action& action) {
         switch (action.getName()) {
             case ActionName::PAUSE: m_paused = !m_paused; break;
             case ActionName::QUIT: onEnd(); break;
+            case ActionName::MOUSE_SCROLL: updateZoom(action.delta); break;
             case ActionName::TOGGLE_FOLLOW: m_follow = !m_follow; break;
             case ActionName::TOGGLE_HEALTH: m_show_health = !m_show_health; break;
             case ActionName::TOGGLE_TEXTURE: m_draw_textures = !m_draw_textures; break;
@@ -577,32 +579,45 @@ void SceneRPG::sCamera() {
             static_cast<float>((window_size.y/2) + room.y*window_size.y)
         );
     }
+    if (m_zoom.value != m_zoom.prev_value) {
+        m_zoom.prev_value = m_zoom.value;
+        view.zoom(m_zoom.value);
+    }
     m_engine->window().setView(view);
 }
 
 void SceneRPG::sRender() {
     m_engine->window().clear(sf::Color(113, 166, 50));
 
-    // draw all Entity textures/animations
+    // Draw all Entity textures/animations
     if (m_draw_textures) {
+        sf::VertexArray vertices(sf::Triangles);
         for (auto e : m_entity_manager.getEntities()) {
+            if (!e->hasComponent<CAnimation>()) {
+                continue;
+            }
             auto& transform = e->getComponent<CTransform>();
-            if (e->hasComponent<CAnimation>()) {
-                auto& animation = e->getComponent<CAnimation>().animation;
-                animation.getSprite().setRotation(transform.angle);
-                animation.getSprite().setPosition(transform.pos.x, transform.pos.y);
-                animation.getSprite().setScale(transform.scale.x, transform.scale.y);
-                m_engine->window().draw(animation.getSprite());
+            auto& sprite = e->getComponent<CAnimation>().animation.getSprite();
+            if (transform.transformable) {
+                sprite.setRotation(transform.angle);
+                sprite.setPosition(transform.pos.x, transform.pos.y);
+                sprite.setScale(transform.scale.x, transform.scale.y);
+                m_engine->window().draw(sprite);
+            } else {
+                addVertexData(transform.pos, sprite.getTextureRect(), vertices);
+            }
 
-                if (m_show_health) {
-                    renderHealth(e);
-                }
+            if (m_show_health) {
+                renderHealth(e);
+            }
 
-	            if (m_show_ai_info && e->tag() == Tag::ENEMY) {
-                    renderInfoAI(e, m_player);
-                }
+            if (m_show_ai_info && e->tag() == Tag::ENEMY) {
+                renderInfoAI(e, m_player);
             }
         }
+        // Draw vertex array
+        sf::RenderStates states(&m_engine->assets().getTexture("Tilemap"));
+        m_engine->window().draw(vertices, states);
     }
 
     if (m_draw_collision) {

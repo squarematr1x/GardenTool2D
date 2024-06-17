@@ -18,6 +18,15 @@ enum class SceneType : unsigned char {
 	TOP_DOWN_RPG
 };
 
+// To zoom views when mouse scrolled
+struct Zoom {
+	float value{ 1.0f };
+	float prev_value{ 1.0f };
+	float delta{ 0.0f };
+	int level{ 0 };
+	int max_level{ 6 };
+};
+
 class Scene
 {
 public:
@@ -49,6 +58,10 @@ public:
 	void renderHealth(std::shared_ptr<Entity> e);
 	void renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> player);
 
+	void updateZoom(float delta);
+
+	void addVertexData(const Vec2& pos, const sf::IntRect& texture_rect_in, sf::VertexArray& vertices);
+
 	bool targetReached(const Vec2& pos, const Vec2& target) const;
 
 protected:
@@ -56,6 +69,7 @@ protected:
 	EntityManager m_entity_manager;
 	size_t m_current_frame{ 0 };
 	std::map<int, ActionName> m_action_map;
+	Zoom m_zoom;
 	bool m_paused{ false };
 	bool m_has_ended{ false };
 	bool m_draw_textures{ true };
@@ -134,6 +148,7 @@ public:
 	void spawnPlayer();
 	void spawnBullet();
 	void spawnExplosion(const Vec2& pos);
+	void spawnItem(const Vec2& pos, const std::string& animation_name, Tag tag);
 
 	// Systems
 	void sAI();

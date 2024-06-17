@@ -76,15 +76,22 @@ void GameEngine::sUserInput() {
 				sf::Texture texture;
 				texture.create(m_window.getSize().x, m_window.getSize().y);
 				texture.update(m_window);
-				if (texture.copyToImage().saveToFile("test.png")) {
-					std::cout << "Screenshot saved to " << "test.png\n";
+
+				auto t = std::time(nullptr);
+				auto tm = *std::localtime(&t);
+				std::ostringstream oss;
+				oss << std::put_time(&tm, "%d-%m-%Y-%H-%M-%S");
+				auto screenshot_path = "demo/screenshot-" + oss.str() + ".png";
+	
+				if (texture.copyToImage().saveToFile(screenshot_path)) {
+					std::cout << "Screenshot saved to " << screenshot_path;
 				}
 			}
 		}
 
 		// New action based handling
 		if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased) {
-			// if the current scene does not have an axction associated with this key, skip the event
+			// if the current scene does not have an action associated with this key, skip the event
 			if (currentScene()->getActionMap().find(event.key.code) == currentScene()->getActionMap().end()) {
 				continue;
 			}
@@ -117,6 +124,13 @@ void GameEngine::sUserInput() {
 		}
 		if (event.type == sf::Event::MouseMoved) {
 			currentScene()->sDoAction(Action(ActionName::MOUSE_MOVE, ActionType::START, pos));
+		}
+		if (event.type == sf::Event::MouseWheelScrolled) {
+			if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
+				if (event.mouseWheelScroll.delta != 0.0f) {
+					currentScene()->sDoAction(Action(ActionName::MOUSE_SCROLL, ActionType::START, event.mouseWheelScroll.delta));
+				}
+			}
 		}
 	}
 }

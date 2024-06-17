@@ -28,6 +28,7 @@ void SceneSideScroller::init(const std::string& level_path) {
     registerAction(sf::Mouse::Button::Left, ActionName::LEFT_CLICK);
     registerAction(sf::Mouse::Button::Middle, ActionName::MIDDLE_CLICK);
     registerAction(sf::Mouse::Button::Right, ActionName::RIGHT_CLICK);
+    registerAction(sf::Mouse::Wheel::VerticalWheel, ActionName::MOUSE_SCROLL);
 
     m_grid_text.setCharacterSize(12);
     m_grid_text.setFont(m_engine->assets().getFont("Arial"));
@@ -94,7 +95,11 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                 tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later
                 if (block_movement) {
                     const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
-                    tile->addComponent<CBBox>(animation_size, block_movement, block_vision);
+                    if (animation == "Brick") {
+                        tile->addComponent<CBBox>(animation_size, block_movement, block_vision, true);
+                    } else {
+                        tile->addComponent<CBBox>(animation_size, block_movement, block_vision);
+                    }
                     m_entity_manager.addEntity(Tag::TILE);
                 }
             } else if (asset_type == "Player") {
@@ -141,7 +146,7 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                 text_stream >> animation >> x >> y >> block_movement >> block_vision >> hp >> damage;
                 auto enemy = m_entity_manager.addEntity(Tag::ENEMY);
                 enemy->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
-                enemy->addComponent<CTransform>(gridToMidPixel(x, y, enemy));
+                enemy->addComponent<CTransform>(gridToMidPixel(x, y, enemy), true);
                 enemy->addComponent<CHealth>(hp);
                 enemy->addComponent<CDamage>(damage);
                 const auto& animation_size = enemy->getComponent<CAnimation>().animation.getSize();
@@ -187,7 +192,7 @@ void SceneSideScroller::loadLevel(const std::string& path) {
 void SceneSideScroller::spawnPlayer() {
     m_player = m_entity_manager.addEntity(Tag::PLAYER);
     m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("Tooth"), true);
-    m_player->addComponent<CTransform>(gridToMidPixel(m_player_config.x, m_player_config.y, m_player));
+    m_player->addComponent<CTransform>(gridToMidPixel(m_player_config.x, m_player_config.y, m_player), true);
     m_player->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y));
     m_player->addComponent<CGravity>(m_player_config.gravity);
 }
@@ -212,6 +217,12 @@ void SceneSideScroller::spawnExplosion(const Vec2& pos) {
     auto explosion = m_entity_manager.addEntity(Tag::EXPLOSION);
     explosion->addComponent<CAnimation>(m_engine->assets().getAnimation("Explosion"));
     explosion->addComponent<CTransform>(pos, Vec2(0, 0));
+}
+
+void SceneSideScroller::spawnItem(const Vec2& pos, const std::string& animation_name, Tag tag) {
+    auto item = m_entity_manager.addEntity(tag);
+    item->addComponent<CAnimation>(m_engine->assets().getAnimation(animation_name), true);
+    item->addComponent<CTransform>(pos, Vec2(0, 0));
 }
 
 void SceneSideScroller::update() {
@@ -390,11 +401,14 @@ void SceneSideScroller::sCollision() {
                     }
                 } else if (p_transfrom.velocity.y < 0) {
                     p_transfrom.pos.y += overlap.y;
-                    spawnExplosion(entity->getComponent<CTransform>().pos);
-                    entity->destroy();
-
-                    // Implement question box collision:
-                    // Spawn coin animation
+                    if (entity->getComponent<CBBox>().breakable) {
+                        spawnExplosion(entity->getComponent<CTransform>().pos);
+                        entity->destroy();
+                    } else if (entity->getComponent<CAnimation>().animation.getName() == "Question1") {
+                        auto e_pos = entity->getComponent<CTransform>().pos;
+                        spawnItem(Vec2(e_pos.x, e_pos.y - 64.0f), "Heart", Tag::HEART);
+                        entity->addComponent<CAnimation>(m_engine->assets().getAnimation("Question2"), true);
+                    }
                 }
                 p_transfrom.velocity.y = 0.0f;
             }
@@ -403,9 +417,13 @@ void SceneSideScroller::sCollision() {
         // Bullet collision
         for (auto bullet : m_entity_manager.getEntities(Tag::BULLET)) {
             if (physics::overlapping(bullet, entity)) {
-                spawnExplosion(entity->getComponent<CTransform>().pos);
-                // Destroy tile and bullet
-                entity->destroy();
+                if (entity->getComponent<CBBox>().breakable) {
+                    // Destroy tile and bullet
+                    spawnExplosion(entity->getComponent<CTransform>().pos);
+                    entity->destroy();
+                } else {
+                    spawnExplosion(bullet->getComponent<CTransform>().pos);
+                }
                 bullet->destroy();
             }
         }
@@ -434,6 +452,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::LEFT: m_player->getComponent<CInput>().left = true; break;
             case ActionName::SHOOT: m_player->getComponent<CInput>().attack = true; break;
             case ActionName::MOUSE_MOVE: m_mouse_pos = action.pos; m_mouse_shape.setPosition(m_mouse_pos.x, m_mouse_pos.y); break;
+            case ActionName::MOUSE_SCROLL: updateZoom(action.delta); break;
             case ActionName::MIDDLE_CLICK: break;
             case ActionName::RIGHT_CLICK: break;
             case ActionName::LEFT_CLICK: {
@@ -498,6 +517,12 @@ void SceneSideScroller::sCamera() {
     sf::View view = m_engine->window().getView();
 
     view.setCenter(window_center_x, m_engine->window().getSize().y - view.getCenter().y);
+    
+    if (m_zoom.value != m_zoom.prev_value) {
+        m_zoom.prev_value = m_zoom.value;
+        view.zoom(m_zoom.value);
+    }
+
     m_engine->window().setView(view);
 }
 
@@ -521,16 +546,25 @@ void SceneSideScroller::sRender() {
 
     // Draw all Entity textures/animations
     if (m_draw_textures) {
+        sf::VertexArray vertices(sf::Triangles);
         for (auto e : m_entity_manager.getEntities()) {
+            if (!e->hasComponent<CAnimation>()) {
+                continue;
+            }
             auto& transform = e->getComponent<CTransform>();
-            if (e->hasComponent<CAnimation>()) {
-                auto& animation = e->getComponent<CAnimation>().animation;
-                animation.getSprite().setRotation(transform.angle);
-                animation.getSprite().setPosition(transform.pos.x, transform.pos.y);
-                animation.getSprite().setScale(transform.scale.x, transform.scale.y);
-                m_engine->window().draw(animation.getSprite());
+            auto& sprite = e->getComponent<CAnimation>().animation.getSprite();
+            if (transform.transformable) {
+                sprite.setRotation(transform.angle);
+                sprite.setPosition(transform.pos.x, transform.pos.y);
+                sprite.setScale(transform.scale.x, transform.scale.y);
+                m_engine->window().draw(sprite);
+            } else {
+                addVertexData(transform.pos, sprite.getTextureRect(), vertices);
             }
         }
+        // Draw vertex array
+        sf::RenderStates states(&m_engine->assets().getTexture("Tilemap"));
+        m_engine->window().draw(vertices, states);
     }
 
     if (m_draw_collision) {
