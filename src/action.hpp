@@ -28,7 +28,8 @@ enum class ActionName : unsigned char {
 	LEFT_CLICK,
 	MIDDLE_CLICK,
 	RIGHT_CLICK,
-	MOUSE_MOVE
+	MOUSE_MOVE,
+	MOUSE_SCROLL
 };
 
 struct Action
@@ -36,6 +37,7 @@ struct Action
 	ActionName name{ ActionName::NONE };
 	ActionType type{ ActionType::NONE };
 	Vec2 pos{ Vec2(0, 0) };
+	float delta{ 1.0f };
 
 	Action(ActionName name_in, ActionType type_in)
 		: name(name_in), type(type_in)
@@ -44,6 +46,11 @@ struct Action
 
 	Action(ActionName name_in, ActionType type_in, const Vec2& pos_in)
 		: name(name_in), type(type_in), pos(pos_in)
+	{
+	}
+
+	Action(ActionName name_in, ActionType type_in, float delta_in)
+		: name(name_in), type(type_in), delta(delta_in)
 	{
 	}
 

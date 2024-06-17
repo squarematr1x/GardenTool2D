@@ -125,6 +125,13 @@ void GameEngine::sUserInput() {
 		if (event.type == sf::Event::MouseMoved) {
 			currentScene()->sDoAction(Action(ActionName::MOUSE_MOVE, ActionType::START, pos));
 		}
+		if (event.type == sf::Event::MouseWheelScrolled) {
+			if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
+				if (event.mouseWheelScroll.delta != 0.0f) {
+					currentScene()->sDoAction(Action(ActionName::MOUSE_SCROLL, ActionType::START, event.mouseWheelScroll.delta));
+				}
+			}
+		}
 	}
 }
 

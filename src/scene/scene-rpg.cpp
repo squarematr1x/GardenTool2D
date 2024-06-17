@@ -31,6 +31,7 @@ void SceneRPG::init(const std::string& level_path) {
     registerAction(sf::Mouse::Button::Left, ActionName::LEFT_CLICK);
     registerAction(sf::Mouse::Button::Middle, ActionName::MIDDLE_CLICK);
     registerAction(sf::Mouse::Button::Right, ActionName::RIGHT_CLICK);
+    registerAction(sf::Mouse::Wheel::VerticalWheel, ActionName::MOUSE_SCROLL);
 
     loadLevel(level_path);
 }
@@ -300,6 +301,7 @@ void SceneRPG::sDoAction(const Action& action) {
         switch (action.getName()) {
             case ActionName::PAUSE: m_paused = !m_paused; break;
             case ActionName::QUIT: onEnd(); break;
+            case ActionName::MOUSE_SCROLL: updateZoom(action.delta); break;
             case ActionName::TOGGLE_FOLLOW: m_follow = !m_follow; break;
             case ActionName::TOGGLE_HEALTH: m_show_health = !m_show_health; break;
             case ActionName::TOGGLE_TEXTURE: m_draw_textures = !m_draw_textures; break;
@@ -576,6 +578,10 @@ void SceneRPG::sCamera() {
             static_cast<float>((window_size.x/2) + room.x*window_size.x),
             static_cast<float>((window_size.y/2) + room.y*window_size.y)
         );
+    }
+    if (m_zoom.value != m_zoom.prev_value) {
+        m_zoom.prev_value = m_zoom.value;
+        view.zoom(m_zoom.value);
     }
     m_engine->window().setView(view);
 }

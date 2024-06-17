@@ -28,6 +28,7 @@ void SceneSideScroller::init(const std::string& level_path) {
     registerAction(sf::Mouse::Button::Left, ActionName::LEFT_CLICK);
     registerAction(sf::Mouse::Button::Middle, ActionName::MIDDLE_CLICK);
     registerAction(sf::Mouse::Button::Right, ActionName::RIGHT_CLICK);
+    registerAction(sf::Mouse::Wheel::VerticalWheel, ActionName::MOUSE_SCROLL);
 
     m_grid_text.setCharacterSize(12);
     m_grid_text.setFont(m_engine->assets().getFont("Arial"));
@@ -451,6 +452,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::LEFT: m_player->getComponent<CInput>().left = true; break;
             case ActionName::SHOOT: m_player->getComponent<CInput>().attack = true; break;
             case ActionName::MOUSE_MOVE: m_mouse_pos = action.pos; m_mouse_shape.setPosition(m_mouse_pos.x, m_mouse_pos.y); break;
+            case ActionName::MOUSE_SCROLL: updateZoom(action.delta); break;
             case ActionName::MIDDLE_CLICK: break;
             case ActionName::RIGHT_CLICK: break;
             case ActionName::LEFT_CLICK: {
@@ -515,6 +517,12 @@ void SceneSideScroller::sCamera() {
     sf::View view = m_engine->window().getView();
 
     view.setCenter(window_center_x, m_engine->window().getSize().y - view.getCenter().y);
+    
+    if (m_zoom.value != m_zoom.prev_value) {
+        m_zoom.prev_value = m_zoom.value;
+        view.zoom(m_zoom.value);
+    }
+
     m_engine->window().setView(view);
 }
 
