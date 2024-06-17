@@ -92,7 +92,7 @@ void SceneRPG::loadLevel(const std::string& path) {
                 text_stream >> animation >> room_x >> room_y >> x >> y >> block_movement >> block_vision >> hp >> damage;
                 auto enemy = m_entity_manager.addEntity(Tag::ENEMY);
                 enemy->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
-                enemy->addComponent<CTransform>(getPosition(room_x, room_y, x, y));
+                enemy->addComponent<CTransform>(getPosition(room_x, room_y, x, y), true);
                 enemy->addComponent<CHealth>(hp);
                 enemy->addComponent<CDamage>(damage);
                 const auto& animation_size = enemy->getComponent<CAnimation>().animation.getSize();
@@ -139,7 +139,7 @@ Vec2 SceneRPG::getCurrentRoom() const {
 
 void SceneRPG::spawnPlayer() {
     m_player = m_entity_manager.addEntity(Tag::PLAYER);
-    m_player->addComponent<CTransform>(Vec2(m_player_config.x*m_grid_size.x, m_player_config.y*m_grid_size.y));
+    m_player->addComponent<CTransform>(Vec2(m_player_config.x*m_grid_size.x, m_player_config.y*m_grid_size.y), true);
     m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PDown"), true);
     m_player->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y), true, false);
     m_player->addComponent<CHealth>(m_player_config.health, m_player_config.health - 1);
@@ -589,26 +589,35 @@ void SceneRPG::sCamera() {
 void SceneRPG::sRender() {
     m_engine->window().clear(sf::Color(113, 166, 50));
 
-    // draw all Entity textures/animations
+    // Draw all Entity textures/animations
     if (m_draw_textures) {
+        sf::VertexArray vertices(sf::Triangles);
         for (auto e : m_entity_manager.getEntities()) {
+            if (!e->hasComponent<CAnimation>()) {
+                continue;
+            }
             auto& transform = e->getComponent<CTransform>();
-            if (e->hasComponent<CAnimation>()) {
-                auto& animation = e->getComponent<CAnimation>().animation;
-                animation.getSprite().setRotation(transform.angle);
-                animation.getSprite().setPosition(transform.pos.x, transform.pos.y);
-                animation.getSprite().setScale(transform.scale.x, transform.scale.y);
-                m_engine->window().draw(animation.getSprite());
+            auto& sprite = e->getComponent<CAnimation>().animation.getSprite();
+            if (transform.transformable) {
+                sprite.setRotation(transform.angle);
+                sprite.setPosition(transform.pos.x, transform.pos.y);
+                sprite.setScale(transform.scale.x, transform.scale.y);
+                m_engine->window().draw(sprite);
+            } else {
+                addVertexData(transform.pos, sprite.getTextureRect(), vertices);
+            }
 
-                if (m_show_health) {
-                    renderHealth(e);
-                }
+            if (m_show_health) {
+                renderHealth(e);
+            }
 
-	            if (m_show_ai_info && e->tag() == Tag::ENEMY) {
-                    renderInfoAI(e, m_player);
-                }
+            if (m_show_ai_info && e->tag() == Tag::ENEMY) {
+                renderInfoAI(e, m_player);
             }
         }
+        // Draw vertex array
+        sf::RenderStates states(&m_engine->assets().getTexture("Tilemap"));
+        m_engine->window().draw(vertices, states);
     }
 
     if (m_draw_collision) {

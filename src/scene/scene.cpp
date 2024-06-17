@@ -139,3 +139,34 @@ bool Scene::targetReached(const Vec2& pos, const Vec2& target) const {
     float distance = pos.distance(target);
     return fabs(distance) <= 5.0f;
 }
+
+void Scene::addVertexData(const Vec2& pos, const sf::IntRect& texture_rect_in, sf::VertexArray& vertices) {
+    // Add all entities that are not individually target of some transform into same vertex array to reduce draw() calls
+    auto texture_rect = sf::FloatRect(texture_rect_in);
+    float half_w = texture_rect.width / 2.0f;
+    float half_h = texture_rect.height / 2.0f;
+    vertices.append(sf::Vertex(
+        sf::Vector2f(pos.x - half_w, pos.y - half_h),
+        sf::Vector2f(texture_rect.left, texture_rect.top)
+    ));
+    vertices.append(sf::Vertex(
+        sf::Vector2f(pos.x + half_w, pos.y - half_h),
+        sf::Vector2f(texture_rect.left + texture_rect.width, texture_rect.top)
+    ));
+    vertices.append(sf::Vertex(
+        sf::Vector2f(pos.x + half_w, pos.y + half_h),
+        sf::Vector2f(texture_rect.left + texture_rect.width, texture_rect.top + texture_rect.height)
+    ));
+    vertices.append(sf::Vertex(
+        sf::Vector2f(pos.x - half_w, pos.y - half_h),
+        sf::Vector2f(texture_rect.left, texture_rect.top)
+    ));
+    vertices.append(sf::Vertex(
+        sf::Vector2f(pos.x + half_w, pos.y + half_h),
+        sf::Vector2f(texture_rect.left + texture_rect.width, texture_rect.top + texture_rect.height)
+    ));
+    vertices.append(sf::Vertex(
+        sf::Vector2f(pos.x - half_w, pos.y  + half_h),
+        sf::Vector2f(texture_rect.left, texture_rect.top + texture_rect.height)
+    ));
+}

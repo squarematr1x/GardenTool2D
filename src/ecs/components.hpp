@@ -39,19 +39,23 @@ struct CTransform: Component {
 
 	float angle{ 0.0f };
 
+	// Check whether it's possible to apply transformation such as scale or rotation individually to an entity.
+	// Explanation: we want to add as many entities' vertex data into one single vertex array to reduce draw() calls.
+	bool transformable{ false };
+
 	CTransform() {}
-	CTransform(const Vec2& p) 
-		: pos(p)
+	CTransform(const Vec2& p, bool t = false) 
+		: pos(p), transformable(t)
 	{
 	}
 
-	CTransform(const Vec2& p, const Vec2& v) 
-		: pos(p), velocity(v) 
+	CTransform(const Vec2& p, const Vec2& v, bool t = false) 
+		: pos(p), velocity(v), transformable(t)
 	{
 	}
 
 	CTransform(const Vec2& p, const Vec2& v, float a)
-		: pos(p), velocity(v), angle(a)
+		: pos(p), velocity(v), angle(a), transformable(true)
 	{
 	}
 };
