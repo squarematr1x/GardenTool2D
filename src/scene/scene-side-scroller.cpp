@@ -518,8 +518,8 @@ void SceneSideScroller::sCamera() {
 
     view.setCenter(window_center_x, m_engine->window().getSize().y - view.getCenter().y);
     
-    if (m_zoom.value != m_zoom.prev_value) {
-        m_zoom.prev_value = m_zoom.value;
+    if (m_zoom.level != m_zoom.prev_level) {
+        m_zoom.prev_level = m_zoom.level;
         view.zoom(m_zoom.value);
     }
 

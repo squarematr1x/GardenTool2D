@@ -21,10 +21,9 @@ enum class SceneType : unsigned char {
 // To zoom views when mouse scrolled
 struct Zoom {
 	float value{ 1.0f };
-	float prev_value{ 1.0f };
-	float delta{ 0.0f };
 	int level{ 0 };
-	int max_level{ 6 };
+	int prev_level{ 0 };
+	int max_level{ 4 };
 };
 
 class Scene
