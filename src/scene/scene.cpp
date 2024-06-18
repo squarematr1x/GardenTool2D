@@ -22,12 +22,14 @@ void Scene::renderGrid(const Vec2& grid_size, sf::Text& grid_text) {
     const float right_x = left_x + width() + grid_size.x;
     const float next_grid_x = left_x - (static_cast<int>(left_x) % static_cast<int>(grid_size.x));
 
+    sf::VertexArray vertices(sf::Lines);
+
     for (float x = next_grid_x; x < right_x; x += grid_size.x) {
-        drawLine(Vec2(x, 0.0f), Vec2(x, height()));
+        addLine(Vec2(x, 0.0f), Vec2(x, height()), vertices);
     }
 
     for (float y = 0; y < height(); y += grid_size.y) {
-        drawLine(Vec2(left_x, height() - y), Vec2(right_x, height() - y));
+        addLine(Vec2(left_x, height() - y), Vec2(right_x, height() - y), vertices);
 
         for (float x = next_grid_x; x < right_x; x += grid_size.x) {
             std::string x_cell = std::to_string(static_cast<int>(x) / static_cast<int>(grid_size.x));
@@ -37,6 +39,7 @@ void Scene::renderGrid(const Vec2& grid_size, sf::Text& grid_text) {
             m_engine->window().draw(grid_text);
         }
     }
+    m_engine->window().draw(vertices);
 }
 
 void Scene::renderBBoxes() {
@@ -169,4 +172,9 @@ void Scene::addVertexData(const Vec2& pos, const sf::IntRect& texture_rect_in, s
         sf::Vector2f(pos.x - half_w, pos.y  + half_h),
         sf::Vector2f(texture_rect.left, texture_rect.top + texture_rect.height)
     ));
+}
+
+void Scene::addLine(const Vec2& p1, const Vec2& p2, sf::VertexArray& vertices) {
+    vertices.append({{p1.x, p1.y}, sf::Color(255, 255, 255)});
+    vertices.append({{p2.x, p2.y}, sf::Color(255, 255, 255)});
 }

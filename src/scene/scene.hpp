@@ -61,6 +61,7 @@ public:
 	void updateZoom(float delta);
 
 	void addVertexData(const Vec2& pos, const sf::IntRect& texture_rect_in, sf::VertexArray& vertices);
+	void addLine(const Vec2& p1, const Vec2& p2, sf::VertexArray& vertices);
 
 	bool targetReached(const Vec2& pos, const Vec2& target) const;
 
