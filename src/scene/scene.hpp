@@ -61,6 +61,7 @@ public:
 	void updateZoom(float delta);
 
 	void addVertexData(const Vec2& pos, const sf::IntRect& texture_rect_in, sf::VertexArray& vertices);
+	void addLine(const Vec2& p1, const Vec2& p2, sf::VertexArray& vertices);
 
 	bool targetReached(const Vec2& pos, const Vec2& target) const;
 
@@ -85,11 +86,7 @@ class SceneMenu: public Scene
 {
 	std::string m_title { "Menu" };
 	std::vector<std::string> m_menu_strings{ "level 1", "level 2", "level 3" };
-	std::vector<std::string> m_level_paths{
-		"config/levels/level1.sc.lvl",
-		"config/levels/level2.sc.lvl",
-		"config/levels/level3.rpg.lvl",
-	}; // TODO: Auto detects level paths
+	std::vector<std::string> m_level_paths;
 	sf::Text m_menu_text;
 	sf::Color m_background_color{ 20, 20, 20 };
 	size_t m_menu_index{ 0 }; // selected menu item
