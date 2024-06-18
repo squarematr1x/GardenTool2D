@@ -43,20 +43,25 @@ void Scene::renderGrid(const Vec2& grid_size, sf::Text& grid_text) {
 }
 
 void Scene::renderBBoxes() {
+    sf::VertexArray vertices(sf::Lines);
     for (auto e : m_entity_manager.getEntities()) {
-        if (e->hasComponent<CBBox>()) {
-            auto& box = e->getComponent<CBBox>();
-            auto& transform = e->getComponent<CTransform>();
-            sf::RectangleShape rect;
-            rect.setSize(sf::Vector2f(box.size.x-1, box.size.y-1));
-            rect.setOrigin(sf::Vector2f(box.half_size.x, box.half_size.y));
-            rect.setPosition(transform.pos.x, transform.pos.y);
-            rect.setFillColor(sf::Color(255, 255, 255, 0));
-            rect.setOutlineColor(sf::Color(255, 255, 255, 255));
-            rect.setOutlineThickness(1);
-            m_engine->window().draw(rect);
+        if (!e->hasComponent<CBBox>()) {
+            continue;
         }
+        auto& box = e->getComponent<CBBox>();
+        auto& pos = e->getComponent<CTransform>().pos;
+        const auto box_color{ sf::Color(255, 255, 255) };
+
+        vertices.append({{pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color});
+        vertices.append({{pos.x + box.half_size.x, pos.y - box.half_size.y}, box_color});
+        vertices.append({{pos.x + box.half_size.x, pos.y - box.half_size.y}, box_color});
+        vertices.append({{pos.x + box.half_size.x, pos.y + box.half_size.y}, box_color});
+        vertices.append({{pos.x + box.half_size.x, pos.y + box.half_size.y}, box_color});
+        vertices.append({{pos.x - box.half_size.x, pos.y + box.half_size.y}, box_color});
+        vertices.append({{pos.x - box.half_size.x, pos.y + box.half_size.y}, box_color});
+        vertices.append({{pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color});
     }
+    m_engine->window().draw(vertices);
 }
 
 void Scene::renderCursor() {
