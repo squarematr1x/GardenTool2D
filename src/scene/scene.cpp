@@ -48,8 +48,8 @@ void Scene::renderBBoxes() {
         if (!e->hasComponent<CBBox>()) {
             continue;
         }
-        auto& box = e->getComponent<CBBox>();
-        auto& pos = e->getComponent<CTransform>().pos;
+        auto box = e->getComponent<CBBox>();
+        auto pos = e->getComponent<CTransform>().pos;
         const auto box_color{ sf::Color(255, 255, 255) };
 
         vertices.append({{pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color});
@@ -123,22 +123,15 @@ void Scene::renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> play
     }
 }
 
-// TODO: this still needs to be investigated/refactored
 void Scene::updateZoom(float scroll_delta) {
-    float delta = 0.01f;
+    m_zoom.value = 2.0f;
     int level = 1;
     if (scroll_delta > 0.0f) {
-        delta = -0.01f;
+        m_zoom.value = 0.5f;
         level = -1;
     }
-    if (m_zoom.delta * delta < 0.0f) {
-        m_zoom.value = 1.0f;
-    }
-    m_zoom.delta = delta;
-    const float new_zoom = m_zoom.value + delta;
     const int new_level = m_zoom.level + level;
     if (new_level >= -m_zoom.max_level && new_level <= m_zoom.max_level) {
-        m_zoom.value = new_zoom;
         m_zoom.level = new_level;
     }
 }

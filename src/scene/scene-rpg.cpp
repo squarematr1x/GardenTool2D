@@ -579,8 +579,8 @@ void SceneRPG::sCamera() {
             static_cast<float>((window_size.y/2) + room.y*window_size.y)
         );
     }
-    if (m_zoom.value != m_zoom.prev_value) {
-        m_zoom.prev_value = m_zoom.value;
+    if (m_zoom.level != m_zoom.prev_level) {
+        m_zoom.prev_level = m_zoom.level;
         view.zoom(m_zoom.value);
     }
     m_engine->window().setView(view);
