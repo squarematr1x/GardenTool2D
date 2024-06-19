@@ -14,6 +14,7 @@ class GameEngine
 	sf::RenderWindow m_window;
 	bool m_paused{ false };
 	bool m_running{ true };
+	bool m_edit_mode{ false };
 	bool m_enable_sound{ true };
 	bool m_enable_music{ true };
 	unsigned int m_screen_w{ 1280 };
@@ -46,8 +47,10 @@ public:
 
 	void toggleSound() { m_enable_sound = !m_enable_sound; }
 	void toggleMusic() { m_enable_music = !m_enable_music; }
+	void toggleEditMode() { m_edit_mode = !m_edit_mode; }
 
 	sf::RenderWindow& window() { return m_window; };
 	const Assets& assets() const { return m_assets; };
+	bool editMode() const { return m_edit_mode; };
 	bool isRunning();
 };

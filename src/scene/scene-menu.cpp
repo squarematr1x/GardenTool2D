@@ -15,6 +15,8 @@ void SceneMenu::init() {
     registerAction(sf::Keyboard::Enter, ActionName::PLAY);
     registerAction(sf::Keyboard::Escape, ActionName::QUIT);
 
+    registerAction(sf::Event::MouseMoved, ActionName::MOUSE_MOVE);
+
     m_menu_text.setCharacterSize(m_font_size);
     m_menu_text.setFont(m_engine->assets().getFont("Arial"));
 
@@ -35,6 +37,10 @@ void SceneMenu::sDoAction(const Action& action) {
         return;
     }
     
+    if (action.getName() == ActionName::MOUSE_MOVE) {
+        m_particles.updateEmitter(action.pos.x, action.pos.y);
+    }
+
     if (action.getName() == ActionName::UP) {
         if (m_menu_index > 0) {
             m_menu_index--;

@@ -2,8 +2,8 @@
 
 void ParticleSystem::resetParticle(size_t index, bool first) {
     // Initial position at the center of the screen
-    float mx = m_window_size.x / 2;
-    float my = m_window_size.y / 2;
+    float mx = m_emitter.x;
+    float my = m_emitter.y;
 
     m_vertices[4*index + 0].position = sf::Vector2f(mx, my);
     m_vertices[4*index + 1].position = sf::Vector2f(mx + m_size, my);
@@ -49,6 +49,8 @@ void ParticleSystem::resetParticles(size_t count, float size) {
 }
 
 void ParticleSystem::init(sf::Vector2u window_size) {
+    m_emitter.x = m_window_size.x / 2;
+    m_emitter.y = m_window_size.y / 2;
     m_window_size = window_size;
     resetParticles();
 }
