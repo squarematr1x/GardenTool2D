@@ -24,5 +24,6 @@ class ParticleSystem
 public:
     void init(sf::Vector2u window_size);
     void update();
+    void updateEmitter(float x, float y) { m_emitter.x = x; m_emitter.y = y; }
     void draw(sf::RenderWindow& window) const;
 };
