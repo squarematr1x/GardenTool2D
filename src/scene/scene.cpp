@@ -18,24 +18,26 @@ void Scene::drawLine(const Vec2& p1, const Vec2& p2) {
 }
 
 void Scene::renderGrid(const Vec2& grid_size, sf::Text& grid_text) {
-    const float left_x = m_engine->window().getView().getCenter().x - width() / 2;
-    const float right_x = left_x + width() + grid_size.x;
+    const size_t w = width();
+    const size_t h = height();
+    const float left_x = m_engine->window().getView().getCenter().x - w / 2;
+    const float right_x = left_x + w + grid_size.x;
     const float next_grid_x = left_x - (static_cast<int>(left_x) % static_cast<int>(grid_size.x));
 
     sf::VertexArray vertices(sf::Lines);
 
     for (float x = next_grid_x; x < right_x; x += grid_size.x) {
-        addLine(Vec2(x, 0.0f), Vec2(x, height()), vertices);
+        addLine(Vec2(x, 0.0f), Vec2(x, h), vertices);
     }
 
-    for (float y = 0; y < height(); y += grid_size.y) {
-        addLine(Vec2(left_x, height() - y), Vec2(right_x, height() - y), vertices);
+    for (float y = 0; y < h; y += grid_size.y) {
+        addLine(Vec2(left_x, h - y), Vec2(right_x, h - y), vertices);
 
         for (float x = next_grid_x; x < right_x; x += grid_size.x) {
             std::string x_cell = std::to_string(static_cast<int>(x) / static_cast<int>(grid_size.x));
             std::string y_cell = std::to_string(static_cast<int>(y) / static_cast<int>(grid_size.y));
             grid_text.setString("(" + x_cell + "," + y_cell + ")");
-            grid_text.setPosition(x + 3, height() - y - grid_size.y + 2);
+            grid_text.setPosition(x + 3, h - y - grid_size.y + 2);
             m_engine->window().draw(grid_text);
         }
     }
@@ -68,27 +70,35 @@ void Scene::renderCursor() {
     // TODO: Implement cursor rendering here
 }
 
-void Scene::renderHealth(std::shared_ptr<Entity> e) {
+void Scene::addHpBar(std::shared_ptr<Entity> e) {
     if (!e->hasComponent<CHealth>() || !e->hasComponent<CAnimation>()) {
         return;
     }
 
+    auto size = e->getComponent<CAnimation>().animation.getSize();
+    auto pos = e->getComponent<CTransform>().pos;
     constexpr float y_offset{ 16.0f };
     constexpr float hbar_h{ 8.0f };
-    auto animation_size = e->getComponent<CAnimation>().animation.getSize();
-    auto pos = e->getComponent<CTransform>().pos;
-    sf::RectangleShape hbox_back;
-    sf::RectangleShape hbox_front;
+    const float x_size = size.x*e->getComponent<CHealth>().percentage;
 
-    hbox_back.setFillColor(sf::Color(0, 0, 0));
-    hbox_back.setSize(sf::Vector2f(animation_size.x, hbar_h));
-    hbox_back.setPosition(pos.x - animation_size.x/2, pos.y - animation_size.y/2 - y_offset);
-    hbox_front.setFillColor(sf::Color(255, 0, 0));
-    hbox_front.setSize(sf::Vector2f(e->getComponent<CHealth>().percentage * animation_size.x, hbar_h));
-    hbox_front.setPosition(pos.x - animation_size.x/2, pos.y - animation_size.y/2 - y_offset);
+    m_hp_bars.append({{pos.x - size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, sf::Color(0, 0, 0)});
+    m_hp_bars.append({{pos.x + size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, sf::Color(0, 0, 0)});
+    m_hp_bars.append({{pos.x + size.x/2, pos.y - size.y/2 - y_offset}, sf::Color(0, 0, 0)});
+    m_hp_bars.append({{pos.x + size.x/2, pos.y - size.y/2 - y_offset}, sf::Color(0, 0, 0)});
+    m_hp_bars.append({{pos.x - size.x/2, pos.y - size.y/2 - y_offset}, sf::Color(0, 0, 0)});
+    m_hp_bars.append({{pos.x - size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, sf::Color(0, 0, 0)});
 
-    m_engine->window().draw(hbox_back);
-    m_engine->window().draw(hbox_front);
+    m_hp_bars.append({{pos.x - size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, sf::Color(255, 0, 0)});
+    m_hp_bars.append({{pos.x - size.x/2 + x_size, pos.y - size.y/2 - y_offset + hbar_h}, sf::Color(255, 0, 0)});
+    m_hp_bars.append({{pos.x - size.x/2 + x_size, pos.y - size.y/2 - y_offset}, sf::Color(255, 0, 0)});
+    m_hp_bars.append({{pos.x - size.x/2 + x_size, pos.y - size.y/2 - y_offset}, sf::Color(255, 0, 0)});
+    m_hp_bars.append({{pos.x - size.x/2, pos.y - size.y/2 - y_offset}, sf::Color(255, 0, 0)});
+    m_hp_bars.append({{pos.x - size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, sf::Color(255, 0, 0)});
+}
+
+void Scene::renderHpBars() {
+    m_engine->window().draw(m_hp_bars);
+    m_hp_bars.clear();
 }
 
 void Scene::renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> player) {

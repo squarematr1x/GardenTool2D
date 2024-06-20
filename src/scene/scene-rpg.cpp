@@ -195,7 +195,7 @@ void SceneRPG::setSwordPos(std::shared_ptr<Entity> sword, const Vec2& facing, co
     Vec2 sword_bbox = facing.x == 0.0f ? Vec2(32.0f, 64.0f) : Vec2(64.0f, 32.0f);
 
     sword->addComponent<CAnimation>(m_engine->assets().getAnimation(sword_animation));
-    sword->addComponent<CTransform>(swor_pos);
+    sword->addComponent<CTransform>(swor_pos, true);
     sword->addComponent<CDamage>();
     sword->addComponent<CBBox>(sword_bbox, true, false);
 
@@ -608,7 +608,7 @@ void SceneRPG::sRender() {
             }
 
             if (m_show_health) {
-                renderHealth(e);
+                addHpBar(e);
             }
 
             if (m_show_ai_info && e->tag() == Tag::ENEMY) {
@@ -618,6 +618,8 @@ void SceneRPG::sRender() {
         // Draw vertex array
         sf::RenderStates states(&m_engine->assets().getTexture("Tilemap"));
         m_engine->window().draw(vertices, states);
+
+        renderHpBars();
     }
 
     if (m_draw_collision) {
