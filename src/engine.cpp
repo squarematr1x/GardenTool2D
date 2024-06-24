@@ -6,6 +6,11 @@
 #include <random>
 #include <chrono>
 
+#include <SFML/System/Clock.hpp>
+
+#include "../vendor/imgui.h"
+#include "../vendor/imgui-SFML.h"
+
 #include "util/profiler.hpp"
 
 GameEngine::GameEngine(const std::string& config) {
@@ -49,14 +54,27 @@ void GameEngine::update() {
 }
 
 void GameEngine::run() {
+	sf::Clock dt;
+	bool init = ImGui::SFML::Init(m_window);
+	(void)init;
+
 	while (isRunning()) {
 		if (!m_paused) {
 			update();
 			currentScene()->update();
 			// TODO: Add render() <- common function for all scenes?
 		}
+		ImGui::SFML::Update(m_window, dt.restart());
+		ImGui::ShowDemoWindow();
+
+		ImGui::Begin("Hello, world!");
+		ImGui::Button("Look at this pretty button");
+		ImGui::End();
+
+		ImGui::SFML::Render(m_window);
 		m_window.display();
 	}
+	ImGui::SFML::Shutdown();
 }
  
  void GameEngine::quit() {
@@ -66,7 +84,10 @@ void GameEngine::run() {
 
 void GameEngine::sUserInput() {
 	sf::Event event;
+
 	while (m_window.pollEvent(event)) {
+		ImGui::SFML::ProcessEvent(m_window, event);
+
 		if (event.type == sf::Event::Closed) {
 			quit();
 		}
