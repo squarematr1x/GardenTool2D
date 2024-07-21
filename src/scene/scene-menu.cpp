@@ -63,8 +63,9 @@ void SceneMenu::sDoAction(const Action& action) {
 }
 
 void SceneMenu::sRender() {
-    m_particles.update();
     m_engine->window().clear(m_background_color);
+    m_particles.update();
+    m_particles.draw(m_engine->window());
 
     float offset = 64.0f;
     size_t index = 0;
@@ -84,8 +85,6 @@ void SceneMenu::sRender() {
         offset += 64.0f;
         index++;
     }
-
-    m_particles.draw(m_engine->window());
 }
 
 void SceneMenu::onEnd() {
