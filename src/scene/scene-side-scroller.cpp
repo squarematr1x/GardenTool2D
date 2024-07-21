@@ -17,6 +17,7 @@ void SceneSideScroller::init(const std::string& level_path) {
     registerAction(sf::Keyboard::T, ActionName::TOGGLE_TEXTURE);
     registerAction(sf::Keyboard::X, ActionName::TOGGLE_COLLISION);
     registerAction(sf::Keyboard::G, ActionName::TOGGLE_GRID);
+    registerAction(sf::Keyboard::Tab, ActionName::TOGGLE_LEVEL_EDITOR);
 
     registerAction(sf::Keyboard::Space, ActionName::UP);
     registerAction(sf::Keyboard::Up, ActionName::UP);
@@ -56,6 +57,13 @@ Vec2 SceneSideScroller::gridToMidPixel(float grid_x, float grid_y, std::shared_p
         return Vec2(x, y);
     }
     return Vec2(0, 0);
+}
+
+Vec2 SceneSideScroller::fitToGrid(const Vec2& pos) const {
+    return Vec2(
+        floorf(pos.x/m_grid_size.x)*m_grid_size.x + m_grid_size.x/2,
+        floorf(pos.y/m_grid_size.y)*m_grid_size.y + m_grid_size.y/2
+    );
 }
 
 // NOTE: Doesn't take zooming into account
@@ -100,7 +108,6 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                     } else {
                         tile->addComponent<CBBox>(animation_size, block_movement, block_vision);
                     }
-                    m_entity_manager.addEntity(Tag::TILE);
                 }
             } else if (asset_type == "Player") {
                 float x, y, bbox_w, bbox_h, v, jump_v, max_v, gravity;
@@ -203,7 +210,7 @@ void SceneSideScroller::spawnBullet() {
     auto bullet = m_entity_manager.addEntity(Tag::BULLET);
     bullet->addComponent<CAnimation>(m_engine->assets().getAnimation("Fire"), true);
 
-    constexpr float bullet_v = 3.0f; // TODO: Add to config file?
+    constexpr float bullet_v = 4.0f; // TODO: Add to config file?
     if (transform.scale.x < 0) {
         bullet->addComponent<CTransform>(transform.pos, Vec2(-bullet_v, 0.0f));
     } else {
@@ -444,6 +451,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::TOGGLE_TEXTURE: m_draw_textures = !m_draw_textures; break;
             case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
             case ActionName::TOGGLE_GRID: m_draw_grid = !m_draw_grid; break;
+            case ActionName::TOGGLE_LEVEL_EDITOR: m_engine->toggleEditMode(); break;
             case ActionName::PAUSE: setPaused(!m_paused); break;
             case ActionName::QUIT: onEnd(); break;
             case ActionName::UP: m_player->getComponent<CInput>().up = true; break;
@@ -454,13 +462,32 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::MOUSE_MOVE: m_mouse_pos = action.pos; m_mouse_shape.setPosition(m_mouse_pos.x, m_mouse_pos.y); break;
             case ActionName::MOUSE_SCROLL: updateZoom(action.delta); break;
             case ActionName::MIDDLE_CLICK: break;
-            case ActionName::RIGHT_CLICK: break;
+            case ActionName::RIGHT_CLICK: {
+                if (!m_engine->editMode()) {
+                    break;
+                }
+                Vec2 world_pos = mouseToWorldPos(action.pos);
+                auto tile = m_entity_manager.addEntity(Tag::TILE);
+                tile->addComponent<CAnimation>(m_engine->assets().getAnimation("Brick"), true);
+                tile->addComponent<CTransform>(fitToGrid(world_pos));
+                tile->addComponent<CDraggable>();
+                tile->addComponent<CBBox>(tile->getComponent<CAnimation>().animation.getSize(), true, true, true);
+                // TODO: Get grid pos of clicked pos and open GUI
+                break;
+            }
             case ActionName::LEFT_CLICK: {
+                if (!m_engine->editMode()) {
+                    break;
+                }
                 Vec2 world_pos = mouseToWorldPos(action.pos);
                 for (auto e : m_entity_manager.getEntities()) {
                     if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
                         auto& dragged = e->getComponent<CDraggable>().dragged;
                         dragged = !dragged;
+                        if (!dragged) {
+                            // When drag ends fit entity to grid
+                            e->getComponent<CTransform>().pos = (fitToGrid(world_pos));
+                        }
                         std::cout << "Clicked entity: " << e->getComponent<CAnimation>().animation.getName() << '\n';
                     }
                 }
@@ -575,21 +602,14 @@ void SceneSideScroller::sRender() {
         renderGrid(m_grid_size, m_grid_text);
     }
 
-    if (m_paused) {
+    if (m_engine->editMode()) {
         const auto text_rect = m_pause_text.getLocalBounds();
         const auto center = m_engine->window().getView().getCenter();
-        m_pause_text.setString("PAUSE");
+        m_pause_text.setString("EDIT MODE = ON");
         m_pause_text.setOrigin(text_rect.left + text_rect.width/2.0f, text_rect.top + text_rect.height/2.0f);
         m_pause_text.setPosition(center.x, center.y);
         m_engine->window().draw(m_pause_text);
     }
-
-    m_mouse_shape.setFillColor(sf::Color(255, 0, 0));
-    m_mouse_shape.setRadius(4);
-    m_mouse_shape.setOrigin(2, 2);
-    Vec2 world_pos = mouseToWorldPos(m_mouse_pos);
-    m_mouse_shape.setPosition(world_pos.x, world_pos.y);
-    m_engine->window().draw(m_mouse_shape);
 }
 
 void SceneSideScroller::sDragAndDrop() {

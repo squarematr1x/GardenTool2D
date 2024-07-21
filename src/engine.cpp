@@ -8,9 +8,6 @@
 
 #include <SFML/System/Clock.hpp>
 
-#include "../vendor/imgui.h"
-#include "../vendor/imgui-SFML.h"
-
 #include "util/profiler.hpp"
 
 GameEngine::GameEngine(const std::string& config) {
@@ -39,6 +36,7 @@ void GameEngine::changeScene(SceneType scene_name, std::shared_ptr<Scene> scene,
 	(void)end_current_scene; // TODO: Use later if needed
 	m_scenes[scene_name] = scene;
 	m_cur_scene = scene_name;
+	m_edit_mode = false;
 }
 
 void GameEngine::setPaused(bool paused) {
@@ -54,9 +52,7 @@ void GameEngine::update() {
 }
 
 void GameEngine::run() {
-	sf::Clock dt;
-	bool init = ImGui::SFML::Init(m_window);
-	(void)init;
+	m_editor.init(m_window);
 
 	while (isRunning()) {
 		if (!m_paused) {
@@ -64,17 +60,12 @@ void GameEngine::run() {
 			currentScene()->update();
 			// TODO: Add render() <- common function for all scenes?
 		}
-		ImGui::SFML::Update(m_window, dt.restart());
-		ImGui::ShowDemoWindow();
 
-		ImGui::Begin("Hello, world!");
-		ImGui::Button("Look at this pretty button");
-		ImGui::End();
-
-		ImGui::SFML::Render(m_window);
+		if (m_edit_mode) {
+			m_editor.render(m_window);
+		}
 		m_window.display();
 	}
-	ImGui::SFML::Shutdown();
 }
  
  void GameEngine::quit() {
@@ -86,7 +77,7 @@ void GameEngine::sUserInput() {
 	sf::Event event;
 
 	while (m_window.pollEvent(event)) {
-		ImGui::SFML::ProcessEvent(m_window, event);
+		m_editor.processEvent(m_window, event);
 
 		if (event.type == sf::Event::Closed) {
 			quit();

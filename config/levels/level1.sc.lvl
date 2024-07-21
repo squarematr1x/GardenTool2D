@@ -19,6 +19,7 @@ Tile Brick 7 0 1 1
 Tile Brick 7 1 1 1
 Tile Brick 7 5 1 1
 Tile Question1 7 7 1 1
+Tile Brick 8 5 1 1
 Tile Brick 8 0 1 1
 Tile Brick 8 1 1 1
 Tile Brick 9 0 1 1
@@ -33,7 +34,6 @@ Tile Rock 22 0 1 1
 Tile Brick 23 0 1 1
 Tile Brick 30 0 1 1
 Tile Brick 31 0 1 1
-
 
 Tile Coin 10 4 0 0
 Tile Bush 7 2 0 0
