@@ -2,6 +2,7 @@
 
 #include "ecs/entity-manager.hpp"
 #include "assets.hpp"
+#include "editor/editor.hpp"
 
 class Scene;
 
@@ -25,6 +26,9 @@ class GameEngine
 	SceneType m_cur_scene;
 
 	Assets m_assets;
+	Editor m_editor;
+
+	std::shared_ptr<Entity> m_selected_entity;
 
 	void init(const std::string& config);
 	void setPaused(bool paused);
@@ -48,6 +52,7 @@ public:
 	void toggleSound() { m_enable_sound = !m_enable_sound; }
 	void toggleMusic() { m_enable_music = !m_enable_music; }
 	void toggleEditMode() { m_edit_mode = !m_edit_mode; }
+	void setEditMode(bool edit) { m_edit_mode = edit; m_paused = edit; }
 
 	sf::RenderWindow& window() { return m_window; };
 	const Assets& assets() const { return m_assets; };

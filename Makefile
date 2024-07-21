@@ -14,6 +14,7 @@ SRC := $(wildcard src/*.cpp) \
 	$(wildcard src/math/*.cpp) \
 	$(wildcard src/ecs/*.cpp) \
 	$(wildcard src/scene/*.cpp) \
+	$(wildcard src/editor/*.cpp) \
 	$(wildcard vendor/*.cpp)
 
 OBJECTS := $(SRC:%.cpp=$(OBJ_DIR)/%.o)
