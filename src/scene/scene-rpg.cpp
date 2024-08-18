@@ -8,7 +8,7 @@
 #include "../math/random.hpp"
 
 SceneRPG::SceneRPG(GameEngine* engine, const std::string& level_path)
-    : Scene(engine), m_level_path(level_path) {
+    : Scene(engine, level_path) {
     init(level_path);
 }
 

@@ -62,7 +62,8 @@ void GameEngine::run() {
 		}
 
 		if (m_edit_mode) {
-			m_editor.render(m_window);
+			auto& entity_manager = currentScene()->getEntityManager();
+			m_editor.update(m_window, entity_manager, this);
 		}
 		m_window.display();
 	}
@@ -173,4 +174,8 @@ void GameEngine::playMusic(const std::string& music_name) {
 
 void GameEngine::stopMusic(const std::string& music_name) {
 	m_assets.getMusic(music_name)->stop();
+}
+
+const std::string& GameEngine::currentLevelPath() {
+	return currentScene()->levelPath();
 }

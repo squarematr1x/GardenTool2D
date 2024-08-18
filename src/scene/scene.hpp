@@ -29,9 +29,6 @@ public:
 		int max_level{ 4 };
 	};
 
-	Scene(GameEngine* engine)
-		: m_engine(engine) {}
-
 	virtual ~Scene() {}
 
 	virtual void update() = 0;
@@ -65,7 +62,17 @@ public:
 
 	bool targetReached(const Vec2& pos, const Vec2& target) const;
 
+	const std::string& levelPath() const { return m_level_path; }
+
+	EntityManager& getEntityManager() { return m_entity_manager; }
+
 protected:
+	Scene(GameEngine* engine)
+		: m_engine(engine) {}
+
+	Scene(GameEngine* engine, const std::string& level_path)
+		: m_engine(engine), m_level_path(level_path) {}
+
 	GameEngine* m_engine{ nullptr };
 	EntityManager m_entity_manager;
 	size_t m_current_frame{ 0 };
@@ -79,6 +86,8 @@ protected:
 	bool m_draw_collision{ false };
 	bool m_draw_grid{ false };
 	bool m_show_ai_info{ false };
+
+	std::string m_level_path{ "" };
 
 	virtual void onEnd() = 0;
 	void setPaused(bool paused) { m_paused = paused; }
@@ -120,7 +129,6 @@ class SceneSideScroller: public Scene
 		float gravity{ 0.0f };
 		std::string weapon{ "" };
 	};
-	std::string m_level_path{ "" };
 	std::shared_ptr<Entity> m_player;
 	PlayerConfig m_player_config;
 	bool m_can_shoot{ true };
@@ -177,7 +185,6 @@ class SceneRPG: public Scene
 		int health{ 4 };
 	};
 	PlayerConfig m_player_config;
-	std::string m_level_path{ "" };
 	std::shared_ptr<Entity> m_player;
 	bool m_follow{ false };
 	bool m_show_health{ true };
