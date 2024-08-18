@@ -28,7 +28,7 @@ class GameEngine
 	Assets m_assets;
 	Editor m_editor;
 
-	std::shared_ptr<Entity> m_selected_entity;
+	size_t m_selected_entity_id;
 
 	void init(const std::string& config);
 	void setPaused(bool paused);
@@ -53,9 +53,12 @@ public:
 	void toggleMusic() { m_enable_music = !m_enable_music; }
 	void toggleEditMode() { m_edit_mode = !m_edit_mode; }
 	void setEditMode(bool edit) { m_edit_mode = edit; m_paused = edit; }
+	void setSelectedEntityId(size_t id) { m_selected_entity_id = id; }
 
 	sf::RenderWindow& window() { return m_window; };
 	const Assets& assets() const { return m_assets; };
+	size_t selectedEntityId() const { return m_selected_entity_id; }
 	bool editMode() const { return m_edit_mode; };
 	bool isRunning();
+	const std::string& currentLevelPath();
 };

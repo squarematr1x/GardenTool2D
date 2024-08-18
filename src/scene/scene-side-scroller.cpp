@@ -7,7 +7,7 @@
 #include "../physics.hpp"
 
 SceneSideScroller::SceneSideScroller(GameEngine* engine, const std::string& level_path)
-    : Scene(engine), m_level_path(level_path) {
+    : Scene(engine, level_path) {
     init(level_path);
 }
 
@@ -476,19 +476,15 @@ void SceneSideScroller::sDoAction(const Action& action) {
                 break;
             }
             case ActionName::LEFT_CLICK: {
+                // TODO: Only move entity when pressed down continuesly, otherwise select entity and display GUI
                 if (!m_engine->editMode()) {
                     break;
                 }
                 Vec2 world_pos = mouseToWorldPos(action.pos);
                 for (auto e : m_entity_manager.getEntities()) {
                     if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
-                        auto& dragged = e->getComponent<CDraggable>().dragged;
-                        dragged = !dragged;
-                        if (!dragged) {
-                            // When drag ends fit entity to grid
-                            e->getComponent<CTransform>().pos = (fitToGrid(world_pos));
-                        }
-                        std::cout << "Clicked entity: " << e->getComponent<CAnimation>().animation.getName() << '\n';
+                        e->getComponent<CDraggable>().dragged = true;
+                        m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity
                     }
                 }
                 break;
@@ -502,6 +498,16 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::LEFT: m_player->getComponent<CInput>().left = false; break;
             case ActionName::UP: m_player->getComponent<CInput>().up = false; break;
             case ActionName::SHOOT: m_player->getComponent<CInput>().attack = false; break;
+            case ActionName::LEFT_CLICK: {
+                Vec2 world_pos = mouseToWorldPos(action.pos);
+                for (auto e : m_entity_manager.getEntities()) {
+                    if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
+                        e->getComponent<CDraggable>().dragged = false;
+                        e->getComponent<CTransform>().pos = (fitToGrid(world_pos));
+                    }
+                }
+                break;
+            }
             default: break;
         }
     }
@@ -594,21 +600,12 @@ void SceneSideScroller::sRender() {
         m_engine->window().draw(vertices, states);
     }
 
-    if (m_draw_collision) {
+    if (m_draw_collision || m_engine->editMode()) {
         renderBBoxes();
     }
 
-    if (m_draw_grid) {
+    if (m_draw_grid || m_engine->editMode()) {
         renderGrid(m_grid_size, m_grid_text);
-    }
-
-    if (m_engine->editMode()) {
-        const auto text_rect = m_pause_text.getLocalBounds();
-        const auto center = m_engine->window().getView().getCenter();
-        m_pause_text.setString("EDIT MODE = ON");
-        m_pause_text.setOrigin(text_rect.left + text_rect.width/2.0f, text_rect.top + text_rect.height/2.0f);
-        m_pause_text.setPosition(center.x, center.y);
-        m_engine->window().draw(m_pause_text);
     }
 }
 
