@@ -87,6 +87,10 @@ const Animation& Assets::getAnimation(const std::string& animation_name) const {
 	return m_animation_map.at(animation_name);
 }
 
+const std::map<std::string, Animation>& Assets::getAnimations() const {
+	return m_animation_map;
+}
+
 void Assets::addFont(const std::string& font_name, const std::string& path) {
 	PROFILE_FUNCTION();
 	m_font_map[font_name] = sf::Font();

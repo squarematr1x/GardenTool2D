@@ -36,6 +36,7 @@ public:
 
 	const sf::Texture& getTexture(const std::string& texture_name) const;
 	const Animation& getAnimation(const std::string& animation_name) const;
+	const std::map<std::string, Animation>& getAnimations() const;
 	const sf::Font& getFont(const std::string& font_name) const;
 	sf::Sound getSound(const std::string& sound_name) const;
 	const std::shared_ptr<sf::Music> getMusic(const std::string& music_name) const;

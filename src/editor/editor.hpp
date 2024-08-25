@@ -25,6 +25,20 @@ class Editor {
         // First implement adding of tiles
     };
 
+    const char* m_types[11] = {
+        "TILE",
+        "DEC",
+        "PLAYER",
+        "ENEMY",
+        "BULLET",
+        "EXPLOSION",
+        "SWORD",
+        "HEART",
+        "TELEPORT",
+        "ELEVATOR",
+        "CHECKPOINT"
+    };
+
     std::string m_level_path{ "" }; // Current level
     sf::Clock m_dt;
     EntityConfig m_entity_config;
@@ -41,4 +55,6 @@ public:
     void deleteEntity(std::shared_ptr<Entity> e);
 
     void setLevel(const std::string& level_path) { m_level_path = level_path; }
+
+    bool windowActive() const;
 };
