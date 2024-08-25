@@ -451,7 +451,6 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::TOGGLE_TEXTURE: m_draw_textures = !m_draw_textures; break;
             case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
             case ActionName::TOGGLE_GRID: m_draw_grid = !m_draw_grid; break;
-            case ActionName::TOGGLE_LEVEL_EDITOR: m_engine->toggleEditMode(); break;
             case ActionName::PAUSE: setPaused(!m_paused); break;
             case ActionName::QUIT: onEnd(); break;
             case ActionName::UP: m_player->getComponent<CInput>().up = true; break;
@@ -476,17 +475,19 @@ void SceneSideScroller::sDoAction(const Action& action) {
                 break;
             }
             case ActionName::LEFT_CLICK: {
-                // TODO: Only move entity when pressed down continuesly, otherwise select entity and display GUI
-                if (!m_engine->editMode()) {
-                    break;
-                }
-                Vec2 world_pos = mouseToWorldPos(action.pos);
-                for (auto e : m_entity_manager.getEntities()) {
-                    if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
-                        e->getComponent<CDraggable>().dragged = true;
-                        m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity
+                if (m_engine->editMode()) {
+                    Vec2 world_pos = mouseToWorldPos(action.pos);
+                    for (auto e : m_entity_manager.getEntities()) {
+                        if (physics::isInside(world_pos, e)) {
+                            m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity
+                        }
                     }
                 }
+                break;
+            }
+            case ActionName::TOGGLE_LEVEL_EDITOR: {
+                m_engine->toggleEditMode();
+                m_paused = m_engine->editMode();
                 break;
             }
             default: break;
@@ -499,14 +500,15 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::UP: m_player->getComponent<CInput>().up = false; break;
             case ActionName::SHOOT: m_player->getComponent<CInput>().attack = false; break;
             case ActionName::LEFT_CLICK: {
-                Vec2 world_pos = mouseToWorldPos(action.pos);
-                for (auto e : m_entity_manager.getEntities()) {
-                    if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
-                        e->getComponent<CDraggable>().dragged = false;
-                        e->getComponent<CTransform>().pos = (fitToGrid(world_pos));
+                if (m_engine->editMode()) {
+                    Vec2 world_pos = mouseToWorldPos(action.pos);
+                    for (auto e : m_entity_manager.getEntities()) {
+                        if (physics::isInside(world_pos, e)) {
+                            e->getComponent<CTransform>().pos = (fitToGrid(world_pos));
+                        }
                     }
+                    break;
                 }
-                break;
             }
             default: break;
         }

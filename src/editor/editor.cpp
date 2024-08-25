@@ -23,42 +23,56 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
     }
 
     ImGui::SFML::Update(window, m_dt.restart());
-
     ImGui::Begin("Editor");
 
     size_t e_id = engine->selectedEntityId();
     if (e_id) {
-        ImGui::SeparatorText("Edit Entity");
+        char header[128];
+        snprintf(header, sizeof(header), "Edit Entity: %lu", e_id);
+        ImGui::SeparatorText(header);
         auto e = entity_manager.getEntity(e_id);
         if (e != nullptr) {
             if (ImGui::TreeNode("Transform")) {
                 if (e->hasComponent<CTransform>()) {
                     auto& transform = e->getComponent<CTransform>();
+                    ImGui::SetNextItemWidth(100);
                     ImGui::InputFloat("x", &transform.pos.x, 1.0f, 1.0f, "%.0f");
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(100);
                     ImGui::InputFloat("y", &transform.pos.x, 1.0f, 1.0f, "%.0f");
+                }
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("Gravitation")) {
+                if (e->hasComponent<CGravity>()) {
+                    auto& gravity = e->getComponent<CGravity>();
+                    ImGui::SetNextItemWidth(100); 
+                    ImGui::InputFloat("Gravity", &gravity.gravity, 0.25f, 0.25f, "%.2f");
+                } else if (ImGui::Button("Add gravity")) {
+                    e->addComponent<CGravity>();
                 }
                 ImGui::TreePop();
             }
             if (ImGui::TreeNode("Bounding box")) {
                 if (e->hasComponent<CBBox>()) {
                     auto& bbox = e->getComponent<CBBox>();
-                    ImGui::InputFloat("Bounding box width", &bbox.size.x, 1.0f, 1.0f, "%.0f");
-                    ImGui::InputFloat("Bounding box height", &bbox.size.y, 1.0f, 1.0f, "%.0f");
+                    ImGui::SetNextItemWidth(100);
+                    ImGui::InputFloat("Width", &bbox.size.x, 1.0f, .20f, "%.0f");
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(100);
+                    ImGui::InputFloat("Height", &bbox.size.y, 1.0f, 1.0f, "%.0f");
                     ImGui::Checkbox("Block movement", &bbox.block_movement);
+                    ImGui::SameLine();
                     ImGui::Checkbox("Block vision", &bbox.block_vision);
                     bbox.half_size.x = bbox.size.x/2;
                     bbox.half_size.y = bbox.size.y/2;
-                } else {
-                    if (ImGui::Button("Add bounding box")) {
-                        e->addComponent<CBBox>();
-                    }
+                } else if (ImGui::Button("Add bounding box")) {
+                    e->addComponent<CBBox>();
                 }
                 ImGui::TreePop();
             }
             if (ImGui::TreeNode("Animation")) {
                 if (e->hasComponent<CAnimation>()) {
-                    (void)m_types;
-
                     auto anims = engine->assets().getAnimations();
                     const char* animations[anims.size()];
                     const std::string anim_name = e->getComponent<CAnimation>().animation.getName();
@@ -74,11 +88,15 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                     }
 
                     int prev_index = cur_index;
-                    ImGui::ListBox("Animation", &cur_index, animations, IM_ARRAYSIZE(animations), 6);
+                    ImGui::ListBox("Animations", &cur_index, animations, IM_ARRAYSIZE(animations), 6);
                     if (prev_index != cur_index) {
                         e->addComponent<CAnimation>(engine->assets().getAnimation(animations[cur_index]), true);
                     }
                 }
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("Type")) {
+                (void)m_types;
                 ImGui::TreePop();
             }
     
@@ -86,9 +104,13 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                 deleteEntity(e);
             }
 
+            ImGui::SameLine();
+
             if (ImGui::Button("Save")) {
-                // Only update file when save pressed?
+                // TODO: Update level file
             }
+        } else {
+            ImGui::Text("Entity was deleted.");
         }
     } else {
         // ImGui::InputText("Animation name", m_entity_config.animation_name, sizeof(m_entity_config.animation_name)/sizeof(char));
@@ -98,7 +120,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
         // }
     }
 
-    ImGui::ShowDemoWindow();
+    // ImGui::ShowDemoWindow();
     ImGui::End();
 
     ImGui::SFML::Render(window);
