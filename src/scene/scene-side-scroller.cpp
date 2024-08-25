@@ -471,15 +471,21 @@ void SceneSideScroller::sDoAction(const Action& action) {
                 tile->addComponent<CTransform>(fitToGrid(world_pos));
                 tile->addComponent<CDraggable>();
                 tile->addComponent<CBBox>(tile->getComponent<CAnimation>().animation.getSize(), true, true, true);
-                // TODO: Get grid pos of clicked pos and open GUI
+                m_entity_manager.update();
                 break;
             }
             case ActionName::LEFT_CLICK: {
-                if (m_engine->editMode()) {
-                    Vec2 world_pos = mouseToWorldPos(action.pos);
-                    for (auto e : m_entity_manager.getEntities()) {
-                        if (physics::isInside(world_pos, e)) {
-                            m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity
+                if (!m_engine->editMode()) {
+                    break;
+                }
+
+                Vec2 world_pos = mouseToWorldPos(action.pos);
+                for (auto e : m_entity_manager.getEntities()) {
+                    if (physics::isInside(world_pos, e)) {
+                        m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity
+
+                        if (e->hasComponent<CDraggable>()) {
+                            e->getComponent<CDraggable>().dragged = true;
                         }
                     }
                 }
@@ -502,8 +508,10 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::LEFT_CLICK: {
                 if (m_engine->editMode()) {
                     Vec2 world_pos = mouseToWorldPos(action.pos);
+
                     for (auto e : m_entity_manager.getEntities()) {
-                        if (physics::isInside(world_pos, e)) {
+                        if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
+                            e->getComponent<CDraggable>().dragged = false;
                             e->getComponent<CTransform>().pos = (fitToGrid(world_pos));
                         }
                     }

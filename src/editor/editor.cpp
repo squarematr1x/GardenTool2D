@@ -39,7 +39,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                     ImGui::InputFloat("x", &transform.pos.x, 1.0f, 1.0f, "%.0f");
                     ImGui::SameLine();
                     ImGui::SetNextItemWidth(100);
-                    ImGui::InputFloat("y", &transform.pos.x, 1.0f, 1.0f, "%.0f");
+                    ImGui::InputFloat("y", &transform.pos.y, 1.0f, 1.0f, "%.0f");
                 }
                 ImGui::TreePop();
             }
