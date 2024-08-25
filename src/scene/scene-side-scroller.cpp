@@ -32,9 +32,7 @@ void SceneSideScroller::init(const std::string& level_path) {
     registerAction(sf::Mouse::Wheel::VerticalWheel, ActionName::MOUSE_SCROLL);
 
     m_grid_text.setCharacterSize(12);
-    m_grid_text.setFont(m_engine->assets().getFont("Arial"));
-    m_pause_text.setCharacterSize(20);
-    m_pause_text.setFont(m_engine->assets().getFont("Arial"));
+    m_grid_text.setFont(m_engine->assets().getFont("Arial")); 
 
     loadLevel(level_path);
 
@@ -616,6 +614,10 @@ void SceneSideScroller::sRender() {
 
     if (m_draw_grid || m_engine->editMode()) {
         renderGrid(m_grid_size, m_grid_text);
+    }
+
+    if (m_paused) {
+        renderPauseText();
     }
 }
 

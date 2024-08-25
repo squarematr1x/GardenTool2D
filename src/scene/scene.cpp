@@ -146,6 +146,30 @@ void Scene::updateZoom(float scroll_delta) {
     }
 }
 
+void Scene::renderPauseText() {
+    const float w = static_cast<float>(width());
+    constexpr float h = 32.0f;
+    const sf::Color color = sf::Color(0, 0, 0);
+    sf::VertexArray vertices{ sf::Triangles, 6 };
+
+    vertices[0] = {{0.0f, 0.0f}, color};
+    vertices[1] = {{w, 0.0f}, color};
+    vertices[2] = {{w, h}, color};
+    vertices[3] = {{w, h}, color};
+    vertices[4] = {{0.0f, h}, color};
+    vertices[5] = {{0.0f, 0.0f}, color};
+    
+    m_engine->window().draw(vertices);
+
+    sf::Text text;
+    text.setCharacterSize(16);
+    text.setFont(m_engine->assets().getFont("Arial"));
+    text.setString("Paused");
+    text.setPosition(w/2 - (text.getLocalBounds().width/2), 5.0f);
+
+    m_engine->window().draw(text);
+}
+
 bool Scene::targetReached(const Vec2& pos, const Vec2& target) const {
     float distance = pos.distance(target);
     return fabs(distance) <= 5.0f;
