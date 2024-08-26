@@ -17,7 +17,7 @@ void Scene::drawLine(const Vec2& p1, const Vec2& p2) {
     m_engine->window().draw(line, 2, sf::Lines);
 }
 
-void Scene::renderGrid(const Vec2& grid_size, sf::Text& grid_text) {
+void Scene::renderGrid(const Vec2& grid_size, sf::Text& grid_text, bool show_coordinates) {
     const size_t w = width();
     const size_t h = height();
     const float left_x = m_engine->window().getView().getCenter().x - w / 2;
@@ -32,6 +32,10 @@ void Scene::renderGrid(const Vec2& grid_size, sf::Text& grid_text) {
 
     for (float y = 0; y < h; y += grid_size.y) {
         addLine(Vec2(left_x, h - y), Vec2(right_x, h - y), vertices);
+
+        if (!show_coordinates) {
+            continue;
+        }
 
         for (float x = next_grid_x; x < right_x; x += grid_size.x) {
             std::string x_cell = std::to_string(static_cast<int>(x) / static_cast<int>(grid_size.x));
