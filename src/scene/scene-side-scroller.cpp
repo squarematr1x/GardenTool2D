@@ -32,9 +32,7 @@ void SceneSideScroller::init(const std::string& level_path) {
     registerAction(sf::Mouse::Wheel::VerticalWheel, ActionName::MOUSE_SCROLL);
 
     m_grid_text.setCharacterSize(12);
-    m_grid_text.setFont(m_engine->assets().getFont("Arial"));
-    m_pause_text.setCharacterSize(20);
-    m_pause_text.setFont(m_engine->assets().getFont("Arial"));
+    m_grid_text.setFont(m_engine->assets().getFont("Arial")); 
 
     loadLevel(level_path);
 
@@ -241,12 +239,13 @@ void SceneSideScroller::update() {
         sLifespan();
         sCollision();
         sAnimation();
-        sDragAndDrop();
         sCamera();
     }
     // sf::View mini_map = m_engine->window().getView();
     // mini_map.setViewport(sf::FloatRect(0.75f, 0.0f, 0.25f, 0.25f));
     // m_engine->window().setView(mini_map);
+
+    sDragAndDrop();
     sRender();
 
     m_current_frame++;
@@ -451,7 +450,6 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::TOGGLE_TEXTURE: m_draw_textures = !m_draw_textures; break;
             case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
             case ActionName::TOGGLE_GRID: m_draw_grid = !m_draw_grid; break;
-            case ActionName::TOGGLE_LEVEL_EDITOR: m_engine->toggleEditMode(); break;
             case ActionName::PAUSE: setPaused(!m_paused); break;
             case ActionName::QUIT: onEnd(); break;
             case ActionName::UP: m_player->getComponent<CInput>().up = true; break;
@@ -472,21 +470,29 @@ void SceneSideScroller::sDoAction(const Action& action) {
                 tile->addComponent<CTransform>(fitToGrid(world_pos));
                 tile->addComponent<CDraggable>();
                 tile->addComponent<CBBox>(tile->getComponent<CAnimation>().animation.getSize(), true, true, true);
-                // TODO: Get grid pos of clicked pos and open GUI
+                m_entity_manager.update();
                 break;
             }
             case ActionName::LEFT_CLICK: {
-                // TODO: Only move entity when pressed down continuesly, otherwise select entity and display GUI
                 if (!m_engine->editMode()) {
                     break;
                 }
+
                 Vec2 world_pos = mouseToWorldPos(action.pos);
                 for (auto e : m_entity_manager.getEntities()) {
-                    if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
-                        e->getComponent<CDraggable>().dragged = true;
+                    if (physics::isInside(world_pos, e)) {
                         m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity
+
+                        if (e->hasComponent<CDraggable>()) {
+                            e->getComponent<CDraggable>().dragged = true;
+                        }
                     }
                 }
+                break;
+            }
+            case ActionName::TOGGLE_LEVEL_EDITOR: {
+                m_engine->toggleEditMode();
+                m_paused = m_engine->editMode();
                 break;
             }
             default: break;
@@ -499,14 +505,17 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::UP: m_player->getComponent<CInput>().up = false; break;
             case ActionName::SHOOT: m_player->getComponent<CInput>().attack = false; break;
             case ActionName::LEFT_CLICK: {
-                Vec2 world_pos = mouseToWorldPos(action.pos);
-                for (auto e : m_entity_manager.getEntities()) {
-                    if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
-                        e->getComponent<CDraggable>().dragged = false;
-                        e->getComponent<CTransform>().pos = (fitToGrid(world_pos));
+                if (m_engine->editMode()) {
+                    Vec2 world_pos = mouseToWorldPos(action.pos);
+
+                    for (auto e : m_entity_manager.getEntities()) {
+                        if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
+                            e->getComponent<CDraggable>().dragged = false;
+                            e->getComponent<CTransform>().pos = (fitToGrid(world_pos));
+                        }
                     }
+                    break;
                 }
-                break;
             }
             default: break;
         }
@@ -606,6 +615,10 @@ void SceneSideScroller::sRender() {
 
     if (m_draw_grid || m_engine->editMode()) {
         renderGrid(m_grid_size, m_grid_text);
+    }
+
+    if (m_paused) {
+        renderPauseText();
     }
 }
 

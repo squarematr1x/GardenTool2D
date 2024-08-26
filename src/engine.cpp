@@ -79,6 +79,9 @@ void GameEngine::sUserInput() {
 
 	while (m_window.pollEvent(event)) {
 		m_editor.processEvent(m_window, event);
+		if (m_editor.windowActive()) {
+			break;
+		}
 
 		if (event.type == sf::Event::Closed) {
 			quit();

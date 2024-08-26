@@ -17,7 +17,7 @@ void Scene::drawLine(const Vec2& p1, const Vec2& p2) {
     m_engine->window().draw(line, 2, sf::Lines);
 }
 
-void Scene::renderGrid(const Vec2& grid_size, sf::Text& grid_text) {
+void Scene::renderGrid(const Vec2& grid_size, sf::Text& grid_text, bool show_coordinates) {
     const size_t w = width();
     const size_t h = height();
     const float left_x = m_engine->window().getView().getCenter().x - w / 2;
@@ -32,6 +32,10 @@ void Scene::renderGrid(const Vec2& grid_size, sf::Text& grid_text) {
 
     for (float y = 0; y < h; y += grid_size.y) {
         addLine(Vec2(left_x, h - y), Vec2(right_x, h - y), vertices);
+
+        if (!show_coordinates) {
+            continue;
+        }
 
         for (float x = next_grid_x; x < right_x; x += grid_size.x) {
             std::string x_cell = std::to_string(static_cast<int>(x) / static_cast<int>(grid_size.x));
@@ -144,6 +148,30 @@ void Scene::updateZoom(float scroll_delta) {
     if (new_level >= -m_zoom.max_level && new_level <= m_zoom.max_level) {
         m_zoom.level = new_level;
     }
+}
+
+void Scene::renderPauseText() {
+    const float w = static_cast<float>(width());
+    constexpr float h = 32.0f;
+    const sf::Color color = sf::Color(0, 0, 0);
+    sf::VertexArray vertices{ sf::Triangles, 6 };
+
+    vertices[0] = {{0.0f, 0.0f}, color};
+    vertices[1] = {{w, 0.0f}, color};
+    vertices[2] = {{w, h}, color};
+    vertices[3] = {{w, h}, color};
+    vertices[4] = {{0.0f, h}, color};
+    vertices[5] = {{0.0f, 0.0f}, color};
+    
+    m_engine->window().draw(vertices);
+
+    sf::Text text;
+    text.setCharacterSize(16);
+    text.setFont(m_engine->assets().getFont("Arial"));
+    text.setString("Paused");
+    text.setPosition(w/2 - (text.getLocalBounds().width/2), 5.0f);
+
+    m_engine->window().draw(text);
 }
 
 bool Scene::targetReached(const Vec2& pos, const Vec2& target) const {
