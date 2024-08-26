@@ -21,6 +21,7 @@ void SceneRPG::init(const std::string& level_path) {
     registerAction(sf::Keyboard::Y, ActionName::TOGGLE_FOLLOW);
     registerAction(sf::Keyboard::H, ActionName::TOGGLE_HEALTH);
     registerAction(sf::Keyboard::Q, ActionName::TOGGLE_AI_INFO);
+    registerAction(sf::Keyboard::Tab, ActionName::TOGGLE_LEVEL_EDITOR);
 
     registerAction(sf::Keyboard::Space, ActionName::ATTACK);
     registerAction(sf::Keyboard::Up, ActionName::UP);
@@ -624,6 +625,10 @@ void SceneRPG::sRender() {
 
     if (m_draw_collision) {
         renderBBoxes();
+    }
+
+    if (m_paused) {
+        renderPauseText();
     }
 }
 
