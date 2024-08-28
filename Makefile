@@ -7,8 +7,8 @@ OBJ_DIR := $(BUILD)/obj
 APP_DIR := $(BUILD)/app
 TARGET := engine
 INCLUDE := -Iinclude/
-SFML_INCLUDE := -I /opt/homebrew/Cellar/sfml/2.6.1/include/
-SFML_LIB := -L /opt/homebrew/Cellar/sfml/2.6.1/lib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+SFML_INCLUDE := -I /opt/homebrew/Cellar/sfml/**/include/
+SFML_LIB := -L /opt/homebrew/Cellar/sfml/**/lib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 SRC := $(wildcard src/*.cpp) \
 	$(wildcard src/**/*.cpp) \
 	$(wildcard vendor/*.cpp)
