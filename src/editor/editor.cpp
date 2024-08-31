@@ -101,6 +101,30 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                         }
                         ImGui::TreePop();
                     }
+                    if (ImGui::TreeNode("Health")) {
+                        if (e->hasComponent<CHealth>()) {
+                            auto& hp = e->getComponent<CHealth>();
+                            ImGui::SetNextItemWidth(100);
+                            ImGui::InputInt("Hp", &hp.current);
+                            ImGui::SameLine();
+                            ImGui::SetNextItemWidth(100);
+                            ImGui::InputInt("Max hp", &hp.max);
+                            hp.percentage = static_cast<float>(hp.current/hp.max);
+                        } else if (ImGui::Button("Add health")) {
+                            e->addComponent<CHealth>();
+                        }
+                        ImGui::TreePop();
+                    }
+                    if (ImGui::TreeNode("Damage")) {
+                        if (e->hasComponent<CDamage>()) {
+                            auto& damage = e->getComponent<CDamage>();
+                            ImGui::SetNextItemWidth(100);
+                            ImGui::InputInt("Damage", &damage.damage);
+                        } else if (ImGui::Button("Add damage")) {
+                            e->addComponent<CDamage>();
+                        }
+                        ImGui::TreePop();
+                    }
                     if (ImGui::TreeNode("Type")) {
                         (void)m_types;
                         ImGui::TreePop();
