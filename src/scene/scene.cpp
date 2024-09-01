@@ -45,10 +45,12 @@ void Scene::renderGrid(bool show_coordinates) {
         }
 
         for (float x = next_grid_x; x < right_x; x += m_grid_size.x) {
-            std::string x_cell = std::to_string(static_cast<int>(x) / static_cast<int>(m_grid_size.x));
-            std::string y_cell = std::to_string(static_cast<int>(y) / static_cast<int>(m_grid_size.y));
+            const std::string x_cell = std::to_string(static_cast<int>(x) / static_cast<int>(m_grid_size.x));
+            const std::string y_cell = std::to_string(static_cast<int>(y) / static_cast<int>(m_grid_size.y));
+            const int x_offset = 3;
+            const int y_offset = 2;
             m_grid_text.setString("(" + x_cell + "," + y_cell + ")");
-            m_grid_text.setPosition(x + 3, h - y - m_grid_size.y + 2);
+            m_grid_text.setPosition(x + x_offset, h - y - m_grid_size.y + y_offset);
             m_engine->window().draw(m_grid_text);
         }
     }
