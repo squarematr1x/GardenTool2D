@@ -607,7 +607,7 @@ void SceneSideScroller::sRender() {
     }
 
     if (m_draw_grid || m_engine->editMode()) {
-        renderGrid(m_grid_size, m_grid_text);
+        renderGrid();
     }
 
     if (m_paused) {

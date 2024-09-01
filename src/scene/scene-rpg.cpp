@@ -680,10 +680,10 @@ void SceneRPG::sRender() {
     }
 
     if (m_draw_grid || m_engine->editMode()) {
-        renderGrid(m_grid_size, m_grid_text);
+        renderGrid();
     }
 
-    if (m_draw_collision) {
+    if (m_draw_collision || m_engine->editMode()) {
         renderBBoxes();
     }
 

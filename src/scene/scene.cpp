@@ -24,32 +24,32 @@ void Scene::drawLine(const Vec2& p1, const Vec2& p2) {
     m_engine->window().draw(line, 2, sf::Lines);
 }
 
-void Scene::renderGrid(const Vec2& grid_size, sf::Text& grid_text, bool show_coordinates) {
+void Scene::renderGrid(bool show_coordinates) {
     const size_t w = width();
     const size_t h = height();
     const float left_x = m_engine->window().getView().getCenter().x - w / 2;
-    const float right_x = left_x + w + grid_size.x;
-    const float next_grid_x = left_x - (static_cast<int>(left_x) % static_cast<int>(grid_size.x));
+    const float right_x = left_x + w + m_grid_size.x;
+    const float next_grid_x = left_x - (static_cast<int>(left_x) % static_cast<int>(m_grid_size.x));
 
     sf::VertexArray vertices(sf::Lines);
 
-    for (float x = next_grid_x; x < right_x; x += grid_size.x) {
+    for (float x = next_grid_x; x < right_x; x += m_grid_size.x) {
         addLine(Vec2(x, 0.0f), Vec2(x, h), vertices);
     }
 
-    for (float y = 0; y < h; y += grid_size.y) {
+    for (float y = 0; y < h; y += m_grid_size.y) {
         addLine(Vec2(left_x, h - y), Vec2(right_x, h - y), vertices);
 
         if (!show_coordinates) {
             continue;
         }
 
-        for (float x = next_grid_x; x < right_x; x += grid_size.x) {
-            std::string x_cell = std::to_string(static_cast<int>(x) / static_cast<int>(grid_size.x));
-            std::string y_cell = std::to_string(static_cast<int>(y) / static_cast<int>(grid_size.y));
-            grid_text.setString("(" + x_cell + "," + y_cell + ")");
-            grid_text.setPosition(x + 3, h - y - grid_size.y + 2);
-            m_engine->window().draw(grid_text);
+        for (float x = next_grid_x; x < right_x; x += m_grid_size.x) {
+            std::string x_cell = std::to_string(static_cast<int>(x) / static_cast<int>(m_grid_size.x));
+            std::string y_cell = std::to_string(static_cast<int>(y) / static_cast<int>(m_grid_size.y));
+            m_grid_text.setString("(" + x_cell + "," + y_cell + ")");
+            m_grid_text.setPosition(x + 3, h - y - m_grid_size.y + 2);
+            m_engine->window().draw(m_grid_text);
         }
     }
     m_engine->window().draw(vertices);

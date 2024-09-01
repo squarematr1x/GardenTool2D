@@ -50,7 +50,7 @@ public:
 	// Rendering helpers
 	void drawLine(const Vec2& p1, const Vec2& p2);
 
-	void renderGrid(const Vec2& grid_size, sf::Text& grid_text, bool show_coordinates = false);
+	void renderGrid(bool show_coordinates = false);
 	void renderBBoxes();
 	void renderCursor();
 	void renderHpBars();
