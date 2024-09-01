@@ -9,6 +9,13 @@ size_t Scene::height() const {
     return m_engine->window().getSize().y;
 }
 
+Vec2 Scene::fitToGrid(const Vec2& pos) const {
+    return Vec2(
+        floorf(pos.x/m_grid_size.x)*m_grid_size.x + m_grid_size.x/2,
+        floorf(pos.y/m_grid_size.y)*m_grid_size.y + m_grid_size.y/2
+    );
+}
+
 void Scene::drawLine(const Vec2& p1, const Vec2& p2) {
     const sf::Vertex line[] = {
         {{p1.x, p1.y}, sf::Color(255, 255, 255)},

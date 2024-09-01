@@ -18,6 +18,7 @@ void SceneRPG::init(const std::string& level_path) {
     registerAction(sf::Keyboard::Escape, ActionName::QUIT);
     registerAction(sf::Keyboard::T, ActionName::TOGGLE_TEXTURE);
     registerAction(sf::Keyboard::X, ActionName::TOGGLE_COLLISION);
+    registerAction(sf::Keyboard::G, ActionName::TOGGLE_GRID);
     registerAction(sf::Keyboard::Y, ActionName::TOGGLE_FOLLOW);
     registerAction(sf::Keyboard::H, ActionName::TOGGLE_HEALTH);
     registerAction(sf::Keyboard::Q, ActionName::TOGGLE_AI_INFO);
@@ -78,6 +79,7 @@ void SceneRPG::loadLevel(const std::string& path) {
                     const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
                     tile->addComponent<CBBox>(animation_size, block_movement, block_vision);
                 }
+                tile->addComponent<CDraggable>(); // NOTE: Anything should be draggable in edit mode
             } else if (asset_type == "Player") {
                 float x, y, bbox_w, bbox_h, v;
                 int health;
@@ -92,8 +94,9 @@ void SceneRPG::loadLevel(const std::string& path) {
                 int hp, damage;
                 text_stream >> animation >> room_x >> room_y >> x >> y >> block_movement >> block_vision >> hp >> damage;
                 auto enemy = m_entity_manager.addEntity(Tag::ENEMY);
+                Vec2 pos = getPosition(room_x, room_y, x, y);
                 enemy->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
-                enemy->addComponent<CTransform>(getPosition(room_x, room_y, x, y), true);
+                enemy->addComponent<CTransform>(pos, true);
                 enemy->addComponent<CHealth>(hp);
                 enemy->addComponent<CDamage>(damage);
                 const auto& animation_size = enemy->getComponent<CAnimation>().animation.getSize();
@@ -130,7 +133,7 @@ Vec2 SceneRPG::getPosition(float rx, float ry, float tx, float ty) const {
     const float room_start_x = rx * m_grid_size.x * m_room_size.x;
     const float room_start_y = ry * m_grid_size.y * m_room_size.y;
 
-    return Vec2(room_start_x + tx*m_grid_size.x, room_start_y + ty*m_grid_size.y);
+    return Vec2(room_start_x + tx*m_grid_size.x + m_grid_size.x/2, room_start_y + ty*m_grid_size.y + m_grid_size.y/2);
 }
 
 Vec2 SceneRPG::getCurrentRoom() const {
@@ -140,7 +143,12 @@ Vec2 SceneRPG::getCurrentRoom() const {
 
 void SceneRPG::spawnPlayer() {
     m_player = m_entity_manager.addEntity(Tag::PLAYER);
-    m_player->addComponent<CTransform>(Vec2(m_player_config.x*m_grid_size.x, m_player_config.y*m_grid_size.y), true);
+    m_player->addComponent<CTransform>(
+        Vec2(
+            m_player_config.x*m_grid_size.x + m_grid_size.x/2,
+            m_player_config.y*m_grid_size.y + m_grid_size.y/2),
+        true
+    );
     m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PDown"), true);
     m_player->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y), true, false);
     m_player->addComponent<CHealth>(m_player_config.health, m_player_config.health - 1);
@@ -236,6 +244,7 @@ void SceneRPG::update() {
         sCamera();
     }
 
+    sDragAndDrop();
     sRender();
     m_current_frame++;
 }
@@ -303,16 +312,45 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::PAUSE: m_paused = !m_paused; break;
             case ActionName::QUIT: onEnd(); break;
             case ActionName::MOUSE_SCROLL: updateZoom(action.delta); break;
+            case ActionName::MOUSE_MOVE: m_mouse_pos = action.pos; break;
             case ActionName::TOGGLE_FOLLOW: m_follow = !m_follow; break;
             case ActionName::TOGGLE_HEALTH: m_show_health = !m_show_health; break;
             case ActionName::TOGGLE_TEXTURE: m_draw_textures = !m_draw_textures; break;
             case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
+            case ActionName::TOGGLE_GRID: m_draw_grid = !m_draw_grid; break;
             case ActionName::TOGGLE_AI_INFO: m_show_ai_info = !m_show_ai_info; break;
             case ActionName::UP: m_player->getComponent<CInput>().up = true; break;
             case ActionName::RIGHT: m_player->getComponent<CInput>().right = true; break;
             case ActionName::DOWN: m_player->getComponent<CInput>().down = true; break;
             case ActionName::LEFT: m_player->getComponent<CInput>().left = true; break;
             case ActionName::ATTACK: m_player->getComponent<CInput>().attack = true; break;
+            case ActionName::TOGGLE_LEVEL_EDITOR: {
+                m_engine->toggleEditMode();
+                m_paused = m_engine->editMode();
+                break;
+            }
+            case ActionName::LEFT_CLICK: {
+                if (!m_engine->editMode()) {
+                    break;
+                }
+
+                for (auto e : m_entity_manager.getEntities()) {
+                    Vec2 room = getCurrentRoom();
+                    auto window_size = m_engine->window().getSize();
+                    Vec2 room_pos = {
+                        action.pos.x + room.x * window_size.x,
+                        action.pos.y + room.y * window_size.y
+                    };
+                    if (physics::isInside(room_pos, e)) {
+                        m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity
+                        if (e->hasComponent<CDraggable>()) {
+                            e->getComponent<CDraggable>().dragged = true;
+                        }
+                    }
+                }
+                break;
+            }
+            
             default: break;
         }
     } else if (action.getType() == ActionType::END) {
@@ -322,6 +360,24 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::RIGHT: m_player->getComponent<CInput>().right = false; break;
             case ActionName::LEFT: m_player->getComponent<CInput>().left = false; break;
             case ActionName::ATTACK: m_player->getComponent<CInput>().attack = false; break;
+            case ActionName::LEFT_CLICK: {
+                if (m_engine->editMode()) {
+                    Vec2 room = getCurrentRoom();
+                    auto window_size = m_engine->window().getSize();
+                    Vec2 room_pos = {
+                        action.pos.x + room.x * window_size.x,
+                        action.pos.y + room.y * window_size.y
+                    };
+
+                    for (auto e : m_entity_manager.getEntities()) {
+                        if (e->hasComponent<CDraggable>() && physics::isInside(room_pos, e)) {
+                            e->getComponent<CDraggable>().dragged = false;
+                            e->getComponent<CTransform>().pos = (fitToGrid(room_pos));
+                        }
+                    }
+                    break;
+                }
+            }
             default: break;
         }
     }
@@ -623,12 +679,30 @@ void SceneRPG::sRender() {
         renderHpBars();
     }
 
+    if (m_draw_grid || m_engine->editMode()) {
+        renderGrid(m_grid_size, m_grid_text);
+    }
+
     if (m_draw_collision) {
         renderBBoxes();
     }
 
     if (m_paused) {
         renderPauseText();
+    }
+}
+
+void SceneRPG::sDragAndDrop() {
+    for (auto e : m_entity_manager.getEntities()) {
+        if (e->hasComponent<CDraggable>() && e->getComponent<CDraggable>().dragged) {
+            Vec2 room = getCurrentRoom();
+            auto window_size = m_engine->window().getSize();
+            Vec2 room_pos = {
+                m_mouse_pos.x + room.x * window_size.x,
+                m_mouse_pos.y + room.y * window_size.y
+            };
+            e->getComponent<CTransform>().pos = room_pos;
+        }
     }
 }
 
