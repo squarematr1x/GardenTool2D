@@ -241,9 +241,9 @@ void SceneRPG::update() {
         sStatus();
         sCollision();
         sAnimation();
-        sCamera();
     }
 
+    sCamera();
     sDragAndDrop();
     sRender();
     m_current_frame++;
