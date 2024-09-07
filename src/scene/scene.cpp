@@ -160,6 +160,10 @@ void Scene::updateZoom(float scroll_delta) {
 }
 
 void Scene::renderPauseText() {
+    sf::View view = m_engine->window().getView();
+    sf::View default_view = m_engine->window().getDefaultView(); // Ignore zoom level etc.
+    m_engine->window().setView(default_view);
+
     const float w = static_cast<float>(width());
     constexpr float h = 32.0f;
     const sf::Color color = sf::Color(0, 0, 0);
@@ -181,6 +185,7 @@ void Scene::renderPauseText() {
     text.setPosition(w/2 - (text.getLocalBounds().width/2), 5.0f);
 
     m_engine->window().draw(text);
+    m_engine->window().setView(view); // Restore previous view
 }
 
 bool Scene::targetReached(const Vec2& pos, const Vec2& target) const {
