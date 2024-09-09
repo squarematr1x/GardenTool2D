@@ -39,7 +39,7 @@ void SceneSideScroller::init(const std::string& level_path) {
     // m_engine->playMusic("Level1Music");
 }
 
-Vec2 SceneSideScroller::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entity> entity) {
+Vec2 SceneSideScroller::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entity> entity) const {
     if (entity->hasComponent<CAnimation>()) {
         const auto animation_size = entity->getComponent<CAnimation>().animation.getSize();
         const float x = grid_x * m_grid_size.x + (animation_size.x / 2.0f);
@@ -55,13 +55,6 @@ Vec2 SceneSideScroller::gridToMidPixel(float grid_x, float grid_y, std::shared_p
         return Vec2(x, y);
     }
     return Vec2(0, 0);
-}
-
-Vec2 SceneSideScroller::fitToGrid(const Vec2& pos) const {
-    return Vec2(
-        floorf(pos.x/m_grid_size.x)*m_grid_size.x + m_grid_size.x/2,
-        floorf(pos.y/m_grid_size.y)*m_grid_size.y + m_grid_size.y/2
-    );
 }
 
 // NOTE: Doesn't take zooming into account
@@ -239,12 +232,12 @@ void SceneSideScroller::update() {
         sLifespan();
         sCollision();
         sAnimation();
-        sCamera();
     }
     // sf::View mini_map = m_engine->window().getView();
     // mini_map.setViewport(sf::FloatRect(0.75f, 0.0f, 0.25f, 0.25f));
     // m_engine->window().setView(mini_map);
 
+    sCamera();
     sDragAndDrop();
     sRender();
 
@@ -614,7 +607,7 @@ void SceneSideScroller::sRender() {
     }
 
     if (m_draw_grid || m_engine->editMode()) {
-        renderGrid(m_grid_size, m_grid_text);
+        renderGrid();
     }
 
     if (m_paused) {

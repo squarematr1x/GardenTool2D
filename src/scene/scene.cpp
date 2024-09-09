@@ -9,6 +9,13 @@ size_t Scene::height() const {
     return m_engine->window().getSize().y;
 }
 
+Vec2 Scene::fitToGrid(const Vec2& pos) const {
+    return Vec2(
+        floorf(pos.x/m_grid_size.x)*m_grid_size.x + m_grid_size.x/2,
+        floorf(pos.y/m_grid_size.y)*m_grid_size.y + m_grid_size.y/2
+    );
+}
+
 void Scene::drawLine(const Vec2& p1, const Vec2& p2) {
     const sf::Vertex line[] = {
         {{p1.x, p1.y}, sf::Color(255, 255, 255)},
@@ -17,32 +24,34 @@ void Scene::drawLine(const Vec2& p1, const Vec2& p2) {
     m_engine->window().draw(line, 2, sf::Lines);
 }
 
-void Scene::renderGrid(const Vec2& grid_size, sf::Text& grid_text, bool show_coordinates) {
+void Scene::renderGrid(bool show_coordinates) {
     const size_t w = width();
     const size_t h = height();
     const float left_x = m_engine->window().getView().getCenter().x - w / 2;
-    const float right_x = left_x + w + grid_size.x;
-    const float next_grid_x = left_x - (static_cast<int>(left_x) % static_cast<int>(grid_size.x));
+    const float right_x = left_x + w + m_grid_size.x;
+    const float next_grid_x = left_x - (static_cast<int>(left_x) % static_cast<int>(m_grid_size.x));
 
     sf::VertexArray vertices(sf::Lines);
 
-    for (float x = next_grid_x; x < right_x; x += grid_size.x) {
+    for (float x = next_grid_x; x < right_x; x += m_grid_size.x) {
         addLine(Vec2(x, 0.0f), Vec2(x, h), vertices);
     }
 
-    for (float y = 0; y < h; y += grid_size.y) {
+    for (float y = 0; y < h; y += m_grid_size.y) {
         addLine(Vec2(left_x, h - y), Vec2(right_x, h - y), vertices);
 
         if (!show_coordinates) {
             continue;
         }
 
-        for (float x = next_grid_x; x < right_x; x += grid_size.x) {
-            std::string x_cell = std::to_string(static_cast<int>(x) / static_cast<int>(grid_size.x));
-            std::string y_cell = std::to_string(static_cast<int>(y) / static_cast<int>(grid_size.y));
-            grid_text.setString("(" + x_cell + "," + y_cell + ")");
-            grid_text.setPosition(x + 3, h - y - grid_size.y + 2);
-            m_engine->window().draw(grid_text);
+        for (float x = next_grid_x; x < right_x; x += m_grid_size.x) {
+            const std::string x_cell = std::to_string(static_cast<int>(x) / static_cast<int>(m_grid_size.x));
+            const std::string y_cell = std::to_string(static_cast<int>(y) / static_cast<int>(m_grid_size.y));
+            const int x_offset = 3;
+            const int y_offset = 2;
+            m_grid_text.setString("(" + x_cell + "," + y_cell + ")");
+            m_grid_text.setPosition(x + x_offset, h - y - m_grid_size.y + y_offset);
+            m_engine->window().draw(m_grid_text);
         }
     }
     m_engine->window().draw(vertices);
@@ -147,10 +156,29 @@ void Scene::updateZoom(float scroll_delta) {
     const int new_level = m_zoom.level + level;
     if (new_level >= -m_zoom.max_level && new_level <= m_zoom.max_level) {
         m_zoom.level = new_level;
+        // a(n) = n^2 - 1
+        m_zoom.magnitude = powf(2.0f, static_cast<float>(m_zoom.level)) - 1.0f;
     }
 }
 
+Vec2 Scene::worldPos(const Vec2& room) {
+    Vec2 world_pos = {
+        m_mouse_pos.x + ((m_mouse_pos.x - width()/2) * m_zoom.magnitude),
+        m_mouse_pos.y + ((m_mouse_pos.y - height()/2) * m_zoom.magnitude)
+    };
+    Vec2 room_pos = {
+        world_pos.x + room.x * width(),
+        world_pos.y + room.y * height()
+    };
+
+    return room_pos;
+}
+
 void Scene::renderPauseText() {
+    sf::View view = m_engine->window().getView();
+    sf::View default_view = m_engine->window().getDefaultView(); // Ignore zoom level etc.
+    m_engine->window().setView(default_view);
+
     const float w = static_cast<float>(width());
     constexpr float h = 32.0f;
     const sf::Color color = sf::Color(0, 0, 0);
@@ -172,6 +200,7 @@ void Scene::renderPauseText() {
     text.setPosition(w/2 - (text.getLocalBounds().width/2), 5.0f);
 
     m_engine->window().draw(text);
+    m_engine->window().setView(view); // Restore previous view
 }
 
 bool Scene::targetReached(const Vec2& pos, const Vec2& target) const {

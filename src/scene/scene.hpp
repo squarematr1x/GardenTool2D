@@ -23,7 +23,8 @@ class Scene
 public:
 	// To zoom views when mouse scrolled
 	struct Zoom {
-		float value{ 1.0f };
+		float value{ 1.0f }; // For setting the view
+		float magnitude{ 0.0f }; // For world pos calculations
 		int level{ 0 };
 		int prev_level{ 0 };
 		int max_level{ 4 };
@@ -45,10 +46,13 @@ public:
 	bool hasEnded() const { return m_has_ended; }
 	const std::map<int, ActionName>& getActionMap() const { return m_action_map; }
 
+	Vec2 fitToGrid(const Vec2& pos) const;
+	Vec2 worldPos(const Vec2& room);
+
 	// Rendering helpers
 	void drawLine(const Vec2& p1, const Vec2& p2);
 
-	void renderGrid(const Vec2& grid_size, sf::Text& grid_text, bool show_coordinates = false);
+	void renderGrid(bool show_coordinates = false);
 	void renderBBoxes();
 	void renderCursor();
 	void renderHpBars();
@@ -89,6 +93,10 @@ protected:
 	bool m_show_ai_info{ false };
 
 	std::string m_level_path{ "" };
+
+	Vec2 m_mouse_pos;
+	const Vec2 m_grid_size{ 64, 64 };
+	sf::Text m_grid_text;
 
 	virtual void onEnd() = 0;
 	void setPaused(bool paused) { m_paused = paused; }
@@ -134,11 +142,8 @@ class SceneSideScroller: public Scene
 	PlayerConfig m_player_config;
 	bool m_can_shoot{ true };
 	bool m_can_jump{ true };
-	const Vec2 m_grid_size{ 64, 64 };
-	sf::Text m_grid_text;
 	std::vector<Layer> m_background_layers;
 
-	Vec2 m_mouse_pos;
 	sf::CircleShape m_mouse_shape;
 
 public:
@@ -147,9 +152,8 @@ public:
 	void init(const std::string& level_path);
 	void update();
 
-	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity);
+	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity) const;
 	Vec2 mouseToWorldPos(const Vec2& mouse_pos) const;
-	Vec2 fitToGrid(const Vec2& pos) const;
 
 	void loadLevel(const std::string& path);
 
@@ -189,7 +193,6 @@ class SceneRPG: public Scene
 	bool m_follow{ false };
 	bool m_show_health{ true };
 	bool m_can_attack{ true };
-	const Vec2 m_grid_size{ 64, 64 };
 	const Vec2 m_room_size{ 20, 12 }; // 20x12 grids
 	std::vector<Vec2> m_doorways;
 
@@ -218,6 +221,7 @@ public:
 	void sCamera();
 	void sDoAction(const Action& action);
 	void sRender();
+	void sDragAndDrop();
 
 	void onEnd();
 };

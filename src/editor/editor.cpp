@@ -109,7 +109,13 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                             ImGui::SameLine();
                             ImGui::SetNextItemWidth(100);
                             ImGui::InputInt("Max hp", &hp.max);
-                            hp.percentage = static_cast<float>(hp.current/hp.max);
+                            if (hp.max < hp.current) {
+                                hp.max = hp.current;
+                            }
+                            if (hp.current < 1) {
+                                hp.current = 1; 
+                            }
+                            hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
                         } else if (ImGui::Button("Add health")) {
                             e->addComponent<CHealth>();
                         }
@@ -122,6 +128,16 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                             ImGui::InputInt("Damage", &damage.damage);
                         } else if (ImGui::Button("Add damage")) {
                             e->addComponent<CDamage>();
+                        }
+                        ImGui::TreePop();
+                    }
+                    if (ImGui::TreeNode("Invincibility")) {
+                        if (e->hasComponent<CInvincibility>()) {
+                            auto& invincibility = e->getComponent<CInvincibility>();
+                            ImGui::SetNextItemWidth(100);
+                            ImGui::InputInt("Time (frames)", &invincibility.i_frames, 60, 60);
+                        } else if (ImGui::Button("Add invincibility")) {
+                            e->addComponent<CInvincibility>();
                         }
                         ImGui::TreePop();
                     }
