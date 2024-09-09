@@ -156,7 +156,22 @@ void Scene::updateZoom(float scroll_delta) {
     const int new_level = m_zoom.level + level;
     if (new_level >= -m_zoom.max_level && new_level <= m_zoom.max_level) {
         m_zoom.level = new_level;
+        // a(n) = n^2 - 1
+        m_zoom.magnitude = powf(2.0f, static_cast<float>(m_zoom.level)) - 1.0f;
     }
+}
+
+Vec2 Scene::worldPos(const Vec2& room) {
+    Vec2 world_pos = {
+        m_mouse_pos.x + ((m_mouse_pos.x - width()/2) * m_zoom.magnitude),
+        m_mouse_pos.y + ((m_mouse_pos.y - height()/2) * m_zoom.magnitude)
+    };
+    Vec2 room_pos = {
+        world_pos.x + room.x * width(),
+        world_pos.y + room.y * height()
+    };
+
+    return room_pos;
 }
 
 void Scene::renderPauseText() {

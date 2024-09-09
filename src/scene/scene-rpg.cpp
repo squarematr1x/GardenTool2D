@@ -336,12 +336,8 @@ void SceneRPG::sDoAction(const Action& action) {
 
                 for (auto e : m_entity_manager.getEntities()) {
                     Vec2 room = getCurrentRoom();
-                    auto window_size = m_engine->window().getSize();
-                    Vec2 room_pos = {
-                        action.pos.x + room.x * window_size.x,
-                        action.pos.y + room.y * window_size.y
-                    };
-                    if (physics::isInside(room_pos, e)) {
+                    Vec2 world_pos = worldPos(room);
+                    if (physics::isInside(world_pos, e)) {
                         m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity
                         if (e->hasComponent<CDraggable>()) {
                             e->getComponent<CDraggable>().dragged = true;
@@ -363,16 +359,13 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::LEFT_CLICK: {
                 if (m_engine->editMode()) {
                     Vec2 room = getCurrentRoom();
-                    auto window_size = m_engine->window().getSize();
-                    Vec2 room_pos = {
-                        action.pos.x + room.x * window_size.x,
-                        action.pos.y + room.y * window_size.y
-                    };
+                    Vec2 world_pos = worldPos(room);
+
 
                     for (auto e : m_entity_manager.getEntities()) {
-                        if (e->hasComponent<CDraggable>() && physics::isInside(room_pos, e)) {
+                        if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
                             e->getComponent<CDraggable>().dragged = false;
-                            e->getComponent<CTransform>().pos = (fitToGrid(room_pos));
+                            e->getComponent<CTransform>().pos = (fitToGrid(world_pos));
                         }
                     }
                     break;
@@ -696,12 +689,7 @@ void SceneRPG::sDragAndDrop() {
     for (auto e : m_entity_manager.getEntities()) {
         if (e->hasComponent<CDraggable>() && e->getComponent<CDraggable>().dragged) {
             Vec2 room = getCurrentRoom();
-            auto window_size = m_engine->window().getSize();
-            Vec2 room_pos = {
-                m_mouse_pos.x + room.x * window_size.x,
-                m_mouse_pos.y + room.y * window_size.y
-            };
-            e->getComponent<CTransform>().pos = room_pos;
+            e->getComponent<CTransform>().pos = worldPos(room);
         }
     }
 }

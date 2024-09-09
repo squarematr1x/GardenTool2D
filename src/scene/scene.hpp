@@ -23,7 +23,8 @@ class Scene
 public:
 	// To zoom views when mouse scrolled
 	struct Zoom {
-		float value{ 1.0f };
+		float value{ 1.0f }; // For setting the view
+		float magnitude{ 0.0f }; // For world pos calculations
 		int level{ 0 };
 		int prev_level{ 0 };
 		int max_level{ 4 };
@@ -46,6 +47,7 @@ public:
 	const std::map<int, ActionName>& getActionMap() const { return m_action_map; }
 
 	Vec2 fitToGrid(const Vec2& pos) const;
+	Vec2 worldPos(const Vec2& room);
 
 	// Rendering helpers
 	void drawLine(const Vec2& p1, const Vec2& p2);
