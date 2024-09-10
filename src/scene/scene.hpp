@@ -72,11 +72,8 @@ public:
 	EntityManager& getEntityManager() { return m_entity_manager; }
 
 protected:
-	Scene(GameEngine* engine)
-		: m_engine(engine) {}
-
-	Scene(GameEngine* engine, const std::string& level_path)
-		: m_engine(engine), m_level_path(level_path) {}
+	Scene(GameEngine* engine);
+	Scene(GameEngine* engine, const std::string& level_path);
 
 	GameEngine* m_engine{ nullptr };
 	EntityManager m_entity_manager;
@@ -95,6 +92,7 @@ protected:
 	std::string m_level_path{ "" };
 
 	Vec2 m_mouse_pos;
+	Vec2 m_grid{ 0, 0 };
 	const Vec2 m_grid_size{ 64, 64 };
 	sf::Text m_grid_text;
 
