@@ -53,6 +53,7 @@ public:
 	void drawLine(const Vec2& p1, const Vec2& p2);
 
 	void renderGrid(bool show_coordinates = false);
+	void renderActiveGridCell();
 	void renderBBoxes();
 	void renderCursor();
 	void renderHpBars();
@@ -92,8 +93,8 @@ protected:
 	std::string m_level_path{ "" };
 
 	Vec2 m_mouse_pos;
-	Vec2 m_grid{ 0, 0 };
-	const Vec2 m_grid_size{ 64, 64 };
+	Vec2 m_grid_size{ 0, 0 };
+	const Vec2 m_grid_cell_size{ 64, 64 };
 	sf::Text m_grid_text;
 
 	virtual void onEnd() = 0;

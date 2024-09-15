@@ -42,15 +42,15 @@ void SceneSideScroller::init(const std::string& level_path) {
 Vec2 SceneSideScroller::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entity> entity) const {
     if (entity->hasComponent<CAnimation>()) {
         const auto animation_size = entity->getComponent<CAnimation>().animation.getSize();
-        const float x = grid_x * m_grid_size.x + (animation_size.x / 2.0f);
-        const float y = height() - (grid_y * m_grid_size.y + (animation_size.y / 2.0f));
+        const float x = grid_x * m_grid_cell_size.x + (animation_size.x / 2.0f);
+        const float y = height() - (grid_y * m_grid_cell_size.y + (animation_size.y / 2.0f));
 
         return Vec2(x, y);
     }
     if (entity->hasComponent<CBBox>()) {
         const auto half_size = entity->getComponent<CBBox>().half_size;
-        const float x = grid_x * m_grid_size.x + half_size.x;
-        const float y = height() - (grid_y * m_grid_size.y + half_size.y);
+        const float x = grid_x * m_grid_cell_size.x + half_size.x;
+        const float y = height() - (grid_y * m_grid_cell_size.y + half_size.y);
 
         return Vec2(x, y);
     }
@@ -364,8 +364,8 @@ void SceneSideScroller::sCollision() {
         if (entity->tag() == Tag::CHECKPOINT) {
             if (physics::overlapping(m_player, entity)) {
                 auto checkpointPos = entity->getComponent<CTransform>().pos;
-                m_player_config.x = (checkpointPos.x - (m_grid_size.x / 2.0f)) / m_grid_size.x;
-                m_player_config.y = ((height() - checkpointPos.y - (m_grid_size.y / 2.0f)) / m_grid_size.y);
+                m_player_config.x = (checkpointPos.x - (m_grid_cell_size.x / 2.0f)) / m_grid_cell_size.x;
+                m_player_config.y = ((height() - checkpointPos.y - (m_grid_cell_size.y / 2.0f)) / m_grid_cell_size.y);
             }
         }
 

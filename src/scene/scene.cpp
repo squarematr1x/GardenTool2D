@@ -3,12 +3,12 @@
 
 Scene::Scene(GameEngine* engine)
     : m_engine(engine) {
-    m_grid = Vec2(width(), height());
+    m_grid_size = Vec2(width(), height());
 }
 
 Scene::Scene(GameEngine* engine, const std::string& level_path)
     : m_engine(engine), m_level_path(level_path) {
-    m_grid = Vec2(width(), height());
+    m_grid_size = Vec2(width(), height());
 }
 
 size_t Scene::width() const {
@@ -21,8 +21,8 @@ size_t Scene::height() const {
 
 Vec2 Scene::fitToGrid(const Vec2& pos) const {
     return Vec2(
-        floorf(pos.x/m_grid_size.x)*m_grid_size.x + m_grid_size.x/2,
-        floorf(pos.y/m_grid_size.y)*m_grid_size.y + m_grid_size.y/2
+        floorf(pos.x/m_grid_cell_size.x)*m_grid_cell_size.x + m_grid_cell_size.x/2,
+        floorf(pos.y/m_grid_cell_size.y)*m_grid_cell_size.y + m_grid_cell_size.y/2
     );
 }
 
@@ -35,41 +35,48 @@ void Scene::drawLine(const Vec2& p1, const Vec2& p2) {
 }
 
 void Scene::renderGrid(bool show_coordinates) {
-    const float w = m_grid.x;
-    const float h = m_grid.y;
+    const float w = m_grid_size.x;
+    const float h = m_grid_size.y;
 
     const float left_x = m_engine->window().getView().getCenter().x - w / 2;
-    const float right_x = left_x + w + m_grid_size.x;
-    const float next_grid_x = left_x - (static_cast<int>(left_x) % static_cast<int>(m_grid_size.x));
+    const float right_x = left_x + w + m_grid_cell_size.x;
+    const float next_grid_x = left_x - (static_cast<int>(left_x) % static_cast<int>(m_grid_cell_size.x));
 
     const float up_y = m_engine->window().getView().getCenter().y - h / 2;
-    const float low_y = up_y + h + m_grid_size.y;
-    const float next_grid_y = up_y - (static_cast<int>(up_y) % static_cast<int>(m_grid_size.y));
+    const float low_y = up_y + h + m_grid_cell_size.y;
+    const float next_grid_y = up_y - (static_cast<int>(up_y) % static_cast<int>(m_grid_cell_size.y));
 
     sf::VertexArray vertices(sf::Lines);
 
-    for (float x = next_grid_x; x < right_x; x += m_grid_size.x) {
+    for (float x = next_grid_x; x < right_x; x += m_grid_cell_size.x) {
         addLine(Vec2(x, up_y), Vec2(x, low_y), vertices);
     }
 
-    for (float y = next_grid_y; y < low_y; y += m_grid_size.y) {
+    for (float y = next_grid_y; y < low_y; y += m_grid_cell_size.y) {
         addLine(Vec2(left_x, y), Vec2(right_x, y), vertices);
 
         if (!show_coordinates) {
             continue;
         }
 
-        for (float x = next_grid_x; x < right_x; x += m_grid_size.x) {
-            const std::string x_cell = std::to_string(static_cast<int>(x) / static_cast<int>(m_grid_size.x));
-            const std::string y_cell = std::to_string(static_cast<int>(y) / static_cast<int>(m_grid_size.y));
+        for (float x = next_grid_x; x < right_x; x += m_grid_cell_size.x) {
+            const std::string x_cell = std::to_string(static_cast<int>(x) / static_cast<int>(m_grid_cell_size.x));
+            const std::string y_cell = std::to_string(static_cast<int>(y) / static_cast<int>(m_grid_cell_size.y));
             const int x_offset = 3;
             const int y_offset = 2;
             m_grid_text.setString("(" + x_cell + "," + y_cell + ")");
-            m_grid_text.setPosition(x + x_offset, h - y - m_grid_size.y + y_offset);
+            m_grid_text.setPosition(x + x_offset, h - y - m_grid_cell_size.y + y_offset);
             m_engine->window().draw(m_grid_text);
         }
     }
     m_engine->window().draw(vertices);
+    renderActiveGridCell();
+}
+
+void Scene::renderActiveGridCell() {
+    // 1. Mouse pos to grid pos
+    // 2. Construct rectangle (partially transparent)
+    // 3. Draw
 }
 
 void Scene::renderBBoxes() {
@@ -175,12 +182,12 @@ void Scene::updateZoom(float scroll_delta) {
         m_zoom.magnitude = powf(2.0f, static_cast<float>(m_zoom.level)) - 1.0f;
 
         if (m_zoom.level > 0) {
-            m_grid = Vec2(
+            m_grid_size = Vec2(
                 width() * powf(2, m_zoom.level),
                 height() * powf(2, m_zoom.level)
             );
         } else {
-            m_grid = Vec2(width(), height());
+            m_grid_size = Vec2(width(), height());
         }
     }
 }
