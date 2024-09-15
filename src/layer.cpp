@@ -13,7 +13,7 @@ void Layer::update(float velocity_x, float coeff) {
     m_sprite.setPosition(m_sprite_offset_x, m_size.y);
 }   
 
-void Layer::scale(unsigned int window_w, unsigned int window_h) {
+void Layer::scale(size_t window_w, size_t window_h) {
     m_sprite.scale(
         window_w/static_cast<unsigned int>(m_size.x),
         window_h/static_cast<unsigned int>(m_size.y)
