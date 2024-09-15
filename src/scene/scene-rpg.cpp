@@ -130,23 +130,23 @@ void SceneRPG::loadLevel(const std::string& path) {
 }
 
 Vec2 SceneRPG::getPosition(float rx, float ry, float tx, float ty) const {
-    const float room_start_x = rx * m_grid_size.x * m_room_size.x;
-    const float room_start_y = ry * m_grid_size.y * m_room_size.y;
+    const float room_start_x = rx*m_grid_cell_size.x*m_room_size.x;
+    const float room_start_y = ry*m_grid_cell_size.y*m_room_size.y;
 
-    return Vec2(room_start_x + tx*m_grid_size.x + m_grid_size.x/2, room_start_y + ty*m_grid_size.y + m_grid_size.y/2);
+    return Vec2(room_start_x + tx*m_grid_cell_size.x + m_grid_cell_size.x/2, room_start_y + ty*m_grid_cell_size.y + m_grid_cell_size.y/2);
 }
 
 Vec2 SceneRPG::getCurrentRoom() const {
     Vec2 p_pos = m_player->getComponent<CTransform>().pos;
-    return Vec2(floorf(p_pos.x/(m_room_size.x*m_grid_size.x)), floorf(p_pos.y/(m_room_size.y*m_grid_size.y)));
+    return Vec2(floorf(p_pos.x/(m_room_size.x*m_grid_cell_size.x)), floorf(p_pos.y/(m_room_size.y*m_grid_cell_size.y)));
 }
 
 void SceneRPG::spawnPlayer() {
     m_player = m_entity_manager.addEntity(Tag::PLAYER);
     m_player->addComponent<CTransform>(
         Vec2(
-            m_player_config.x*m_grid_size.x + m_grid_size.x/2,
-            m_player_config.y*m_grid_size.y + m_grid_size.y/2),
+            m_player_config.x*m_grid_cell_size.x + m_grid_cell_size.x/2,
+            m_player_config.y*m_grid_cell_size.y + m_grid_cell_size.y/2),
         true
     );
     m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PDown"), true);
@@ -197,8 +197,8 @@ void SceneRPG::setSwordPos(std::shared_ptr<Entity> sword, const Vec2& facing, co
     }
 
     Vec2 swor_pos(
-        pos.x + facing.x*m_grid_size.x,
-        pos.y + facing.y*m_grid_size.y
+        pos.x + facing.x*m_grid_cell_size.x,
+        pos.y + facing.y*m_grid_cell_size.y
     );
 
     Vec2 sword_bbox = facing.x == 0.0f ? Vec2(32.0f, 64.0f) : Vec2(64.0f, 32.0f);
@@ -335,8 +335,7 @@ void SceneRPG::sDoAction(const Action& action) {
                 }
 
                 for (auto e : m_entity_manager.getEntities()) {
-                    Vec2 room = getCurrentRoom();
-                    Vec2 world_pos = worldPos(room);
+                    Vec2 world_pos = worldPos(getCurrentRoom());
                     if (physics::isInside(world_pos, e)) {
                         m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity
                         if (e->hasComponent<CDraggable>()) {
@@ -358,8 +357,7 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::ATTACK: m_player->getComponent<CInput>().attack = false; break;
             case ActionName::LEFT_CLICK: {
                 if (m_engine->editMode()) {
-                    Vec2 room = getCurrentRoom();
-                    Vec2 world_pos = worldPos(room);
+                    Vec2 world_pos = worldPos(getCurrentRoom());
 
 
                     for (auto e : m_entity_manager.getEntities()) {
@@ -622,11 +620,10 @@ void SceneRPG::sCamera() {
         view.setCenter(p_pos.x, p_pos.y);
     } else {
         // Get view for room-based camera
-        auto window_size = m_engine->window().getSize();
         Vec2 room = getCurrentRoom();
         view.setCenter(
-            static_cast<float>((window_size.x/2) + room.x*window_size.x),
-            static_cast<float>((window_size.y/2) + room.y*window_size.y)
+            static_cast<float>((width()/2) + room.x*width()),
+            static_cast<float>((height()/2) + room.y*height())
         );
     }
     if (m_zoom.level != m_zoom.prev_level) {
@@ -674,6 +671,7 @@ void SceneRPG::sRender() {
 
     if (m_draw_grid || m_engine->editMode()) {
         renderGrid();
+        renderActiveGridCell(getCurrentRoom());
     }
 
     if (m_draw_collision || m_engine->editMode()) {
@@ -688,8 +686,7 @@ void SceneRPG::sRender() {
 void SceneRPG::sDragAndDrop() {
     for (auto e : m_entity_manager.getEntities()) {
         if (e->hasComponent<CDraggable>() && e->getComponent<CDraggable>().dragged) {
-            Vec2 room = getCurrentRoom();
-            e->getComponent<CTransform>().pos = worldPos(room);
+            e->getComponent<CTransform>().pos = worldPos(getCurrentRoom());
         }
     }
 }

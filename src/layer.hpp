@@ -19,7 +19,7 @@ public:
     Layer(const std::string& name, const sf::Texture& texture);
 
     void update(float velocity_x, float coeff = 0.025f);
-    void scale(unsigned int window_w, unsigned int window_h);
+    void scale(size_t window_w, size_t window_h);
 
     sf::Sprite& getSprite() { return m_sprite; }
     const sf::View& getView() { return m_view; }

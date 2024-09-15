@@ -42,15 +42,15 @@ void SceneSideScroller::init(const std::string& level_path) {
 Vec2 SceneSideScroller::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entity> entity) const {
     if (entity->hasComponent<CAnimation>()) {
         const auto animation_size = entity->getComponent<CAnimation>().animation.getSize();
-        const float x = grid_x * m_grid_size.x + (animation_size.x / 2.0f);
-        const float y = height() - (grid_y * m_grid_size.y + (animation_size.y / 2.0f));
+        const float x = grid_x*m_grid_cell_size.x + (animation_size.x/2.0f);
+        const float y = height() - (grid_y*m_grid_cell_size.y + (animation_size.y/2.0f));
 
         return Vec2(x, y);
     }
     if (entity->hasComponent<CBBox>()) {
         const auto half_size = entity->getComponent<CBBox>().half_size;
-        const float x = grid_x * m_grid_size.x + half_size.x;
-        const float y = height() - (grid_y * m_grid_size.y + half_size.y);
+        const float x = grid_x*m_grid_cell_size.x + half_size.x;
+        const float y = height() - (grid_y*m_grid_cell_size.y + half_size.y);
 
         return Vec2(x, y);
     }
@@ -60,8 +60,8 @@ Vec2 SceneSideScroller::gridToMidPixel(float grid_x, float grid_y, std::shared_p
 // NOTE: Doesn't take zooming into account
 Vec2 SceneSideScroller::mouseToWorldPos(const Vec2& mouse_pos) const {
     auto view = m_engine->window().getView();
-    float world_x = view.getCenter().x - (m_engine->window().getSize().x/2);
-    float world_y = view.getCenter().y - (m_engine->window().getSize().y/2);
+    float world_x = view.getCenter().x - (width()/2);
+    float world_y = view.getCenter().y - (height()/2);
 
     return Vec2(mouse_pos.x + world_x, mouse_pos.y + world_y);
 }
@@ -364,8 +364,8 @@ void SceneSideScroller::sCollision() {
         if (entity->tag() == Tag::CHECKPOINT) {
             if (physics::overlapping(m_player, entity)) {
                 auto checkpointPos = entity->getComponent<CTransform>().pos;
-                m_player_config.x = (checkpointPos.x - (m_grid_size.x / 2.0f)) / m_grid_size.x;
-                m_player_config.y = ((height() - checkpointPos.y - (m_grid_size.y / 2.0f)) / m_grid_size.y);
+                m_player_config.x = (checkpointPos.x - (m_grid_cell_size.x/2.0f))/m_grid_cell_size.x;
+                m_player_config.y = ((height() - checkpointPos.y - (m_grid_cell_size.y/2.0f))/m_grid_cell_size.y);
             }
         }
 
@@ -548,10 +548,10 @@ void SceneSideScroller::sAnimation() {
 
 void SceneSideScroller::sCamera() {
     auto& p_pos = m_player->getComponent<CTransform>().pos;
-    float window_center_x = std::max(m_engine->window().getSize().x / 2.0f, p_pos.x);
+    float window_center_x = std::max(width()/2.0f, p_pos.x);
     sf::View view = m_engine->window().getView();
 
-    view.setCenter(window_center_x, m_engine->window().getSize().y - view.getCenter().y);
+    view.setCenter(window_center_x, height() - view.getCenter().y);
     
     if (m_zoom.level != m_zoom.prev_level) {
         m_zoom.prev_level = m_zoom.level;
@@ -572,7 +572,7 @@ void SceneSideScroller::sRender() {
         layer.update(p_transform.velocity.x, parallax_velocity);
         parallax_velocity += 0.05f;
         if (m_current_frame == 0) {
-            layer.scale(m_engine->window().getSize().x, m_engine->window().getSize().y);
+            layer.scale(width(), height());
         }
         m_engine->window().setView(layer.getView());
         m_engine->window().draw(layer.getSprite());
@@ -608,6 +608,7 @@ void SceneSideScroller::sRender() {
 
     if (m_draw_grid || m_engine->editMode()) {
         renderGrid();
+        renderActiveGridCell();
     }
 
     if (m_paused) {

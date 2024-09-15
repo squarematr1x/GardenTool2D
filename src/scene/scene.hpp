@@ -46,13 +46,14 @@ public:
 	bool hasEnded() const { return m_has_ended; }
 	const std::map<int, ActionName>& getActionMap() const { return m_action_map; }
 
-	Vec2 fitToGrid(const Vec2& pos) const;
-	Vec2 worldPos(const Vec2& room);
+	Vec2 fitToGrid(const Vec2& pos, bool mid_pixel = true) const;
+	Vec2 worldPos(const Vec2& room = Vec2(0, 0));
 
 	// Rendering helpers
 	void drawLine(const Vec2& p1, const Vec2& p2);
 
 	void renderGrid(bool show_coordinates = false);
+	void renderActiveGridCell(const Vec2& room = Vec2(0, 0));
 	void renderBBoxes();
 	void renderCursor();
 	void renderHpBars();
@@ -92,8 +93,8 @@ protected:
 	std::string m_level_path{ "" };
 
 	Vec2 m_mouse_pos;
-	Vec2 m_grid{ 0, 0 };
-	const Vec2 m_grid_size{ 64, 64 };
+	Vec2 m_grid_size{ 0, 0 };
+	const Vec2 m_grid_cell_size{ 64, 64 };
 	sf::Text m_grid_text;
 
 	virtual void onEnd() = 0;

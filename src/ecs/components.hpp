@@ -105,7 +105,7 @@ struct CHealth: Component {
 	CHealth(int max_in, int current_in)
 		: max(max_in),
 		current(current_in),
-		percentage(static_cast<float>(current_in) / static_cast<float>(max_in))
+		percentage(static_cast<float>(current_in)/static_cast<float>(max_in))
 	{
 	} 
 };
@@ -161,13 +161,13 @@ struct CBBox: Component {
 
 	CBBox() {}
 	CBBox(Vec2 size_in)
-		: size(size_in), half_size(size_in / 2)
+		: size(size_in), half_size(size_in/2)
 	{
 	}
 
 	CBBox(Vec2 size_in, bool block_movement_in, bool block_vision_in)
 		: size(size_in),
-		half_size(size_in / 2),
+		half_size(size_in/2),
 		block_movement(block_movement_in),
 		block_vision(block_vision_in)
 	{
@@ -175,7 +175,7 @@ struct CBBox: Component {
 
 	CBBox(Vec2 size_in, bool block_movement_in, bool block_vision_in, bool breakable_in)
 		: size(size_in),
-		half_size(size_in / 2),
+		half_size(size_in/2),
 		block_movement(block_movement_in),
 		block_vision(block_vision_in),
 		breakable(breakable_in)
