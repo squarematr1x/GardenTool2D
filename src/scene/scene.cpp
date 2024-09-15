@@ -19,6 +19,11 @@ size_t Scene::height() const {
     return m_engine->window().getSize().y;
 }
 
+Vec2 Scene::getCenter() const {
+    auto center = m_engine->window().getView().getCenter();
+    return Vec2(center.x, center.y);
+}
+
 Vec2 Scene::fitToGrid(const Vec2& pos, bool mid_pixel) const {
     if (mid_pixel) {
         return Vec2(
@@ -41,14 +46,16 @@ void Scene::drawLine(const Vec2& p1, const Vec2& p2) {
 }
 
 void Scene::renderGrid(bool show_coordinates) {
+    const Vec2 center = getCenter();
+
     const float w = m_grid_size.x;
     const float h = m_grid_size.y;
 
-    const float left_x = m_engine->window().getView().getCenter().x - w/2;
+    const float left_x = center.x - w/2;
     const float right_x = left_x + w + m_grid_cell_size.x;
     const float next_grid_x = left_x - (static_cast<int>(left_x) % static_cast<int>(m_grid_cell_size.x));
 
-    const float up_y = m_engine->window().getView().getCenter().y - h/2;
+    const float up_y = center.y - h/2;
     const float low_y = up_y + h + m_grid_cell_size.y;
     const float next_grid_y = up_y - (static_cast<int>(up_y) % static_cast<int>(m_grid_cell_size.y));
 
@@ -205,6 +212,7 @@ void Scene::updateZoom(float scroll_delta) {
 
 Vec2 Scene::worldPos(const Vec2& room) {
     // TODO: In follow mode this is of by -1*64, -3*64
+    //       This happens after window has been scrolled (e.g. in sidescroller not initially)
     Vec2 world_pos = {
         m_mouse_pos.x + ((m_mouse_pos.x - width()/2)*m_zoom.magnitude),
         m_mouse_pos.y + ((m_mouse_pos.y - height()/2)*m_zoom.magnitude)

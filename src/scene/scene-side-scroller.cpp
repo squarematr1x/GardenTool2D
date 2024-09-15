@@ -59,9 +59,9 @@ Vec2 SceneSideScroller::gridToMidPixel(float grid_x, float grid_y, std::shared_p
 
 // NOTE: Doesn't take zooming into account
 Vec2 SceneSideScroller::mouseToWorldPos(const Vec2& mouse_pos) const {
-    auto view = m_engine->window().getView();
-    float world_x = view.getCenter().x - (width()/2);
-    float world_y = view.getCenter().y - (height()/2);
+    auto center = getCenter();
+    float world_x = center.x - (width()/2);
+    float world_y = center.y - (height()/2);
 
     return Vec2(mouse_pos.x + world_x, mouse_pos.y + world_y);
 }
