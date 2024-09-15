@@ -47,7 +47,7 @@ public:
 	const std::map<int, ActionName>& getActionMap() const { return m_action_map; }
 
 	Vec2 fitToGrid(const Vec2& pos, bool mid_pixel = true) const;
-	Vec2 worldPos(const Vec2& room);
+	Vec2 worldPos(const Vec2& room = Vec2(0, 0));
 
 	// Rendering helpers
 	void drawLine(const Vec2& p1, const Vec2& p2);

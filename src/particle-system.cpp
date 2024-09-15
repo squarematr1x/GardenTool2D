@@ -28,13 +28,13 @@ void ParticleSystem::resetParticle(size_t index, bool first) {
     m_vertices[4*index + 3].color = color;
 
     // Set random velocity
-    float rx = static_cast<float>(static_cast<float>(rand()) / RAND_MAX) * 10.0f - 5.0f;
-    float ry = static_cast<float>(static_cast<float>(rand()) / RAND_MAX) * 10.0f - 5.0f;
+    float rx = static_cast<float>(static_cast<float>(rand())/RAND_MAX)*10.0f - 5.0f;
+    float ry = static_cast<float>(static_cast<float>(rand())/RAND_MAX)*10.0f - 5.0f;
 
     m_particles[index].velocity = sf::Vector2f(rx, ry);
 
     // Set random lifespan
-    m_particles[index].lifespan = 30 + rand()%60;
+    m_particles[index].lifespan = 30 + rand() % 60;
 }
 
 void ParticleSystem::resetParticles(size_t count, float size) {
@@ -49,8 +49,8 @@ void ParticleSystem::resetParticles(size_t count, float size) {
 }
 
 void ParticleSystem::init(sf::Vector2u window_size) {
-    m_emitter.x = m_window_size.x / 2;
-    m_emitter.y = m_window_size.y / 2;
+    m_emitter.x = m_window_size.x/2;
+    m_emitter.y = m_window_size.y/2;
     m_window_size = window_size;
     resetParticles();
 }

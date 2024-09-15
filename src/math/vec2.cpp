@@ -9,11 +9,11 @@ Vec2 Vec2::operator- (const Vec2& p) const {
 }
 
 Vec2 Vec2::operator* (const float scale) const {
-	return Vec2(scale * x, scale * y);
+	return Vec2(scale*x, scale*y);
 }
 
 Vec2 Vec2::operator/ (const float scale) const {
-	return Vec2(x / scale, y / scale);
+	return Vec2(x/scale, y/scale);
 }
 
 Vec2 Vec2::operator+= (const Vec2& p) {
@@ -78,5 +78,5 @@ float Vec2::length() const {
 }
 
 Vec2 Vec2::normalize() const {
-	return *this / sqrtf(x*x + y*y);
+	return *this/sqrtf(x*x + y*y);
 }

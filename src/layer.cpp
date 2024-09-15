@@ -2,20 +2,20 @@
 
 Layer::Layer(const std::string& name, const sf::Texture& texture)
     : m_name(name), m_sprite(texture), m_size(Vec2(texture.getSize().x, texture.getSize().y)) {
-    m_sprite.setTextureRect(sf::IntRect(0, 0, 3 * static_cast<int>(m_size.x), 2 * static_cast<int>(m_size.y)));
+    m_sprite.setTextureRect(sf::IntRect(0, 0, 3*static_cast<int>(m_size.x), 2*static_cast<int>(m_size.y)));
     m_sprite.setOrigin(m_size.x, m_size.y);
 }
 
 void Layer::update(float velocity_x, float coeff) {
     m_view.setCenter(m_view_offset_x, -m_size.y);
-    m_view_offset_x += velocity_x * coeff;
-    m_sprite_offset_x = floor(m_view_offset_x / m_size.x) * m_size.x;
+    m_view_offset_x += velocity_x*coeff;
+    m_sprite_offset_x = floor(m_view_offset_x/m_size.x)*m_size.x;
     m_sprite.setPosition(m_sprite_offset_x, m_size.y);
 }   
 
 void Layer::scale(unsigned int window_w, unsigned int window_h) {
     m_sprite.scale(
-        window_w / static_cast<unsigned int>(m_size.x),
-        window_h / static_cast<unsigned int>(m_size.y)
+        window_w/static_cast<unsigned int>(m_size.x),
+        window_h/static_cast<unsigned int>(m_size.y)
     );
 }

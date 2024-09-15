@@ -130,8 +130,8 @@ void SceneRPG::loadLevel(const std::string& path) {
 }
 
 Vec2 SceneRPG::getPosition(float rx, float ry, float tx, float ty) const {
-    const float room_start_x = rx * m_grid_cell_size.x * m_room_size.x;
-    const float room_start_y = ry * m_grid_cell_size.y * m_room_size.y;
+    const float room_start_x = rx*m_grid_cell_size.x*m_room_size.x;
+    const float room_start_y = ry*m_grid_cell_size.y*m_room_size.y;
 
     return Vec2(room_start_x + tx*m_grid_cell_size.x + m_grid_cell_size.x/2, room_start_y + ty*m_grid_cell_size.y + m_grid_cell_size.y/2);
 }
@@ -335,8 +335,7 @@ void SceneRPG::sDoAction(const Action& action) {
                 }
 
                 for (auto e : m_entity_manager.getEntities()) {
-                    Vec2 room = getCurrentRoom();
-                    Vec2 world_pos = worldPos(room);
+                    Vec2 world_pos = worldPos(getCurrentRoom());
                     if (physics::isInside(world_pos, e)) {
                         m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity
                         if (e->hasComponent<CDraggable>()) {
@@ -358,8 +357,7 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::ATTACK: m_player->getComponent<CInput>().attack = false; break;
             case ActionName::LEFT_CLICK: {
                 if (m_engine->editMode()) {
-                    Vec2 room = getCurrentRoom();
-                    Vec2 world_pos = worldPos(room);
+                    Vec2 world_pos = worldPos(getCurrentRoom());
 
 
                     for (auto e : m_entity_manager.getEntities()) {
@@ -622,11 +620,10 @@ void SceneRPG::sCamera() {
         view.setCenter(p_pos.x, p_pos.y);
     } else {
         // Get view for room-based camera
-        auto window_size = m_engine->window().getSize();
         Vec2 room = getCurrentRoom();
         view.setCenter(
-            static_cast<float>((window_size.x/2) + room.x*window_size.x),
-            static_cast<float>((window_size.y/2) + room.y*window_size.y)
+            static_cast<float>((width()/2) + room.x*width()),
+            static_cast<float>((height()/2) + room.y*height())
         );
     }
     if (m_zoom.level != m_zoom.prev_level) {
@@ -689,8 +686,7 @@ void SceneRPG::sRender() {
 void SceneRPG::sDragAndDrop() {
     for (auto e : m_entity_manager.getEntities()) {
         if (e->hasComponent<CDraggable>() && e->getComponent<CDraggable>().dragged) {
-            Vec2 room = getCurrentRoom();
-            e->getComponent<CTransform>().pos = worldPos(room);
+            e->getComponent<CTransform>().pos = worldPos(getCurrentRoom());
         }
     }
 }
