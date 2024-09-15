@@ -46,14 +46,14 @@ public:
 	bool hasEnded() const { return m_has_ended; }
 	const std::map<int, ActionName>& getActionMap() const { return m_action_map; }
 
-	Vec2 fitToGrid(const Vec2& pos) const;
+	Vec2 fitToGrid(const Vec2& pos, bool mid_pixel = true) const;
 	Vec2 worldPos(const Vec2& room);
 
 	// Rendering helpers
 	void drawLine(const Vec2& p1, const Vec2& p2);
 
 	void renderGrid(bool show_coordinates = false);
-	void renderActiveGridCell();
+	void renderActiveGridCell(const Vec2& room = Vec2(0, 0));
 	void renderBBoxes();
 	void renderCursor();
 	void renderHpBars();

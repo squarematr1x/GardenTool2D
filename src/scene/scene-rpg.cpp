@@ -674,6 +674,7 @@ void SceneRPG::sRender() {
 
     if (m_draw_grid || m_engine->editMode()) {
         renderGrid();
+        renderActiveGridCell(getCurrentRoom());
     }
 
     if (m_draw_collision || m_engine->editMode()) {

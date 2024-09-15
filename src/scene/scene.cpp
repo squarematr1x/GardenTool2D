@@ -19,10 +19,16 @@ size_t Scene::height() const {
     return m_engine->window().getSize().y;
 }
 
-Vec2 Scene::fitToGrid(const Vec2& pos) const {
+Vec2 Scene::fitToGrid(const Vec2& pos, bool mid_pixel) const {
+    if (mid_pixel) {
+        return Vec2(
+            floorf(pos.x/m_grid_cell_size.x)*m_grid_cell_size.x + m_grid_cell_size.x/2,
+            floorf(pos.y/m_grid_cell_size.y)*m_grid_cell_size.y + m_grid_cell_size.y/2
+        );
+    }
     return Vec2(
-        floorf(pos.x/m_grid_cell_size.x)*m_grid_cell_size.x + m_grid_cell_size.x/2,
-        floorf(pos.y/m_grid_cell_size.y)*m_grid_cell_size.y + m_grid_cell_size.y/2
+        floorf(pos.x/m_grid_cell_size.x)*m_grid_cell_size.x,
+        floorf(pos.y/m_grid_cell_size.y)*m_grid_cell_size.y
     );
 }
 
@@ -70,13 +76,18 @@ void Scene::renderGrid(bool show_coordinates) {
         }
     }
     m_engine->window().draw(vertices);
-    renderActiveGridCell();
 }
 
-void Scene::renderActiveGridCell() {
-    // 1. Mouse pos to grid pos
-    // 2. Construct rectangle (partially transparent)
-    // 3. Draw
+void Scene::renderActiveGridCell(const Vec2& room) {
+    Vec2 world_pos = worldPos(room);
+    Vec2 grid_pos = fitToGrid(world_pos, false);
+
+    sf::RectangleShape active_cell;
+    active_cell.setFillColor({255, 255, 255, 128});
+    active_cell.setPosition({grid_pos.x, grid_pos.y});
+    active_cell.setSize({m_grid_cell_size.x, m_grid_cell_size.y});
+
+    m_engine->window().draw(active_cell);
 }
 
 void Scene::renderBBoxes() {
