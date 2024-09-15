@@ -53,11 +53,17 @@ bool Vec2::operator!= (const Vec2& p) const {
 }
 
 Vec2& Vec2::scale(const float scale) {
-	x *= scale; y *= scale; return *this;
+	x *= scale;
+	y *= scale;
+
+	return *this;
 }
 
 Vec2& Vec2::add(const float value) {
-	x += value; y += value; return *this;
+	x += value;
+	y += value;
+
+	return *this;
 }
 
 std::ostream& operator<< (std::ostream& out, const Vec2& p) {
