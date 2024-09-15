@@ -49,7 +49,7 @@ void Scene::renderGrid(bool show_coordinates) {
     sf::VertexArray vertices(sf::Lines);
 
     for (float x = next_grid_x; x < right_x; x += m_grid_size.x) {
-        addLine(Vec2(x, up_y), Vec2(x, h), vertices);
+        addLine(Vec2(x, up_y), Vec2(x, low_y), vertices);
     }
 
     for (float y = next_grid_y; y < low_y; y += m_grid_size.y) {
