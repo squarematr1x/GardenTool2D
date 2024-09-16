@@ -57,15 +57,6 @@ Vec2 SceneSideScroller::gridToMidPixel(float grid_x, float grid_y, std::shared_p
     return Vec2(0, 0);
 }
 
-// NOTE: Doesn't take zooming into account
-Vec2 SceneSideScroller::mouseToWorldPos(const Vec2& mouse_pos) const {
-    auto center = getCenter();
-    float world_x = center.x - (width()/2);
-    float world_y = center.y - (height()/2);
-
-    return Vec2(mouse_pos.x + world_x, mouse_pos.y + world_y);
-}
-
 void SceneSideScroller::loadLevel(const std::string& path) {
     // Reset the entity manager every time we load a level
     m_entity_manager = EntityManager();
@@ -457,7 +448,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
                 if (!m_engine->editMode()) {
                     break;
                 }
-                Vec2 world_pos = mouseToWorldPos(action.pos);
+                Vec2 world_pos = worldPos();
                 auto tile = m_entity_manager.addEntity(Tag::TILE);
                 tile->addComponent<CAnimation>(m_engine->assets().getAnimation("Brick"), true);
                 tile->addComponent<CTransform>(fitToGrid(world_pos));
@@ -471,7 +462,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
                     break;
                 }
 
-                Vec2 world_pos = mouseToWorldPos(action.pos);
+                Vec2 world_pos = worldPos();
                 for (auto e : m_entity_manager.getEntities()) {
                     if (physics::isInside(world_pos, e)) {
                         m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity
@@ -499,7 +490,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::SHOOT: m_player->getComponent<CInput>().attack = false; break;
             case ActionName::LEFT_CLICK: {
                 if (m_engine->editMode()) {
-                    Vec2 world_pos = mouseToWorldPos(action.pos);
+                    Vec2 world_pos = worldPos();
 
                     for (auto e : m_entity_manager.getEntities()) {
                         if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
@@ -619,7 +610,7 @@ void SceneSideScroller::sRender() {
 void SceneSideScroller::sDragAndDrop() {
     for (auto e : m_entity_manager.getEntities()) {
         if (e->hasComponent<CDraggable>() && e->getComponent<CDraggable>().dragged) {
-            Vec2 world_pos = mouseToWorldPos(m_mouse_pos);
+            Vec2 world_pos = worldPos();
             e->getComponent<CTransform>().pos = world_pos;
         }
     }

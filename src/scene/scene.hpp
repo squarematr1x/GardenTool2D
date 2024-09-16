@@ -153,7 +153,6 @@ public:
 	void update();
 
 	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity) const;
-	Vec2 mouseToWorldPos(const Vec2& mouse_pos) const;
 
 	void loadLevel(const std::string& path);
 
