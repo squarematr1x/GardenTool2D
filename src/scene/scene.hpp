@@ -47,13 +47,14 @@ public:
 	const std::map<int, ActionName>& getActionMap() const { return m_action_map; }
 
 	Vec2 fitToGrid(const Vec2& pos, bool mid_pixel = true) const;
-	Vec2 worldPos(const Vec2& room = Vec2(0, 0));
+	Vec2 worldPos();
+	Vec2 getCenter() const;
 
 	// Rendering helpers
 	void drawLine(const Vec2& p1, const Vec2& p2);
 
 	void renderGrid(bool show_coordinates = false);
-	void renderActiveGridCell(const Vec2& room = Vec2(0, 0));
+	void renderActiveGridCell();
 	void renderBBoxes();
 	void renderCursor();
 	void renderHpBars();
@@ -152,7 +153,6 @@ public:
 	void update();
 
 	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity) const;
-	Vec2 mouseToWorldPos(const Vec2& mouse_pos) const;
 
 	void loadLevel(const std::string& path);
 

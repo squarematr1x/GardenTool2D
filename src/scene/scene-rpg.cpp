@@ -335,7 +335,7 @@ void SceneRPG::sDoAction(const Action& action) {
                 }
 
                 for (auto e : m_entity_manager.getEntities()) {
-                    Vec2 world_pos = worldPos(getCurrentRoom());
+                    Vec2 world_pos = worldPos();
                     if (physics::isInside(world_pos, e)) {
                         m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity
                         if (e->hasComponent<CDraggable>()) {
@@ -357,7 +357,7 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::ATTACK: m_player->getComponent<CInput>().attack = false; break;
             case ActionName::LEFT_CLICK: {
                 if (m_engine->editMode()) {
-                    Vec2 world_pos = worldPos(getCurrentRoom());
+                    Vec2 world_pos = worldPos();
 
 
                     for (auto e : m_entity_manager.getEntities()) {
@@ -671,7 +671,7 @@ void SceneRPG::sRender() {
 
     if (m_draw_grid || m_engine->editMode()) {
         renderGrid();
-        renderActiveGridCell(getCurrentRoom());
+        renderActiveGridCell();
     }
 
     if (m_draw_collision || m_engine->editMode()) {
@@ -686,7 +686,7 @@ void SceneRPG::sRender() {
 void SceneRPG::sDragAndDrop() {
     for (auto e : m_entity_manager.getEntities()) {
         if (e->hasComponent<CDraggable>() && e->getComponent<CDraggable>().dragged) {
-            e->getComponent<CTransform>().pos = worldPos(getCurrentRoom());
+            e->getComponent<CTransform>().pos = worldPos();
         }
     }
 }
