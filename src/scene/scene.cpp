@@ -85,8 +85,8 @@ void Scene::renderGrid(bool show_coordinates) {
     m_engine->window().draw(vertices);
 }
 
-void Scene::renderActiveGridCell(const Vec2& room) {
-    Vec2 world_pos = worldPos(room);
+void Scene::renderActiveGridCell() {
+    Vec2 world_pos = worldPos();
     Vec2 grid_pos = fitToGrid(world_pos, false);
 
     sf::RectangleShape active_cell;
@@ -210,19 +210,13 @@ void Scene::updateZoom(float scroll_delta) {
     }
 }
 
-Vec2 Scene::worldPos(const Vec2& room) {
-    // TODO: In follow mode this is of by -1*64, -3*64
-    //       This happens after window has been scrolled (e.g. in sidescroller not initially)
-    Vec2 world_pos = {
-        m_mouse_pos.x + ((m_mouse_pos.x - width()/2)*m_zoom.magnitude),
-        m_mouse_pos.y + ((m_mouse_pos.y - height()/2)*m_zoom.magnitude)
-    };
-    world_pos = {
-        world_pos.x + room.x*width(),
-        world_pos.y + room.y*height()
-    };
+Vec2 Scene::worldPos() {
+    auto world_pos = m_engine->window().mapPixelToCoords({
+        static_cast<int>(m_mouse_pos.x),
+        static_cast<int>(m_mouse_pos.y)
+    });
 
-    return world_pos;
+    return Vec2(world_pos.x, world_pos.y);
 }
 
 void Scene::renderPauseText() {
