@@ -38,6 +38,7 @@ class Editor {
     sf::Clock m_dt;
     EntityConfig m_entity_config;
     bool m_previously_created{ false };
+    std::string m_previous_animation{ "Brick" };
 
 public:
     ~Editor();

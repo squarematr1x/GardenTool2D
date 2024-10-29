@@ -98,6 +98,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                             ImGui::ListBox("Animations", &cur_index, animations, IM_ARRAYSIZE(animations), 6);
                             if (prev_index != cur_index) {
                                 e->addComponent<CAnimation>(engine->assets().getAnimation(animations[cur_index]), true);
+                                m_previous_animation = animations[cur_index];
                             }
                         }
                         ImGui::TreePop();
@@ -177,7 +178,7 @@ void Editor::processEvent(const sf::RenderWindow& window, const sf::Event& event
 
 std::shared_ptr<Entity> Editor::addEntity(EntityManager& entity_manager, GameEngine* engine) {
     auto tile = entity_manager.addEntity(Tag::TILE);
-    tile->addComponent<CAnimation>(engine->assets().getAnimation("Brick"), true); // Note: use last added animation always?
+    tile->addComponent<CAnimation>(engine->assets().getAnimation(m_previous_animation), true);
     tile->addComponent<CTransform>(engine->selectedPos());
     tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later
     engine->setSelectedEntityId(tile->id());
