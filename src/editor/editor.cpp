@@ -31,7 +31,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
             }
             ImGui::EndTabItem();
         }
-        if (ImGui::BeginTabItem("Edit")) {
+        if (ImGui::BeginTabItem("Edit", (bool *)__null, editTabFlag())) {
             size_t e_id = engine->selectedEntityId();
             if (e_id) {
                 char header[128];
@@ -180,6 +180,10 @@ std::shared_ptr<Entity> Editor::addEntity(EntityManager& entity_manager, GameEng
     tile->addComponent<CAnimation>(engine->assets().getAnimation("Brick"), true); // Note: use last added animation always?
     tile->addComponent<CTransform>(engine->selectedPos());
     tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later
+    engine->setSelectedEntityId(tile->id());
+
+    m_previously_created = true;
+
     return nullptr;
     // Store entity data (in m_entity_config) to file in m_level_path
     //  - Maybe: should also remove the previous entity in the same position, given that those have same type?
@@ -201,4 +205,13 @@ void Editor::deleteEntity(std::shared_ptr<Entity> e) {
 bool Editor::windowActive() const {
     auto& io = ImGui::GetIO();
 	return io.WantCaptureMouse || io.WantCaptureKeyboard;
+}
+
+int Editor::editTabFlag() {
+    // For ImGui automatic tab change
+    if (m_previously_created) {
+        m_previously_created = false;
+        return 2;
+    }
+    return 0;
 }
