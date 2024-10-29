@@ -83,6 +83,8 @@ void Scene::renderGrid(bool show_coordinates) {
         }
     }
     m_engine->window().draw(vertices);
+
+    renderSelectedGridCell();
 }
 
 void Scene::renderActiveGridCell() {
@@ -91,6 +93,16 @@ void Scene::renderActiveGridCell() {
 
     sf::RectangleShape active_cell;
     active_cell.setFillColor({255, 255, 255, 128});
+    active_cell.setPosition({grid_pos.x, grid_pos.y});
+    active_cell.setSize({m_grid_cell_size.x, m_grid_cell_size.y});
+
+    m_engine->window().draw(active_cell);
+}
+
+void Scene::renderSelectedGridCell() {
+    Vec2 grid_pos = fitToGrid(m_selected_cell, false);
+    sf::RectangleShape active_cell;
+    active_cell.setFillColor({196, 196, 255, 156});
     active_cell.setPosition({grid_pos.x, grid_pos.y});
     active_cell.setSize({m_grid_cell_size.x, m_grid_cell_size.y});
 

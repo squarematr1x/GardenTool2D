@@ -463,6 +463,8 @@ void SceneSideScroller::sDoAction(const Action& action) {
                 }
 
                 Vec2 world_pos = worldPos();
+                m_selected_cell = fitToGrid(world_pos);
+                m_engine->setSelectedPos(m_selected_cell);
                 for (auto e : m_entity_manager.getEntities()) {
                     if (physics::isInside(world_pos, e)) {
                         m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity

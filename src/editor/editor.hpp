@@ -4,11 +4,6 @@
 
 #include "../ecs/entity.hpp"
 
-enum class Mode { // NOTE: could be used for UI
-    ADD,
-    EDIT
-};
-
 class EntityManager;
 class GameEngine;
 
@@ -42,6 +37,8 @@ class Editor {
     std::string m_level_path{ "" }; // Current level
     sf::Clock m_dt;
     EntityConfig m_entity_config;
+    bool m_previously_created{ false };
+    std::string m_previous_animation{ "Brick" };
 
 public:
     ~Editor();
@@ -57,4 +54,5 @@ public:
     void setLevel(const std::string& level_path) { m_level_path = level_path; }
 
     bool windowActive() const;
+    int editTabFlag();
 };

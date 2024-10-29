@@ -55,6 +55,7 @@ public:
 
 	void renderGrid(bool show_coordinates = false);
 	void renderActiveGridCell();
+	void renderSelectedGridCell();
 	void renderBBoxes();
 	void renderCursor();
 	void renderHpBars();
@@ -95,6 +96,7 @@ protected:
 
 	Vec2 m_mouse_pos;
 	Vec2 m_grid_size{ 0, 0 };
+	Vec2 m_selected_cell{ 0, 0 };
 	const Vec2 m_grid_cell_size{ 64, 64 };
 	sf::Text m_grid_text;
 

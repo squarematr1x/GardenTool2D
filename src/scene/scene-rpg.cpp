@@ -336,6 +336,8 @@ void SceneRPG::sDoAction(const Action& action) {
 
                 for (auto e : m_entity_manager.getEntities()) {
                     Vec2 world_pos = worldPos();
+                    m_selected_cell = fitToGrid(world_pos);
+                    m_engine->setSelectedPos(m_selected_cell);
                     if (physics::isInside(world_pos, e)) {
                         m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity
                         if (e->hasComponent<CDraggable>()) {

@@ -24,13 +24,14 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
     if (ImGui::BeginTabBar("EditTabBar", 0)) {
         if (ImGui::BeginTabItem("Add")) {
             ImGui::SeparatorText("Add New Entity");
+            ImGui::Text("Click and select grid position");
             if (ImGui::Button("Create")) {
                 addEntity(entity_manager, engine);
                 entity_manager.update();
             }
             ImGui::EndTabItem();
         }
-        if (ImGui::BeginTabItem("Edit")) {
+        if (ImGui::BeginTabItem("Edit", (bool *)__null, editTabFlag())) {
             size_t e_id = engine->selectedEntityId();
             if (e_id) {
                 char header[128];
@@ -97,6 +98,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                             ImGui::ListBox("Animations", &cur_index, animations, IM_ARRAYSIZE(animations), 6);
                             if (prev_index != cur_index) {
                                 e->addComponent<CAnimation>(engine->assets().getAnimation(animations[cur_index]), true);
+                                m_previous_animation = animations[cur_index];
                             }
                         }
                         ImGui::TreePop();
@@ -176,10 +178,13 @@ void Editor::processEvent(const sf::RenderWindow& window, const sf::Event& event
 
 std::shared_ptr<Entity> Editor::addEntity(EntityManager& entity_manager, GameEngine* engine) {
     auto tile = entity_manager.addEntity(Tag::TILE);
-    tile->addComponent<CAnimation>(engine->assets().getAnimation("Brick"), true); // Note: use last added animation always?
-    auto size = tile->getComponent<CAnimation>().animation.getSize();
-    tile->addComponent<CTransform>(Vec2(0 + size.x/2, 0 + size.y/2));
+    tile->addComponent<CAnimation>(engine->assets().getAnimation(m_previous_animation), true);
+    tile->addComponent<CTransform>(engine->selectedPos());
     tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later
+    engine->setSelectedEntityId(tile->id());
+
+    m_previously_created = true;
+
     return nullptr;
     // Store entity data (in m_entity_config) to file in m_level_path
     //  - Maybe: should also remove the previous entity in the same position, given that those have same type?
@@ -201,4 +206,13 @@ void Editor::deleteEntity(std::shared_ptr<Entity> e) {
 bool Editor::windowActive() const {
     auto& io = ImGui::GetIO();
 	return io.WantCaptureMouse || io.WantCaptureKeyboard;
+}
+
+int Editor::editTabFlag() {
+    // For ImGui automatic tab change
+    if (m_previously_created) {
+        m_previously_created = false;
+        return 2;
+    }
+    return 0;
 }

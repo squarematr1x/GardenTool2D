@@ -3,6 +3,7 @@
 #include "ecs/entity-manager.hpp"
 #include "assets.hpp"
 #include "editor/editor.hpp"
+#include "math/vec2.hpp"
 
 class Scene;
 
@@ -29,6 +30,7 @@ class GameEngine
 	Editor m_editor;
 
 	size_t m_selected_entity_id;
+	Vec2 m_selected_pos{ 0, 0 };
 
 	void init(const std::string& config);
 	void setPaused(bool paused);
@@ -54,10 +56,12 @@ public:
 	void toggleEditMode() { m_edit_mode = !m_edit_mode; }
 	void setEditMode(bool edit) { m_edit_mode = edit; m_paused = edit; }
 	void setSelectedEntityId(size_t id) { m_selected_entity_id = id; }
+	void setSelectedPos(const Vec2& cell) { m_selected_pos = cell; }
 
 	sf::RenderWindow& window() { return m_window; };
 	const Assets& assets() const { return m_assets; };
 	size_t selectedEntityId() const { return m_selected_entity_id; }
+	const Vec2& selectedPos() const { return m_selected_pos; }
 	bool editMode() const { return m_edit_mode; };
 	bool isRunning();
 	const std::string& currentLevelPath();
