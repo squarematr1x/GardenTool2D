@@ -24,6 +24,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
     if (ImGui::BeginTabBar("EditTabBar", 0)) {
         if (ImGui::BeginTabItem("Add")) {
             ImGui::SeparatorText("Add New Entity");
+            ImGui::Text("Click and select grid position");
             if (ImGui::Button("Create")) {
                 addEntity(entity_manager, engine);
                 entity_manager.update();
@@ -177,8 +178,7 @@ void Editor::processEvent(const sf::RenderWindow& window, const sf::Event& event
 std::shared_ptr<Entity> Editor::addEntity(EntityManager& entity_manager, GameEngine* engine) {
     auto tile = entity_manager.addEntity(Tag::TILE);
     tile->addComponent<CAnimation>(engine->assets().getAnimation("Brick"), true); // Note: use last added animation always?
-    auto size = tile->getComponent<CAnimation>().animation.getSize();
-    tile->addComponent<CTransform>(Vec2(0 + size.x/2, 0 + size.y/2));
+    tile->addComponent<CTransform>(engine->selectedPos());
     tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later
     return nullptr;
     // Store entity data (in m_entity_config) to file in m_level_path
