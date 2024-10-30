@@ -24,7 +24,12 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
     if (ImGui::BeginTabBar("EditTabBar", 0)) {
         if (ImGui::BeginTabItem("Add")) {
             ImGui::SeparatorText("Add New Entity");
-            ImGui::Text("Click and select grid position");
+            auto pos = engine->selectedPos();
+            if (pos == Vec2(0, 0)) {
+                ImGui::Text("Click and select grid position");
+            } else {
+                ImGui::Text("Add entity to position: (%.0f, %0.f)", pos.x, pos.y);
+            }
             if (ImGui::Button("Create")) {
                 addEntity(entity_manager, engine);
                 entity_manager.update();
