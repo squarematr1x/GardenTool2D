@@ -6,6 +6,8 @@
 #include "../../vendor/imgui.h"
 #include "../../vendor/imgui-SFML.h"
 
+#include "file.hpp"
+
 Editor::~Editor() {
     ImGui::SFML::Shutdown();
 }
@@ -220,4 +222,9 @@ int Editor::editTabFlag() {
         return 2;
     }
     return 0;
+}
+
+void Editor::setLevel(const std::string& level_path) {
+    m_level_path = level_path;
+    m_current_level_file = files::readFile(level_path);
 }

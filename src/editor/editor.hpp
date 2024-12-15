@@ -39,6 +39,14 @@ class Editor {
     EntityConfig m_entity_config;
     bool m_previously_created{ false };
     std::string m_previous_animation{ "Brick" };
+    std::vector<std::string> m_current_level_file;
+
+    std::shared_ptr<Entity> addEntity(EntityManager& entity_manager, GameEngine* engine);
+
+    void modifyEntity(std::shared_ptr<Entity> e, GameEngine* engine);
+    void deleteEntity(std::shared_ptr<Entity> e);
+
+    int editTabFlag();
 
 public:
     ~Editor();
@@ -47,12 +55,7 @@ public:
     void update(sf::RenderWindow& window, EntityManager& entity_manager, GameEngine* engine);
     void processEvent(const sf::RenderWindow& window, const sf::Event& event);
 
-    std::shared_ptr<Entity> addEntity(EntityManager& entity_manager, GameEngine* engine);
-    void modifyEntity(std::shared_ptr<Entity> e, GameEngine* engine);
-    void deleteEntity(std::shared_ptr<Entity> e);
-
-    void setLevel(const std::string& level_path) { m_level_path = level_path; }
+    void setLevel(const std::string& level_path);
 
     bool windowActive() const;
-    int editTabFlag();
 };

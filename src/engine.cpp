@@ -37,6 +37,7 @@ void GameEngine::changeScene(SceneType scene_name, std::shared_ptr<Scene> scene,
 	m_scenes[scene_name] = scene;
 	m_cur_scene = scene_name;
 	m_edit_mode = false;
+	m_editor.setLevel(scene->levelPath());
 }
 
 void GameEngine::setPaused(bool paused) {
