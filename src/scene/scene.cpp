@@ -300,3 +300,10 @@ void Scene::addLine(const Vec2& p1, const Vec2& p2, sf::VertexArray& vertices) {
     vertices.append({{p1.x, p1.y}, sf::Color(255, 255, 255)});
     vertices.append({{p2.x, p2.y}, sf::Color(255, 255, 255)});
 }
+
+Vec2 Scene::gridPos(const Vec2& pos) const {
+    return Vec2(
+        floor(pos.x/m_grid_cell_size.x),
+        floor((static_cast<float>(height()) - pos.y)/m_grid_cell_size.y)
+    );
+}
