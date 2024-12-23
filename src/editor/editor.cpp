@@ -286,10 +286,11 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
             ss << " " << grid_pos.x << " " << grid_pos.y;
         }
     }
+
     if (e->hasComponent<CFollowPlayer>()) {
         const auto follow = e->getComponent<CFollowPlayer>();
-        ss << " Follow " << follow.speed << static_cast<int>(follow.home.x) << " "
-            << static_cast<int>(follow.home.y); 
+        const auto grid_pos = engine->toGridPos(follow.home);
+        ss << " Follow " << follow.speed << " " << grid_pos.x << " " << grid_pos.y; 
     }
 
     files::addLine(m_level_content, ss.str());
@@ -329,5 +330,5 @@ void Editor::parseEntities(EntityManager& entity_manager, GameEngine* engine) {
         parseEntity(e, engine);
     }
  
-    files::writeFile("config/levels/level_temp.sc.lvl", m_level_content);
+    files::writeFile("config/notes/level_temp.rpg.lvl", m_level_content);
 }
