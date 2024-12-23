@@ -83,7 +83,7 @@ void SceneRPG::loadLevel(const std::string& path) {
                 int health;
                 text_stream >> x >> y >> bbox_w >> bbox_h >> v >> health;
                 m_player_config = {
-                    x, y, bbox_w, bbox_h, v, health
+                    x, y, bbox_w, bbox_h, v, 0.0f, 0.0f, 0.0f, "", health
                 };
             } else if (asset_type == "NPC") { 
                 std::string animation, mode;
