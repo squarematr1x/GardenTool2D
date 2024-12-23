@@ -30,7 +30,6 @@ void writeFile(const std::string& file_name, const std::vector<std::string>& lin
     file.close();
 }
 
-// For editing entities
 void replaceLine(std::vector<std::string>& lines, size_t line_number, const std::string new_line) {
     if (line_number >= 0 && line_number < lines.size()) {
         lines[line_number] = new_line;
@@ -39,7 +38,6 @@ void replaceLine(std::vector<std::string>& lines, size_t line_number, const std:
     }
 }
 
-// For deleting entities
 void deleteLine(std::vector<std::string>& lines, size_t line_number) {
     if (line_number >= 0 && line_number < lines.size()) {
         lines.erase(lines.begin() + static_cast<long>(line_number));
@@ -48,7 +46,6 @@ void deleteLine(std::vector<std::string>& lines, size_t line_number) {
     }
 }
 
-// For adding new entities
 void addLine(std::vector<std::string>& lines, const std::string new_line) {
     lines.push_back(new_line);
 }
