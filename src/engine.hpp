@@ -5,6 +5,8 @@
 #include "editor/editor.hpp"
 #include "math/vec2.hpp"
 
+struct PlayerConfig;
+
 class Scene;
 
 enum class SceneType: unsigned char;
@@ -62,6 +64,8 @@ public:
 	const Assets& assets() const { return m_assets; };
 	size_t selectedEntityId() const { return m_selected_entity_id; }
 	const Vec2& selectedPos() const { return m_selected_pos; }
+	const Vec2 toGridPos(const Vec2& pos);
+	const PlayerConfig& getPlayerConfig();
 	bool editMode() const { return m_edit_mode; };
 	bool isRunning();
 	const std::string& currentLevelPath();

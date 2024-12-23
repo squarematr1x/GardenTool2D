@@ -61,10 +61,8 @@ void SceneRPG::loadLevel(const std::string& path) {
                 text_stream >> animation >> room_x >> room_y >> x >> y >> block_movement >> block_vision;
 
                 Vec2 pos = getPosition(room_x, room_y, x, y);
-                Tag tag = Tag::DEC;
-                if (block_movement) {
-                    tag = Tag::TILE;
-                } else if (animation == "Heart") {
+                Tag tag = Tag::TILE;
+                if (animation == "Heart") {
                     tag = Tag::HEART;
                 } else if (animation == "Doorway") {
                     tag = Tag::TELEPORT;
@@ -85,7 +83,7 @@ void SceneRPG::loadLevel(const std::string& path) {
                 int health;
                 text_stream >> x >> y >> bbox_w >> bbox_h >> v >> health;
                 m_player_config = {
-                    x, y, bbox_w, bbox_h, v, health
+                    x, y, bbox_w, bbox_h, v, 0.0f, 0.0f, 0.0f, "", health
                 };
             } else if (asset_type == "NPC") { 
                 std::string animation, mode;

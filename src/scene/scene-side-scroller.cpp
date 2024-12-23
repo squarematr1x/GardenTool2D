@@ -79,7 +79,7 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                 bool block_movement, block_vision;
                 text_stream >> animation >> x >> y >> block_movement >> block_vision;
 
-                auto tile = block_movement ? m_entity_manager.addEntity(Tag::TILE) : m_entity_manager.addEntity(Tag::DEC);
+                auto tile = m_entity_manager.addEntity(Tag::TILE);
                 tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
                 tile->addComponent<CTransform>(gridToMidPixel(x, y, tile));
                 tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later

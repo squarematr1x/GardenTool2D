@@ -27,7 +27,6 @@ typedef std::tuple<
 enum class Tag : unsigned char {
 	DEFAULT,
 	TILE,
-	DEC,
 	PLAYER,
 	ENEMY,
 	BULLET,

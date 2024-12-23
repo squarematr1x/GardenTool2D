@@ -8,6 +8,7 @@
 #include "../action.hpp"
 #include "../particle-system.hpp"
 #include "../layer.hpp"
+#include "../player-config.hpp"
 
 class GameEngine;
 
@@ -46,6 +47,7 @@ public:
 	bool hasEnded() const { return m_has_ended; }
 	const std::map<int, ActionName>& getActionMap() const { return m_action_map; }
 
+	Vec2 gridPos(const Vec2& pos) const;
 	Vec2 fitToGrid(const Vec2& pos, bool mid_pixel = true) const;
 	Vec2 worldPos();
 	Vec2 getCenter() const;
@@ -74,6 +76,8 @@ public:
 
 	EntityManager& getEntityManager() { return m_entity_manager; }
 
+	const PlayerConfig& getPlayerConfig() const { return m_player_config; }
+
 protected:
 	Scene(GameEngine* engine);
 	Scene(GameEngine* engine, const std::string& level_path);
@@ -84,6 +88,7 @@ protected:
 	std::map<int, ActionName> m_action_map;
 	Zoom m_zoom;
 	sf::VertexArray m_hp_bars{ sf::Triangles };
+	PlayerConfig m_player_config;
 
 	bool m_paused{ false };
 	bool m_has_ended{ false };
@@ -129,19 +134,7 @@ public:
 
 class SceneSideScroller: public Scene
 {
-	struct PlayerConfig {
-		float x{ 0.0f };
-		float y{ 0.0f };
-		float bbox_x{ 0.0f };
-		float bbox_y{ 0.0f };
-		float v{ 0.0f };
-		float max_v{ 0.0f };
-		float jump_v{ 0.0f };
-		float gravity{ 0.0f };
-		std::string weapon{ "" };
-	};
 	std::shared_ptr<Entity> m_player;
-	PlayerConfig m_player_config;
 	bool m_can_shoot{ true };
 	bool m_can_jump{ true };
 	std::vector<Layer> m_background_layers;
@@ -181,15 +174,6 @@ public:
 
 class SceneRPG: public Scene
 {
-	struct PlayerConfig {
-		float x{ 0.0f };
-		float y{ 0.0f };
-		float bbox_x{ 0.0f };
-		float bbox_y{ 0.0f };
-		float v{ 0.0f };
-		int health{ 4 };
-	};
-	PlayerConfig m_player_config;
 	std::shared_ptr<Entity> m_player;
 	bool m_follow{ false };
 	bool m_show_health{ true };
