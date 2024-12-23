@@ -93,8 +93,9 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                 }
             } else if (asset_type == "Player") {
                 float x, y, bbox_w, bbox_h, v, jump_v, max_v, gravity;
+                int hp;
                 std::string weapon_animation;
-                text_stream >> x >> y >> bbox_w >> bbox_h >> v >> max_v >> jump_v >> gravity >> weapon_animation;
+                text_stream >> x >> y >> bbox_w >> bbox_h >> v >> max_v >> jump_v >> gravity >> weapon_animation >> hp;
                 m_player_config = {
                     x, y, bbox_w, bbox_h, v, max_v, jump_v, gravity, weapon_animation
                 };
