@@ -1,11 +1,13 @@
 #include "editor.hpp"
 
-#include "../ecs/entity-manager.hpp"
-#include "../engine.hpp"
+#include <sstream>
  
 #include "../../vendor/imgui.h"
 #include "../../vendor/imgui-SFML.h"
 
+#include "../ecs/entity-manager.hpp"
+#include "../engine.hpp"
+#include "../player-config.hpp"
 #include "file.hpp"
 
 Editor::~Editor() {
@@ -163,7 +165,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                     ImGui::SameLine();
 
                     if (ImGui::Button("Save")) {
-                        // TODO: Update level file
+                        parseEntities(entity_manager, engine);
                     }
                 } else {
                     ImGui::Text("Entity was deleted.");
@@ -226,5 +228,108 @@ int Editor::editTabFlag() {
 
 void Editor::setLevel(const std::string& level_path) {
     m_level_path = level_path;
-    m_current_level_file = files::readFile(level_path);
+}
+
+void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
+    std::map<Tag, std::string> tag_map = {
+        { Tag::TILE, "Tile" },
+        { Tag::PLAYER, "Player" },
+        { Tag::ENEMY, "NPC" },
+        { Tag::ELEVATOR, "Elevator" },
+        { Tag::CHECKPOINT, "Checkpoint" },
+    };
+    std::string tag = "";
+    if (tag_map.count(e->tag())) {
+        tag = tag_map.at(e->tag());
+    }
+    if (tag == "") {
+        return;
+    }
+
+    if (!e->hasComponent<CTransform>()) {
+        // Currently not saving entities without position to level files
+        return;
+    }
+
+    const auto pos = e->getComponent<CTransform>().pos;
+    const auto grid_pos = engine->toGridPos(Vec2(pos.x, pos.y));
+    const auto grid_x = static_cast<int>(grid_pos.x);
+    const auto grid_y = static_cast<int>(grid_pos.y);
+
+    auto block_movement = 0;
+    auto block_vision = 0;
+
+    std::stringstream ss;
+
+    if (e->hasComponent<CBBox>()) {
+        const auto bbox = e->getComponent<CBBox>();
+        block_movement = static_cast<int>(bbox.block_movement);
+        block_vision = static_cast<int>(bbox.block_vision);
+
+        if (tag == "Checkpoint") {
+            ss << tag << " " << grid_x << " " << grid_y << " " << bbox.size.x << " " << bbox.size.y;
+            files::addLine(m_level_content, ss.str());
+            return;
+        }
+    }
+
+    std::string animation_name =  "" ;
+    if (e->hasComponent<CAnimation>()) {
+        animation_name = e->getComponent<CAnimation>().animation.getName();
+    }
+
+    if (tag == "Player") {
+        const auto cf = engine->getPlayerConfig();
+        ss << tag << " " << grid_x << " " << grid_y << " " << cf.bbox_x << " " <<
+            cf.bbox_y << " " << cf.v << " " << cf.max_v << " " << cf.jump_v << " " <<
+            cf.gravity << " " << cf.weapon << " " << cf.health;
+        files::addLine(m_level_content, ss.str());
+        return;
+    }
+
+    ss << tag << " " << animation_name << " " << grid_x << " " << grid_y << " " <<
+        block_movement << " " << block_vision;
+    
+    if (e->hasComponent<CPatrol>()) {
+        const auto patrol = e->getComponent<CPatrol>();
+        ss << " Patrol " << patrol.speed << " " << patrol.positions.size();
+        for (const auto& pos : patrol.positions) {
+            const auto grid_pos = engine->toGridPos(pos);
+            ss << " " << grid_pos.x << " " << grid_pos.y;
+        }
+    }
+
+    files::addLine(m_level_content, ss.str());
+}
+
+// NOTE: Only works for sidescroller for now
+void Editor::parseEntities(EntityManager& entity_manager, GameEngine* engine) {
+    m_level_content.clear();
+
+    m_level_content.push_back("\n# Tile: animation name, x, y, block movement, block vision");
+    for (const auto& e : entity_manager.getEntities(Tag::TILE)) {
+        parseEntity(e, engine);
+    }
+
+    m_level_content.push_back("\n# Player: x, y, bboxw, bboxh, speed, max speed, jump speed, gravity, weapon animation name hp");
+    for (const auto& e : entity_manager.getEntities(Tag::PLAYER)) {
+        parseEntity(e, engine);
+    }
+
+    m_level_content.push_back("\n# NPC: animation name, x, y, block movement, block vision, behavior");
+    for (const auto& e : entity_manager.getEntities(Tag::ENEMY)) {
+        parseEntity(e, engine);
+    }
+
+    m_level_content.push_back("\n# Elevator: animation name, x, y, block movement, block vision, behavior");
+    for (const auto& e : entity_manager.getEntities(Tag::ELEVATOR)) {
+        parseEntity(e, engine);
+    }
+
+    m_level_content.push_back("\n# Checkpoint: x, y, bboxw, bboxh");
+    for (const auto& e : entity_manager.getEntities(Tag::CHECKPOINT)) {
+        parseEntity(e, engine);
+    }
+ 
+    files::writeFile("config/levels/level_temp.sc.lvl", m_level_content);
 }

@@ -76,6 +76,8 @@ public:
 
 	EntityManager& getEntityManager() { return m_entity_manager; }
 
+	const PlayerConfig& getPlayerConfig() const { return m_player_config; }
+
 protected:
 	Scene(GameEngine* engine);
 	Scene(GameEngine* engine, const std::string& level_path);

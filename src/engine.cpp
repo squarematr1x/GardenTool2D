@@ -180,6 +180,15 @@ void GameEngine::stopMusic(const std::string& music_name) {
 	m_assets.getMusic(music_name)->stop();
 }
 
+// TODO: methods below could be used directly trough Scene
 const std::string& GameEngine::currentLevelPath() {
 	return currentScene()->levelPath();
+}
+
+const Vec2 GameEngine::toGridPos(const Vec2& pos) {
+	return currentScene()->gridPos(pos);
+}
+
+const PlayerConfig& GameEngine::getPlayerConfig() {
+	return currentScene()->getPlayerConfig();
 }

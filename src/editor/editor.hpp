@@ -4,6 +4,8 @@
 
 #include "../ecs/entity.hpp"
 
+struct PlayerConfig;
+
 class EntityManager;
 class GameEngine;
 
@@ -22,7 +24,6 @@ class Editor {
 
     const char* m_types[11] = {
         "TILE",
-        "DEC",
         "PLAYER",
         "ENEMY",
         "BULLET",
@@ -39,12 +40,14 @@ class Editor {
     EntityConfig m_entity_config;
     bool m_previously_created{ false };
     std::string m_previous_animation{ "Brick" };
-    std::vector<std::string> m_current_level_file;
+    std::vector<std::string> m_level_content;
 
     std::shared_ptr<Entity> addEntity(EntityManager& entity_manager, GameEngine* engine);
 
     void modifyEntity(std::shared_ptr<Entity> e, GameEngine* engine);
     void deleteEntity(std::shared_ptr<Entity> e);
+    void parseEntity(std::shared_ptr<Entity> e, GameEngine* engine);
+    void parseEntities(EntityManager& entity_manager, GameEngine* engine);
 
     int editTabFlag();
 

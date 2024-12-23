@@ -47,8 +47,8 @@ Tile Cloud1 23 8 0 0
 Background Landscape1
 Background Landscape2
 
-# Player: x, y, bboxw, bboxh, speed, jump speed, max speed, gravity, animation name
-Player 2 6 56 62 5 5 25 2 Fire
+# Player: x, y, bboxw, bboxh, speed, max speed, jump speed, gravity, weapon animation name hp
+Player 2 6 56 62 5 5 25 2 Fire 4
 
 # NPC: animation name, x, y, block movement, block vision, behavior
 NPC CreepRun 7 2 0 0 1 1 Patrol 2 2 6 2 8 2
