@@ -220,6 +220,8 @@ const std::string Editor::tagString(Tag tag) const {
         { Tag::ENEMY, "NPC" },
         { Tag::ELEVATOR, "Elevator" },
         { Tag::CHECKPOINT, "Checkpoint" },
+        { Tag::HEART, "Tile" },
+        { Tag::TELEPORT, "Tile" }
     };
     std::string tag_str = "";
     if (tag_map.count(tag)) {
@@ -307,6 +309,12 @@ void Editor::parseEntities(EntityManager& entity_manager, GameEngine* engine) {
 
     m_level_content.push_back("\n# Tile: animation name, x, y, block movement, block vision");
     for (const auto& e : entity_manager.getEntities(Tag::TILE)) {
+        parseEntity(e, engine);
+    }
+    for (const auto& e : entity_manager.getEntities(Tag::HEART)) {
+        parseEntity(e, engine);
+    }
+    for (const auto& e : entity_manager.getEntities(Tag::TELEPORT)) {
         parseEntity(e, engine);
     }
 
