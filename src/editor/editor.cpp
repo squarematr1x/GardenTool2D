@@ -241,18 +241,18 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
 
     const auto pos = e->getComponent<CTransform>().pos;
     const auto grid_pos = engine->toGridPos(Vec2(pos.x, pos.y));
-    const auto grid_x = static_cast<int>(grid_pos.x);
-    const auto grid_y = static_cast<int>(grid_pos.y);
+    const auto grid_x = grid_pos.x;
+    const auto grid_y = grid_pos.y;
 
-    auto block_movement = 0;
-    auto block_vision = 0;
+    auto block_movement = false;
+    auto block_vision = false;
 
     std::stringstream ss;
 
     if (e->hasComponent<CBBox>()) {
         const auto bbox = e->getComponent<CBBox>();
-        block_movement = static_cast<int>(bbox.block_movement);
-        block_vision = static_cast<int>(bbox.block_vision);
+        block_movement = bbox.block_movement;
+        block_vision = bbox.block_vision;
 
         if (tag == "Checkpoint") {
             ss << tag << " " << grid_x << " " << grid_y << " " << bbox.size.x << " " << bbox.size.y;
