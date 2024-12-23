@@ -158,7 +158,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                     }
             
                     if (ImGui::Button("Delete")) {
-                        deleteEntity(e);
+                        e->destroy();
                         entity_manager.update();
                     }
 
@@ -185,7 +185,7 @@ void Editor::processEvent(const sf::RenderWindow& window, const sf::Event& event
     ImGui::SFML::ProcessEvent(window, event);
 }
 
-std::shared_ptr<Entity> Editor::addEntity(EntityManager& entity_manager, GameEngine* engine) {
+void Editor::addEntity(EntityManager& entity_manager, GameEngine* engine) {
     auto tile = entity_manager.addEntity(Tag::TILE);
     tile->addComponent<CAnimation>(engine->assets().getAnimation(m_previous_animation), true);
     tile->addComponent<CTransform>(engine->selectedPos());
@@ -193,23 +193,6 @@ std::shared_ptr<Entity> Editor::addEntity(EntityManager& entity_manager, GameEng
     engine->setSelectedEntityId(tile->id());
 
     m_previously_created = true;
-
-    return nullptr;
-    // Store entity data (in m_entity_config) to file in m_level_path
-    //  - Maybe: should also remove the previous entity in the same position, given that those have same type?
-    // Spawn the entity to user's mouse position
-}
-
-void Editor::modifyEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
-    (void)e;
-    (void)engine;
-    // Store entity e data to file in m_level_path
-}
-
-void Editor::deleteEntity(std::shared_ptr<Entity> e) {
-    e->destroy();
-
-    // Delete entity e data from file in m_level_path
 }
 
 bool Editor::windowActive() const {
@@ -230,7 +213,7 @@ void Editor::setLevel(const std::string& level_path) {
     m_level_path = level_path;
 }
 
-void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
+const std::string Editor::tagString(Tag tag) const {
     std::map<Tag, std::string> tag_map = {
         { Tag::TILE, "Tile" },
         { Tag::PLAYER, "Player" },
@@ -238,10 +221,15 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
         { Tag::ELEVATOR, "Elevator" },
         { Tag::CHECKPOINT, "Checkpoint" },
     };
-    std::string tag = "";
-    if (tag_map.count(e->tag())) {
-        tag = tag_map.at(e->tag());
+    std::string tag_str = "";
+    if (tag_map.count(tag)) {
+        tag_str = tag_map.at(tag);
     }
+    return tag_str;
+}
+
+void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
+    const auto tag = tagString(e->tag());
     if (tag == "") {
         return;
     }
