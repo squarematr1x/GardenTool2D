@@ -22,5 +22,6 @@ public:
     void scale(size_t window_w, size_t window_h);
 
     sf::Sprite& getSprite() { return m_sprite; }
-    const sf::View& getView() { return m_view; }
+    const sf::View& getView() const { return m_view; }
+    const std::string& getName() const { return m_name; }
 };

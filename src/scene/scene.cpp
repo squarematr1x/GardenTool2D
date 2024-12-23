@@ -307,3 +307,11 @@ Vec2 Scene::gridPos(const Vec2& pos) const {
         floor((static_cast<float>(height()) - pos.y)/m_grid_cell_size.y)
     );
 }
+
+const std::vector<std::string> Scene::getLayerNames() const {
+    std::vector<std::string> layer_names;
+    for (const auto& layer : m_background_layers) {
+        layer_names.push_back(layer.getName());
+    }
+    return layer_names;
+}

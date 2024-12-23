@@ -69,4 +69,5 @@ public:
 	bool editMode() const { return m_edit_mode; };
 	bool isRunning();
 	const std::string& currentLevelPath();
+	const std::vector<std::string> layerNames();
 };

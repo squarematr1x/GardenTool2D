@@ -77,6 +77,7 @@ public:
 	EntityManager& getEntityManager() { return m_entity_manager; }
 
 	const PlayerConfig& getPlayerConfig() const { return m_player_config; }
+	const std::vector<std::string> getLayerNames() const;
 
 protected:
 	Scene(GameEngine* engine);
@@ -104,6 +105,8 @@ protected:
 	Vec2 m_selected_cell{ 0, 0 };
 	const Vec2 m_grid_cell_size{ 64, 64 };
 	sf::Text m_grid_text;
+
+	std::vector<Layer> m_background_layers;
 
 	virtual void onEnd() = 0;
 	void setPaused(bool paused) { m_paused = paused; }
@@ -137,7 +140,6 @@ class SceneSideScroller: public Scene
 	std::shared_ptr<Entity> m_player;
 	bool m_can_shoot{ true };
 	bool m_can_jump{ true };
-	std::vector<Layer> m_background_layers;
 
 	sf::CircleShape m_mouse_shape;
 

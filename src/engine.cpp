@@ -192,3 +192,7 @@ const Vec2 GameEngine::toGridPos(const Vec2& pos) {
 const PlayerConfig& GameEngine::getPlayerConfig() {
 	return currentScene()->getPlayerConfig();
 }
+
+const std::vector<std::string> GameEngine::layerNames() {
+	return currentScene()->getLayerNames();
+}
