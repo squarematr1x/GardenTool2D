@@ -82,10 +82,10 @@ void SceneRPG::loadLevel(const std::string& path) {
             } else if (asset_type == "Player") {
                 float x, y, bbox_w, bbox_h, v, max_v, jump_v, gravity;
                 int hp;
-                std::string weapon;
+                std::string weapon = "Empty";
                 text_stream >> x >> y >> bbox_w >> bbox_h >> v >> max_v >> jump_v >> gravity >> weapon >> hp;
                 m_player_config = {
-                    x, y, bbox_w, bbox_h, v, 0.0f, 0.0f, 0.0f, "", hp
+                    x, y, bbox_w, bbox_h, v, 0.0f, 0.0f, 0.0f, weapon, hp
                 };
             } else if (asset_type == "NPC") { 
                 std::string animation, mode;

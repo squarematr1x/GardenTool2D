@@ -1,70 +1,79 @@
-# Tile: animation name, room x, room y, x, y, block movement, block vision
-Tile RockULCorner 0 0 10 5 1 1
-Tile Rock 0 0 10 6 1 1
-Tile Rock 0 0 10 7 1 1
-Tile Rock 0 0 11 5 1 1
-Tile Rock 0 0 11 6 1 1
-Tile Doorway 0 0 11 7 0 1
-Tile RockURCorner 0 0 12 5 1 1
-Tile Rock 0 0 12 6 1 1
-Tile Rock 0 0 12 7 1 1
-Tile DarkBush 0 0 11 9 0 1
-Tile Grass 0 0 9 10 0 0
-Tile Grass 0 0 11 12 0 0
-Tile WaterURCorner 0 0 0 4 1 0
-Tile Water 0 0 0 5 1 0
-Tile WaterLRCorner 0 0 0 6 1 0
-Tile WaterULCorner 0 0 -1 4 1 0
-Tile Water 0 0 -1 5 1 0
-Tile WaterLLCorner 0 0 -1 6 1 0
-Tile Heart 0 0 2 2 0 0
-Tile RockULCorner 0 -1 10 5 1 1
-Tile Rock 0 -1 10 6 1 1
-Tile Rock 0 -1 10 7 1 1
-Tile Rock 0 -1 11 5 1 1
-Tile Rock 0 -1 11 6 1 1
-Tile Doorway 0 -1 11 7 0 1
-Tile RockURCorner 0 -1 12 5 1 1
-Tile Rock 0 -1 12 6 1 1
-Tile Rock 0 -1 12 7 1 1
-Tile RockULCorner 1 0 10 5 1 1
-Tile Rock 1 0  10 6 1 1
-Tile Rock 1 0  10 7 1 1
-Tile Rock 1 0  11 5 1 1
-Tile Rock 1 0  11 6 1 1
-Tile Doorway 1 0 11 7 0 1
-Tile RockURCorner 1 0 12 5 1 1
-Tile Rock 1 0 12 6 1 1
-Tile Rock 1 0  12 7 1 1
-Tile Grass 1 0 15 9 0 0
-Tile Grass 1 0 16 9 0 0
-Tile Grass 1 0 17 9 0 0
-Tile Grass 1 0 15 10 0 0
-Tile Grass 1 0 16 10 0 0
-Tile Grass 1 0 17 10 0 0
+# Background: layer name
 
-Tile WaterULCorner 0 0 16 9 1 0
-Tile WaterURCorner 0 0 18 9 1 0
-Tile Water 0 0 17 9 1 0
-Tile Water 0 0 17 10 1 0
-Tile Water 0 0 17 11 1 0
-Tile Water 0 0 18 10 1 0
-Tile Water 0 0 16 10 1 0
-Tile WaterLLCorner 0 0 16 11 1 0
-Tile WaterLRCorner 0 0 18 11 1 0
+# Tile: animation name, x, y, block movement, block vision
+Tile RockULCorner 10 6 1 1
+Tile Rock 10 5 1 1
+Tile Rock 10 4 1 1
+Tile Rock 11 6 1 1
+Tile Rock 11 5 1 1
+Tile RockURCorner 12 6 1 1
+Tile Rock 12 5 1 1
+Tile Rock 12 4 1 1
+Tile DarkBush 11 2 0 1
+Tile Grass 9 1 0 0
+Tile Grass 11 -1 0 0
+Tile WaterURCorner 0 7 1 0
+Tile Water 0 6 1 0
+Tile WaterLRCorner 0 5 1 0
+Tile WaterULCorner -1 7 1 0
+Tile Water -1 6 1 0
+Tile WaterLLCorner -1 5 1 0
+Tile RockULCorner 10 18 1 1
+Tile Rock 10 17 1 1
+Tile Rock 10 16 1 1
+Tile Rock 11 18 1 1
+Tile Rock 11 17 1 1
+Tile RockURCorner 12 18 1 1
+Tile Rock 12 17 1 1
+Tile Rock 12 16 1 1
+Tile RockULCorner 30 6 1 1
+Tile Rock 30 5 1 1
+Tile Rock 30 4 1 1
+Tile Rock 31 6 1 1
+Tile Rock 31 5 1 1
+Tile RockURCorner 32 6 1 1
+Tile Rock 32 5 1 1
+Tile Rock 32 4 1 1
+Tile Grass 35 2 0 0
+Tile Grass 36 2 0 0
+Tile Grass 37 2 0 0
+Tile Grass 35 1 0 0
+Tile Grass 36 1 0 0
+Tile Grass 37 1 0 0
+Tile WaterULCorner 16 2 1 0
+Tile WaterURCorner 18 2 1 0
+Tile Water 17 2 1 0
+Tile Water 17 1 1 0
+Tile Water 17 0 1 0
+Tile Water 18 1 1 0
+Tile Water 16 1 1 0
+Tile WaterLLCorner 16 0 1 0
+Tile WaterLRCorner 18 0 1 0
+Tile Grass 0 11 0 0
+Tile Grass 1 11 0 0
+Tile Grass 0 10 0 0
+Tile Grass 1 10 0 0
+Tile Brick 0 12 0 0
+Tile DarkBush 12 2 1 1
+Tile DarkBush 8 5 0 0
+Tile DarkBush 7 5 0 0
+Tile Coin 6 5 0 0
+Tile DarkBush 13 2 1 1
+Tile Coin 3 9 0 0
+Tile Brick 8 3 1 0
+Tile Heart 2 9 0 0
+Tile Doorway 11 4 0 1
+Tile Doorway 11 16 0 1
+Tile Doorway 31 4 0 1
 
-Tile Grass 0 0 0 0 0 0
-Tile Grass 0 0 1 0 0 0
-Tile Grass 0 0 0 1 0 0
-Tile Grass 0 0 1 1 0 0
+# Player: x, y, bboxw, bboxh, speed, max speed, jump speed, gravity, weapon animation name hp
+Player 11 1 58 58 5 0 0 0 Empty 4
 
-# Player: x, y, bbox_w, bbox_h, speed, max hp
-Player 11 9 64 64 5 5
+# NPC: animation name, x, y, block movement, block vision, hp, damage, behavior
+NPC Jelly 4 7 0 0 3 1 Patrol 2 3 3 8 7 8 7 5
+NPC Angry 4 4 0 0 3 1 Patrol 2 2 3 3 6 3
+NPC Ghost 14 8 1 0 3 1 Follow 2 14 8
 
-# NPC: animation name, room x, room y, x, y, block movement, block vision, max hp, damage, behavior
-#   - Behaviors:
-#     - Patrol: speed, number of positions, list of (x, y) positions
-#     - Follow: speed, home position x, home position y
-NPC Jelly 0 0 3 3 0 0 3 1 Patrol 2 3 3 3 7 3 7 6
-NPC Angry 0 0 3 8 0 0 3 1 Patrol 2 2 3 8 6 8
-NPC Ghost 0 0 14 3 1 0 3 1 Follow 2 14 3
+# Elevator: animation name, x, y, block movement, block vision, behavior
+
+# Checkpoint: x, y, bboxw, bboxh
