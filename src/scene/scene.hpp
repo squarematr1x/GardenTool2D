@@ -110,6 +110,8 @@ protected:
 
 	virtual void onEnd() = 0;
 	void setPaused(bool paused) { m_paused = paused; }
+
+	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity) const;
 };
 
 class SceneMenu: public Scene
@@ -148,8 +150,6 @@ public:
 
 	void init(const std::string& level_path);
 	void update();
-
-	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity) const;
 
 	void loadLevel(const std::string& path);
 
@@ -198,6 +198,7 @@ public:
 	void teleport(const Vec2& cur_doorway);
 
 	Vec2 getPosition(float rx, float ry, float tx, float ty) const;
+	Vec2 getPosition(float x, float y) const;
 	Vec2 getCurrentRoom() const;
 
 	void sAI();

@@ -56,49 +56,51 @@ void SceneRPG::loadLevel(const std::string& path) {
         while (text_stream >> asset_type) {
             if (asset_type == "Tile") {
                 std::string animation;
-                float room_x, room_y, x, y;
+                float x, y;
                 bool block_movement, block_vision;
-                text_stream >> animation >> room_x >> room_y >> x >> y >> block_movement >> block_vision;
+                text_stream >> animation >> x >> y >> block_movement >> block_vision;
 
-                Vec2 pos = getPosition(room_x, room_y, x, y);
                 Tag tag = Tag::TILE;
                 if (animation == "Heart") {
                     tag = Tag::HEART;
                 } else if (animation == "Doorway") {
                     tag = Tag::TELEPORT;
-                    m_doorways.push_back(pos);
                 }
 
                 auto tile = m_entity_manager.addEntity(tag);
                 tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
-                tile->addComponent<CTransform>(pos);
-                tile->addComponent<CDraggable>();
                 if (block_movement || block_vision) {
                     const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
                     tile->addComponent<CBBox>(animation_size, block_movement, block_vision);
                 }
+                auto pos = gridToMidPixel(x, y, tile);
+                tile->addComponent<CTransform>(pos);
+                if (tag == Tag::TELEPORT) {
+                    m_doorways.push_back(pos);
+                }
                 tile->addComponent<CDraggable>(); // NOTE: Anything should be draggable in edit mode
             } else if (asset_type == "Player") {
-                float x, y, bbox_w, bbox_h, v;
-                int health;
-                text_stream >> x >> y >> bbox_w >> bbox_h >> v >> health;
+                float x, y, bbox_w, bbox_h, v, max_v, jump_v, gravity;
+                int hp;
+                std::string weapon;
+                text_stream >> x >> y >> bbox_w >> bbox_h >> v >> max_v >> jump_v >> gravity >> weapon >> hp;
                 m_player_config = {
-                    x, y, bbox_w, bbox_h, v, 0.0f, 0.0f, 0.0f, "", health
+                    x, y, bbox_w, bbox_h, v, 0.0f, 0.0f, 0.0f, "", hp
                 };
             } else if (asset_type == "NPC") { 
                 std::string animation, mode;
-                float room_x, room_y, x, y;
+                float x, y;
                 bool block_movement, block_vision;
                 int hp, damage;
-                text_stream >> animation >> room_x >> room_y >> x >> y >> block_movement >> block_vision >> hp >> damage;
+                text_stream >> animation >> x >> y >> block_movement >> block_vision >> hp >> damage;
                 auto enemy = m_entity_manager.addEntity(Tag::ENEMY);
-                Vec2 pos = getPosition(room_x, room_y, x, y);
                 enemy->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
-                enemy->addComponent<CTransform>(pos, true);
                 enemy->addComponent<CHealth>(hp);
                 enemy->addComponent<CDamage>(damage);
                 const auto& animation_size = enemy->getComponent<CAnimation>().animation.getSize();
                 enemy->addComponent<CBBox>(animation_size, block_movement, block_vision);
+                auto pos = gridToMidPixel(x, y, enemy);
+                enemy->addComponent<CTransform>(pos, true);
 
                 text_stream >> mode;
                 if (mode == "Patrol") {
@@ -108,13 +110,13 @@ void SceneRPG::loadLevel(const std::string& path) {
                     text_stream >> speed >> n_positions;
                     for (int i = 0; i < n_positions; i++) {
                         text_stream >> x >> y;
-                        positions.push_back(getPosition(room_x, room_y, x, y));
+                        positions.push_back(getPosition(x, y));
                     }
                     enemy->addComponent<CPatrol>(positions, speed);
                 } else if (mode == "Follow") {
                     float speed, y, x;
                     text_stream >> speed >> x >> y;
-                    enemy->addComponent<CFollowPlayer>(getPosition(room_x, room_y, x, y), speed);
+                    enemy->addComponent<CFollowPlayer>(getPosition(x, y), speed);
                 }
             } else {
                 std::cerr << "Unknown level object: " << asset_type << '\n';
@@ -127,6 +129,12 @@ void SceneRPG::loadLevel(const std::string& path) {
     spawnPlayer();
 }
 
+// TODO: Add gridToMidPixel here
+Vec2 SceneRPG::getPosition(float x, float y) const {
+    return Vec2(x*m_grid_cell_size.x + m_grid_cell_size.x/2, y*m_grid_cell_size.y + m_grid_cell_size.y/2);
+}
+
+// TODO: This can stay, but won't be used for now
 Vec2 SceneRPG::getPosition(float rx, float ry, float tx, float ty) const {
     const float room_start_x = rx*m_grid_cell_size.x*m_room_size.x;
     const float room_start_y = ry*m_grid_cell_size.y*m_room_size.y;

@@ -280,6 +280,18 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
     ss << tag << " " << animation_name << " " << grid_x << " " << grid_y << " " <<
         block_movement << " " << block_vision;
     
+    if (tag == "NPC") {
+        auto hp = 1;
+        auto damage = 0;
+        if (e->hasComponent<CHealth>()) {
+            hp = e->getComponent<CHealth>().current;
+        }
+        if (e->hasComponent<CDamage>()) {
+            damage = e->getComponent<CDamage>().damage;
+        }
+        ss << " " << hp << " " << damage;
+    }
+
     if (e->hasComponent<CPatrol>()) {
         const auto patrol = e->getComponent<CPatrol>();
         ss << " Patrol " << patrol.speed << " " << patrol.positions.size();
@@ -298,7 +310,6 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
     files::addLine(m_level_content, ss.str());
 }
 
-// NOTE: Only works for sidescroller for now
 void Editor::parseEntities(EntityManager& entity_manager, GameEngine* engine) {
     m_level_content.clear();
 
@@ -323,7 +334,7 @@ void Editor::parseEntities(EntityManager& entity_manager, GameEngine* engine) {
         parseEntity(e, engine);
     }
 
-    m_level_content.push_back("\n# NPC: animation name, x, y, block movement, block vision, behavior");
+    m_level_content.push_back("\n# NPC: animation name, x, y, block movement, block vision, hp, damage, behavior");
     for (const auto& e : entity_manager.getEntities(Tag::ENEMY)) {
         parseEntity(e, engine);
     }
@@ -338,5 +349,5 @@ void Editor::parseEntities(EntityManager& entity_manager, GameEngine* engine) {
         parseEntity(e, engine);
     }
  
-    files::writeFile("config/notes/level_temp.rpg.lvl", m_level_content);
+    files::writeFile(m_level_path, m_level_content);
 }

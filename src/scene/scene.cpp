@@ -308,6 +308,24 @@ Vec2 Scene::gridPos(const Vec2& pos) const {
     );
 }
 
+Vec2 Scene::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entity> entity) const {
+    if (entity->hasComponent<CAnimation>()) {
+        const auto animation_size = entity->getComponent<CAnimation>().animation.getSize();
+        const float x = grid_x*m_grid_cell_size.x + (animation_size.x/2.0f);
+        const float y = height() - (grid_y*m_grid_cell_size.y + (animation_size.y/2.0f));
+
+        return Vec2(x, y);
+    }
+    if (entity->hasComponent<CBBox>()) {
+        const auto half_size = entity->getComponent<CBBox>().half_size;
+        const float x = grid_x*m_grid_cell_size.x + half_size.x;
+        const float y = height() - (grid_y*m_grid_cell_size.y + half_size.y);
+
+        return Vec2(x, y);
+    }
+    return Vec2(0, 0);
+}
+
 const std::vector<std::string> Scene::getLayerNames() const {
     std::vector<std::string> layer_names;
     for (const auto& layer : m_background_layers) {
