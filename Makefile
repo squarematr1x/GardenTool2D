@@ -46,6 +46,10 @@ debug: all
 check-leaks: all
 	leaks -atExit -- ./$(APP_DIR)/$(TARGET)
 
+.PHONY: loc
+loc:
+	find src/ \( -name "*.cpp" -o -name "*.hpp" \) -type f -exec wc -l {} +
+
 .PHONY: clean
 clean:
 	-@rm -rvf $(OBJ_DIR)/*
