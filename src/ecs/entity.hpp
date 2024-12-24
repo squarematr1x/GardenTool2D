@@ -28,8 +28,8 @@ enum class Tag : unsigned char {
 	DEFAULT,
 	TILE,
 	PLAYER,
-	ENEMY,
-	BULLET,
+	ENEMY, // TODO: Distinguish between friendly NPC and enemy (this should just be NPC with a flag defining whether friendly or not)
+	BULLET, // TODO: Add WEAPON tag to combine SWORD and BULLET?
 	EXPLOSION,
 	SWORD,
 	HEART,
