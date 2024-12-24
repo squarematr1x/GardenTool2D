@@ -9,6 +9,8 @@ struct PlayerConfig;
 class EntityManager;
 class GameEngine;
 
+enum class Tag : unsigned char;
+
 class Editor {
     struct EntityConfig {
         Vec2 pos{ 0, 0 }; // NOTE: this should be actually just mouse pos and let the user drop the entity to its final pos
@@ -42,14 +44,13 @@ class Editor {
     std::string m_previous_animation{ "Brick" };
     std::vector<std::string> m_level_content;
 
-    std::shared_ptr<Entity> addEntity(EntityManager& entity_manager, GameEngine* engine);
-
-    void modifyEntity(std::shared_ptr<Entity> e, GameEngine* engine);
-    void deleteEntity(std::shared_ptr<Entity> e);
+    void addEntity(EntityManager& entity_manager, GameEngine* engine);
     void parseEntity(std::shared_ptr<Entity> e, GameEngine* engine);
     void parseEntities(EntityManager& entity_manager, GameEngine* engine);
 
     int editTabFlag();
+
+    const std::string tagString(Tag tag) const;
 
 public:
     ~Editor();

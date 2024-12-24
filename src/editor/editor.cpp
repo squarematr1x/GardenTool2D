@@ -158,7 +158,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                     }
             
                     if (ImGui::Button("Delete")) {
-                        deleteEntity(e);
+                        e->destroy();
                         entity_manager.update();
                     }
 
@@ -185,7 +185,7 @@ void Editor::processEvent(const sf::RenderWindow& window, const sf::Event& event
     ImGui::SFML::ProcessEvent(window, event);
 }
 
-std::shared_ptr<Entity> Editor::addEntity(EntityManager& entity_manager, GameEngine* engine) {
+void Editor::addEntity(EntityManager& entity_manager, GameEngine* engine) {
     auto tile = entity_manager.addEntity(Tag::TILE);
     tile->addComponent<CAnimation>(engine->assets().getAnimation(m_previous_animation), true);
     tile->addComponent<CTransform>(engine->selectedPos());
@@ -193,23 +193,6 @@ std::shared_ptr<Entity> Editor::addEntity(EntityManager& entity_manager, GameEng
     engine->setSelectedEntityId(tile->id());
 
     m_previously_created = true;
-
-    return nullptr;
-    // Store entity data (in m_entity_config) to file in m_level_path
-    //  - Maybe: should also remove the previous entity in the same position, given that those have same type?
-    // Spawn the entity to user's mouse position
-}
-
-void Editor::modifyEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
-    (void)e;
-    (void)engine;
-    // Store entity e data to file in m_level_path
-}
-
-void Editor::deleteEntity(std::shared_ptr<Entity> e) {
-    e->destroy();
-
-    // Delete entity e data from file in m_level_path
 }
 
 bool Editor::windowActive() const {
@@ -230,18 +213,25 @@ void Editor::setLevel(const std::string& level_path) {
     m_level_path = level_path;
 }
 
-void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
+const std::string Editor::tagString(Tag tag) const {
     std::map<Tag, std::string> tag_map = {
         { Tag::TILE, "Tile" },
         { Tag::PLAYER, "Player" },
         { Tag::ENEMY, "NPC" },
         { Tag::ELEVATOR, "Elevator" },
         { Tag::CHECKPOINT, "Checkpoint" },
+        { Tag::HEART, "Tile" },
+        { Tag::TELEPORT, "Tile" }
     };
-    std::string tag = "";
-    if (tag_map.count(e->tag())) {
-        tag = tag_map.at(e->tag());
+    std::string tag_str = "";
+    if (tag_map.count(tag)) {
+        tag_str = tag_map.at(tag);
     }
+    return tag_str;
+}
+
+void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
+    const auto tag = tagString(e->tag());
     if (tag == "") {
         return;
     }
@@ -253,18 +243,18 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
 
     const auto pos = e->getComponent<CTransform>().pos;
     const auto grid_pos = engine->toGridPos(Vec2(pos.x, pos.y));
-    const auto grid_x = static_cast<int>(grid_pos.x);
-    const auto grid_y = static_cast<int>(grid_pos.y);
+    const auto grid_x = grid_pos.x;
+    const auto grid_y = grid_pos.y;
 
-    auto block_movement = 0;
-    auto block_vision = 0;
+    auto block_movement = false;
+    auto block_vision = false;
 
     std::stringstream ss;
 
     if (e->hasComponent<CBBox>()) {
         const auto bbox = e->getComponent<CBBox>();
-        block_movement = static_cast<int>(bbox.block_movement);
-        block_vision = static_cast<int>(bbox.block_vision);
+        block_movement = bbox.block_movement;
+        block_vision = bbox.block_vision;
 
         if (tag == "Checkpoint") {
             ss << tag << " " << grid_x << " " << grid_y << " " << bbox.size.x << " " << bbox.size.y;
@@ -290,6 +280,18 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
     ss << tag << " " << animation_name << " " << grid_x << " " << grid_y << " " <<
         block_movement << " " << block_vision;
     
+    if (tag == "NPC") {
+        auto hp = 1;
+        auto damage = 0;
+        if (e->hasComponent<CHealth>()) {
+            hp = e->getComponent<CHealth>().current;
+        }
+        if (e->hasComponent<CDamage>()) {
+            damage = e->getComponent<CDamage>().damage;
+        }
+        ss << " " << hp << " " << damage;
+    }
+
     if (e->hasComponent<CPatrol>()) {
         const auto patrol = e->getComponent<CPatrol>();
         ss << " Patrol " << patrol.speed << " " << patrol.positions.size();
@@ -299,15 +301,31 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
         }
     }
 
+    if (e->hasComponent<CFollowPlayer>()) {
+        const auto follow = e->getComponent<CFollowPlayer>();
+        const auto grid_pos = engine->toGridPos(follow.home);
+        ss << " Follow " << follow.speed << " " << grid_pos.x << " " << grid_pos.y; 
+    }
+
     files::addLine(m_level_content, ss.str());
 }
 
-// NOTE: Only works for sidescroller for now
 void Editor::parseEntities(EntityManager& entity_manager, GameEngine* engine) {
     m_level_content.clear();
 
+    m_level_content.push_back("# Background: layer name");
+    for (const auto& layer_name : engine->layerNames()) {
+        m_level_content.push_back("Background " + layer_name);
+    }
+
     m_level_content.push_back("\n# Tile: animation name, x, y, block movement, block vision");
     for (const auto& e : entity_manager.getEntities(Tag::TILE)) {
+        parseEntity(e, engine);
+    }
+    for (const auto& e : entity_manager.getEntities(Tag::HEART)) {
+        parseEntity(e, engine);
+    }
+    for (const auto& e : entity_manager.getEntities(Tag::TELEPORT)) {
         parseEntity(e, engine);
     }
 
@@ -316,7 +334,7 @@ void Editor::parseEntities(EntityManager& entity_manager, GameEngine* engine) {
         parseEntity(e, engine);
     }
 
-    m_level_content.push_back("\n# NPC: animation name, x, y, block movement, block vision, behavior");
+    m_level_content.push_back("\n# NPC: animation name, x, y, block movement, block vision, hp, damage, behavior");
     for (const auto& e : entity_manager.getEntities(Tag::ENEMY)) {
         parseEntity(e, engine);
     }
@@ -331,5 +349,5 @@ void Editor::parseEntities(EntityManager& entity_manager, GameEngine* engine) {
         parseEntity(e, engine);
     }
  
-    files::writeFile("config/levels/level_temp.sc.lvl", m_level_content);
+    files::writeFile(m_level_path, m_level_content);
 }

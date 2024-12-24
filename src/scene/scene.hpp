@@ -77,6 +77,7 @@ public:
 	EntityManager& getEntityManager() { return m_entity_manager; }
 
 	const PlayerConfig& getPlayerConfig() const { return m_player_config; }
+	const std::vector<std::string> getLayerNames() const;
 
 protected:
 	Scene(GameEngine* engine);
@@ -105,8 +106,12 @@ protected:
 	const Vec2 m_grid_cell_size{ 64, 64 };
 	sf::Text m_grid_text;
 
+	std::vector<Layer> m_background_layers;
+
 	virtual void onEnd() = 0;
 	void setPaused(bool paused) { m_paused = paused; }
+
+	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity) const;
 };
 
 class SceneMenu: public Scene
@@ -137,7 +142,6 @@ class SceneSideScroller: public Scene
 	std::shared_ptr<Entity> m_player;
 	bool m_can_shoot{ true };
 	bool m_can_jump{ true };
-	std::vector<Layer> m_background_layers;
 
 	sf::CircleShape m_mouse_shape;
 
@@ -146,8 +150,6 @@ public:
 
 	void init(const std::string& level_path);
 	void update();
-
-	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity) const;
 
 	void loadLevel(const std::string& path);
 
@@ -196,6 +198,7 @@ public:
 	void teleport(const Vec2& cur_doorway);
 
 	Vec2 getPosition(float rx, float ry, float tx, float ty) const;
+	Vec2 getPosition(float x, float y) const;
 	Vec2 getCurrentRoom() const;
 
 	void sAI();

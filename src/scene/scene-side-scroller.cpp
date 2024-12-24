@@ -39,24 +39,6 @@ void SceneSideScroller::init(const std::string& level_path) {
     // m_engine->playMusic("Level1Music");
 }
 
-Vec2 SceneSideScroller::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entity> entity) const {
-    if (entity->hasComponent<CAnimation>()) {
-        const auto animation_size = entity->getComponent<CAnimation>().animation.getSize();
-        const float x = grid_x*m_grid_cell_size.x + (animation_size.x/2.0f);
-        const float y = height() - (grid_y*m_grid_cell_size.y + (animation_size.y/2.0f));
-
-        return Vec2(x, y);
-    }
-    if (entity->hasComponent<CBBox>()) {
-        const auto half_size = entity->getComponent<CBBox>().half_size;
-        const float x = grid_x*m_grid_cell_size.x + half_size.x;
-        const float y = height() - (grid_y*m_grid_cell_size.y + half_size.y);
-
-        return Vec2(x, y);
-    }
-    return Vec2(0, 0);
-}
-
 void SceneSideScroller::loadLevel(const std::string& path) {
     // Reset the entity manager every time we load a level
     m_entity_manager = EntityManager();
@@ -93,8 +75,9 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                 }
             } else if (asset_type == "Player") {
                 float x, y, bbox_w, bbox_h, v, jump_v, max_v, gravity;
+                int hp;
                 std::string weapon_animation;
-                text_stream >> x >> y >> bbox_w >> bbox_h >> v >> max_v >> jump_v >> gravity >> weapon_animation;
+                text_stream >> x >> y >> bbox_w >> bbox_h >> v >> max_v >> jump_v >> gravity >> weapon_animation >> hp;
                 m_player_config = {
                     x, y, bbox_w, bbox_h, v, max_v, jump_v, gravity, weapon_animation
                 };
