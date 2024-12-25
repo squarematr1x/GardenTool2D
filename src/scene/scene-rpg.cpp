@@ -78,7 +78,6 @@ void SceneRPG::loadLevel(const std::string& path) {
                 if (tag == Tag::TELEPORT) {
                     m_doorways.push_back(pos);
                 }
-                tile->addComponent<CDraggable>(); // NOTE: Anything should be draggable in edit mode
             } else if (asset_type == "Player") {
                 float x, y, bbox_w, bbox_h, v, max_v, jump_v, gravity;
                 int hp;

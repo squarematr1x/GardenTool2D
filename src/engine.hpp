@@ -55,8 +55,7 @@ public:
 
 	void toggleSound() { m_enable_sound = !m_enable_sound; }
 	void toggleMusic() { m_enable_music = !m_enable_music; }
-	void toggleEditMode() { m_edit_mode = !m_edit_mode; }
-	void setEditMode(bool edit) { m_edit_mode = edit; m_paused = edit; }
+	void toggleEditMode();
 	void setSelectedEntityId(size_t id) { m_selected_entity_id = id; }
 	void setSelectedPos(const Vec2& cell) { m_selected_pos = cell; }
 
