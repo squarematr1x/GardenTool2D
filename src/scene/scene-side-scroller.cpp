@@ -64,7 +64,6 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                 auto tile = m_entity_manager.addEntity(Tag::TILE);
                 tile->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
                 tile->addComponent<CTransform>(gridToMidPixel(x, y, tile));
-                tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later
                 if (block_movement) {
                     const auto& animation_size = tile->getComponent<CAnimation>().animation.getSize();
                     if (animation == "Brick") {

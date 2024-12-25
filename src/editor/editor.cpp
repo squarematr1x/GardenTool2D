@@ -83,7 +83,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                             bbox.half_size.x = bbox.size.x/2;
                             bbox.half_size.y = bbox.size.y/2;
                         } else if (ImGui::Button("Add bounding box")) {
-                            e->addComponent<CBBox>();
+                            e->addComponent<CBBox>(Vec2(64, 64));
                         }
                         ImGui::TreePop();
                     }

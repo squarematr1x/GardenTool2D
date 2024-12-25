@@ -32,7 +32,7 @@ _TBA_
 Install SFML using [Homebrew](https://brew.sh/):
 
 ```
-brew install sfml
+brew install sfml@2
 ```
 
 Clone this repository:
