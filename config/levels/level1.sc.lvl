@@ -1,3 +1,7 @@
+# Background: layer name
+Background Landscape1
+Background Landscape2
+
 # Tile: animation name, x, y, block movement, block vision
 Tile Brick 0 0 1 1
 Tile Brick 0 1 1 1
@@ -18,7 +22,7 @@ Tile Brick 6 4 1 1
 Tile Brick 7 0 1 1
 Tile Brick 7 1 1 1
 Tile Brick 7 5 1 1
-Tile Question1 7 7 1 1
+Tile Question2 7 7 1 1
 Tile Brick 8 5 1 1
 Tile Brick 8 0 1 1
 Tile Brick 8 1 1 1
@@ -28,36 +32,46 @@ Tile Brick 13 0 1 1
 Tile Brick 14 0 1 1
 Tile Brick 15 0 1 1
 Tile Brick 15 1 1 1
-Tile Brick 15 4 1 1
 Tile Brick 21 0 1 1
 Tile Rock 22 0 1 1
 Tile Brick 23 0 1 1
 Tile Brick 30 0 1 1
 Tile Brick 31 0 1 1
-
 Tile Coin 10 4 0 0
 Tile Bush 7 2 0 0
-Tile Cloud1 3 8 0 0
-Tile Cloud1 8 9 0 0
-Tile Cloud2 11 10 0 0
-Tile Cloud2 14 7 0 0
-Tile Cloud1 23 8 0 0
-
-# Background: layer name
-Background Landscape1
-Background Landscape2
+Tile Cloud1 6 8 0 0
+Tile Cloud1 11 9 0 0
+Tile Cloud2 14 10 0 0
+Tile Cloud2 17 7 0 0
+Tile Cloud1 26 8 0 0
+Tile Brick 12 6 1 1
+Tile Brick 13 6 1 1
+Tile Brick 13 7 1 1
+Tile Brick 9 7 1 1
+Tile Brick 11 6 1 1
+Tile Brick 10 8 1 1
+Tile Brick 11 9 1 1
+Tile Brick 12 9 1 1
+Tile Brick 13 9 1 1
+Tile Brick 11 0 1 1
+Tile Brick 32 1 1 1
+Tile Brick 33 1 1 1
+Tile Brick 34 2 1 1
+Tile Brick 35 2 1 1
+Tile Bush 33 2 1 1
+Tile Heart 7 8 0 0
 
 # Player: x, y, bboxw, bboxh, speed, max speed, jump speed, gravity, weapon animation name hp
-Player 2 6 56 62 5 5 25 2 Fire 4
+Player 15 2 56 62 5 5 25 2 Fire 4
 
-# NPC: animation name, x, y, block movement, block vision, behavior
-NPC CreepRun 7 2 0 0 1 1 Patrol 2 2 6 2 8 2
-NPC GitRun 13 1 0 0 1 1 Patrol 2 2 13 1 14 1
+# NPC: animation name, x, y, block movement, block vision, hp, damage, behavior
+NPC CreepRun 8 2 0 0 4 1 Patrol 2 2 6 2 8 2
+NPC GitRun 13 1 0 0 4 1 Patrol 2 2 13 1 14 1
 
 # Elevator: animation name, x, y, block movement, block vision, behavior
-Elevator Brick 16 1 1 1 Patrol 2 2 16 1 20 1
-Elevator Rock 25 1 1 1 Patrol 2 2 25 1 25 5
-Elevator Rock 27 5 1 1 Patrol 2 2 27 5 27 1
+Elevator Brick 17 1 1 1 Patrol 2 2 16 1 20 1
+Elevator Rock 25 2 1 1 Patrol 2 2 25 1 25 5
+Elevator Rock 27 4 1 1 Patrol 2 2 27 5 27 1
 
 # Checkpoint: x, y, bboxw, bboxh
 Checkpoint 22 1 64 64
