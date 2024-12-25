@@ -97,6 +97,7 @@ protected:
 	bool m_draw_collision{ false };
 	bool m_draw_grid{ false };
 	bool m_show_ai_info{ false };
+	bool m_show_hp{ true };
 
 	std::string m_level_path{ "" };
 
@@ -117,7 +118,7 @@ protected:
 class SceneMenu: public Scene
 {
 	std::string m_title { "Menu" };
-	std::vector<std::string> m_menu_strings{ "level 1", "level 2", "level 3" };
+	std::vector<std::string> m_menu_strings;
 	std::vector<std::string> m_level_paths;
 	sf::Text m_menu_text;
 	sf::Color m_background_color{ 20, 20, 20 };
@@ -162,7 +163,7 @@ public:
 	void sAI();
 	void sAnimation();
 	void sMovement();
-	void sLifespan();
+	void sStatus();
 	void sEnemySpawner();
 	void sCollision();
 	void sCamera();
@@ -178,7 +179,6 @@ class SceneRPG: public Scene
 {
 	std::shared_ptr<Entity> m_player;
 	bool m_follow{ false };
-	bool m_show_health{ true };
 	bool m_can_attack{ true };
 	const Vec2 m_room_size{ 20, 12 }; // 20x12 grids
 	std::vector<Vec2> m_doorways;

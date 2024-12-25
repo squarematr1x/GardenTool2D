@@ -166,6 +166,7 @@ void SceneSideScroller::spawnPlayer() {
     m_player->addComponent<CTransform>(gridToMidPixel(m_player_config.x, m_player_config.y, m_player), true);
     m_player->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y));
     m_player->addComponent<CGravity>(m_player_config.gravity);
+    m_player->addComponent<CHealth>(m_player_config.hp);
 }
 
 void SceneSideScroller::spawnBullet() {
@@ -202,7 +203,7 @@ void SceneSideScroller::update() {
 
         sAI();
         sMovement();
-        sLifespan();
+        sStatus();
         sCollision();
         sAnimation();
     }
@@ -309,8 +310,16 @@ void SceneSideScroller::sMovement() {
     }
 }
 
-void SceneSideScroller::sLifespan() {
+void SceneSideScroller::sStatus() {
+    // Invicibility frames
+    if (m_player->hasComponent<CInvincibility>()) {
+        if (m_player->getComponent<CInvincibility>().i_frames-- <= 0) {
+            m_player->removeComponent<CInvincibility>();
+        }
+    }
+
     for (auto entity : m_entity_manager.getEntities()) {
+        // Lifespan
         if (entity->hasComponent<CLifespan>()) {
             if (entity->getComponent<CLifespan>().remaining <= 0) {
                 entity->destroy();
@@ -326,30 +335,57 @@ void SceneSideScroller::sCollision() {
     auto& p_state = m_player->getComponent<CState>();
     auto& p_bbox = m_player->getComponent<CBBox>();
 
-    for (auto entity : m_entity_manager.getEntities()) {
-        if (entity->tag() != Tag::TILE &&
-            entity->tag() != Tag::ELEVATOR &&
-            entity->tag() != Tag::CHECKPOINT) {
+    for (auto e : m_entity_manager.getEntities()) {
+        if (e->tag() != Tag::TILE &&
+            e->tag() != Tag::ELEVATOR &&
+            e->tag() != Tag::CHECKPOINT &&
+            e->tag() != Tag::ENEMY) {
             continue;
         }
 
         // Checkpoint
-        if (entity->tag() == Tag::CHECKPOINT) {
-            if (physics::overlapping(m_player, entity)) {
-                auto checkpointPos = entity->getComponent<CTransform>().pos;
+        if (e->tag() == Tag::CHECKPOINT) {
+            if (physics::overlapping(m_player, e)) {
+                auto checkpointPos = e->getComponent<CTransform>().pos;
                 m_player_config.x = (checkpointPos.x - (m_grid_cell_size.x/2.0f))/m_grid_cell_size.x;
                 m_player_config.y = ((height() - checkpointPos.y - (m_grid_cell_size.y/2.0f))/m_grid_cell_size.y);
             }
         }
 
-        if (!entity->getComponent<CBBox>().block_movement) {
+        // Bullet collision
+        for (auto bullet : m_entity_manager.getEntities(Tag::BULLET)) {
+            if (physics::overlapping(bullet, e)) {
+                if (e->getComponent<CBBox>().breakable) {
+                    // Destroy tile and bullet
+                    spawnExplosion(e->getComponent<CTransform>().pos);
+                    e->destroy();
+                } else {
+                    spawnExplosion(bullet->getComponent<CTransform>().pos);
+                }
+                if (e->tag() == Tag::ENEMY) {
+                    if (e->hasComponent<CHealth>()) {
+                        auto& hp = e->getComponent<CHealth>();
+                        constexpr auto bullet_dmg = 2; // TODO: should be stored into weapon entity
+                        hp.current -= bullet_dmg;
+                        hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
+
+                        if (hp.current <= 0) {
+                            e->destroy();
+                        }
+                    }
+                }
+                bullet->destroy();
+            }
+        }
+
+        if (!e->getComponent<CBBox>().block_movement) {
             continue;
         }
     
         // Player collision
-        Vec2 overlap = physics::getOverlap(m_player, entity);
+        Vec2 overlap = physics::getOverlap(m_player, e);
         if (overlap.x > 0 && overlap.y > 0) {
-            Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
+            Vec2 prev_overlap = physics::getPrevOverlap(m_player, e);
             if (prev_overlap.y > 0) {
                 if (p_transfrom.velocity.x > 0) {
                     p_transfrom.pos.x -= overlap.x;
@@ -368,35 +404,58 @@ void SceneSideScroller::sCollision() {
                     else {
                         p_state.state = State::STAND;
                     }
-                    if (entity->tag() == Tag::ELEVATOR) {
-                        p_transfrom.pos.x += entity->getComponent<CTransform>().velocity.x;
+                    if (e->tag() == Tag::ELEVATOR) {
+                        p_transfrom.pos.x += e->getComponent<CTransform>().velocity.x;
                     }
                 } else if (p_transfrom.velocity.y < 0) {
                     p_transfrom.pos.y += overlap.y;
-                    if (entity->getComponent<CBBox>().breakable) {
-                        spawnExplosion(entity->getComponent<CTransform>().pos);
-                        entity->destroy();
-                    } else if (entity->getComponent<CAnimation>().animation.getName() == "Question1") {
-                        auto e_pos = entity->getComponent<CTransform>().pos;
+                    if (e->getComponent<CBBox>().breakable) {
+                        spawnExplosion(e->getComponent<CTransform>().pos);
+                        e->destroy();
+                    } else if (e->getComponent<CAnimation>().animation.getName() == "Question1") {
+                        auto e_pos = e->getComponent<CTransform>().pos;
                         spawnItem(Vec2(e_pos.x, e_pos.y - 64.0f), "Heart", Tag::HEART);
-                        entity->addComponent<CAnimation>(m_engine->assets().getAnimation("Question2"), true);
+                        e->addComponent<CAnimation>(m_engine->assets().getAnimation("Question2"), true);
                     }
                 }
                 p_transfrom.velocity.y = 0.0f;
             }
         }
+    }
 
-        // Bullet collision
-        for (auto bullet : m_entity_manager.getEntities(Tag::BULLET)) {
-            if (physics::overlapping(bullet, entity)) {
-                if (entity->getComponent<CBBox>().breakable) {
-                    // Destroy tile and bullet
-                    spawnExplosion(entity->getComponent<CTransform>().pos);
-                    entity->destroy();
-                } else {
-                    spawnExplosion(bullet->getComponent<CTransform>().pos);
+    // Player - enemy collision
+    for (auto enemy : m_entity_manager.getEntities(Tag::ENEMY)) {
+        auto enemy_damage = enemy->getComponent<CDamage>().damage;
+
+        for (auto sword : m_entity_manager.getEntities(Tag::SWORD)) {
+            if (physics::overlapping(enemy, sword)) {
+                if (!sword->hasComponent<CDamage>()) {
+                    continue;
                 }
-                bullet->destroy();
+                auto& hp = enemy->getComponent<CHealth>();
+                hp.current -= sword->getComponent<CDamage>().damage;
+                hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
+
+                if (hp.current <= 0) {
+                    enemy->destroy();
+                }
+            }
+        }
+
+        if (m_player->hasComponent<CInvincibility>()) {
+            continue;
+        }
+
+        if (physics::overlapping(m_player, enemy)) {
+            auto& hp = m_player->getComponent<CHealth>();
+            hp.current -= enemy_damage;
+            hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
+
+            if (hp.current <= 0) {
+                m_player->destroy();
+                spawnPlayer();
+            } else {
+                m_player->addComponent<CInvincibility>();
             }
         }
     }
@@ -517,6 +576,12 @@ void SceneSideScroller::sAnimation() {
                 }
             }
             p_state.prev_state = p_state.state;
+
+            if (entity->hasComponent<CInvincibility>()) {
+		        entity->getComponent<CAnimation>().animation.getSprite().setColor(sf::Color(255, 128, 128, 128));
+	        } else {
+                entity->getComponent<CAnimation>().animation.getSprite().setColor(sf::Color(255, 255, 255));
+            }
         }
     }
 }
@@ -571,6 +636,9 @@ void SceneSideScroller::sRender() {
             } else {
                 addVertexData(transform.pos, sprite.getTextureRect(), vertices);
             }
+            if (m_show_hp) {
+                addHpBar(e);
+            }
         }
         // Draw vertex array
         sf::RenderStates states(&m_engine->assets().getTexture("Tilemap"));
@@ -589,6 +657,8 @@ void SceneSideScroller::sRender() {
     if (m_paused) {
         renderPauseText();
     }
+
+    renderHpBars();
 }
 
 void SceneSideScroller::sDragAndDrop() {

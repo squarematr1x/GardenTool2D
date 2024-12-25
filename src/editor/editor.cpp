@@ -272,7 +272,7 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
         const auto cf = engine->getPlayerConfig();
         ss << tag << " " << grid_x << " " << grid_y << " " << cf.bbox_x << " " <<
             cf.bbox_y << " " << cf.v << " " << cf.max_v << " " << cf.jump_v << " " <<
-            cf.gravity << " " << cf.weapon << " " << cf.health;
+            cf.gravity << " " << cf.weapon << " " << cf.hp;
         files::addLine(m_level_content, ss.str());
         return;
     }
