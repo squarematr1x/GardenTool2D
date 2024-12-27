@@ -378,6 +378,16 @@ void SceneSideScroller::sCollision() {
             }
         }
 
+        // Player - heart collision
+        for (auto heart : m_entity_manager.getEntities(Tag::HEART)) {
+            if (physics::overlapping(m_player, heart)) {
+                auto& p_health = m_player->getComponent<CHealth>();
+                p_health.current = std::min(p_health.current + 1, p_health.max);
+                p_health.percentage = static_cast<float>(p_health.current)/static_cast<float>(p_health.max);
+                heart->destroy();
+            }
+        }
+
         if (!e->getComponent<CBBox>().block_movement) {
             continue;
         }
