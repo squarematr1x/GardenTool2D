@@ -228,6 +228,10 @@ void SceneSideScroller::sAI() {
             auto& patrol = e->getComponent<CPatrol>();
             auto& transform = e->getComponent<CTransform>();
 
+            if (patrol.positions.size() <= patrol.cur_pos) {
+                continue;
+            }
+
             Vec2 target = patrol.positions[patrol.cur_pos];
             if (targetReached(transform.pos, target)) {
                 patrol.cur_pos = patrol.cur_pos + 1 < patrol.positions.size() ? patrol.cur_pos + 1 : 0;
