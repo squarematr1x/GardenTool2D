@@ -20,10 +20,12 @@ void Editor::init(sf::RenderWindow& window) {
     }
 }
 
+// NOTE: this function is rather messy, but ImGui in general seems to result in messy code
 void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, GameEngine* engine) {
     ImGui::SFML::Update(window, m_dt.restart());
     ImGui::Begin("Editor");
-    // ImGui::ShowDemoWindow();
+
+    //  ImGui::ShowDemoWindow();
     
     if (ImGui::BeginTabBar("EditTabBar", 0)) {
         if (ImGui::BeginTabItem("Add")) {
@@ -149,6 +151,59 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                             ImGui::InputInt("Time (frames)", &invincibility.i_frames, 60, 60);
                         } else if (ImGui::Button("Add invincibility")) {
                             e->addComponent<CInvincibility>();
+                        }
+                        ImGui::TreePop();
+                    }
+                    if (ImGui::TreeNode("Behavior")) {
+                        if (e->tag() == Tag::ENEMY) {
+                            if (ImGui::TreeNode("Follow")) {
+                                if (e->hasComponent<CFollowPlayer>()) {
+                                    auto& follow = e->getComponent<CFollowPlayer>();
+                                    ImGui::SetNextItemWidth(100);
+                                    ImGui::InputFloat("x", &follow.home.x, 1.0f, 1.0f, "%.0f");
+                                    ImGui::SameLine();
+                                    ImGui::SetNextItemWidth(100);
+                                    ImGui::InputFloat("y", &follow.home.y, 1.0f, 1.0f, "%.0f");
+                                    ImGui::SetNextItemWidth(100);
+                                    ImGui::InputFloat("Speed", &follow.speed, 1.0f, 1.0f, "%.0f");
+                                } else if (ImGui::Button("Add follow behavior")) {
+                                    e->addComponent<CFollowPlayer>();
+                                    e->removeComponent<CPatrol>();
+                                }
+                                ImGui::TreePop();
+                            }
+                            if (ImGui::TreeNode("Patrol")) {
+                                if (e->hasComponent<CPatrol>()) {
+                                    auto& patrol = e->getComponent<CPatrol>();
+                                    ImGui::SetNextItemWidth(100);
+                                    ImGui::InputFloat("Speed", &patrol.speed, 1.0f, 1.0f, "%.0f");
+                                    auto i = 0;
+                                    for (auto& pos : patrol.positions) {
+                                        ImGui::PushID(i);
+                                        ImGui::SetNextItemWidth(100);
+                                        ImGui::InputFloat("x", &pos.x, 1.0f, 1.0f, "%.0f");
+                                        ImGui::SameLine();
+                                        ImGui::SetNextItemWidth(100);
+                                        ImGui::InputFloat("y", &pos.y, 1.0f, 1.0f, "%.0f");
+                                        ImGui::SetNextItemWidth(100);
+                                        ImGui::PopID();
+                                        i++;
+                                    }
+                                    if (ImGui::Button("Add position")) {
+                                        patrol.positions.push_back(Vec2(0.0f, 0.0f));
+                                    }
+                                    if (patrol.positions.size() > 2) {
+                                        if (ImGui::Button("Pop position")) {
+                                            patrol.positions.pop_back();
+                                            patrol.cur_pos = 0;
+                                        }
+                                    }
+                                } else if (ImGui::Button("Add follow behavior")) {
+                                    e->addComponent<CPatrol>();
+                                    e->removeComponent<CFollowPlayer>();
+                                }
+                                ImGui::TreePop();
+                            }
                         }
                         ImGui::TreePop();
                     }
