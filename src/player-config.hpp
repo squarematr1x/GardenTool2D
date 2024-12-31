@@ -16,5 +16,5 @@ struct PlayerConfig {
     
     std::string weapon{ "" };
 
-    int health{ 4 };
+    int hp{ 4 };
 };

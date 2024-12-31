@@ -18,6 +18,9 @@ Animation Grass Tilemap 1 1 64 64 0 128
 Animation DarkBush Tilemap 1 1 64 64 0 192
 Animation Doorway Tilemap 1 0 64 64 0 256
 Animation Brick Tilemap 1 1 64 64 0 320
+Animation BrickRCorner Tilemap 1 1 64 64 64 320
+Animation BrickLCorner Tilemap 1 1 64 64 128 320
+Animation BrickRound Tilemap 1 1 64 64 192 320
 Animation Question1 Tilemap 1 1 64 64 0 384
 Animation Question2 Tilemap 1 1 64 64 64 384
 Animation Bush Tilemap 4 15 256 64 0 448

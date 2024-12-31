@@ -54,9 +54,6 @@ Tile Grass 1 11 0 0
 Tile Grass 0 10 0 0
 Tile Grass 1 10 0 0
 Tile Brick 0 12 0 0
-Tile DarkBush 12 2 1 1
-Tile DarkBush 8 5 0 0
-Tile DarkBush 7 5 0 0
 Tile Coin 6 5 0 0
 Tile DarkBush 13 2 1 1
 Tile Coin 3 9 0 0
@@ -73,7 +70,6 @@ Player 9 6 58 58 5 0 0 0 Empty 4
 # NPC: animation name, x, y, block movement, block vision, hp, damage, behavior
 NPC Jelly 6 5 0 0 3 1 Patrol 2 3 3 8 7 8 7 5
 NPC Angry 4 7 0 0 3 1 Patrol 2 2 3 3 6 3
-NPC Ghost 14 4 1 0 3 1 Follow 2 14 8
 
 # Elevator: animation name, x, y, block movement, block vision, behavior
 

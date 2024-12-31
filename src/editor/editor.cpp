@@ -20,10 +20,12 @@ void Editor::init(sf::RenderWindow& window) {
     }
 }
 
+// NOTE: this function is rather messy, but ImGui in general seems to result in messy code
 void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, GameEngine* engine) {
     ImGui::SFML::Update(window, m_dt.restart());
     ImGui::Begin("Editor");
-    // ImGui::ShowDemoWindow();
+
+    //  ImGui::ShowDemoWindow();
     
     if (ImGui::BeginTabBar("EditTabBar", 0)) {
         if (ImGui::BeginTabItem("Add")) {
@@ -152,8 +154,81 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                         }
                         ImGui::TreePop();
                     }
+                    if (ImGui::TreeNode("Behavior")) {
+                        if (e->tag() == Tag::ENEMY) {
+                            if (ImGui::TreeNode("Follow")) {
+                                if (e->hasComponent<CFollowPlayer>()) {
+                                    auto& follow = e->getComponent<CFollowPlayer>();
+                                    ImGui::SetNextItemWidth(100);
+                                    ImGui::InputFloat("x", &follow.home.x, 1.0f, 1.0f, "%.0f");
+                                    ImGui::SameLine();
+                                    ImGui::SetNextItemWidth(100);
+                                    ImGui::InputFloat("y", &follow.home.y, 1.0f, 1.0f, "%.0f");
+                                    ImGui::SetNextItemWidth(100);
+                                    ImGui::InputFloat("Speed", &follow.speed, 1.0f, 1.0f, "%.0f");
+                                } else if (ImGui::Button("Add follow behavior")) {
+                                    e->addComponent<CFollowPlayer>();
+                                    e->removeComponent<CPatrol>();
+                                }
+                                ImGui::TreePop();
+                            }
+                        }
+                        if (e->tag() == Tag::ENEMY || e->tag() == Tag::ELEVATOR) {
+                            if (ImGui::TreeNode("Patrol")) {
+                                if (e->hasComponent<CPatrol>()) {
+                                    auto& patrol = e->getComponent<CPatrol>();
+                                    ImGui::SetNextItemWidth(100);
+                                    ImGui::InputFloat("Speed", &patrol.speed, 1.0f, 1.0f, "%.0f");
+                                    auto i = 0;
+                                    for (auto& pos : patrol.positions) {
+                                        ImGui::PushID(i);
+                                        ImGui::SetNextItemWidth(100);
+                                        ImGui::InputFloat("x", &pos.x, 1.0f, 1.0f, "%.0f");
+                                        ImGui::SameLine();
+                                        ImGui::SetNextItemWidth(100);
+                                        ImGui::InputFloat("y", &pos.y, 1.0f, 1.0f, "%.0f");
+                                        ImGui::SetNextItemWidth(100);
+                                        ImGui::PopID();
+                                        i++;
+                                    }
+                                    if (ImGui::Button("Add position")) {
+                                        patrol.positions.push_back(Vec2(0.0f, 0.0f));
+                                    }
+                                    if (patrol.positions.size() > 2) {
+                                        if (ImGui::Button("Pop position")) {
+                                            patrol.positions.pop_back();
+                                            patrol.cur_pos = 0;
+                                        }
+                                    }
+                                } else if (ImGui::Button("Add follow behavior")) {
+                                    e->addComponent<CPatrol>();
+                                    e->removeComponent<CFollowPlayer>();
+                                }
+                                ImGui::TreePop();
+                            }
+                        }
+                        ImGui::TreePop();
+                    }
                     if (ImGui::TreeNode("Type")) {
-                        (void)m_types;
+                        static int cur_index = 0;
+                        for (int i = 0; i < IM_ARRAYSIZE(m_types); i++) {
+                            const std::string type_str(m_types[i]);
+                            if (!m_type_map.count(type_str)) {
+                                continue;
+                            }
+                            if (m_type_map.at(type_str) == e->tag()) {
+                                cur_index = i;
+                                break;
+                            }
+                        }
+                        int prev_index = cur_index;
+                        ImGui::ListBox("Types", &cur_index, m_types, IM_ARRAYSIZE(m_types), 6);
+                        if (prev_index != cur_index) {
+                            std::string type(m_types[cur_index]);
+                            if (m_type_map.count(type)) {
+                                e->setTag(m_type_map.at(type));
+                            }
+                        }
                         ImGui::TreePop();
                     }
             
@@ -189,7 +264,7 @@ void Editor::addEntity(EntityManager& entity_manager, GameEngine* engine) {
     auto tile = entity_manager.addEntity(Tag::TILE);
     tile->addComponent<CAnimation>(engine->assets().getAnimation(m_previous_animation), true);
     tile->addComponent<CTransform>(engine->selectedPos());
-    tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later
+    tile->addComponent<CDraggable>();
     engine->setSelectedEntityId(tile->id());
 
     m_previously_created = true;
@@ -263,7 +338,7 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
         }
     }
 
-    std::string animation_name =  "" ;
+    std::string animation_name =  "";
     if (e->hasComponent<CAnimation>()) {
         animation_name = e->getComponent<CAnimation>().animation.getName();
     }
@@ -272,7 +347,7 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
         const auto cf = engine->getPlayerConfig();
         ss << tag << " " << grid_x << " " << grid_y << " " << cf.bbox_x << " " <<
             cf.bbox_y << " " << cf.v << " " << cf.max_v << " " << cf.jump_v << " " <<
-            cf.gravity << " " << cf.weapon << " " << cf.health;
+            cf.gravity << " " << cf.weapon << " " << cf.hp;
         files::addLine(m_level_content, ss.str());
         return;
     }

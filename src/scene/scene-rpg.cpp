@@ -156,7 +156,7 @@ void SceneRPG::spawnPlayer() {
     );
     m_player->addComponent<CAnimation>(m_engine->assets().getAnimation("PDown"), true);
     m_player->addComponent<CBBox>(Vec2(m_player_config.bbox_x, m_player_config.bbox_y), true, false);
-    m_player->addComponent<CHealth>(m_player_config.health, m_player_config.health - 1);
+    m_player->addComponent<CHealth>(m_player_config.hp, m_player_config.hp);
     m_player->addComponent<CState>(State::RUN);
     m_player->addComponent<CWeapon>();
 }
@@ -319,7 +319,7 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::MOUSE_SCROLL: updateZoom(action.delta); break;
             case ActionName::MOUSE_MOVE: m_mouse_pos = action.pos; break;
             case ActionName::TOGGLE_FOLLOW: m_follow = !m_follow; break;
-            case ActionName::TOGGLE_HEALTH: m_show_health = !m_show_health; break;
+            case ActionName::TOGGLE_HEALTH: m_show_hp = !m_show_hp; break;
             case ActionName::TOGGLE_TEXTURE: m_draw_textures = !m_draw_textures; break;
             case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
             case ActionName::TOGGLE_GRID: m_draw_grid = !m_draw_grid; break;
@@ -365,8 +365,6 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::LEFT_CLICK: {
                 if (m_engine->editMode()) {
                     Vec2 world_pos = worldPos();
-
-
                     for (auto e : m_entity_manager.getEntities()) {
                         if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
                             e->getComponent<CDraggable>().dragged = false;
@@ -387,6 +385,10 @@ void SceneRPG::sAI() {
         if (e->hasComponent<CPatrol>()) {
             auto& patrol = e->getComponent<CPatrol>();
             auto& transform = e->getComponent<CTransform>();
+
+            if (patrol.positions.size() <= patrol.cur_pos) {
+                continue;
+            }
 
             Vec2 target = patrol.positions[patrol.cur_pos];
             if (targetReached(transform.pos, target)) {
@@ -661,7 +663,7 @@ void SceneRPG::sRender() {
                 addVertexData(transform.pos, sprite.getTextureRect(), vertices);
             }
 
-            if (m_show_health) {
+            if (m_show_hp) {
                 addHpBar(e);
             }
 

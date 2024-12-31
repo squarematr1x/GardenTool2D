@@ -22,9 +22,10 @@ void SceneMenu::init() {
 
     m_particles.init(m_engine->window().getSize());
 
-    std::string path = "config/levels";
+    std::string path = "config/levels/";
     for (const auto & entry : std::filesystem::directory_iterator(path)) {
         m_level_paths.push_back(entry.path());
+        m_menu_strings.push_back(entry.path());
     }
 }
 
