@@ -172,6 +172,8 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                 }
                                 ImGui::TreePop();
                             }
+                        }
+                        if (e->tag() == Tag::ENEMY || e->tag() == Tag::ELEVATOR) {
                             if (ImGui::TreeNode("Patrol")) {
                                 if (e->hasComponent<CPatrol>()) {
                                     auto& patrol = e->getComponent<CPatrol>();
@@ -208,7 +210,25 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                         ImGui::TreePop();
                     }
                     if (ImGui::TreeNode("Type")) {
-                        (void)m_types;
+                        static int cur_index = 0;
+                        for (int i = 0; i < IM_ARRAYSIZE(m_types); i++) {
+                            const std::string type_str(m_types[i]);
+                            if (!m_type_map.count(type_str)) {
+                                continue;
+                            }
+                            if (m_type_map.at(type_str) == e->tag()) {
+                                cur_index = i;
+                                break;
+                            }
+                        }
+                        int prev_index = cur_index;
+                        ImGui::ListBox("Types", &cur_index, m_types, IM_ARRAYSIZE(m_types), 6);
+                        if (prev_index != cur_index) {
+                            std::string type(m_types[cur_index]);
+                            if (m_type_map.count(type)) {
+                                e->setTag(m_type_map.at(type));
+                            }
+                        }
                         ImGui::TreePop();
                     }
             
@@ -244,7 +264,7 @@ void Editor::addEntity(EntityManager& entity_manager, GameEngine* engine) {
     auto tile = entity_manager.addEntity(Tag::TILE);
     tile->addComponent<CAnimation>(engine->assets().getAnimation(m_previous_animation), true);
     tile->addComponent<CTransform>(engine->selectedPos());
-    tile->addComponent<CDraggable>(); // TODO: Add draggable to other entities later
+    tile->addComponent<CDraggable>();
     engine->setSelectedEntityId(tile->id());
 
     m_previously_created = true;
@@ -318,7 +338,7 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
         }
     }
 
-    std::string animation_name =  "" ;
+    std::string animation_name =  "";
     if (e->hasComponent<CAnimation>()) {
         animation_name = e->getComponent<CAnimation>().animation.getName();
     }

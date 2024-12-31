@@ -9,37 +9,27 @@ struct PlayerConfig;
 class EntityManager;
 class GameEngine;
 
-enum class Tag : unsigned char;
-
 class Editor {
-    struct EntityConfig {
-        Vec2 pos{ 0, 0 }; // NOTE: this should be actually just mouse pos and let the user drop the entity to its final pos
-        Vec2 bbox{ 0, 0 };
-        bool block_movement{ false };
-        bool block_vision{ false };
-        char animation_name[128]{ "" };
-        Tag tag{ Tag::DEFAULT };
-        
-        // Other stuff such as gravity, damage, etc.
-        // First implement adding of tiles
+    const char* m_types[6] = {
+        "TILE",
+        "ENEMY",
+        "HEART",
+        "ELEVATOR",
+        "TELEPORT",
+        "CHECKPOINT"
     };
 
-    const char* m_types[11] = {
-        "TILE",
-        "PLAYER",
-        "ENEMY",
-        "BULLET",
-        "EXPLOSION",
-        "SWORD",
-        "HEART",
-        "TELEPORT",
-        "ELEVATOR",
-        "CHECKPOINT"
+    const std::map<std::string, Tag> m_type_map = {
+        { "TILE", Tag::TILE },
+        { "ENEMY", Tag::ENEMY },
+        { "HEART", Tag::HEART },
+        { "ELEVATOR", Tag::ELEVATOR },
+        { "TELEPORT", Tag::TELEPORT },
+        { "CHECKPOINT", Tag::CHECKPOINT }
     };
 
     std::string m_level_path{ "" }; // Current level
     sf::Clock m_dt;
-    EntityConfig m_entity_config;
     bool m_previously_created{ false };
     std::string m_previous_animation{ "Brick" };
     std::vector<std::string> m_level_content;
