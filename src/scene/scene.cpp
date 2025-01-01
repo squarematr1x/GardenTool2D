@@ -198,6 +198,53 @@ void Scene::renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> play
     }
 }
 
+void Scene::renderCommon(std::shared_ptr<Entity> player) {
+    if (m_draw_textures) {
+        sf::VertexArray vertices(sf::Triangles);
+        for (auto e : m_entity_manager.getEntities()) {
+            if (!e->hasComponent<CAnimation>()) {
+                continue;
+            }
+            auto& transform = e->getComponent<CTransform>();
+            auto& sprite = e->getComponent<CAnimation>().animation.getSprite();
+            if (transform.transformable) {
+                sprite.setRotation(transform.angle);
+                sprite.setPosition(transform.pos.x, transform.pos.y);
+                sprite.setScale(transform.scale.x, transform.scale.y);
+                m_engine->window().draw(sprite);
+            } else {
+                addVertexData(transform.pos, sprite.getTextureRect(), vertices);
+            }
+
+            if (m_show_hp) {
+                addHpBar(e);
+            }
+
+            if (m_show_ai_info && e->tag() == Tag::ENEMY) {
+                renderInfoAI(e, player);
+            }
+        }
+        // Draw vertex array
+        sf::RenderStates states(&m_engine->assets().getTexture("Tilemap"));
+        m_engine->window().draw(vertices, states);
+
+        renderHpBars();
+    }
+
+    if (m_draw_grid || m_engine->editMode()) {
+        renderGrid();
+        renderActiveGridCell();
+    }
+
+    if (m_draw_collision || m_engine->editMode()) {
+        renderBBoxes();
+    }
+
+    if (m_paused) {
+        renderPauseText();
+    }
+}
+
 void Scene::updateZoom(float scroll_delta) {
     m_zoom.value = 2.0f;
     int level = 1;

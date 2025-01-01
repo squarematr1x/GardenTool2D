@@ -88,6 +88,11 @@ void GameEngine::sUserInput() {
 			quit();
 		}
 
+		if (event.type == sf::Event::Resized) {
+			sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+			m_window.setView(sf::View(visibleArea));
+		}
+
 		if (event.type == sf::Event::KeyPressed) {
 			if (event.key.code == sf::Keyboard::F12) {
 				sf::Texture texture;
