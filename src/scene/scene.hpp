@@ -66,6 +66,7 @@ public:
 	void renderCommon(std::shared_ptr<Entity> player);
 
 	void updateZoom(float delta);
+	void updateGridSize(Vec2 size) { m_grid_size = size; }
 
 	void addVertexData(const Vec2& pos, const sf::IntRect& texture_rect_in, sf::VertexArray& vertices);
 	void addLine(const Vec2& p1, const Vec2& p2, sf::VertexArray& vertices);
@@ -181,7 +182,7 @@ class SceneRPG: public Scene
 	std::shared_ptr<Entity> m_player;
 	bool m_follow{ false };
 	bool m_can_attack{ true };
-	const Vec2 m_room_size{ 20, 12 }; // 20x12 grids
+	Vec2 m_room_size{ 20, 12 };
 	std::vector<Vec2> m_doorways;
 
 public:
@@ -195,6 +196,7 @@ public:
 	void spawnPlayer();
 	void spawnSword(std::shared_ptr<Entity> entity);
 	void setSwordPos(std::shared_ptr<Entity> entity, const Vec2& facing, const Vec2& pos);
+	void setRoomSize();
 
 	void teleport(const Vec2& cur_doorway);
 

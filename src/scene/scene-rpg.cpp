@@ -36,6 +36,8 @@ void SceneRPG::init(const std::string& level_path) {
     registerAction(sf::Mouse::Wheel::VerticalWheel, ActionName::MOUSE_SCROLL);
 
     loadLevel(level_path);
+
+    setRoomSize();
 }
 
 void SceneRPG::loadLevel(const std::string& path) {
@@ -214,6 +216,10 @@ void SceneRPG::setSwordPos(std::shared_ptr<Entity> sword, const Vec2& facing, co
     sword->addComponent<CBBox>(sword_bbox, true, false);
 
     sword->getComponent<CTransform>().scale = scale;
+}
+
+void SceneRPG::setRoomSize() {
+    m_room_size = Vec2(width()/m_grid_cell_size.x, height()/m_grid_cell_size.y);
 }
 
 void SceneRPG::teleport(const Vec2& cur_doorway) {
