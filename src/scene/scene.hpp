@@ -63,6 +63,7 @@ public:
 	void renderHpBars();
 	void renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> player);
 	void renderPauseText();
+	void renderCommon(std::shared_ptr<Entity> player);
 
 	void updateZoom(float delta);
 

@@ -634,45 +634,7 @@ void SceneSideScroller::sRender() {
     m_engine->window().setView(view);
 
     // Draw all Entity textures/animations
-    if (m_draw_textures) {
-        sf::VertexArray vertices(sf::Triangles);
-        for (auto e : m_entity_manager.getEntities()) {
-            if (!e->hasComponent<CAnimation>()) {
-                continue;
-            }
-            auto& transform = e->getComponent<CTransform>();
-            auto& sprite = e->getComponent<CAnimation>().animation.getSprite();
-            if (transform.transformable) {
-                sprite.setRotation(transform.angle);
-                sprite.setPosition(transform.pos.x, transform.pos.y);
-                sprite.setScale(transform.scale.x, transform.scale.y);
-                m_engine->window().draw(sprite);
-            } else {
-                addVertexData(transform.pos, sprite.getTextureRect(), vertices);
-            }
-            if (m_show_hp) {
-                addHpBar(e);
-            }
-        }
-        // Draw vertex array
-        sf::RenderStates states(&m_engine->assets().getTexture("Tilemap"));
-        m_engine->window().draw(vertices, states);
-    }
-
-    if (m_draw_collision || m_engine->editMode()) {
-        renderBBoxes();
-    }
-
-    if (m_draw_grid || m_engine->editMode()) {
-        renderGrid();
-        renderActiveGridCell();
-    }
-
-    if (m_paused) {
-        renderPauseText();
-    }
-
-    renderHpBars();
+    renderCommon(m_player);
 }
 
 void SceneSideScroller::sDragAndDrop() {
