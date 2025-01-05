@@ -102,6 +102,7 @@ void SceneRPG::loadLevel(const std::string& path) {
                 enemy->addComponent<CBBox>(animation_size, block_movement, block_vision);
                 auto pos = gridToMidPixel(x, y, enemy);
                 enemy->addComponent<CTransform>(pos, true);
+                enemy->addComponent<CBehavior>(true);
 
                 text_stream >> mode;
                 if (mode == "Patrol") {
@@ -536,7 +537,11 @@ void SceneRPG::sCollision() {
             continue;
         }
 
-        if (physics::overlapping(m_player, enemy)) {
+        if (!enemy->hasComponent<CBehavior>()) {
+            continue;
+        }
+
+        if (enemy->getComponent<CBehavior>().hostile && physics::overlapping(m_player, enemy)) {
             auto& hp = m_player->getComponent<CHealth>();
             hp.current -= enemy_damage;
             hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);

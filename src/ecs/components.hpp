@@ -233,6 +233,16 @@ struct CPatrol: Component {
 	}
 };
 
+struct CBehavior: Component {
+	bool hostile{ false }; // NOTE: could set to true if player hits (patrol) enemy first -> trigger CFollowPlayer?
+
+	CBehavior() {}
+	CBehavior(bool hostile_in)
+		: hostile(hostile_in)
+	{
+	}
+};
+
 struct CWeapon: Component {
 	WeaponType type{ WeaponType::MELEE };
 	int max_cooldown{ 20 };

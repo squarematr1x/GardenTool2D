@@ -122,6 +122,7 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                 enemy->addComponent<CDamage>(damage);
                 const auto& animation_size = enemy->getComponent<CAnimation>().animation.getSize();
                 enemy->addComponent<CBBox>(animation_size, block_movement, block_vision);
+                enemy->addComponent<CBehavior>(true);
 
                 text_stream >> mode;
                 if (mode == "Patrol") {
@@ -460,7 +461,11 @@ void SceneSideScroller::sCollision() {
             continue;
         }
 
-        if (physics::overlapping(m_player, enemy)) {
+        if (!enemy->hasComponent<CBehavior>()) {
+            continue;
+        }
+
+        if (enemy->getComponent<CBehavior>().hostile && physics::overlapping(m_player, enemy)) {
             auto& hp = m_player->getComponent<CHealth>();
             hp.current -= enemy_damage;
             hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);

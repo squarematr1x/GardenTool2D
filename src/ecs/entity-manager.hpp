@@ -20,7 +20,8 @@ typedef std::tuple<
 	std::vector<CState>,
 	std::vector<CDraggable>,
 	std::vector<CFollowPlayer>,
-	std::vector<CPatrol>
+	std::vector<CPatrol>,
+	std::vector<CBehavior>
 > EntityComponentVectorTuple;
 
 class EntityManager
