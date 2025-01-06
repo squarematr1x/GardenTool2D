@@ -528,6 +528,14 @@ void SceneRPG::sCollision() {
 
                 if (hp.current <= 0) {
                     enemy->destroy();
+                } else {
+                    enemy->addComponent<CBehavior>(true);
+                    if (enemy->hasComponent<CPatrol>()) {
+                        const auto pos = enemy->getComponent<CTransform>().pos;
+                        const auto follow_speed = 1.0f;
+                        enemy->removeComponent<CPatrol>();
+                        enemy->addComponent<CFollowPlayer>(pos, follow_speed);
+                    }
                 }
             }
         }
