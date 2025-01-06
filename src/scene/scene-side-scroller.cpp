@@ -112,9 +112,9 @@ void SceneSideScroller::loadLevel(const std::string& path) {
             } else if (asset_type == "NPC") { 
                 std::string animation, mode;
                 float x, y;
-                bool block_movement, block_vision;
+                bool block_movement, block_vision, hostile;
                 int hp, damage;
-                text_stream >> animation >> x >> y >> block_movement >> block_vision >> hp >> damage;
+                text_stream >> animation >> x >> y >> block_movement >> block_vision >> hostile >> hp >> damage;
                 auto enemy = m_entity_manager.addEntity(Tag::ENEMY);
                 enemy->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
                 enemy->addComponent<CTransform>(gridToMidPixel(x, y, enemy), true);
@@ -122,7 +122,7 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                 enemy->addComponent<CDamage>(damage);
                 const auto& animation_size = enemy->getComponent<CAnimation>().animation.getSize();
                 enemy->addComponent<CBBox>(animation_size, block_movement, block_vision);
-                enemy->addComponent<CBehavior>(true);
+                enemy->addComponent<CBehavior>(hostile);
 
                 text_stream >> mode;
                 if (mode == "Patrol") {

@@ -67,9 +67,9 @@ Tile Doorway 31 4 0 1
 # Player: x, y, bboxw, bboxh, speed, max speed, jump speed, gravity, weapon animation name hp
 Player 9 6 58 58 5 0 0 0 Empty 4
 
-# NPC: animation name, x, y, block movement, block vision, hp, damage, behavior
-NPC Jelly 6 5 0 0 3 1 Patrol 2 3 3 8 7 8 7 5
-NPC Angry 4 7 0 0 3 1 Patrol 2 2 3 3 6 3
+# NPC: animation name, x, y, block movement, block vision, hostile, hp, damage, behavior
+NPC Jelly 6 5 0 0 1 3 1 Patrol 2 3 3 8 7 8 7 5
+NPC Angry 4 7 0 0 1 3 1 Patrol 2 2 3 3 6 3
 
 # Elevator: animation name, x, y, block movement, block vision, behavior
 
