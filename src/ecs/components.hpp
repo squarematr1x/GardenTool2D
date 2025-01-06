@@ -275,12 +275,14 @@ struct CSound: Component {
 };
 
 struct CInteractable: Component {
-	// Interact with e.g. button, npc, item, etc.
+	// Interact with e.g. button, door, npc, item, etc.
+	bool highlight{ false };
+	bool active{ false };
 };
 
 struct CTrigger: Component {
 	// Scene change, start music, cutscene, etc.
-};
+}; 
 
 struct CDialog: Component {
 	// Dialog tree for entities	

@@ -22,7 +22,8 @@ typedef std::tuple<
 	CDraggable,
 	CFollowPlayer,
 	CPatrol,
-	CBehavior
+	CBehavior,
+	CInteractable
 > ComponentTuple;
 
 enum class Tag : unsigned char {

@@ -103,6 +103,7 @@ void SceneRPG::loadLevel(const std::string& path) {
                 auto pos = gridToMidPixel(x, y, enemy);
                 enemy->addComponent<CTransform>(pos, true);
                 enemy->addComponent<CBehavior>(hostile);
+                enemy->addComponent<CInteractable>();
 
                 text_stream >> mode;
                 if (mode == "Patrol") {
@@ -250,6 +251,7 @@ void SceneRPG::update() {
         sAI();
         sMovement();
         sStatus();
+        sInteract();
         sCollision();
         sAnimation();
     }
@@ -671,6 +673,20 @@ void SceneRPG::sDragAndDrop() {
     for (auto e : m_entity_manager.getEntities()) {
         if (e->hasComponent<CDraggable>() && e->getComponent<CDraggable>().dragged) {
             e->getComponent<CTransform>().pos = worldPos();
+        }
+    }
+}
+
+void SceneRPG::sInteract() {
+    for (auto e : m_entity_manager.getEntities()) {
+        if (!e->hasComponent<CInteractable>()) {
+            continue;
+        }
+        auto& highlight = e->getComponent<CInteractable>().highlight;
+        if (physics::isInside(m_mouse_pos, e)) {
+            highlight = true;
+        } else {
+            highlight = false;
         }
     }
 }

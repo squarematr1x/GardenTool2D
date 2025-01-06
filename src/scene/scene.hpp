@@ -61,6 +61,7 @@ public:
 	void renderBBoxes();
 	void renderCursor();
 	void renderHpBars();
+	void renderHighlights();
 	void renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> player);
 	void renderPauseText();
 	void renderCommon(std::shared_ptr<Entity> player);
@@ -71,6 +72,7 @@ public:
 	void addVertexData(const Vec2& pos, const sf::IntRect& texture_rect_in, sf::VertexArray& vertices);
 	void addLine(const Vec2& p1, const Vec2& p2, sf::VertexArray& vertices);
 	void addHpBar(std::shared_ptr<Entity> e);
+	void addHighlight(std::shared_ptr<Entity> e);
 
 	bool targetReached(const Vec2& pos, const Vec2& target) const;
 
@@ -91,6 +93,7 @@ protected:
 	std::map<int, ActionName> m_action_map;
 	Zoom m_zoom;
 	sf::VertexArray m_hp_bars{ sf::Triangles };
+	sf::VertexArray m_highlights{ sf::Lines };
 	PlayerConfig m_player_config;
 
 	bool m_paused{ false };
@@ -213,6 +216,7 @@ public:
 	void sDoAction(const Action& action);
 	void sRender();
 	void sDragAndDrop();
+	void sInteract();
 
 	void onEnd();
 };
