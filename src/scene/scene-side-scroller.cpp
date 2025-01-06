@@ -152,7 +152,6 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                 m_background_layers.push_back(m_engine->assets().getLayer(layer));
             } else {
                 std::cerr << "Unknown level object: " << asset_type << '\n';
-                // TODO: handle this error
             }
         }
     }

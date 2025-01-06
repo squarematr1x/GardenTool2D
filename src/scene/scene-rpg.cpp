@@ -122,7 +122,6 @@ void SceneRPG::loadLevel(const std::string& path) {
                 }
             } else {
                 std::cerr << "Unknown level object: " << asset_type << '\n';
-                // TODO: handle this error
             }
         }
     }
