@@ -1,3 +1,7 @@
+# Background: layer name
+Background Landscape1
+Background Landscape2
+
 # Tile: animation name, x, y, block movement, block vision
 Tile Rock 1 0 1 1
 Tile Rock 1 1 1 1
@@ -12,9 +16,62 @@ Tile Rock 7 0 1 1
 Tile Rock 7 1 1 1
 Tile Bush 1 2 0 0
 Tile Bush 7 2 0 0
-Tile Cloud1 3 8 0 0
-Tile Cloud1 8 9 0 0
-Tile Cloud2 11 10 0 0
+Tile Cloud1 5 8 0 0
+Tile Cloud1 10 9 0 0
+Tile Cloud2 13 10 0 0
+Tile Brick 4 1 1 1
+Tile Brick 5 1 1 1
+Tile Brick 8 1 1 1
+Tile Brick 9 1 1 1
+Tile Brick 11 1 1 1
+Tile Brick 10 1 1 1
+Tile Brick 12 1 1 1
+Tile Brick 13 1 1 1
+Tile Brick 14 1 1 1
+Tile Brick 15 1 1 1
+Tile Brick 16 1 1 1
+Tile Brick 17 1 1 1
+Tile Brick 18 1 1 1
+Tile Brick 19 1 1 1
+Tile Brick 20 1 1 1
+Tile Brick 21 1 1 1
+Tile Brick 21 1 1 1
+Tile Brick 22 1 1 1
+Tile Brick 23 1 1 1
+Tile Brick 24 1 1 1
+Tile Brick 25 1 1 1
+Tile Brick 26 1 1 1
+Tile Brick 27 1 1 1
+Tile Brick 28 1 1 1
+Tile Brick 28 1 1 1
+Tile Brick 29 1 1 1
+Tile Brick 30 1 1 1
+Tile Brick 31 1 1 1
+Tile Brick 32 1 1 1
+Tile Brick 34 1 1 1
+Tile Brick 33 1 1 1
+Tile Brick 35 1 1 1
+Tile Brick 36 1 1 1
+Tile Brick 37 1 1 1
+Tile Brick 38 1 1 1
+Tile Brick 39 1 1 1
+Tile Brick 41 1 1 1
+Tile Brick 43 1 1 1
+Tile Brick 45 1 1 1
+Tile Brick 47 1 1 1
+Tile Brick 46 1 1 1
+Tile Brick 44 1 1 1
+Tile Brick 42 1 1 1
+Tile Brick 40 1 1 1
+Tile Brick 48 1 0 0
+Tile Brick 4 0 0 0
+Tile Brick 5 0 1 1
 
-# Player: x, y, bboxw, bboxh, speed, jump speed, max speed, gravity, animation name
-Player 2 6 64 64 5 5 25 2 Fire
+# Player: x, y, bboxw, bboxh, speed, max speed, jump speed, gravity, weapon animation name hp
+Player 1 2 64 64 5 5 25 2 Fire 4
+
+# NPC: animation name, x, y, block movement, block vision, hostile, hp, damage, behavior
+
+# Elevator: animation name, x, y, block movement, block vision, behavior
+
+# Checkpoint: x, y, bboxw, bboxh

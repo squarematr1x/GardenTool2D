@@ -60,28 +60,6 @@ struct CTransform: Component {
 	}
 };
 
-struct CShape: Component {
-	sf::CircleShape circle;
-
-	CShape(float radius, int points, const sf::Color& fill, const sf::Color& outline, float thickness)
-		: circle(radius, static_cast<std::size_t>(points))
-	{
-		circle.setFillColor(fill);
-		circle.setOutlineColor(outline);
-		circle.setOutlineThickness(thickness);
-		circle.setOrigin(radius, radius);
-	}
-};
-
-struct CCollision: Component {
-	float radius;
-
-	CCollision(float r)
-		: radius(r)
-	{
-	}
-};
-
 struct CScore: Component {
 	int score;
 
@@ -251,6 +229,16 @@ struct CPatrol: Component {
 	CPatrol() {}
 	CPatrol(const std::vector<Vec2>& positions_in, float speed_in)
 		: positions(positions_in), speed(speed_in)
+	{
+	}
+};
+
+struct CBehavior: Component {
+	bool hostile{ false }; // NOTE: could set to true if player hits (patrol) enemy first -> trigger CFollowPlayer?
+
+	CBehavior() {}
+	CBehavior(bool hostile_in)
+		: hostile(hostile_in)
 	{
 	}
 };

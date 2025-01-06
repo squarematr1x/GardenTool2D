@@ -65,9 +65,9 @@ Tile BrickRound 16 5 1 1
 # Player: x, y, bboxw, bboxh, speed, max speed, jump speed, gravity, weapon animation name hp
 Player 15 2 56 62 5 5 25 2 Fire 4
 
-# NPC: animation name, x, y, block movement, block vision, hp, damage, behavior
-NPC CreepRun 7 2 0 0 4 1 Patrol 2 2 6 2 8 2
-NPC GitRun 14 1 0 0 4 1 Patrol 2 2 13 1 14 1
+# NPC: animation name, x, y, block movement, block vision, hostile, hp, damage, behavior
+NPC CreepRun 7 2 0 0 1 4 1 Patrol 2 2 6 2 8 2
+NPC GitRun 14 1 0 0 1 4 1 Patrol 2 2 13 1 14 1
 
 # Elevator: animation name, x, y, block movement, block vision, behavior
 Elevator Brick 16 1 1 1 Patrol 2 2 16 1 20 1

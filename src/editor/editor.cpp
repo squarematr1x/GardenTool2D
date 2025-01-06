@@ -156,6 +156,10 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                     }
                     if (ImGui::TreeNode("Behavior")) {
                         if (e->tag() == Tag::ENEMY) {
+                            if (e->hasComponent<CBehavior>()) {
+                                auto& hostile = e->getComponent<CBehavior>().hostile;
+                                ImGui::Checkbox("Hostile", &hostile);
+                            }
                             if (ImGui::TreeNode("Follow")) {
                                 if (e->hasComponent<CFollowPlayer>()) {
                                     auto& follow = e->getComponent<CFollowPlayer>();
@@ -356,15 +360,20 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
         block_movement << " " << block_vision;
     
     if (tag == "NPC") {
+        auto hostile = 0;
         auto hp = 1;
         auto damage = 0;
+
+        if (e->hasComponent<CBehavior>()) {
+            hostile = e->getComponent<CBehavior>().hostile;
+        }
         if (e->hasComponent<CHealth>()) {
             hp = e->getComponent<CHealth>().current;
         }
         if (e->hasComponent<CDamage>()) {
             damage = e->getComponent<CDamage>().damage;
         }
-        ss << " " << hp << " " << damage;
+        ss << " " << hostile << " " << hp << " " << damage;
     }
 
     if (e->hasComponent<CPatrol>()) {
@@ -409,7 +418,7 @@ void Editor::parseEntities(EntityManager& entity_manager, GameEngine* engine) {
         parseEntity(e, engine);
     }
 
-    m_level_content.push_back("\n# NPC: animation name, x, y, block movement, block vision, hp, damage, behavior");
+    m_level_content.push_back("\n# NPC: animation name, x, y, block movement, block vision, hostile, hp, damage, behavior");
     for (const auto& e : entity_manager.getEntities(Tag::ENEMY)) {
         parseEntity(e, engine);
     }
