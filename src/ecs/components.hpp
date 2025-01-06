@@ -265,3 +265,23 @@ struct CWeapon: Component {
 	{
 	}
 };
+
+struct CLightSource: Component {
+	// For dynamic lighting
+};
+
+struct CSound: Component {
+	// Play different sounds related to certain entity
+};
+
+struct CInteractable: Component {
+	// Interact with e.g. button, npc, item, etc.
+};
+
+struct CTrigger: Component {
+	// Scene change, start music, cutscene, etc.
+};
+
+struct CDialog: Component {
+	// Dialog tree for entities	
+};
