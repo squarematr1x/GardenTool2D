@@ -6,6 +6,7 @@
 #include "../engine.hpp"
 #include "../physics.hpp"
 #include "../math/random.hpp"
+#include "../pathfinding.hpp"
 
 SceneRPG::SceneRPG(GameEngine* engine, const std::string& level_path)
     : Scene(engine, level_path) {
@@ -263,44 +264,62 @@ void SceneRPG::update() {
 }
 
 void SceneRPG::sMovement() {
-    auto input = m_player->getComponent<CInput>();
     auto& p_transform = m_player->getComponent<CTransform>();
-    p_transform.prev_facing = p_transform.facing;
-    Vec2 new_velocity(0.0f, 0.0f);
 
-    if (input.up) {
-        p_transform.scale = Vec2(fabsf(p_transform.scale.x), p_transform.scale.y);
-        p_transform.facing = Vec2(0.0f, -1.0f);
-        new_velocity.y -= m_player_config.v;
-        new_velocity.x = 0.0f;
-    }
-    if (input.down) {
-        p_transform.scale = Vec2(fabsf(p_transform.scale.x), p_transform.scale.y);
-        p_transform.facing = Vec2(0.0f, 1.0f);
-        new_velocity.y += m_player_config.v;
-        new_velocity.x = 0.0f;
-    }
-    if (input.left) {
-        p_transform.scale = Vec2(fabsf(p_transform.scale.x), p_transform.scale.y);
-        p_transform.facing = Vec2(-1.0f, 0.0f);
-        new_velocity.x -= m_player_config.v;
-        new_velocity.y = 0.0f;
-    }
-    if (input.right) {
-        p_transform.scale = Vec2(-fabsf(p_transform.scale.x), p_transform.scale.y);
-        p_transform.facing = Vec2(1.0f, 0.0f);
-        new_velocity.x += m_player_config.v;
-        new_velocity.y = 0.0f;
-    }
-    p_transform.velocity = new_velocity;
-
-    if (input.attack) {
-        if (m_can_attack) {
-            spawnSword(m_player);
+    if (m_player->hasComponent<CPath>()) {
+        auto& path = m_player->getComponent<CPath>();
+        Vec2 target = path.positions[path.cur_pos];
+        if (!targetReached(p_transform.pos, target)) {
+            Vec2 desired = target - p_transform.pos;
+            desired = desired.normalize();
+            desired = desired*m_player_config.v;
+            p_transform.velocity = desired;
+        } else {
+            path.cur_pos++;
+            if (path.cur_pos >= path.positions.size()) {
+                p_transform.velocity = Vec2(0.0f, 0.0f);
+                m_player->removeComponent<CPath>();
+            }
         }
-        m_can_attack = false;
     } else {
-        m_can_attack = true;
+        auto input = m_player->getComponent<CInput>();
+        p_transform.prev_facing = p_transform.facing;
+        Vec2 new_velocity(0.0f, 0.0f);
+
+        if (input.up) {
+            p_transform.scale = Vec2(fabsf(p_transform.scale.x), p_transform.scale.y);
+            p_transform.facing = Vec2(0.0f, -1.0f);
+            new_velocity.y -= m_player_config.v;
+            new_velocity.x = 0.0f;
+        }
+        if (input.down) {
+            p_transform.scale = Vec2(fabsf(p_transform.scale.x), p_transform.scale.y);
+            p_transform.facing = Vec2(0.0f, 1.0f);
+            new_velocity.y += m_player_config.v;
+            new_velocity.x = 0.0f;
+        }
+        if (input.left) {
+            p_transform.scale = Vec2(fabsf(p_transform.scale.x), p_transform.scale.y);
+            p_transform.facing = Vec2(-1.0f, 0.0f);
+            new_velocity.x -= m_player_config.v;
+            new_velocity.y = 0.0f;
+        }
+        if (input.right) {
+            p_transform.scale = Vec2(-fabsf(p_transform.scale.x), p_transform.scale.y);
+            p_transform.facing = Vec2(1.0f, 0.0f);
+            new_velocity.x += m_player_config.v;
+            new_velocity.y = 0.0f;
+        }
+        p_transform.velocity = new_velocity;
+
+        if (input.attack) {
+            if (m_can_attack) {
+                spawnSword(m_player);
+            }
+            m_can_attack = false;
+        } else {
+            m_can_attack = true;
+        }
     }
 
     for (auto e : m_entity_manager.getEntities()){
@@ -357,6 +376,15 @@ void SceneRPG::sDoAction(const Action& action) {
                             e->getComponent<CDraggable>().dragged = true;
                         }
                     }
+                }
+                break;
+            }
+            case ActionName::RIGHT_CLICK: {
+                const auto start = fitToGrid(m_player->getComponent<CTransform>().pos);
+                const auto goal = fitToGrid(worldPos());
+                const auto path = path::getPath(start, goal, m_entity_manager);
+                if (path.size() > 0) {
+                    m_player->addComponent<CPath>(path);
                 }
                 break;
             }
@@ -689,6 +717,10 @@ void SceneRPG::sInteract() {
             highlight = false;
         }
     }
+}
+
+void SceneRPG::sPathfind() {
+    
 }
 
 void SceneRPG::onEnd() {
