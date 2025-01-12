@@ -21,7 +21,9 @@ typedef std::tuple<
 	std::vector<CDraggable>,
 	std::vector<CFollowPlayer>,
 	std::vector<CPatrol>,
-	std::vector<CBehavior>
+	std::vector<CBehavior>,
+	std::vector<CInteractable>,
+	std::vector<CPath>
 > EntityComponentVectorTuple;
 
 class EntityManager

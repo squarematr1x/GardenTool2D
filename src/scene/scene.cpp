@@ -161,9 +161,33 @@ void Scene::addHpBar(std::shared_ptr<Entity> e) {
     m_hp_bars.append({{pos.x - size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, sf::Color(255, 0, 0)});
 }
 
+void Scene::addHighlight(std::shared_ptr<Entity> e) {
+    if (!e->hasComponent<CBBox>()) {
+        return;
+    }
+
+    auto box = e->getComponent<CBBox>();
+    auto pos = e->getComponent<CTransform>().pos;
+    const auto box_color{ sf::Color(255, 255, 255) };
+
+    m_highlights.append({{pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color});
+    m_highlights.append({{pos.x + box.half_size.x, pos.y - box.half_size.y}, box_color});
+    m_highlights.append({{pos.x + box.half_size.x, pos.y - box.half_size.y}, box_color});
+    m_highlights.append({{pos.x + box.half_size.x, pos.y + box.half_size.y}, box_color});
+    m_highlights.append({{pos.x + box.half_size.x, pos.y + box.half_size.y}, box_color});
+    m_highlights.append({{pos.x - box.half_size.x, pos.y + box.half_size.y}, box_color});
+    m_highlights.append({{pos.x - box.half_size.x, pos.y + box.half_size.y}, box_color});
+    m_highlights.append({{pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color});
+}
+
 void Scene::renderHpBars() {
     m_engine->window().draw(m_hp_bars);
     m_hp_bars.clear();
+}
+
+void Scene::renderHighlights() {
+    m_engine->window().draw(m_highlights);
+    m_highlights.clear();
 }
 
 void Scene::renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> player) {
@@ -223,11 +247,16 @@ void Scene::renderCommon(std::shared_ptr<Entity> player) {
             if (m_show_ai_info && e->tag() == Tag::ENEMY) {
                 renderInfoAI(e, player);
             }
+
+            if (e->hasComponent<CInteractable>() && e->getComponent<CInteractable>().highlight) {
+                addHighlight(e);
+            }
         }
         // Draw vertex array
         sf::RenderStates states(&m_engine->assets().getTexture("Tilemap"));
         m_engine->window().draw(vertices, states);
 
+        renderHighlights();
         renderHpBars();
     }
 

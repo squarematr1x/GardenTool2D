@@ -265,3 +265,37 @@ struct CWeapon: Component {
 	{
 	}
 };
+
+struct CPath: Component {
+	std::vector<Vec2> positions;
+	size_t cur_pos{ 0 };
+	bool finished{ false };
+
+	CPath() {}
+	CPath(const std::vector<Vec2> positions_in)
+		: positions(positions_in)
+	{
+	}
+};
+
+struct CLightSource: Component {
+	// For dynamic lighting
+};
+
+struct CSound: Component {
+	// Play different sounds related to certain entity
+};
+
+struct CInteractable: Component {
+	// Interact with e.g. button, door, npc, item, etc.
+	bool highlight{ false };
+	bool active{ false };
+};
+
+struct CTrigger: Component {
+	// Scene change, start music, cutscene, etc.
+}; 
+
+struct CDialog: Component {
+	// Dialog tree for entities	
+};
