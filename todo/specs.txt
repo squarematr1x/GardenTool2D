@@ -1,0 +1,54 @@
+============================================== System specifications ============================================== 
+
+Refactor Scene files
+- All other files are relatively simple
+
+Add ingame menu [ ]
+- Use to control sound, music, load from checkpoint etc.
+
+UI [ ]
+- Used for inventory, skill trees map, etc.
+
+Saving/loading game [ ]
+- Create/load save files
+- Just modify player data in lvl as a starter
+
+Dialogue tree [ ]
+- Create a specific datastructure for this
+
+Dynamic lighting [ ]
+- In some levels everything could be dark, if no light source entity nearby etc.
+- Point lights can be entities?
+
+Shaders [ ]
+- Draw background (parallax) [x], done without shaders atm
+- Use entity effects such as taking damage etc.
+
+Testing [ ]
+- Use doctest for unit testing
+- Important to test collision and pathfinding
+
+Multithreading [ ]
+- Not a priority right now
+
+Build [ ]
+- Start using e.g. CMake
+
+Memory pooling for CPU cache coherent code [ ]
+- entity-memory-pool.hpp is a skeleton for this
+- No need to use shared pointers
+
+Physics based emerging world [ ]
+- Emerging behavior emerging from the system itself
+  - Water makes entity wet, therefore it doesn't take as much fire damage
+    Fire, however will eventually dry wet entity
+    Electricity will hurt wet entity more in TextureName
+    Frost will make wet surface ice, hence surface becomes slippery
+  - This kind of system will give arise to all sorts of interesting phenomenan
+- This could be used in puzzles as well as in combat
+- It would be cool for players to discover unorthodoxed approaches to different problems
+- This kind of system could be preferred over "scripted" predictable system
+
+Editor [ ]
+- Zoom reset button in editor
+- Undo/redo in editor (could use ctrl+z)

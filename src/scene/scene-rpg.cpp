@@ -7,6 +7,7 @@
 #include "../physics.hpp"
 #include "../math/random.hpp"
 #include "../pathfinding.hpp"
+#include "../util/timer.hpp"
 
 SceneRPG::SceneRPG(GameEngine* engine, const std::string& level_path)
     : Scene(engine, level_path) {
@@ -265,6 +266,11 @@ void SceneRPG::update() {
 
 void SceneRPG::sMovement() {
     auto& p_transform = m_player->getComponent<CTransform>();
+    auto input = m_player->getComponent<CInput>();
+
+    if (input.up || input.right || input.down || input.left) {
+        m_player->removeComponent<CPath>();
+    }
 
     if (m_player->hasComponent<CPath>()) {
         auto& path = m_player->getComponent<CPath>();
@@ -282,7 +288,6 @@ void SceneRPG::sMovement() {
             }
         }
     } else {
-        auto input = m_player->getComponent<CInput>();
         p_transform.prev_facing = p_transform.facing;
         Vec2 new_velocity(0.0f, 0.0f);
 
@@ -380,6 +385,8 @@ void SceneRPG::sDoAction(const Action& action) {
                 break;
             }
             case ActionName::RIGHT_CLICK: {
+                m_player->removeComponent<CPath>();
+
                 const auto start = fitToGrid(m_player->getComponent<CTransform>().pos);
                 const auto goal = fitToGrid(worldPos());
                 const auto path = path::getPath(start, goal, m_entity_manager);

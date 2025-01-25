@@ -299,3 +299,13 @@ struct CTrigger: Component {
 struct CDialog: Component {
 	// Dialog tree for entities	
 };
+
+struct CGridCoordinate: Component {
+	// NOTE: this could be used to check collision
+	// For instance, against player p
+	// [1][2][3]
+	// [4][p][5]
+	// [6][7][8]
+	// We would only check collisions with the tiles in positions 1..8 and p,
+	// if they have bbox
+};
