@@ -22,8 +22,8 @@ class GameEngine
 	bool m_enable_sound{ true };
 	bool m_enable_music{ true };
 	bool m_vsync{ true };
-	unsigned int m_screen_w{ 1920 };
-	unsigned int m_screen_h{ 1080 };
+	unsigned int m_screen_w{ 1280 };
+	unsigned int m_screen_h{ 768 };
 	unsigned int m_framerate{ 60 };
 
 	std::map<SceneType, std::shared_ptr<Scene>> m_scenes;

@@ -4,6 +4,7 @@
 #include <string>
 
 #include "math/vec2.hpp"
+#include "asset/texture.hpp"
 
 // Used for parallax scrolling
 class Layer {
@@ -16,7 +17,7 @@ class Layer {
 
 public:
     Layer() = default;
-    Layer(const std::string& name, const sf::Texture& texture);
+    Layer(const std::string& name, const Texture& texture);
 
     void update(float velocity_x, float coeff = 0.025f);
     void scale(size_t window_w, size_t window_h);

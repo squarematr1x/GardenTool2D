@@ -253,7 +253,7 @@ void Scene::renderCommon(std::shared_ptr<Entity> player) {
             }
         }
         // Draw vertex array
-        sf::RenderStates states(&m_engine->assets().getTexture("Tilemap"));
+        sf::RenderStates states(&m_engine->assets().getTexture("Tilemap").getTexture());
         m_engine->window().draw(vertices, states);
 
         renderHighlights();

@@ -59,7 +59,7 @@ void Assets::loadFromFile(const std::string& path) {
 
 void Assets::addTexture(const std::string& texture_name, const std::string& path, bool repeating, bool smooth) {
 	PROFILE_SCOPE(path);
-	sf::Texture texture;
+	Texture texture;
 	texture.setRepeated(repeating);
 	m_texture_map[texture_name] = texture;
 
@@ -77,7 +77,7 @@ void Assets::addAnimation(const std::string& animation_name, const std::string& 
 	m_animation_map[animation_name] = Animation(animation_name, getTexture(texture_name), frame_count, speed, size, offset);
 }
 
-const sf::Texture& Assets::getTexture(const std::string& texture_name) const {
+const Texture& Assets::getTexture(const std::string& texture_name) const {
 	assert(m_texture_map.find(texture_name) != m_texture_map.end());
 	return m_texture_map.at(texture_name);
 }
