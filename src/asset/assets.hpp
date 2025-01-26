@@ -9,6 +9,7 @@
 #include "animation.hpp"
 #include "font.hpp"
 #include "texture.hpp"
+#include "music.hpp"
 #include "../layer.hpp"
 #include "../math/vec2.hpp"
 
@@ -21,7 +22,7 @@ class Assets
 	std::map<std::string, Font> m_font_map;
 	std::map<std::string, sf::SoundBuffer> m_sound_buffer_map;
 	std::map<std::string, sf::Sound> m_sound_map;
-	std::map<std::string, std::shared_ptr<sf::Music>> m_music_map;
+	std::map<std::string, std::shared_ptr<Music>> m_music_map;
 	std::map<std::string, Layer> m_layer_map;
 
 	void addTexture(const std::string& texture_name, const std::string& path, bool repeating, bool smooth = false);
@@ -42,6 +43,6 @@ public:
 	const std::map<std::string, Animation>& getAnimations() const;
 	const Font& getFont(const std::string& font_name) const;
 	sf::Sound getSound(const std::string& sound_name) const;
-	const std::shared_ptr<sf::Music> getMusic(const std::string& music_name) const;
+	const std::shared_ptr<Music> getMusic(const std::string& music_name) const;
 	const Layer& getLayer(const std::string& layer_name) const;
 };
