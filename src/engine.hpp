@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ecs/entity-manager.hpp"
-#include "assets.hpp"
+#include "asset/assets.hpp"
 #include "editor/editor.hpp"
 #include "math/vec2.hpp"
 
@@ -21,8 +21,9 @@ class GameEngine
 	bool m_edit_mode{ false };
 	bool m_enable_sound{ true };
 	bool m_enable_music{ true };
-	unsigned int m_screen_w{ 1920 };
-	unsigned int m_screen_h{ 1080 };
+	bool m_vsync{ true };
+	unsigned int m_screen_w{ 1280 };
+	unsigned int m_screen_h{ 768 };
 	unsigned int m_framerate{ 60 };
 
 	std::map<SceneType, std::shared_ptr<Scene>> m_scenes;

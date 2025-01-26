@@ -1,5 +1,9 @@
 ============================================== System specifications ============================================== 
 
+Refactor sfml based structure under wrappers [ ]
+- sf::Texture, sf::Color, sf::Text, sf::VertexArray, etc.
+- This increases portability
+
 Refactor Scene files
 - All other files are relatively simple
 

@@ -1,8 +1,8 @@
 #include "layer.hpp"
 
-Layer::Layer(const std::string& name, const sf::Texture& texture)
-    : m_name(name), m_sprite(texture), m_size(Vec2(texture.getSize().x, texture.getSize().y)) {
-    m_sprite.setTextureRect(sf::IntRect(0, 0, 3*static_cast<int>(m_size.x), 2*static_cast<int>(m_size.y)));
+Layer::Layer(const std::string& name, const Texture& texture)
+    : m_name(name), m_sprite(texture), m_size(texture.getSize()) {
+    m_sprite.setTextureRect(0, 0, 3*static_cast<int>(m_size.x), 2*static_cast<int>(m_size.y));
     m_sprite.setOrigin(m_size.x, m_size.y);
 }
 

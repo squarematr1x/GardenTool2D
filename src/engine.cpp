@@ -27,6 +27,7 @@ void GameEngine::init(const std::string& path) {
 		PROFILE_SCOPE("SFML Window");
 		m_window.create(sf::VideoMode(m_screen_w, m_screen_h), m_title);
 		m_window.setFramerateLimit(m_framerate);
+		m_window.setVerticalSyncEnabled(m_vsync);
 	}
 
 	changeScene(SceneType::MENU, std::make_shared<SceneMenu>(this));
@@ -95,18 +96,19 @@ void GameEngine::sUserInput() {
 
 		if (event.type == sf::Event::KeyPressed) {
 			if (event.key.code == sf::Keyboard::F12) {
-				sf::Texture texture;
-				texture.create(m_window.getSize().x, m_window.getSize().y);
-				texture.update(m_window);
+				Texture texture;
+				if (texture.create(m_window.getSize().x, m_window.getSize().y)) {
+					texture.update(m_window);
 
-				auto t = std::time(nullptr);
-				auto tm = *std::localtime(&t);
-				std::ostringstream oss;
-				oss << std::put_time(&tm, "%d-%m-%Y-%H-%M-%S");
-				auto screenshot_path = "demo/screenshot-" + oss.str() + ".png";
-	
-				if (texture.copyToImage().saveToFile(screenshot_path)) {
-					std::cout << "Screenshot saved to " << screenshot_path;
+					auto t = std::time(nullptr);
+					auto tm = *std::localtime(&t);
+					std::ostringstream oss;
+					oss << std::put_time(&tm, "%d-%m-%Y-%H-%M-%S");
+					auto screenshot_path = "demo/screenshot-" + oss.str() + ".png";
+		
+					if (texture.saveToFile(screenshot_path)) {
+						std::cout << "Screenshot saved to " << screenshot_path;
+					}
 				}
 			}
 		}

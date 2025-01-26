@@ -2,7 +2,7 @@
 
 #include "../math/vec2.hpp"
 
-#include "../animation.hpp"
+#include "../asset/animation.hpp"
 
 enum class State: unsigned char {
 	NONE,
