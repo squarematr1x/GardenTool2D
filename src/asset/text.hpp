@@ -2,22 +2,12 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "rect.hpp"
+
 class Font;
 class Vec2;
 
 using channel = unsigned char;
-
-struct TextRect {
-    float width;
-    float height;
-    float left;
-    float top;
-
-    TextRect(float w_in, float h_in, float left_in, float top_in)
-        : width(w_in), height(h_in), left(left_in), top(top_in)
-    {
-    }
-};
 
 class Text {
     // Wrapper for text
@@ -29,7 +19,7 @@ public:
     Text(const Font& font, const std::string& name, unsigned int char_size, float x, float y);
 
     const sf::Text& getText() const { return m_text; }
-    TextRect getLocalBounds();
+    Rect<float> getLocalBounds();
 
     void setFont(const Font& font);
     void setString(const std::string& name);

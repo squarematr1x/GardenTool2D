@@ -17,15 +17,15 @@ Text::Text(const Font& font, const std::string& name, unsigned int char_size, fl
     m_text.setPosition(x, y);
 }
 
-TextRect Text::getLocalBounds() {
+Rect<float> Text::getLocalBounds() {
     const auto local_bounds = m_text.getLocalBounds();
-    TextRect rect(
+    Rect<float> rectangle(
         local_bounds.width,
         local_bounds.height,
         local_bounds.left,
         local_bounds.top
     );
-    return rect;
+    return rectangle;
 }
 
 void Text::setFont(const Font& font) {
