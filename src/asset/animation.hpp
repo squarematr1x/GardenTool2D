@@ -3,13 +3,15 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
+#include "sprite.hpp"
+
 #include "../math/vec2.hpp"
 #include "../asset/texture.hpp"
 
 class Animation
 {
 	std::string m_name{ "none" };
-	sf::Sprite m_sprite;
+	Sprite m_sprite;
 
 	size_t m_frame_count{ 1 };
 	int m_current_frame{ 0 }; // frame in animation (if animation has 4 "images" frame 2 would be the third image and so on)
@@ -30,5 +32,5 @@ public:
 
 	const std::string& getName() const { return m_name; }
 	const Vec2& getSize() const { return m_size; }
-	sf::Sprite& getSprite() { return m_sprite; }
+	Sprite& getSprite() { return m_sprite; }
 };

@@ -596,9 +596,9 @@ void SceneSideScroller::sAnimation() {
             p_state.prev_state = p_state.state;
 
             if (entity->hasComponent<CInvincibility>()) {
-		        entity->getComponent<CAnimation>().animation.getSprite().setColor(sf::Color(255, 128, 128, 128));
+		        entity->getComponent<CAnimation>().animation.getSprite().setColor(255, 128, 128, 128);
 	        } else {
-                entity->getComponent<CAnimation>().animation.getSprite().setColor(sf::Color(255, 255, 255));
+                entity->getComponent<CAnimation>().animation.getSprite().setColor(255, 255, 255);
             }
         }
     }
@@ -633,7 +633,7 @@ void SceneSideScroller::sRender() {
             layer.scale(width(), height());
         }
         m_engine->window().setView(layer.getView());
-        m_engine->window().draw(layer.getSprite());
+        m_engine->window().draw(layer.getSprite().getSprite());
     }
     m_engine->window().setView(view);
 

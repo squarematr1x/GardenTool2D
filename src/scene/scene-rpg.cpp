@@ -662,9 +662,9 @@ void SceneRPG::sAnimation() {
             }
 
             if (m_player->hasComponent<CInvincibility>()) {
-		        entity->getComponent<CAnimation>().animation.getSprite().setColor(sf::Color(255, 128, 128, 128));
+		        entity->getComponent<CAnimation>().animation.getSprite().setColor(255, 128, 128, 128);
 	        } else {
-                entity->getComponent<CAnimation>().animation.getSprite().setColor(sf::Color(255, 255, 255));
+                entity->getComponent<CAnimation>().animation.getSprite().setColor(255, 255, 255);
             }
         } else {
             entity->getComponent<CAnimation>().animation.update();
