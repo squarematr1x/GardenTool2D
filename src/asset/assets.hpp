@@ -7,12 +7,13 @@
 #include <SFML/Audio.hpp>
 
 #include "animation.hpp"
-#include "layer.hpp"
-#include "math/vec2.hpp"
+#include "../layer.hpp"
+#include "../math/vec2.hpp"
 
 class Assets
 {
 	// TODO: Prefer enums over strings?
+	// TODO: Wrap sf classes (e.g. sf::Texture) to custom classes to make those portable
 	std::map<std::string, sf::Texture> m_texture_map;
 	std::map<std::string, Animation> m_animation_map;
 	std::map<std::string, sf::Font> m_font_map;

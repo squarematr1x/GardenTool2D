@@ -5,7 +5,7 @@
 #include <iostream>
 #include <cassert>
 
-#include "util/profiler.hpp"
+#include "../util/profiler.hpp"
 
 void Assets::loadFromFile(const std::string& path) {
 	PROFILE_FUNCTION();

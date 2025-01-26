@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
-#include "math/vec2.hpp"
+#include "../math/vec2.hpp"
 
 class Animation
 {

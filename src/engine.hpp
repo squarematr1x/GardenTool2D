@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ecs/entity-manager.hpp"
-#include "assets.hpp"
+#include "asset/assets.hpp"
 #include "editor/editor.hpp"
 #include "math/vec2.hpp"
 
