@@ -27,6 +27,7 @@ void GameEngine::init(const std::string& path) {
 		PROFILE_SCOPE("SFML Window");
 		m_window.create(sf::VideoMode(m_screen_w, m_screen_h), m_title);
 		m_window.setFramerateLimit(m_framerate);
+		m_window.setVerticalSyncEnabled(m_vsync);
 	}
 
 	changeScene(SceneType::MENU, std::make_shared<SceneMenu>(this));

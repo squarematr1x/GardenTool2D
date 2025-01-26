@@ -21,6 +21,7 @@ class GameEngine
 	bool m_edit_mode{ false };
 	bool m_enable_sound{ true };
 	bool m_enable_music{ true };
+	bool m_vsync{ true };
 	unsigned int m_screen_w{ 1920 };
 	unsigned int m_screen_h{ 1080 };
 	unsigned int m_framerate{ 60 };
