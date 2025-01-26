@@ -93,7 +93,7 @@ const std::map<std::string, Animation>& Assets::getAnimations() const {
 
 void Assets::addFont(const std::string& font_name, const std::string& path) {
 	PROFILE_FUNCTION();
-	m_font_map[font_name] = sf::Font();
+	m_font_map[font_name] = Font();
 
 	if (!m_font_map[font_name].loadFromFile(path)) {
 		std::cerr << "Cannot load font file: " << path << '\n';
@@ -103,7 +103,7 @@ void Assets::addFont(const std::string& font_name, const std::string& path) {
 	}
 }
 
-const sf::Font& Assets::getFont(const std::string& font_name) const {
+const Font& Assets::getFont(const std::string& font_name) const {
 	assert(m_font_map.find(font_name) != m_font_map.end());
 	return m_font_map.at(font_name);
 }

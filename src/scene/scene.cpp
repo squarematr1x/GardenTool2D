@@ -79,7 +79,7 @@ void Scene::renderGrid(bool show_coordinates) {
             const int y_offset = 2;
             m_grid_text.setString("(" + x_cell + "," + y_cell + ")");
             m_grid_text.setPosition(x + x_offset, h - y - m_grid_cell_size.y + y_offset);
-            m_engine->window().draw(m_grid_text);
+            m_engine->window().draw(m_grid_text.getText());
         }
     }
     m_engine->window().draw(vertices);
@@ -308,8 +308,8 @@ Vec2 Scene::worldPos() {
 }
 
 void Scene::renderPauseText() {
-    sf::View view = m_engine->window().getView();
-    sf::View default_view = m_engine->window().getDefaultView(); // Ignore zoom level etc.
+    auto view = m_engine->window().getView();
+    auto default_view = m_engine->window().getDefaultView(); // Ignore zoom level etc.
     m_engine->window().setView(default_view);
 
     const float w = static_cast<float>(width());
@@ -326,13 +326,13 @@ void Scene::renderPauseText() {
     
     m_engine->window().draw(vertices);
 
-    sf::Text text;
-    text.setCharacterSize(16);
+    Text text;
     text.setFont(m_engine->assets().getFont("Arial"));
     text.setString("Paused");
+    text.setCharacterSize(16);
     text.setPosition(w/2 - (text.getLocalBounds().width/2), 5.0f);
 
-    m_engine->window().draw(text);
+    m_engine->window().draw(text.getText());
     m_engine->window().setView(view); // Restore previous view
 }
 

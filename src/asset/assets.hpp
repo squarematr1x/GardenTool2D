@@ -7,6 +7,7 @@
 #include <SFML/Audio.hpp>
 
 #include "animation.hpp"
+#include "font.hpp"
 #include "../layer.hpp"
 #include "../math/vec2.hpp"
 
@@ -16,7 +17,7 @@ class Assets
 	// TODO: Wrap sf classes (e.g. sf::Texture) to custom classes to make those portable
 	std::map<std::string, sf::Texture> m_texture_map;
 	std::map<std::string, Animation> m_animation_map;
-	std::map<std::string, sf::Font> m_font_map;
+	std::map<std::string, Font> m_font_map;
 	std::map<std::string, sf::SoundBuffer> m_sound_buffer_map;
 	std::map<std::string, sf::Sound> m_sound_map;
 	std::map<std::string, std::shared_ptr<sf::Music>> m_music_map;
@@ -38,7 +39,7 @@ public:
 	const sf::Texture& getTexture(const std::string& texture_name) const;
 	const Animation& getAnimation(const std::string& animation_name) const;
 	const std::map<std::string, Animation>& getAnimations() const;
-	const sf::Font& getFont(const std::string& font_name) const;
+	const Font& getFont(const std::string& font_name) const;
 	sf::Sound getSound(const std::string& sound_name) const;
 	const std::shared_ptr<sf::Music> getMusic(const std::string& music_name) const;
 	const Layer& getLayer(const std::string& layer_name) const;

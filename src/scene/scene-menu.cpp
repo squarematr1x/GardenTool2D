@@ -74,15 +74,15 @@ void SceneMenu::sRender() {
         const auto text_rect = m_menu_text.getLocalBounds();
 
         if (index == m_menu_index) {
-            m_menu_text.setFillColor(sf::Color(255, 255, 255));
+            m_menu_text.setFillColor(255, 255, 255);
         } else {
-            m_menu_text.setFillColor(sf::Color(125, 125, 125));
+            m_menu_text.setFillColor(125, 125, 125);
         }
 
         m_menu_text.setString(item);
         m_menu_text.setOrigin(text_rect.left + text_rect.width/2.0f, text_rect.top + text_rect.height/2.0f);
         m_menu_text.setPosition(width()/2.0f, offset);
-        m_engine->window().draw(m_menu_text);
+        m_engine->window().draw(m_menu_text.getText());
         offset += 64.0f;
         index++;
     }

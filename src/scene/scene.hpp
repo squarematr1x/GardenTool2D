@@ -10,6 +10,8 @@
 #include "../layer.hpp"
 #include "../player-config.hpp"
 
+#include "../asset/text.hpp"
+
 class GameEngine;
 
 enum class SceneType : unsigned char {
@@ -110,7 +112,7 @@ protected:
 	Vec2 m_grid_size{ 0, 0 };
 	Vec2 m_selected_cell{ 0, 0 };
 	const Vec2 m_grid_cell_size{ 64, 64 };
-	sf::Text m_grid_text;
+	Text m_grid_text;
 
 	std::vector<Layer> m_background_layers;
 
@@ -125,7 +127,7 @@ class SceneMenu: public Scene
 	std::string m_title { "Menu" };
 	std::vector<std::string> m_menu_strings;
 	std::vector<std::string> m_level_paths;
-	sf::Text m_menu_text;
+	Text m_menu_text;
 	sf::Color m_background_color{ 20, 20, 20 };
 	size_t m_menu_index{ 0 }; // selected menu item
 	unsigned int m_font_size{ 20 };
