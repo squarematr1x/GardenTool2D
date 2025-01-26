@@ -108,37 +108,26 @@ const Font& Assets::getFont(const std::string& font_name) const {
 	return m_font_map.at(font_name);
 }
 
-void Assets::addSoundBuffer(const std::string& sound_name, const std::string& path) {
+void Assets::addSound(const std::string& sound_name, const std::string& path) {
 	PROFILE_FUNCTION();
-	m_sound_buffer_map[sound_name] = sf::SoundBuffer();
-
-	if (!m_sound_buffer_map[sound_name].loadFromFile(path)) {
+	Sound sound;
+	if (!sound.loadFromFile(path)) {
 		std::cerr << "Cannot load sound file: " << path << '\n';
-		m_font_map.erase(sound_name);
+		m_sound_map.erase(sound_name);
 	} else {
 		std::cout << "Loaded Sound: " << path << '\n';
 	}
+	m_sound_map[sound_name] = sound;
 }
 
-const sf::SoundBuffer& Assets::getSoundBuffer(const std::string& sound_name) const {
-	assert(m_sound_buffer_map.find(sound_name) != m_sound_buffer_map.end());
-	return m_sound_buffer_map.at(sound_name);
-}
-
-void Assets::addSound(const std::string& sound_name, const std::string& path) {
-	PROFILE_FUNCTION();
-	addSoundBuffer(sound_name, path);
-	m_sound_map[sound_name] = sf::Sound(getSoundBuffer(sound_name));
-}
-
-sf::Sound Assets::getSound(const std::string& sound_name) const {
+Sound Assets::getSound(const std::string& sound_name) const {
 	assert(m_sound_map.find(sound_name) != m_sound_map.end());
 	return m_sound_map.at(sound_name);
 }
 
 void Assets::addMusic(const std::string& music_name, const std::string& path) {
 	PROFILE_FUNCTION();
-	m_music_map[music_name] = std::make_shared<sf::Music>();
+	m_music_map[music_name] = std::make_shared<Music>();
 	if (!m_music_map[music_name]->openFromFile(path)) {
 		std::cerr << "Cannot load music file: " << path << '\n';
 		m_music_map.erase(music_name);
@@ -147,7 +136,7 @@ void Assets::addMusic(const std::string& music_name, const std::string& path) {
 	}
 }
 
-const std::shared_ptr<sf::Music> Assets::getMusic(const std::string& music_name) const {
+const std::shared_ptr<Music> Assets::getMusic(const std::string& music_name) const {
 	assert(m_music_map.find(music_name) != m_music_map.end());
 	return m_music_map.at(music_name);
 }
