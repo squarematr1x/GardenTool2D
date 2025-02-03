@@ -627,10 +627,10 @@ void SceneSideScroller::sRender() {
     float parallax_velocity = 0.01f;
     const auto p_transform = m_player->getComponent<CTransform>();
     for (auto& layer : m_background_layers) {
-        layer.update(p_transform.velocity.x, parallax_velocity);
+        layer.update(p_transform.velocity.x, parallax_velocity, m_engine->window());
         parallax_velocity += 0.05f;
         if (m_current_frame == 0) {
-            layer.scale(width(), height());
+            layer.init(m_engine->window());
         }
         m_engine->window().setView(layer.getView());
         m_engine->window().draw(layer.getSprite().getSprite());

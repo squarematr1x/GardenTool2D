@@ -20,8 +20,8 @@ public:
     Layer() = default;
     Layer(const std::string& name, const Texture& texture);
 
-    void update(float velocity_x, float coeff = 0.025f);
-    void scale(size_t window_w, size_t window_h);
+    void init(const sf::RenderWindow& window);
+    void update(float velocity_x, float coeff, const sf::RenderWindow& window);
 
     Sprite& getSprite() { return m_sprite; }
     const sf::View& getView() const { return m_view; }
