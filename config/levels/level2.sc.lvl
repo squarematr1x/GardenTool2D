@@ -16,9 +16,9 @@ Tile Rock 7 0 1 1
 Tile Rock 7 1 1 1
 Tile Bush 1 2 0 0
 Tile Bush 7 2 0 0
-Tile Cloud1 5 8 0 0
-Tile Cloud1 10 9 0 0
-Tile Cloud2 13 10 0 0
+Tile Cloud1 8 8 0 0
+Tile Cloud1 13 9 0 0
+Tile Cloud2 16 10 0 0
 Tile Brick 4 1 1 1
 Tile Brick 5 1 1 1
 Tile Brick 8 1 1 1
@@ -63,12 +63,48 @@ Tile Brick 46 1 1 1
 Tile Brick 44 1 1 1
 Tile Brick 42 1 1 1
 Tile Brick 40 1 1 1
-Tile Brick 48 1 0 0
+Tile Brick 48 1 1 1
 Tile Brick 4 0 0 0
 Tile Brick 5 0 1 1
+Tile Brick 49 1 1 1
+Tile Brick 50 1 1 1
+Tile Brick 51 1 1 1
+Tile Brick 52 1 1 1
+Tile Brick 53 1 1 1
+Tile Brick 54 1 1 1
+Tile Brick 55 1 1 1
+Tile Brick 56 1 1 1
+Tile Brick 57 1 1 1
+Tile Brick 58 1 1 1
+Tile Brick 59 1 1 1
+Tile Brick 60 1 1 1
+Tile Brick 61 1 1 1
+Tile Brick 62 1 1 1
+Tile Brick 63 1 1 1
+Tile Brick 64 1 1 1
+Tile Brick 65 1 1 1
+Tile Brick 66 1 1 1
+Tile Brick 68 1 1 1
+Tile Brick 67 1 1 1
+Tile Brick 69 1 1 1
+Tile Brick 70 1 1 1
+Tile Brick 71 1 1 1
+Tile Brick 72 1 1 1
+Tile Brick 73 1 1 1
+Tile Brick 74 1 1 1
+Tile Brick 75 1 1 1
+Tile Brick 76 1 1 1
+Tile Brick 77 1 1 1
+Tile Brick 78 1 1 1
+Tile Brick 79 1 1 1
+Tile Brick 80 1 1 1
+Tile Brick 81 1 1 1
+Tile Brick 82 1 1 1
+Tile Brick 83 1 1 1
+Tile Brick 84 1 1 1
 
 # Player: x, y, bboxw, bboxh, speed, max speed, jump speed, gravity, weapon animation name hp
-Player 1 2 64 64 5 5 25 2 Fire 4
+Player 64 2 64 64 5 5 25 2 Fire 4
 
 # NPC: animation name, x, y, block movement, block vision, hostile, hp, damage, behavior
 
