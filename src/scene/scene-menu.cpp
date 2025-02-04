@@ -27,6 +27,9 @@ void SceneMenu::init() {
         m_level_paths.push_back(entry.path());
         m_menu_strings.push_back(entry.path());
     }
+
+    std::sort(std::begin(m_level_paths), std::end(m_level_paths));
+    std::sort(std::begin(m_menu_strings), std::end(m_menu_strings));
 }
 
 void SceneMenu::update() {
