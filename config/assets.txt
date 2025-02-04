@@ -1,7 +1,8 @@
 # Texture: name, path, repeating
 Texture Tilemap assets/textures/tilemap.png 0
 Texture Layer1 assets/textures/background1.png 1
-Texture Layer2 assets/textures/background3.png 1
+Texture Layer2 assets/textures/background2.png 1
+Texture Layer3 assets/textures/background3.png 1
 
 # Animation: name, texture name, frames speed width height atlas x-offset atlas y-offset
 Animation Rock Tilemap 1 1 64 64 0 0
@@ -55,6 +56,7 @@ Animation Heart Tilemap 2 20 128 64 576 196
 # Layer: name, texture name
 Layer Landscape1 Layer1
 Layer Landscape2 Layer2
+Layer Landscape3 Layer3
 
 # Font: name, path
 Font Arial assets/fonts/arial.ttf

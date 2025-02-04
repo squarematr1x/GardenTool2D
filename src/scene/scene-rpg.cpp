@@ -182,7 +182,7 @@ void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) {
     sword->addComponent<CLifespan>(20);
     setSwordPos(sword, facing, pos);
 
-    // Set  weapon cooldown
+    // Set weapon cooldown
     auto& weapon = entity->getComponent<CWeapon>();
     weapon.remaining_cooldown = weapon.max_cooldown;
     weapon.current_weapon_id = sword->id();
@@ -223,6 +223,26 @@ void SceneRPG::setSwordPos(std::shared_ptr<Entity> sword, const Vec2& facing, co
 
 void SceneRPG::setRoomSize() {
     m_room_size = Vec2(width()/m_grid_cell_size.x, height()/m_grid_cell_size.y);
+}
+
+void SceneRPG::setFacing(std::shared_ptr<Entity> entity) {
+    auto& transform = entity->getComponent<CTransform>();
+    if (transform.velocity == Vec2(0.0f, 0.0f)) {
+        return;
+    }
+    transform.facing = Vec2(0.0f, 0.0f);
+    transform.scale = Vec2(fabsf(transform.scale.x), transform.scale.y);
+    if (std::floor(transform.velocity.x) > 0.0f) {
+        transform.facing.x = 1.0f;
+        transform.scale = Vec2(-fabsf(transform.scale.x), transform.scale.y);
+    } else if (std::ceil(transform.velocity.x) < 0.0f) {
+        transform.facing.x = -1.0f;
+    }
+    if (std::floor(transform.velocity.y) > 0.0f) {
+        transform.facing.y = 1.0f;
+    } else if (std::ceil(transform.velocity.y) < 0.0f) {
+        transform.facing.y = -1.0f;
+    }
 }
 
 void SceneRPG::teleport(const Vec2& cur_doorway) {
@@ -268,9 +288,11 @@ void SceneRPG::sMovement() {
     auto& p_transform = m_player->getComponent<CTransform>();
     auto input = m_player->getComponent<CInput>();
 
-    if (input.up || input.right || input.down || input.left) {
+    if (input.up || input.right || input.down || input.left || input.attack) {
         m_player->removeComponent<CPath>();
     }
+
+    p_transform.prev_facing = p_transform.facing;
 
     if (m_player->hasComponent<CPath>()) {
         auto& path = m_player->getComponent<CPath>();
@@ -280,6 +302,7 @@ void SceneRPG::sMovement() {
             desired = desired.normalize();
             desired = desired*m_player_config.v;
             p_transform.velocity = desired;
+            setFacing(m_player);
         } else {
             path.cur_pos++;
             if (path.cur_pos >= path.positions.size()) {
@@ -288,34 +311,26 @@ void SceneRPG::sMovement() {
             }
         }
     } else {
-        p_transform.prev_facing = p_transform.facing;
         Vec2 new_velocity(0.0f, 0.0f);
 
         if (input.up) {
-            p_transform.scale = Vec2(fabsf(p_transform.scale.x), p_transform.scale.y);
-            p_transform.facing = Vec2(0.0f, -1.0f);
             new_velocity.y -= m_player_config.v;
             new_velocity.x = 0.0f;
         }
         if (input.down) {
-            p_transform.scale = Vec2(fabsf(p_transform.scale.x), p_transform.scale.y);
-            p_transform.facing = Vec2(0.0f, 1.0f);
             new_velocity.y += m_player_config.v;
             new_velocity.x = 0.0f;
         }
         if (input.left) {
-            p_transform.scale = Vec2(fabsf(p_transform.scale.x), p_transform.scale.y);
-            p_transform.facing = Vec2(-1.0f, 0.0f);
             new_velocity.x -= m_player_config.v;
             new_velocity.y = 0.0f;
         }
         if (input.right) {
-            p_transform.scale = Vec2(-fabsf(p_transform.scale.x), p_transform.scale.y);
-            p_transform.facing = Vec2(1.0f, 0.0f);
             new_velocity.x += m_player_config.v;
             new_velocity.y = 0.0f;
         }
         p_transform.velocity = new_velocity;
+        setFacing(m_player);
 
         if (input.attack) {
             if (m_can_attack) {

@@ -1,6 +1,7 @@
 # Background: layer name
 Background Landscape1
 Background Landscape2
+Background Landscape3
 
 # Tile: animation name, x, y, block movement, block vision
 Tile Rock 1 0 1 1
