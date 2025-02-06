@@ -220,7 +220,6 @@ public:
 	void sRender();
 	void sDragAndDrop();
 	void sInteract();
-	void sPathfind();
 
 	void onEnd();
 };

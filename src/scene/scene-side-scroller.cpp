@@ -170,12 +170,12 @@ void SceneSideScroller::spawnPlayer() {
 }
 
 void SceneSideScroller::spawnBullet() {
-    auto transform = m_player->getComponent<CTransform>();
+    const auto transform = m_player->getComponent<CTransform>();
 
     auto bullet = m_entity_manager.addEntity(Tag::BULLET);
     bullet->addComponent<CAnimation>(m_engine->assets().getAnimation("Fire"), true);
 
-    constexpr float bullet_v = 4.0f; // TODO: Add to config file?
+    constexpr auto bullet_v = 4.0f; // TODO: Add to config file?
     if (transform.scale.x < 0) {
         bullet->addComponent<CTransform>(transform.pos, Vec2(-bullet_v, 0.0f));
     } else {
@@ -247,7 +247,7 @@ void SceneSideScroller::sAI() {
 }
 
 void SceneSideScroller::sMovement() {
-    Vec2 player_v = m_player->getComponent<CTransform>().velocity;
+    auto player_v = m_player->getComponent<CTransform>().velocity;
     auto& player_state = m_player->getComponent<CState>().state;
     auto& input = m_player->getComponent<CInput>();
 
@@ -350,9 +350,9 @@ void SceneSideScroller::sCollision() {
         // Checkpoint
         if (e->tag() == Tag::CHECKPOINT) {
             if (physics::overlapping(m_player, e)) {
-                auto checkpointPos = e->getComponent<CTransform>().pos;
-                m_player_config.x = (checkpointPos.x - (m_grid_cell_size.x/2.0f))/m_grid_cell_size.x;
-                m_player_config.y = ((height() - checkpointPos.y - (m_grid_cell_size.y/2.0f))/m_grid_cell_size.y);
+                const auto checkpoint_pos = e->getComponent<CTransform>().pos;
+                m_player_config.x = (checkpoint_pos.x - (m_grid_cell_size.x/2.0f))/m_grid_cell_size.x;
+                m_player_config.y = ((height() - checkpoint_pos.y - (m_grid_cell_size.y/2.0f))/m_grid_cell_size.y);
             }
         }
 
@@ -397,9 +397,9 @@ void SceneSideScroller::sCollision() {
         }
     
         // Player collision
-        Vec2 overlap = physics::getOverlap(m_player, e);
+        const auto overlap = physics::getOverlap(m_player, e);
         if (overlap.x > 0 && overlap.y > 0) {
-            Vec2 prev_overlap = physics::getPrevOverlap(m_player, e);
+            const auto prev_overlap = physics::getPrevOverlap(m_player, e);
             if (prev_overlap.y > 0) {
                 if (p_transfrom.velocity.x > 0) {
                     p_transfrom.pos.x -= overlap.x;
@@ -507,7 +507,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
                 if (!m_engine->editMode()) {
                     break;
                 }
-                Vec2 world_pos = worldPos();
+                const auto world_pos = worldPos();
                 auto tile = m_entity_manager.addEntity(Tag::TILE);
                 tile->addComponent<CAnimation>(m_engine->assets().getAnimation("Brick"), true);
                 tile->addComponent<CTransform>(fitToGrid(world_pos));
@@ -521,7 +521,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
                     break;
                 }
 
-                Vec2 world_pos = worldPos();
+                const auto world_pos = worldPos();
                 m_selected_cell = fitToGrid(world_pos);
                 m_engine->setSelectedPos(m_selected_cell);
                 for (auto e : m_entity_manager.getEntities()) {
@@ -551,7 +551,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::SHOOT: m_player->getComponent<CInput>().attack = false; break;
             case ActionName::LEFT_CLICK: {
                 if (m_engine->editMode()) {
-                    Vec2 world_pos = worldPos();
+                    auto world_pos = worldPos();
 
                     for (auto e : m_entity_manager.getEntities()) {
                         if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
@@ -606,7 +606,7 @@ void SceneSideScroller::sAnimation() {
 
 void SceneSideScroller::sCamera() {
     auto& p_pos = m_player->getComponent<CTransform>().pos;
-    float window_center_x = std::max(width()/2.0f, p_pos.x);
+    const auto window_center_x = std::max(width()/2.0f, p_pos.x);
     sf::View view = m_engine->window().getView();
 
     view.setCenter(window_center_x, height() - view.getCenter().y);
@@ -624,7 +624,7 @@ void SceneSideScroller::sRender() {
 
     // Draw backgrounds
     sf::View view = m_engine->window().getView();
-    float parallax_velocity = 0.01f;
+    auto parallax_velocity = 0.01f;
     const auto p_transform = m_player->getComponent<CTransform>();
     for (auto& layer : m_background_layers) {
         layer.update(p_transform.velocity.x, parallax_velocity, m_engine->window());

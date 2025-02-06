@@ -90,7 +90,7 @@ void GameEngine::sUserInput() {
 		}
 
 		if (event.type == sf::Event::Resized) {
-			sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+			const sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
 			m_window.setView(sf::View(visibleArea));
 		}
 
@@ -100,11 +100,11 @@ void GameEngine::sUserInput() {
 				if (texture.create(m_window.getSize().x, m_window.getSize().y)) {
 					texture.update(m_window);
 
-					auto t = std::time(nullptr);
-					auto tm = *std::localtime(&t);
+					const auto t = std::time(nullptr);
+					const auto tm = *std::localtime(&t);
 					std::ostringstream oss;
 					oss << std::put_time(&tm, "%d-%m-%Y-%H-%M-%S");
-					auto screenshot_path = "demo/screenshot-" + oss.str() + ".png";
+					const auto screenshot_path = "demo/screenshot-" + oss.str() + ".png";
 		
 					if (texture.saveToFile(screenshot_path)) {
 						std::cout << "Screenshot saved to " << screenshot_path;
@@ -121,14 +121,14 @@ void GameEngine::sUserInput() {
 			}
 
 			// determine start or end action by whether it was press or realease
-			const ActionType action_type = (event.type == sf::Event::KeyPressed) ? ActionType::START : ActionType::END;
+			const auto action_type = (event.type == sf::Event::KeyPressed) ? ActionType::START : ActionType::END;
 
 			// look up the action and send the action to the scene
 			currentScene()->sDoAction(Action(currentScene()->getActionMap().at(event.key.code), action_type));
 		}
 
-		auto mouse_pos = sf::Mouse::getPosition(m_window);
-		Vec2 pos(mouse_pos.x, mouse_pos.y);
+		const auto mouse_pos = sf::Mouse::getPosition(m_window);
+		const Vec2 pos(mouse_pos.x, mouse_pos.y);
 
 		if (event.type == sf::Event::MouseButtonPressed) {
 			switch (event.mouseButton.button) {

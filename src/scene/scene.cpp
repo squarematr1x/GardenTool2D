@@ -20,7 +20,7 @@ size_t Scene::height() const {
 }
 
 Vec2 Scene::getCenter() const {
-    auto center = m_engine->window().getView().getCenter();
+    const auto center = m_engine->window().getView().getCenter();
     return Vec2(center.x, center.y);
 }
 
@@ -48,24 +48,24 @@ void Scene::drawLine(const Vec2& p1, const Vec2& p2) {
 void Scene::renderGrid(bool show_coordinates) {
     const Vec2 center = getCenter();
 
-    const float w = m_grid_size.x;
-    const float h = m_grid_size.y;
+    const auto w = m_grid_size.x;
+    const auto h = m_grid_size.y;
 
-    const float left_x = center.x - w/2;
-    const float right_x = left_x + w + m_grid_cell_size.x;
-    const float next_grid_x = left_x - (static_cast<int>(left_x) % static_cast<int>(m_grid_cell_size.x));
+    const auto left_x = center.x - w/2;
+    const auto right_x = left_x + w + m_grid_cell_size.x;
+    const auto next_grid_x = left_x - (static_cast<int>(left_x) % static_cast<int>(m_grid_cell_size.x));
 
-    const float up_y = center.y - h/2;
-    const float low_y = up_y + h + m_grid_cell_size.y;
-    const float next_grid_y = up_y - (static_cast<int>(up_y) % static_cast<int>(m_grid_cell_size.y));
+    const auto up_y = center.y - h/2;
+    const auto low_y = up_y + h + m_grid_cell_size.y;
+    const auto next_grid_y = up_y - (static_cast<int>(up_y) % static_cast<int>(m_grid_cell_size.y));
 
     sf::VertexArray vertices(sf::Lines);
 
-    for (float x = next_grid_x; x < right_x; x += m_grid_cell_size.x) {
+    for (auto x = next_grid_x; x < right_x; x += m_grid_cell_size.x) {
         addLine(Vec2(x, up_y), Vec2(x, low_y), vertices);
     }
 
-    for (float y = next_grid_y; y < low_y; y += m_grid_cell_size.y) {
+    for (auto y = next_grid_y; y < low_y; y += m_grid_cell_size.y) {
         addLine(Vec2(left_x, y), Vec2(right_x, y), vertices);
 
         if (!show_coordinates) {
@@ -73,10 +73,10 @@ void Scene::renderGrid(bool show_coordinates) {
         }
 
         for (float x = next_grid_x; x < right_x; x += m_grid_cell_size.x) {
-            const std::string x_cell = std::to_string(static_cast<int>(x)/static_cast<int>(m_grid_cell_size.x));
-            const std::string y_cell = std::to_string(static_cast<int>(y)/static_cast<int>(m_grid_cell_size.y));
-            const int x_offset = 3;
-            const int y_offset = 2;
+            const auto x_cell = std::to_string(static_cast<int>(x)/static_cast<int>(m_grid_cell_size.x));
+            const auto y_cell = std::to_string(static_cast<int>(y)/static_cast<int>(m_grid_cell_size.y));
+            const auto x_offset = 3;
+            const auto y_offset = 2;
             m_grid_text.setString("(" + x_cell + "," + y_cell + ")");
             m_grid_text.setPosition(x + x_offset, h - y - m_grid_cell_size.y + y_offset);
             m_engine->window().draw(m_grid_text.getText());
@@ -88,8 +88,8 @@ void Scene::renderGrid(bool show_coordinates) {
 }
 
 void Scene::renderActiveGridCell() {
-    Vec2 world_pos = worldPos();
-    Vec2 grid_pos = fitToGrid(world_pos, false);
+    auto world_pos = worldPos();
+    auto grid_pos = fitToGrid(world_pos, false);
 
     sf::RectangleShape active_cell;
     active_cell.setFillColor({255, 255, 255, 128});
@@ -100,7 +100,7 @@ void Scene::renderActiveGridCell() {
 }
 
 void Scene::renderSelectedGridCell() {
-    Vec2 grid_pos = fitToGrid(m_selected_cell, false);
+    auto grid_pos = fitToGrid(m_selected_cell, false);
     sf::RectangleShape active_cell;
     active_cell.setFillColor({196, 196, 255, 156});
     active_cell.setPosition({grid_pos.x, grid_pos.y});
@@ -111,12 +111,12 @@ void Scene::renderSelectedGridCell() {
 
 void Scene::renderBBoxes() {
     sf::VertexArray vertices(sf::Lines);
-    for (auto e : m_entity_manager.getEntities()) {
+    for (const auto& e : m_entity_manager.getEntities()) {
         if (!e->hasComponent<CBBox>()) {
             continue;
         }
-        auto box = e->getComponent<CBBox>();
-        auto pos = e->getComponent<CTransform>().pos;
+        const auto box = e->getComponent<CBBox>();
+        const auto pos = e->getComponent<CTransform>().pos;
         const auto box_color{ sf::Color(255, 255, 255) };
 
         vertices.append({{pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color});
@@ -140,11 +140,11 @@ void Scene::addHpBar(std::shared_ptr<Entity> e) {
         return;
     }
 
-    auto size = e->getComponent<CAnimation>().animation.getSize();
-    auto pos = e->getComponent<CTransform>().pos;
-    constexpr float y_offset{ 16.0f };
-    constexpr float hbar_h{ 8.0f };
-    const float x_size = size.x*e->getComponent<CHealth>().percentage;
+    const auto size = e->getComponent<CAnimation>().animation.getSize();
+    const auto pos = e->getComponent<CTransform>().pos;
+    constexpr auto y_offset{ 16.0f };
+    constexpr auto hbar_h{ 8.0f };
+    const auto x_size = size.x*e->getComponent<CHealth>().percentage;
 
     m_hp_bars.append({{pos.x - size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, sf::Color(0, 0, 0)});
     m_hp_bars.append({{pos.x + size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, sf::Color(0, 0, 0)});
@@ -166,8 +166,8 @@ void Scene::addHighlight(std::shared_ptr<Entity> e) {
         return;
     }
 
-    auto box = e->getComponent<CBBox>();
-    auto pos = e->getComponent<CTransform>().pos;
+    const auto box = e->getComponent<CBBox>();
+    const auto pos = e->getComponent<CTransform>().pos;
     const auto box_color{ sf::Color(255, 255, 255) };
 
     m_highlights.append({{pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color});
@@ -209,13 +209,13 @@ void Scene::renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> play
     }
 
     if (e->hasComponent<CPatrol>()) {
-        auto positions = e->getComponent<CPatrol>().positions;
+        const auto positions = e->getComponent<CPatrol>().positions;
         sf::CircleShape patrol_pos;
         patrol_pos.setFillColor(sf::Color(255, 255, 255));
         patrol_pos.setRadius(4);
         patrol_pos.setOrigin(2, 2);
 
-        for (const Vec2& pos : positions) {
+        for (const auto& pos : positions) {
             patrol_pos.setPosition(pos.x, pos.y);
             m_engine->window().draw(patrol_pos);
         }
@@ -276,12 +276,12 @@ void Scene::renderCommon(std::shared_ptr<Entity> player) {
 
 void Scene::updateZoom(float scroll_delta) {
     m_zoom.value = 2.0f;
-    int level = 1;
+    auto level = 1;
     if (scroll_delta > 0.0f) {
         m_zoom.value = 0.5f;
         level = -1;
     }
-    const int new_level = m_zoom.level + level;
+    const auto new_level = m_zoom.level + level;
     if (new_level >= -m_zoom.max_level && new_level <= m_zoom.max_level) {
         m_zoom.level = new_level;
         // a(n) = n^2 - 1
@@ -299,7 +299,7 @@ void Scene::updateZoom(float scroll_delta) {
 }
 
 Vec2 Scene::worldPos() {
-    auto world_pos = m_engine->window().mapPixelToCoords({
+    const auto world_pos = m_engine->window().mapPixelToCoords({
         static_cast<int>(m_mouse_pos.x),
         static_cast<int>(m_mouse_pos.y)
     });
@@ -308,13 +308,13 @@ Vec2 Scene::worldPos() {
 }
 
 void Scene::renderPauseText() {
-    auto view = m_engine->window().getView();
-    auto default_view = m_engine->window().getDefaultView(); // Ignore zoom level etc.
+    const auto view = m_engine->window().getView();
+    const auto default_view = m_engine->window().getDefaultView(); // Ignore zoom level etc.
     m_engine->window().setView(default_view);
 
-    const float w = static_cast<float>(width());
-    constexpr float h = 32.0f;
-    const sf::Color color = sf::Color(0, 0, 0);
+    const auto w = static_cast<float>(width());
+    constexpr auto h = 32.0f;
+    const auto color = sf::Color(0, 0, 0);
     sf::VertexArray vertices{ sf::Triangles, 6 };
 
     vertices[0] = {{0.0f, 0.0f}, color};
@@ -337,15 +337,15 @@ void Scene::renderPauseText() {
 }
 
 bool Scene::targetReached(const Vec2& pos, const Vec2& target) const {
-    float distance = pos.distance(target);
+    auto distance = pos.distance(target);
     return fabs(distance) <= 5.0f;
 }
 
 void Scene::addVertexData(const Vec2& pos, const sf::IntRect& texture_rect_in, sf::VertexArray& vertices) {
     // Add all entities that are not individually target of some transform into same vertex array to reduce draw() calls
-    auto texture_rect = sf::FloatRect(texture_rect_in);
-    float half_w = texture_rect.width/2.0f;
-    float half_h = texture_rect.height/2.0f;
+    const auto texture_rect = sf::FloatRect(texture_rect_in);
+    const auto half_w = texture_rect.width/2.0f;
+    const auto half_h = texture_rect.height/2.0f;
     vertices.append(sf::Vertex(
         sf::Vector2f(pos.x - half_w, pos.y - half_h),
         sf::Vector2f(texture_rect.left, texture_rect.top)
@@ -385,20 +385,20 @@ Vec2 Scene::gridPos(const Vec2& pos) const {
 }
 
 Vec2 Scene::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entity> entity) const {
-    const float mod_h = static_cast<float>(static_cast<int>(height())%static_cast<int>(m_grid_cell_size.y));
-    const float grid_h = mod_h != 0 ? height() + m_grid_cell_size.y - mod_h : height();
+    const auto mod_h = static_cast<float>(static_cast<int>(height())%static_cast<int>(m_grid_cell_size.y));
+    const auto grid_h = mod_h != 0 ? height() + m_grid_cell_size.y - mod_h : height();
 
     if (entity->hasComponent<CAnimation>()) {
         const auto animation_size = entity->getComponent<CAnimation>().animation.getSize();
-        const float x = grid_x*m_grid_cell_size.x + (animation_size.x/2.0f);
-        const float y = grid_h - (grid_y*m_grid_cell_size.y + (animation_size.y/2.0f));
+        const auto x = grid_x*m_grid_cell_size.x + (animation_size.x/2.0f);
+        const auto y = grid_h - (grid_y*m_grid_cell_size.y + (animation_size.y/2.0f));
 
         return Vec2(x, y);
     }
     if (entity->hasComponent<CBBox>()) {
         const auto half_size = entity->getComponent<CBBox>().half_size;
-        const float x = grid_x*m_grid_cell_size.x + half_size.x;
-        const float y = grid_h - (grid_y*m_grid_cell_size.y + half_size.y);
+        const auto x = grid_x*m_grid_cell_size.x + half_size.x;
+        const auto y = grid_h - (grid_y*m_grid_cell_size.y + half_size.y);
 
         return Vec2(x, y);
     }

@@ -22,7 +22,7 @@ void SceneMenu::init() {
 
     m_particles.init(m_engine->window().getSize());
 
-    std::string path = "config/levels/";
+    const auto path = "config/levels/";
     for (const auto & entry : std::filesystem::directory_iterator(path)) {
         m_level_paths.push_back(entry.path());
         m_menu_strings.push_back(entry.path());
@@ -54,7 +54,7 @@ void SceneMenu::sDoAction(const Action& action) {
     } else if (action.getName() == ActionName::DOWN) {
         m_menu_index = (m_menu_index + 1) % m_menu_strings.size();
     } else if (action.getName() == ActionName::PLAY) {
-        const std::string file_name = m_level_paths[m_menu_index];
+        const auto file_name = m_level_paths[m_menu_index];
         const std::string extension(std::find(file_name.begin(), file_name.end(), '.'), file_name.end());
         if (extension == ".sc.lvl") {
             m_engine->changeScene(SceneType::SIDE_SCROLL, std::make_shared<SceneSideScroller>(m_engine, file_name));
@@ -71,7 +71,7 @@ void SceneMenu::sRender() {
     m_particles.update();
     m_particles.draw(m_engine->window());
 
-    float offset = 64.0f;
+    auto offset = 64.0f;
     size_t index = 0;
     for (const std::string& item : m_menu_strings) {
         const auto text_rect = m_menu_text.getLocalBounds();
