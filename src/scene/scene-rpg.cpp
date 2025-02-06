@@ -140,14 +140,14 @@ Vec2 SceneRPG::getPosition(float x, float y) const {
 
 // TODO: This can stay, but won't be used for now
 Vec2 SceneRPG::getPosition(float rx, float ry, float tx, float ty) const {
-    const float room_start_x = rx*m_grid_cell_size.x*m_room_size.x;
-    const float room_start_y = ry*m_grid_cell_size.y*m_room_size.y;
+    const auto room_start_x = rx*m_grid_cell_size.x*m_room_size.x;
+    const auto room_start_y = ry*m_grid_cell_size.y*m_room_size.y;
 
     return Vec2(room_start_x + tx*m_grid_cell_size.x + m_grid_cell_size.x/2, room_start_y + ty*m_grid_cell_size.y + m_grid_cell_size.y/2);
 }
 
 Vec2 SceneRPG::getCurrentRoom() const {
-    Vec2 p_pos = m_player->getComponent<CTransform>().pos;
+    auto p_pos = m_player->getComponent<CTransform>().pos;
     return Vec2(floorf(p_pos.x/(m_room_size.x*m_grid_cell_size.x)), floorf(p_pos.y/(m_room_size.y*m_grid_cell_size.y)));
 }
 
@@ -192,7 +192,7 @@ void SceneRPG::spawnSword(std::shared_ptr<Entity> entity) {
 }
 
 void SceneRPG::setSwordPos(std::shared_ptr<Entity> sword, const Vec2& facing, const Vec2& pos) {
-    std::string sword_animation = "";
+    auto sword_animation = "";
     Vec2 scale(1.0f, 1.0f);
 
     if (facing == Vec2(0.0f, -1.0f)) {
@@ -211,7 +211,7 @@ void SceneRPG::setSwordPos(std::shared_ptr<Entity> sword, const Vec2& facing, co
         pos.y + facing.y*m_grid_cell_size.y
     );
 
-    Vec2 sword_bbox = facing.x == 0.0f ? Vec2(32.0f, 64.0f) : Vec2(64.0f, 32.0f);
+    auto sword_bbox = facing.x == 0.0f ? Vec2(32.0f, 64.0f) : Vec2(64.0f, 32.0f);
 
     sword->addComponent<CAnimation>(m_engine->assets().getAnimation(sword_animation));
     sword->addComponent<CTransform>(swor_pos, true);
@@ -296,9 +296,9 @@ void SceneRPG::sMovement() {
 
     if (m_player->hasComponent<CPath>()) {
         auto& path = m_player->getComponent<CPath>();
-        Vec2 target = path.positions[path.cur_pos];
+        auto target = path.positions[path.cur_pos];
         if (!targetReached(p_transform.pos, target)) {
-            Vec2 desired = target - p_transform.pos;
+            auto desired = target - p_transform.pos;
             desired = desired.normalize();
             desired = desired*m_player_config.v;
             p_transform.velocity = desired;
@@ -387,7 +387,7 @@ void SceneRPG::sDoAction(const Action& action) {
                 }
 
                 for (auto e : m_entity_manager.getEntities()) {
-                    Vec2 world_pos = worldPos();
+                    auto world_pos = worldPos();
                     m_selected_cell = fitToGrid(world_pos);
                     m_engine->setSelectedPos(m_selected_cell);
                     if (physics::isInside(world_pos, e)) {
@@ -422,7 +422,7 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::ATTACK: m_player->getComponent<CInput>().attack = false; break;
             case ActionName::LEFT_CLICK: {
                 if (m_engine->editMode()) {
-                    Vec2 world_pos = worldPos();
+                    auto world_pos = worldPos();
                     for (auto e : m_entity_manager.getEntities()) {
                         if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
                             e->getComponent<CDraggable>().dragged = false;
@@ -448,13 +448,13 @@ void SceneRPG::sAI() {
                 continue;
             }
 
-            Vec2 target = patrol.positions[patrol.cur_pos];
+            auto target = patrol.positions[patrol.cur_pos];
             if (targetReached(transform.pos, target)) {
                 patrol.cur_pos = patrol.cur_pos + 1 < patrol.positions.size() ? patrol.cur_pos + 1 : 0;
                 target = patrol.positions[patrol.cur_pos];
             }
 
-            Vec2 desired = target - transform.pos;
+            auto desired = target - transform.pos;
             desired = desired.normalize();
             desired = desired*patrol.speed;
             transform.velocity = desired;
@@ -462,7 +462,7 @@ void SceneRPG::sAI() {
 
         // Follow
         if (e->hasComponent<CFollowPlayer>()) {
-            Vec2 target = m_player->getComponent<CTransform>().pos;
+            auto target = m_player->getComponent<CTransform>().pos;
             auto& transform = e->getComponent<CTransform>();
             e->getComponent<CFollowPlayer>().detected = true;
 
@@ -482,7 +482,7 @@ void SceneRPG::sAI() {
             }
 
             if (!targetReached(transform.pos, target)) {
-                Vec2 desired = target - transform.pos;
+                auto desired = target - transform.pos;
                 desired = desired.normalize();
                 desired = desired*e->getComponent<CFollowPlayer>().speed;
                 transform.velocity = desired;
@@ -543,9 +543,9 @@ void SceneRPG::sCollision() {
         if (!entity->getComponent<CBBox>().block_movement) {
             continue;
         }
-        Vec2 overlap = physics::getOverlap(m_player, entity);
+        auto overlap = physics::getOverlap(m_player, entity);
         if (overlap.x > 0 && overlap.y > 0) {
-            Vec2 prev_overlap = physics::getPrevOverlap(m_player, entity);
+            auto prev_overlap = physics::getPrevOverlap(m_player, entity);
             if (prev_overlap.y > 0) {
                 if (transfrom.velocity.x > 0) {
                     transfrom.pos.x -= overlap.x;
@@ -699,7 +699,7 @@ void SceneRPG::sCamera() {
         view.setCenter(p_pos.x, p_pos.y);
     } else {
         // Get view for room-based camera
-        Vec2 room = getCurrentRoom();
+        auto room = getCurrentRoom();
         view.setCenter(
             static_cast<float>((width()/2) + room.x*width()),
             static_cast<float>((height()/2) + room.y*height())

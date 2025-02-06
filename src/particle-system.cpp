@@ -2,8 +2,8 @@
 
 void ParticleSystem::resetParticle(size_t index, bool first) {
     // Initial position at the center of the screen
-    float mx = m_emitter.x;
-    float my = m_emitter.y;
+    auto mx = m_emitter.x;
+    auto my = m_emitter.y;
 
     m_vertices[4*index + 0].position = sf::Vector2f(mx, my);
     m_vertices[4*index + 1].position = sf::Vector2f(mx + m_size, my);
@@ -28,8 +28,8 @@ void ParticleSystem::resetParticle(size_t index, bool first) {
     m_vertices[4*index + 3].color = color;
 
     // Set random velocity
-    float rx = static_cast<float>(static_cast<float>(rand())/RAND_MAX)*10.0f - 5.0f;
-    float ry = static_cast<float>(static_cast<float>(rand())/RAND_MAX)*10.0f - 5.0f;
+    auto rx = static_cast<float>(static_cast<float>(rand())/RAND_MAX)*10.0f - 5.0f;
+    auto ry = static_cast<float>(static_cast<float>(rand())/RAND_MAX)*10.0f - 5.0f;
 
     m_particles[index].velocity = sf::Vector2f(rx, ry);
 
@@ -42,7 +42,7 @@ void ParticleSystem::resetParticles(size_t count, float size) {
     m_vertices = sf::VertexArray(sf::Quads, count*4);
     m_size = size;
 
-    size_t particles_size = m_particles.size();
+    auto particles_size = m_particles.size();
     for (size_t i = 0; i < particles_size; i++) {
         resetParticle(i, true);
     }

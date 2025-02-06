@@ -14,10 +14,10 @@ std::vector<Vec2> getPath(const Vec2& start, const Vec2& goal, EntityManager& en
     std::vector<Vec2> closed;
     std::priority_queue<SearchNode, std::vector<SearchNode>, CompareNode> open;
 
-    constexpr float g = 0.0f;
-    const float h = start.distance(goal);
-    constexpr float w = 10.0f;
-    const float f = g + w*h;
+    constexpr auto g = 0.0f;
+    const auto h = start.distance(goal);
+    constexpr auto w = 10.0f;
+    const auto f = g + w*h;
 
     SearchNode start_node(start, f, g);
 
@@ -78,9 +78,9 @@ std::vector<SearchNode> getNeighbours(const SearchNode& node, const Vec2& goal, 
             }
         }
         if (!collide) {
-            float g = node.g + cell_size.x;
-            float h = pos.distance(goal);
-            float f = g + w*h;
+            auto g = node.g + cell_size.x;
+            auto h = pos.distance(goal);
+            auto f = g + w*h;
             nodes.push_back({ pos, f, g });
         }
     }

@@ -73,8 +73,8 @@ std::ostream& operator<< (std::ostream& out, const Vec2& p) {
 }
 
 float Vec2::distance(const Vec2& p) const {
-	const float dx{ x - p.x };
-	const float dy{ y - p.y };
+	const auto dx{ x - p.x };
+	const auto dy{ y - p.y };
 
 	return sqrtf(dx*dx + dy*dy);
 }

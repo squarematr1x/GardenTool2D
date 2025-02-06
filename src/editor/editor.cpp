@@ -93,9 +93,9 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                         if (e->hasComponent<CAnimation>()) {
                             auto anims = engine->assets().getAnimations();
                             const char* animations[anims.size()];
-                            const std::string anim_name = e->getComponent<CAnimation>().animation.getName();
-                            static int cur_index = 1;
-                            int i = 0;
+                            const auto anim_name = e->getComponent<CAnimation>().animation.getName();
+                            static auto cur_index = 1;
+                            auto i = 0;
 
                             for (const auto& pair : anims) {
                                 animations[i] = pair.first.c_str();
@@ -105,7 +105,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                 i++;
                             }
 
-                            int prev_index = cur_index;
+                            auto prev_index = cur_index;
                             ImGui::ListBox("Animations", &cur_index, animations, IM_ARRAYSIZE(animations), 6);
                             if (prev_index != cur_index) {
                                 e->addComponent<CAnimation>(engine->assets().getAnimation(animations[cur_index]), true);
@@ -214,8 +214,8 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                         ImGui::TreePop();
                     }
                     if (ImGui::TreeNode("Type")) {
-                        static int cur_index = 0;
-                        for (int i = 0; i < IM_ARRAYSIZE(m_types); i++) {
+                        static auto cur_index = 0;
+                        for (auto i = 0; i < IM_ARRAYSIZE(m_types); i++) {
                             const std::string type_str(m_types[i]);
                             if (!m_type_map.count(type_str)) {
                                 continue;
@@ -225,7 +225,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                 break;
                             }
                         }
-                        int prev_index = cur_index;
+                        auto prev_index = cur_index;
                         ImGui::ListBox("Types", &cur_index, m_types, IM_ARRAYSIZE(m_types), 6);
                         if (prev_index != cur_index) {
                             std::string type(m_types[cur_index]);
