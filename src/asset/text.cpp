@@ -19,7 +19,7 @@ Text::Text(const Font& font, const std::string& name, unsigned int char_size, fl
 
 const Rect<float> Text::getLocalBounds() {
     const auto local_bounds = m_text.getLocalBounds();
-    Rect<float> rectangle(
+    const Rect<float> rectangle(
         local_bounds.width,
         local_bounds.height,
         local_bounds.left,

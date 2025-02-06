@@ -170,7 +170,7 @@ void SceneSideScroller::spawnPlayer() {
 }
 
 void SceneSideScroller::spawnBullet() {
-    auto transform = m_player->getComponent<CTransform>();
+    const auto transform = m_player->getComponent<CTransform>();
 
     auto bullet = m_entity_manager.addEntity(Tag::BULLET);
     bullet->addComponent<CAnimation>(m_engine->assets().getAnimation("Fire"), true);
@@ -350,9 +350,9 @@ void SceneSideScroller::sCollision() {
         // Checkpoint
         if (e->tag() == Tag::CHECKPOINT) {
             if (physics::overlapping(m_player, e)) {
-                auto checkpointPos = e->getComponent<CTransform>().pos;
-                m_player_config.x = (checkpointPos.x - (m_grid_cell_size.x/2.0f))/m_grid_cell_size.x;
-                m_player_config.y = ((height() - checkpointPos.y - (m_grid_cell_size.y/2.0f))/m_grid_cell_size.y);
+                const auto checkpoint_pos = e->getComponent<CTransform>().pos;
+                m_player_config.x = (checkpoint_pos.x - (m_grid_cell_size.x/2.0f))/m_grid_cell_size.x;
+                m_player_config.y = ((height() - checkpoint_pos.y - (m_grid_cell_size.y/2.0f))/m_grid_cell_size.y);
             }
         }
 
@@ -397,9 +397,9 @@ void SceneSideScroller::sCollision() {
         }
     
         // Player collision
-        auto overlap = physics::getOverlap(m_player, e);
+        const auto overlap = physics::getOverlap(m_player, e);
         if (overlap.x > 0 && overlap.y > 0) {
-            auto prev_overlap = physics::getPrevOverlap(m_player, e);
+            const auto prev_overlap = physics::getPrevOverlap(m_player, e);
             if (prev_overlap.y > 0) {
                 if (p_transfrom.velocity.x > 0) {
                     p_transfrom.pos.x -= overlap.x;
@@ -507,7 +507,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
                 if (!m_engine->editMode()) {
                     break;
                 }
-                auto world_pos = worldPos();
+                const auto world_pos = worldPos();
                 auto tile = m_entity_manager.addEntity(Tag::TILE);
                 tile->addComponent<CAnimation>(m_engine->assets().getAnimation("Brick"), true);
                 tile->addComponent<CTransform>(fitToGrid(world_pos));
@@ -521,7 +521,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
                     break;
                 }
 
-                auto world_pos = worldPos();
+                const auto world_pos = worldPos();
                 m_selected_cell = fitToGrid(world_pos);
                 m_engine->setSelectedPos(m_selected_cell);
                 for (auto e : m_entity_manager.getEntities()) {

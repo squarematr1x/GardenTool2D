@@ -19,7 +19,7 @@ std::vector<Vec2> getPath(const Vec2& start, const Vec2& goal, EntityManager& en
     constexpr auto w = 10.0f;
     const auto f = g + w*h;
 
-    SearchNode start_node(start, f, g);
+    const SearchNode start_node(start, f, g);
 
     open.push(start_node);
 
@@ -37,7 +37,7 @@ std::vector<Vec2> getPath(const Vec2& start, const Vec2& goal, EntityManager& en
         }
         closed.push_back(current.pos);
 
-        auto neighbours = getNeighbours(current, goal, entity_manager);
+        const auto neighbours = getNeighbours(current, goal, entity_manager);
         for (const auto& neighbour : neighbours) {
             if (contains(closed, neighbour.pos)) {
                 continue;
@@ -69,7 +69,7 @@ std::vector<SearchNode> getNeighbours(const SearchNode& node, const Vec2& goal, 
 
     std::vector<SearchNode> nodes;
     constexpr auto w = 10.0f;
-    auto tiles = entity_manager.getEntities(Tag::TILE);
+    const auto tiles = entity_manager.getEntities(Tag::TILE);
     for (const auto& pos : positions) {
         bool collide = false;
         for (auto tile : tiles) {

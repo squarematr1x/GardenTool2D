@@ -51,9 +51,8 @@ bool previouslyOverlapping(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b)
 }
 
 bool isInside(const Vec2& pos, std::shared_ptr<Entity> entity) {
-	auto e_pos = entity->getComponent<CTransform>().pos;
-    auto size = entity->getComponent<CAnimation>().animation.getSize();
-
+	const auto e_pos = entity->getComponent<CTransform>().pos;
+    const auto size = entity->getComponent<CAnimation>().animation.getSize();
     const auto dx = fabs(pos.x - e_pos.x);
     const auto dy = fabs(pos.y - e_pos.y);
 

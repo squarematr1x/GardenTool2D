@@ -147,7 +147,7 @@ Vec2 SceneRPG::getPosition(float rx, float ry, float tx, float ty) const {
 }
 
 Vec2 SceneRPG::getCurrentRoom() const {
-    auto p_pos = m_player->getComponent<CTransform>().pos;
+    const auto p_pos = m_player->getComponent<CTransform>().pos;
     return Vec2(floorf(p_pos.x/(m_room_size.x*m_grid_cell_size.x)), floorf(p_pos.y/(m_room_size.y*m_grid_cell_size.y)));
 }
 
@@ -206,12 +206,12 @@ void SceneRPG::setSwordPos(std::shared_ptr<Entity> sword, const Vec2& facing, co
         sword_animation = "SwordSide";
     }
 
-    Vec2 swor_pos(
+    const Vec2 swor_pos(
         pos.x + facing.x*m_grid_cell_size.x,
         pos.y + facing.y*m_grid_cell_size.y
     );
 
-    auto sword_bbox = facing.x == 0.0f ? Vec2(32.0f, 64.0f) : Vec2(64.0f, 32.0f);
+    const auto sword_bbox = facing.x == 0.0f ? Vec2(32.0f, 64.0f) : Vec2(64.0f, 32.0f);
 
     sword->addComponent<CAnimation>(m_engine->assets().getAnimation(sword_animation));
     sword->addComponent<CTransform>(swor_pos, true);
@@ -286,7 +286,7 @@ void SceneRPG::update() {
 
 void SceneRPG::sMovement() {
     auto& p_transform = m_player->getComponent<CTransform>();
-    auto input = m_player->getComponent<CInput>();
+    const auto input = m_player->getComponent<CInput>();
 
     if (input.up || input.right || input.down || input.left || input.attack) {
         m_player->removeComponent<CPath>();
@@ -296,7 +296,7 @@ void SceneRPG::sMovement() {
 
     if (m_player->hasComponent<CPath>()) {
         auto& path = m_player->getComponent<CPath>();
-        auto target = path.positions[path.cur_pos];
+        const auto target = path.positions[path.cur_pos];
         if (!targetReached(p_transform.pos, target)) {
             auto desired = target - p_transform.pos;
             desired = desired.normalize();
@@ -349,7 +349,7 @@ void SceneRPG::sMovement() {
         // transform.angle += 0.1f; // NOTE: For crazy effects
 
         if (e->hasComponent<CWeapon>()) {
-            auto weapon = e->getComponent<CWeapon>();
+            const auto weapon = e->getComponent<CWeapon>();
             auto weapon_e = m_entity_manager.getEntity(weapon.current_weapon_id);
             if (weapon_e) {
                 setSwordPos(weapon_e, transform.facing, transform.pos);
@@ -387,7 +387,7 @@ void SceneRPG::sDoAction(const Action& action) {
                 }
 
                 for (auto e : m_entity_manager.getEntities()) {
-                    auto world_pos = worldPos();
+                    const auto world_pos = worldPos();
                     m_selected_cell = fitToGrid(world_pos);
                     m_engine->setSelectedPos(m_selected_cell);
                     if (physics::isInside(world_pos, e)) {
@@ -422,7 +422,7 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::ATTACK: m_player->getComponent<CInput>().attack = false; break;
             case ActionName::LEFT_CLICK: {
                 if (m_engine->editMode()) {
-                    auto world_pos = worldPos();
+                    const auto world_pos = worldPos();
                     for (auto e : m_entity_manager.getEntities()) {
                         if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
                             e->getComponent<CDraggable>().dragged = false;
@@ -539,11 +539,11 @@ void SceneRPG::sCollision() {
     auto& transfrom = m_player->getComponent<CTransform>();
 
     // Player - tile collision
-    for (auto entity : m_entity_manager.getEntities(Tag::TILE)) {
+    for (const auto& entity : m_entity_manager.getEntities(Tag::TILE)) {
         if (!entity->getComponent<CBBox>().block_movement) {
             continue;
         }
-        auto overlap = physics::getOverlap(m_player, entity);
+        const auto overlap = physics::getOverlap(m_player, entity);
         if (overlap.x > 0 && overlap.y > 0) {
             auto prev_overlap = physics::getPrevOverlap(m_player, entity);
             if (prev_overlap.y > 0) {
@@ -569,7 +569,7 @@ void SceneRPG::sCollision() {
     for (auto enemy : m_entity_manager.getEntities(Tag::ENEMY)) {
         auto enemy_damage = enemy->getComponent<CDamage>().damage;
 
-        for (auto sword : m_entity_manager.getEntities(Tag::SWORD)) {
+        for (const auto& sword : m_entity_manager.getEntities(Tag::SWORD)) {
             if (physics::overlapping(enemy, sword)) {
                 if (!sword->hasComponent<CDamage>()) {
                     continue;
@@ -641,7 +641,7 @@ void SceneRPG::sAnimation() {
 
         if (entity->tag() == Tag::PLAYER) {
             auto& p_state = m_player->getComponent<CState>();
-            auto p_transform = m_player->getComponent<CTransform>();
+            const auto p_transform = m_player->getComponent<CTransform>();
             if (p_transform.facing != p_transform.prev_facing || p_state.state != p_state.prev_state) {
                 switch (p_state.state) {
                     case State::RUN:
@@ -695,11 +695,11 @@ void SceneRPG::sCamera() {
     sf::View view = m_engine->window().getView();
     if (m_follow) {
         // Get view from player follow camera
-        auto& p_pos = m_player->getComponent<CTransform>().pos;
+        const auto p_pos = m_player->getComponent<CTransform>().pos;
         view.setCenter(p_pos.x, p_pos.y);
     } else {
         // Get view for room-based camera
-        auto room = getCurrentRoom();
+        const auto room = getCurrentRoom();
         view.setCenter(
             static_cast<float>((width()/2) + room.x*width()),
             static_cast<float>((height()/2) + room.y*height())
@@ -739,10 +739,6 @@ void SceneRPG::sInteract() {
             highlight = false;
         }
     }
-}
-
-void SceneRPG::sPathfind() {
-    
 }
 
 void SceneRPG::onEnd() {
