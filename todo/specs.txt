@@ -1,48 +1,56 @@
 ============================================== System specifications ============================================== 
 
-Refactor sfml based structure under wrappers [ ]
+Refactor sfml based structure under wrappers
 - sf::Texture, sf::Color, sf::Text, sf::VertexArray, etc.
 - This increases portability
+- Eventually move to SDL3 (or sfml 3)
 
-Refactor Scene files
-- All other files are relatively simple
+Refactor
+- Do we need to scale to turn animation sprite left/right?
 
-Add ingame menu [ ]
-- Use to control sound, music, load from checkpoint etc.
-
-UI [ ]
+UI
 - Used for inventory, skill trees map, etc.
+- Add ingame menu
+  - Use to control sound, music, load from checkpoint etc.
+- Editor
+  - Undo/redo in editor (could use ctrl+z)
 
-Saving/loading game [ ]
+Saving/loading game
 - Create/load save files
 - Just modify player data in lvl as a starter
 
-Dialogue tree [ ]
+Dialogue tree
 - Create a specific datastructure for this
+- Store npc and dialogues in json file
 
-Dynamic lighting [ ]
+Dynamic lighting
 - In some levels everything could be dark, if no light source entity nearby etc.
 - Point lights can be entities?
 
-Shaders [ ]
-- Draw background (parallax) [x], done without shaders atm
+Sound component
+- If player move, set CSound -> active = true
+  - if active calculate area around the player and check if enemy entities inside the area
+    - set enities inside the are to agressive
+  - double the area if running (walking normal)
+
+Shaders
 - Use entity effects such as taking damage etc.
 
-Testing [ ]
+Testing
 - Use doctest for unit testing
 - Important to test collision and pathfinding
 
-Multithreading [ ]
+Multithreading
 - Not a priority right now
 
-Build [ ]
+Build
 - Start using e.g. CMake
 
-Memory pooling for CPU cache coherent code [ ]
+Memory pooling for CPU cache coherent code
 - entity-memory-pool.hpp is a skeleton for this
 - No need to use shared pointers
 
-Physics based emerging world [ ]
+Physics based emerging world
 - Emerging behavior emerging from the system itself
   - Water makes entity wet, therefore it doesn't take as much fire damage
     Fire, however will eventually dry wet entity
@@ -52,7 +60,3 @@ Physics based emerging world [ ]
 - This could be used in puzzles as well as in combat
 - It would be cool for players to discover unorthodoxed approaches to different problems
 - This kind of system could be preferred over "scripted" predictable system
-
-Editor [ ]
-- Zoom reset button in editor
-- Undo/redo in editor (could use ctrl+z)
