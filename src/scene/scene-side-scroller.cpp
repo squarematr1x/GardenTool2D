@@ -626,9 +626,10 @@ void SceneSideScroller::sRender() {
     sf::View view = m_engine->window().getView();
     auto parallax_velocity = 0.01f;
     const auto p_transform = m_player->getComponent<CTransform>();
+    constexpr auto scale = 0.05f;
     for (auto& layer : m_background_layers) {
         layer.update(p_transform.velocity.x, parallax_velocity, m_engine->window());
-        parallax_velocity += 0.05f;
+        parallax_velocity += scale;
         if (m_current_frame == 0) {
             layer.init(m_engine->window());
         }
