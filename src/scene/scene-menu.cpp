@@ -3,6 +3,7 @@
 #include <filesystem>
 
 #include "../engine.hpp"
+#include "../core/event.hpp"
 
 SceneMenu::SceneMenu(GameEngine* engine)
     : Scene(engine) {
@@ -15,7 +16,7 @@ void SceneMenu::init() {
     registerAction(sf::Keyboard::Enter, ActionName::PLAY);
     registerAction(sf::Keyboard::Escape, ActionName::QUIT);
 
-    registerAction(sf::Event::MouseMoved, ActionName::MOUSE_MOVE);
+    registerAction(Event::MouseMoved, ActionName::MOUSE_MOVE);
 
     m_menu_text.setCharacterSize(m_font_size);
     m_menu_text.setFont(m_engine->assets().getFont("Arial"));

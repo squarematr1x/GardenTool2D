@@ -9,6 +9,8 @@
 #include <SFML/System/Clock.hpp>
 
 #include "util/profiler.hpp"
+#include "core/event.hpp"
+#include "core/mouse.hpp"
 
 GameEngine::GameEngine(const std::string& config) {
 	PROFILE_FUNCTION();
@@ -25,7 +27,7 @@ void GameEngine::init(const std::string& path) {
 
 	{
 		PROFILE_SCOPE("SFML Window");
-		m_window.create(sf::VideoMode(m_screen_w, m_screen_h), m_title);
+		m_window.create(m_screen_w, m_screen_h, m_title);
 		m_window.setFramerateLimit(m_framerate);
 		m_window.setVerticalSyncEnabled(m_vsync);
 	}
@@ -54,7 +56,7 @@ void GameEngine::update() {
 }
 
 void GameEngine::run() {
-	m_editor.init(m_window);
+	m_editor.init(m_window.getWindow());
 
 	while (isRunning()) {
 		if (!m_paused) {
@@ -65,7 +67,7 @@ void GameEngine::run() {
 
 		if (m_edit_mode) {
 			auto& entity_manager = currentScene()->getEntityManager();
-			m_editor.update(m_window, entity_manager, this);
+			m_editor.update(m_window.getWindow(), entity_manager, this);
 		}
 		m_window.display();
 	}
@@ -77,28 +79,28 @@ void GameEngine::run() {
  }
 
 void GameEngine::sUserInput() {
-	sf::Event event;
+	Event event;
 
 	while (m_window.pollEvent(event)) {
-		m_editor.processEvent(m_window, event);
+		m_editor.processEvent(m_window.getWindow(), event.getEvent());
 		if (m_editor.windowActive()) {
 			break;
 		}
 
-		if (event.type == sf::Event::Closed) {
+		if (event.getType() == Event::Closed) {
 			quit();
 		}
 
-		if (event.type == sf::Event::Resized) {
-			const sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+		if (event.getType() == Event::Resized) {
+			const sf::FloatRect visibleArea(0, 0, event.getWidth(), event.getHeight());
 			m_window.setView(sf::View(visibleArea));
 		}
 
-		if (event.type == sf::Event::KeyPressed) {
-			if (event.key.code == sf::Keyboard::F12) {
+		if (event.getType() == Event::KeyPressed) {
+			if (event.getKeyCode() == sf::Keyboard::F12) {
 				Texture texture;
 				if (texture.create(m_window.getSize().x, m_window.getSize().y)) {
-					texture.update(m_window);
+					texture.update(m_window.getWindow());
 
 					const auto t = std::time(nullptr);
 					const auto tm = *std::localtime(&t);
@@ -114,45 +116,44 @@ void GameEngine::sUserInput() {
 		}
 
 		// New action based handling
-		if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased) {
+		if (event.getType() == Event::KeyPressed || event.getType() == Event::KeyReleased) {
 			// if the current scene does not have an action associated with this key, skip the event
-			if (currentScene()->getActionMap().find(event.key.code) == currentScene()->getActionMap().end()) {
+			if (currentScene()->getActionMap().find(event.getKeyCode()) == currentScene()->getActionMap().end()) {
 				continue;
 			}
 
 			// determine start or end action by whether it was press or realease
-			const auto action_type = (event.type == sf::Event::KeyPressed) ? ActionType::START : ActionType::END;
+			const auto action_type = (event.getType() == Event::KeyPressed) ? ActionType::START : ActionType::END;
 
 			// look up the action and send the action to the scene
-			currentScene()->sDoAction(Action(currentScene()->getActionMap().at(event.key.code), action_type));
+			currentScene()->sDoAction(Action(currentScene()->getActionMap().at(event.getKeyCode()), action_type));
 		}
 
-		const auto mouse_pos = sf::Mouse::getPosition(m_window);
-		const Vec2 pos(mouse_pos.x, mouse_pos.y);
+		const auto pos = mouse::getPosition(m_window);
 
-		if (event.type == sf::Event::MouseButtonPressed) {
-			switch (event.mouseButton.button) {
-				case sf::Mouse::Left: { currentScene()->sDoAction(Action(ActionName::LEFT_CLICK, ActionType::START, pos)); break; }
-				case sf::Mouse::Middle: { currentScene()->sDoAction(Action(ActionName::MIDDLE_CLICK, ActionType::START, pos)); break; }
-				case sf::Mouse::Right: { currentScene()->sDoAction(Action(ActionName::RIGHT_CLICK, ActionType::START, pos)); break; }
+		if (event.getType() == Event::MouseButtonPressed) {
+			switch (event.getMouseButton()) {
+				case mouse::Left: { currentScene()->sDoAction(Action(ActionName::LEFT_CLICK, ActionType::START, pos)); break; }
+				case mouse::Middle: { currentScene()->sDoAction(Action(ActionName::MIDDLE_CLICK, ActionType::START, pos)); break; }
+				case mouse::Right: { currentScene()->sDoAction(Action(ActionName::RIGHT_CLICK, ActionType::START, pos)); break; }
 				default: break;
 			}
 		}
-		if (event.type == sf::Event::MouseButtonReleased) {
-			switch (event.mouseButton.button) {
-				case sf::Mouse::Left: { currentScene()->sDoAction(Action(ActionName::LEFT_CLICK, ActionType::END, pos)); break; }
-				case sf::Mouse::Middle: { currentScene()->sDoAction(Action(ActionName::MIDDLE_CLICK, ActionType::END, pos)); break; }
-				case sf::Mouse::Right: { currentScene()->sDoAction(Action(ActionName::RIGHT_CLICK, ActionType::END, pos)); break; }
+		if (event.getType() == Event::MouseButtonReleased) {
+			switch (event.getMouseButton()) {
+				case mouse::Left: { currentScene()->sDoAction(Action(ActionName::LEFT_CLICK, ActionType::END, pos)); break; }
+				case mouse::Middle: { currentScene()->sDoAction(Action(ActionName::MIDDLE_CLICK, ActionType::END, pos)); break; }
+				case mouse::Right: { currentScene()->sDoAction(Action(ActionName::RIGHT_CLICK, ActionType::END, pos)); break; }
 				default: break;
 			}
 		}
-		if (event.type == sf::Event::MouseMoved) {
+		if (event.getType() == Event::MouseMoved) {
 			currentScene()->sDoAction(Action(ActionName::MOUSE_MOVE, ActionType::START, pos));
 		}
-		if (event.type == sf::Event::MouseWheelScrolled) {
-			if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
-				if (event.mouseWheelScroll.delta != 0.0f) {
-					currentScene()->sDoAction(Action(ActionName::MOUSE_SCROLL, ActionType::START, event.mouseWheelScroll.delta));
+		if (event.getType() == Event::MouseWheelScrolled) {
+			if (event.getMouseWheelScrollWheel() == mouse::VerticalWheel) {
+				if (event.getMouseWheelScrollDelta() != 0.0f) {
+					currentScene()->sDoAction(Action(ActionName::MOUSE_SCROLL, ActionType::START, event.getMouseWheelScrollDelta()));
 				}
 			}
 		}
