@@ -2,12 +2,15 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "view.hpp"
+
 class View;
 class Event;
 class Vec2;
 
 class RenderWindow {
     sf::RenderWindow m_window;
+    View m_view;
 
 public:
     RenderWindow() = default;
@@ -28,6 +31,10 @@ public:
     bool pollEvent(Event& event);
 
     Vec2 getSize() const;
+
+    const View& getView() const;
+
+    const sf::View& getDefaultView() const;
 
     sf::RenderWindow& getWindow() { return m_window; }
     const sf::RenderWindow& getWindow() const { return m_window; }

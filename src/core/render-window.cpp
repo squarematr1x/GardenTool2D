@@ -16,8 +16,8 @@ void RenderWindow::setVerticalSyncEnabled(bool enable) {
 }
 
 void RenderWindow::setView(const View& view) {
-    (void)view;
-    // m_window.setView(view.getView());
+    m_view = view;
+    m_window.setView(view.getView());
 }
 
 void RenderWindow::setDefaultView() {
@@ -51,4 +51,12 @@ bool RenderWindow::pollEvent(Event& event) {
 
 Vec2 RenderWindow::getSize() const {
     return Vec2(m_window.getSize().x, m_window.getSize().y);
+}
+
+const View& RenderWindow::getView() const {
+    return m_view;
+}
+
+const sf::View& RenderWindow::getDefaultView() const {
+    return m_window.getDefaultView();
 }

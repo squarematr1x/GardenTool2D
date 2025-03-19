@@ -692,7 +692,7 @@ void SceneRPG::sAnimation() {
 }
 
 void SceneRPG::sCamera() {
-    sf::View view = m_engine->window().getView();
+    auto view = m_engine->window().getView();
     if (m_follow) {
         // Get view from player follow camera
         const auto p_pos = m_player->getComponent<CTransform>().pos;
@@ -713,7 +713,7 @@ void SceneRPG::sCamera() {
 }
 
 void SceneRPG::sRender() {
-    m_engine->window().clear(sf::Color(113, 166, 50));
+    m_engine->window().clear(113, 166, 50);
 
     // Draw all Entity textures/animations
     renderCommon(m_player);
@@ -743,7 +743,7 @@ void SceneRPG::sInteract() {
 
 void SceneRPG::onEnd() {
     // Reset view
-    m_engine->window().setView(m_engine->window().getDefaultView());
+    m_engine->window().setDefaultView();
 
     // Go back to menu
     m_engine->changeScene(SceneType::MENU, std::make_shared<SceneMenu>(m_engine), true);

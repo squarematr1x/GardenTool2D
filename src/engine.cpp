@@ -92,8 +92,7 @@ void GameEngine::sUserInput() {
 		}
 
 		if (event.getType() == Event::Resized) {
-			const sf::FloatRect visibleArea(0, 0, event.getWidth(), event.getHeight());
-			m_window.setView(sf::View(visibleArea));
+			m_window.setView(View(0, 0, event.getWidth(), event.getHeight()));
 		}
 
 		if (event.getType() == Event::KeyPressed) {

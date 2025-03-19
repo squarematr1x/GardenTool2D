@@ -607,7 +607,7 @@ void SceneSideScroller::sAnimation() {
 void SceneSideScroller::sCamera() {
     auto& p_pos = m_player->getComponent<CTransform>().pos;
     const auto window_center_x = std::max(width()/2.0f, p_pos.x);
-    sf::View view = m_engine->window().getView();
+    auto view = m_engine->window().getView();
 
     view.setCenter(window_center_x, height() - view.getCenter().y);
     
@@ -620,10 +620,10 @@ void SceneSideScroller::sCamera() {
 }
 
 void SceneSideScroller::sRender() {
-    m_engine->window().clear(sf::Color(236, 115, 22));
+    m_engine->window().clear(236, 115, 22);
 
     // Draw backgrounds
-    sf::View view = m_engine->window().getView();
+    auto view = m_engine->window().getView();
     auto parallax_velocity = 0.01f;
     const auto p_transform = m_player->getComponent<CTransform>();
     constexpr auto scale = 0.05f;
@@ -656,7 +656,7 @@ void SceneSideScroller::onEnd() {
     m_engine->stopMusic("Level1Music");
 
     // Reset view
-    m_engine->window().setView(m_engine->window().getDefaultView());
+    m_engine->window().setDefaultView();
 
     // Go back to menu
     m_engine->changeScene(SceneType::MENU, std::make_shared<SceneMenu>(m_engine), true);
