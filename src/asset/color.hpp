@@ -1,17 +1,18 @@
 #pragma once
 
+#include <SFML/Graphics.hpp>
+
 using channel = unsigned char;
 
 struct Color {
-    channel r{ 255 };
-    channel g{ 255 };
-    channel b{ 255 };
-    channel a{ 255 };
+    sf::Color m_color{ 255, 255, 255 , 255 };
 
     Color() = default;
 
-    Color(channel r_in, channel g_in, channel b_in, channel a_in=255)
-        : r(r_in), g(g_in), b(b_in), a(a_in)
+    Color(channel r, channel g, channel b, channel a=255)
+        : m_color(sf::Color(r, g, b, a))
     {
     }
+
+    const sf::Color& getColor() const { return m_color; } 
 };
