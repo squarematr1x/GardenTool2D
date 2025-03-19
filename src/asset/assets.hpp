@@ -4,8 +4,6 @@
 #include <string>
 #include <memory>
 
-#include <SFML/Audio.hpp>
-
 #include "animation.hpp"
 #include "font.hpp"
 #include "texture.hpp"
