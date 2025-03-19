@@ -14,7 +14,6 @@
 
 class Assets
 {
-	// TODO: Prefer enums over strings?
 	std::map<std::string, Texture> m_texture_map;
 	std::map<std::string, Animation> m_animation_map;
 	std::map<std::string, Font> m_font_map;
