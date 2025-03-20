@@ -1,5 +1,7 @@
 #include "particle-system.hpp"
 
+#include "core/render-window.hpp"
+
 void ParticleSystem::resetParticle(size_t index, bool first) {
     // Initial position at the center of the screen
     const auto mx = m_emitter.x;
@@ -48,7 +50,7 @@ void ParticleSystem::resetParticles(size_t count, float size) {
     }
 }
 
-void ParticleSystem::init(sf::Vector2u window_size) {
+void ParticleSystem::init(const Vec2& window_size) {
     m_emitter.x = m_window_size.x/2;
     m_emitter.y = m_window_size.y/2;
     m_window_size = window_size;
@@ -70,6 +72,6 @@ void ParticleSystem::update() {
     }
 }
 
-void ParticleSystem::draw(sf::RenderWindow& window) const {
+void ParticleSystem::draw(RenderWindow& window) const {
     window.draw(m_vertices);
 }

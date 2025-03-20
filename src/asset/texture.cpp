@@ -27,6 +27,13 @@ bool Texture::create(unsigned int width, unsigned int height) {
     return m_texture.create(width, height);
 }
 
+bool Texture::create(float width, float height) {
+    return m_texture.create(
+        static_cast<unsigned int>(width),
+        static_cast<unsigned int>(height)
+    );
+}
+
 bool Texture::saveToFile(const std::string& path) {
     const auto image = m_texture.copyToImage();
     return image.saveToFile(path);

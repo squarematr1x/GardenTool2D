@@ -8,6 +8,8 @@ class View;
 class Event;
 class Vec2;
 
+using channel = unsigned char;
+
 class RenderWindow {
     sf::RenderWindow m_window;
     View m_view;
@@ -25,7 +27,7 @@ public:
     void draw(const sf::Drawable& drawable);
     void display();
     void close();
-    void clear(unsigned int r, unsigned int g, unsigned int b, unsigned int a=255);
+    void clear(channel r, channel g, channel b, channel a=255);
 
     bool isOpen() const;
     bool pollEvent(Event& event);

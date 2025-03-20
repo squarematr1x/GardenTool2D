@@ -68,7 +68,7 @@ void SceneMenu::sDoAction(const Action& action) {
 }
 
 void SceneMenu::sRender() {
-    m_engine->window().clear(m_background_color);
+    m_engine->window().clear(20, 20, 20);
     m_particles.update();
     m_particles.draw(m_engine->window());
 

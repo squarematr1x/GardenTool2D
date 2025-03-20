@@ -19,7 +19,6 @@ namespace mouse
         Middle,
         XButton1,
         XButton2,
-
         ButtonCount
     };
 

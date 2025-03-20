@@ -37,7 +37,7 @@ void RenderWindow::close() {
     m_window.close();
 }
 
-void RenderWindow::clear(unsigned int r, unsigned int g, unsigned int b, unsigned int a) {
+void RenderWindow::clear(channel r, channel g, channel b, channel a) {
     m_window.clear({r, g, b, a});
 }
 

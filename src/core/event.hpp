@@ -2,6 +2,8 @@
 
 #include <SFML/Window.hpp>
 
+#include "mouse.hpp"
+
 class Event {
     sf::Event m_event;
 
@@ -41,7 +43,7 @@ public:
     unsigned int getHeight() { return m_event.size.height; }
 
     sf::Keyboard::Key getKeyCode() { return m_event.key.code; }
-    sf::Mouse::Button getMouseButton() { return m_event.mouseButton.button; }
-    sf::Mouse::Wheel getMouseWheelScrollWheel() { return m_event.mouseWheelScroll.wheel; }
+    mouse::Button getMouseButton() { return static_cast<mouse::Button>(m_event.mouseButton.button); }
+    mouse::Wheel getMouseWheelScrollWheel() { return static_cast<mouse::Wheel>(m_event.mouseWheelScroll.wheel); }
     float getMouseWheelScrollDelta() { return m_event.mouseWheelScroll.delta; }
 };
