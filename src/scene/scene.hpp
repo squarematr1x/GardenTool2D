@@ -42,8 +42,8 @@ public:
 	virtual void registerAction(int key, const ActionName action_name) { m_action_map[key] = action_name; };
 	// virtual void doAction(const Action& action); ?
 
-	size_t width() const;
-	size_t height() const;
+	unsigned int width() const;
+	unsigned int height() const;
 	size_t currentFrame() const { return m_current_frame; };
 
 	bool hasEnded() const { return m_has_ended; }

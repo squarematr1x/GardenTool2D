@@ -18,7 +18,7 @@ public:
 
     View(float rect_left, float rect_top, float width, float height);
 
-    Vec2 getCenter();
+    Vec2 getCenter() const;
 
     const sf::View& getView() const { return m_view; }
 

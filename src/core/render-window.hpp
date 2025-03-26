@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "view.hpp"
+#include "primitive.hpp"
 
 class View;
 class Event;
@@ -25,6 +26,9 @@ public:
     void setDefaultView();
 
     void draw(const sf::Drawable& drawable);
+    void draw(const sf::Vertex* vertices, size_t vertex_count, Primitive primitive);
+    void draw(const sf::VertexArray& vertex_array, const sf::RenderStates render_states);
+
     void display();
     void close();
     void clear(channel r, channel g, channel b, channel a=255);
@@ -32,7 +36,11 @@ public:
     bool isOpen() const;
     bool pollEvent(Event& event);
 
+    unsigned int width() const;
+    unsigned int heigh() const;
+
     Vec2 getSize() const;
+    Vec2 mapPixelToCoords(const Vec2 pos) const;
 
     const View& getView() const;
 

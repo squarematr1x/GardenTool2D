@@ -11,17 +11,16 @@ Scene::Scene(GameEngine* engine, const std::string& level_path)
     m_grid_size = Vec2(width(), height());
 }
 
-size_t Scene::width() const {
-    return m_engine->window().getSize().x;
+unsigned int Scene::width() const {
+    return m_engine->window().width();
 }
 
-size_t Scene::height() const {
-    return m_engine->window().getSize().y;
+unsigned int Scene::height() const {
+    return m_engine->window().heigh();
 }
 
 Vec2 Scene::getCenter() const {
-    const auto center = m_engine->window().getView().getCenter();
-    return Vec2(center.x, center.y);
+    return m_engine->window().getView().getCenter();
 }
 
 Vec2 Scene::fitToGrid(const Vec2& pos, bool mid_pixel) const {
@@ -42,7 +41,7 @@ void Scene::drawLine(const Vec2& p1, const Vec2& p2) {
         {{p1.x, p1.y}, sf::Color(255, 255, 255)},
         {{p2.x, p2.y}, sf::Color(255, 255, 255)}
     };
-    m_engine->window().draw(line, 2, sf::Lines);
+    m_engine->window().draw(line, 2UL, LINES);
 }
 
 void Scene::renderGrid(bool show_coordinates) {
@@ -299,11 +298,7 @@ void Scene::updateZoom(float scroll_delta) {
 }
 
 Vec2 Scene::worldPos() {
-    const auto world_pos = m_engine->window().mapPixelToCoords({
-        static_cast<int>(m_mouse_pos.x),
-        static_cast<int>(m_mouse_pos.y)
-    });
-
+    const auto world_pos = m_engine->window().mapPixelToCoords(m_mouse_pos);
     return Vec2(world_pos.x, world_pos.y);
 }
 

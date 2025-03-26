@@ -5,6 +5,7 @@
 
 void RenderWindow::create(unsigned int w, unsigned int h, const std::string& title) {
     m_window.create(sf::VideoMode(w, h), title);
+    m_view = View(m_window.getView());
 }
 
 void RenderWindow::setFramerateLimit(unsigned int limit) {
@@ -24,9 +25,20 @@ void RenderWindow::setDefaultView() {
     m_window.setView(m_window.getDefaultView());
 }
 
-void RenderWindow::draw(
-    const sf::Drawable& drawable) {
+void RenderWindow::draw(const sf::Drawable& drawable) {
     m_window.draw(drawable);
+}
+
+void RenderWindow::draw(const sf::Vertex* vertices, size_t vertex_count, Primitive primitive) {
+    m_window.draw(
+        vertices,
+        vertex_count,
+        static_cast<sf::PrimitiveType>(primitive)
+    );
+}
+
+void RenderWindow::draw(const sf::VertexArray& vertex_array, const sf::RenderStates render_states) {
+    m_window.draw(vertex_array, render_states);
 }
 
 void RenderWindow::display() {
@@ -49,9 +61,26 @@ bool RenderWindow::pollEvent(Event& event) {
     return m_window.pollEvent(event.getEvent());
 }
 
+unsigned int RenderWindow::width() const {
+    return m_window.getSize().x;
+}
+
+unsigned int RenderWindow::heigh() const {
+    return m_window.getSize().y;
+}
+
 Vec2 RenderWindow::getSize() const {
     return Vec2(m_window.getSize().x, m_window.getSize().y);
 }
+
+Vec2 RenderWindow::mapPixelToCoords(const Vec2 pos) const {
+    auto coords = m_window.mapPixelToCoords({
+        static_cast<int>(pos.x),
+        static_cast<int>(pos.y)
+    });
+    return Vec2(coords.x, coords.y);
+}
+
 
 const View& RenderWindow::getView() const {
     return m_view;
