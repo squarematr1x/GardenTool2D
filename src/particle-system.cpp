@@ -7,33 +7,33 @@ void ParticleSystem::resetParticle(size_t index, bool first) {
     const auto mx = m_emitter.x;
     const auto my = m_emitter.y;
 
-    m_vertices[4*index + 0].position = sf::Vector2f(mx, my);
-    m_vertices[4*index + 1].position = sf::Vector2f(mx + m_size, my);
-    m_vertices[4*index + 2].position = sf::Vector2f(mx + m_size, my + m_size);
-    m_vertices[4*index + 3].position = sf::Vector2f(mx, my + m_size);
+    m_vertices.setPosAt(4*index + 0, Vec2(mx, my));
+    m_vertices.setPosAt(4*index + 1, Vec2(mx + m_size, my));
+    m_vertices.setPosAt(4*index + 2, Vec2(mx + m_size, my + m_size));
+    m_vertices.setPosAt(4*index + 3, Vec2(mx, my + m_size));
 
     // Set color
-    sf::Color color(
+    Color color(
         55,
         55,
-        static_cast<sf::Uint8>(55 + rand()%200),
-        static_cast<sf::Uint8>(rand()%255)
+        static_cast<channel>(55 + rand()%200),
+        static_cast<channel>(rand()%255)
     );
 
     if (first) {
-        color.a = 0;
+        color.setA(0);
     }
 
-    m_vertices[4*index + 0].color = color;
-    m_vertices[4*index + 1].color = color;
-    m_vertices[4*index + 2].color = color;
-    m_vertices[4*index + 3].color = color;
+    m_vertices.setColorAt(4*index + 0, color);
+    m_vertices.setColorAt(4*index + 1, color);
+    m_vertices.setColorAt(4*index + 2, color);
+    m_vertices.setColorAt(4*index + 3, color);
 
     // Set random velocity
     const auto rx = static_cast<float>(static_cast<float>(rand())/RAND_MAX)*10.0f - 5.0f;
     const auto ry = static_cast<float>(static_cast<float>(rand())/RAND_MAX)*10.0f - 5.0f;
 
-    m_particles[index].velocity = sf::Vector2f(rx, ry);
+    m_particles[index].velocity = Vec2(rx, ry);
 
     // Set random lifespan
     m_particles[index].lifespan = 30 + rand() % 60;
@@ -41,7 +41,7 @@ void ParticleSystem::resetParticle(size_t index, bool first) {
 
 void ParticleSystem::resetParticles(size_t count, float size) {
     m_particles = std::vector<Particle>(count);
-    m_vertices = sf::VertexArray(sf::Quads, count*4);
+    m_vertices = VertexArray(QUADS, count*4);
     m_size = size;
 
     const auto particles_size = m_particles.size();
@@ -63,10 +63,10 @@ void ParticleSystem::update() {
             resetParticle(i);
         }
 
-        m_vertices[4*i + 0].position += m_particles[i].velocity;
-        m_vertices[4*i + 1].position += m_particles[i].velocity;
-        m_vertices[4*i + 2].position += m_particles[i].velocity;
-        m_vertices[4*i + 3].position += m_particles[i].velocity;
+        m_vertices.incPosAt(4*i + 0, m_particles[i].velocity);
+        m_vertices.incPosAt(4*i + 1, m_particles[i].velocity);
+        m_vertices.incPosAt(4*i + 2, m_particles[i].velocity);
+        m_vertices.incPosAt(4*i + 3, m_particles[i].velocity);
 
         m_particles[i].lifespan--;
     }

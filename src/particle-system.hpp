@@ -2,22 +2,20 @@
 
 #include <vector>
 
-#include <SFML/Graphics.hpp>
-
 #include "math/vec2.hpp"
+#include "core/vertex-array.hpp"
 
 class RenderWindow;
 
 class ParticleSystem
 {
-    struct Particle
-    {
-        sf::Vector2f velocity;
+    struct Particle {
+        Vec2 velocity;
         int lifespan{ 0 };
     };
 
     std::vector<Particle> m_particles;
-    sf::VertexArray m_vertices;
+    VertexArray m_vertices;
     Vec2 m_window_size;
     Vec2 m_emitter; // Emitter could be the mouse position
     float m_size{ 8.0f };

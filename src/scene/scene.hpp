@@ -71,8 +71,8 @@ public:
 	void updateZoom(float delta);
 	void updateGridSize(Vec2 size) { m_grid_size = size; }
 
-	void addVertexData(const Vec2& pos, const sf::IntRect& texture_rect_in, sf::VertexArray& vertices);
-	void addLine(const Vec2& p1, const Vec2& p2, sf::VertexArray& vertices);
+	void addVertexData(const Vec2& pos, const sf::IntRect& texture_rect_in, VertexArray& vertices);
+	void addLine(const Vec2& p1, const Vec2& p2, VertexArray& vertices);
 	void addHpBar(std::shared_ptr<Entity> e);
 	void addHighlight(std::shared_ptr<Entity> e);
 
@@ -94,8 +94,8 @@ protected:
 	size_t m_current_frame{ 0 };
 	std::map<int, ActionName> m_action_map;
 	Zoom m_zoom;
-	sf::VertexArray m_hp_bars{ sf::Triangles };
-	sf::VertexArray m_highlights{ sf::Lines };
+	VertexArray m_hp_bars{ TRIANGLE };
+	VertexArray m_highlights{ LINES };
 	PlayerConfig m_player_config;
 
 	bool m_paused{ false };

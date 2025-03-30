@@ -58,7 +58,7 @@ void Scene::renderGrid(bool show_coordinates) {
     const auto low_y = up_y + h + m_grid_cell_size.y;
     const auto next_grid_y = up_y - (static_cast<int>(up_y) % static_cast<int>(m_grid_cell_size.y));
 
-    sf::VertexArray vertices(sf::Lines);
+    VertexArray vertices(LINES);
 
     for (auto x = next_grid_x; x < right_x; x += m_grid_cell_size.x) {
         addLine(Vec2(x, up_y), Vec2(x, low_y), vertices);
@@ -109,23 +109,23 @@ void Scene::renderSelectedGridCell() {
 }
 
 void Scene::renderBBoxes() {
-    sf::VertexArray vertices(sf::Lines);
+    VertexArray vertices(LINES);
     for (const auto& e : m_entity_manager.getEntities()) {
         if (!e->hasComponent<CBBox>()) {
             continue;
         }
         const auto box = e->getComponent<CBBox>();
         const auto pos = e->getComponent<CTransform>().pos;
-        const auto box_color{ sf::Color(255, 255, 255) };
+        const auto box_color{ Color(255, 255, 255) };
 
-        vertices.append({{pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color});
-        vertices.append({{pos.x + box.half_size.x, pos.y - box.half_size.y}, box_color});
-        vertices.append({{pos.x + box.half_size.x, pos.y - box.half_size.y}, box_color});
-        vertices.append({{pos.x + box.half_size.x, pos.y + box.half_size.y}, box_color});
-        vertices.append({{pos.x + box.half_size.x, pos.y + box.half_size.y}, box_color});
-        vertices.append({{pos.x - box.half_size.x, pos.y + box.half_size.y}, box_color});
-        vertices.append({{pos.x - box.half_size.x, pos.y + box.half_size.y}, box_color});
-        vertices.append({{pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color});
+        vertices.append({pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color);
+        vertices.append({pos.x + box.half_size.x, pos.y - box.half_size.y}, box_color);
+        vertices.append({pos.x + box.half_size.x, pos.y - box.half_size.y}, box_color);
+        vertices.append({pos.x + box.half_size.x, pos.y + box.half_size.y}, box_color);
+        vertices.append({pos.x + box.half_size.x, pos.y + box.half_size.y}, box_color);
+        vertices.append({pos.x - box.half_size.x, pos.y + box.half_size.y}, box_color);
+        vertices.append({pos.x - box.half_size.x, pos.y + box.half_size.y}, box_color);
+        vertices.append({pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color);
     }
     m_engine->window().draw(vertices);
 }
@@ -145,19 +145,19 @@ void Scene::addHpBar(std::shared_ptr<Entity> e) {
     constexpr auto hbar_h{ 8.0f };
     const auto x_size = size.x*e->getComponent<CHealth>().percentage;
 
-    m_hp_bars.append({{pos.x - size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, sf::Color(0, 0, 0)});
-    m_hp_bars.append({{pos.x + size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, sf::Color(0, 0, 0)});
-    m_hp_bars.append({{pos.x + size.x/2, pos.y - size.y/2 - y_offset}, sf::Color(0, 0, 0)});
-    m_hp_bars.append({{pos.x + size.x/2, pos.y - size.y/2 - y_offset}, sf::Color(0, 0, 0)});
-    m_hp_bars.append({{pos.x - size.x/2, pos.y - size.y/2 - y_offset}, sf::Color(0, 0, 0)});
-    m_hp_bars.append({{pos.x - size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, sf::Color(0, 0, 0)});
+    m_hp_bars.append({pos.x - size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, Color(0, 0, 0));
+    m_hp_bars.append({pos.x + size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, Color(0, 0, 0));
+    m_hp_bars.append({pos.x + size.x/2, pos.y - size.y/2 - y_offset}, Color(0, 0, 0));
+    m_hp_bars.append({pos.x + size.x/2, pos.y - size.y/2 - y_offset}, Color(0, 0, 0));
+    m_hp_bars.append({pos.x - size.x/2, pos.y - size.y/2 - y_offset}, Color(0, 0, 0));
+    m_hp_bars.append({pos.x - size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, Color(0, 0, 0));
 
-    m_hp_bars.append({{pos.x - size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, sf::Color(255, 0, 0)});
-    m_hp_bars.append({{pos.x - size.x/2 + x_size, pos.y - size.y/2 - y_offset + hbar_h}, sf::Color(255, 0, 0)});
-    m_hp_bars.append({{pos.x - size.x/2 + x_size, pos.y - size.y/2 - y_offset}, sf::Color(255, 0, 0)});
-    m_hp_bars.append({{pos.x - size.x/2 + x_size, pos.y - size.y/2 - y_offset}, sf::Color(255, 0, 0)});
-    m_hp_bars.append({{pos.x - size.x/2, pos.y - size.y/2 - y_offset}, sf::Color(255, 0, 0)});
-    m_hp_bars.append({{pos.x - size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, sf::Color(255, 0, 0)});
+    m_hp_bars.append({pos.x - size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, Color(255, 0, 0));
+    m_hp_bars.append({pos.x - size.x/2 + x_size, pos.y - size.y/2 - y_offset + hbar_h}, Color(255, 0, 0));
+    m_hp_bars.append({pos.x - size.x/2 + x_size, pos.y - size.y/2 - y_offset}, Color(255, 0, 0));
+    m_hp_bars.append({pos.x - size.x/2 + x_size, pos.y - size.y/2 - y_offset}, Color(255, 0, 0));
+    m_hp_bars.append({pos.x - size.x/2, pos.y - size.y/2 - y_offset}, Color(255, 0, 0));
+    m_hp_bars.append({pos.x - size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, Color(255, 0, 0));
 }
 
 void Scene::addHighlight(std::shared_ptr<Entity> e) {
@@ -167,16 +167,16 @@ void Scene::addHighlight(std::shared_ptr<Entity> e) {
 
     const auto box = e->getComponent<CBBox>();
     const auto pos = e->getComponent<CTransform>().pos;
-    const auto box_color{ sf::Color(255, 255, 255) };
+    const auto box_color{ Color(255, 255, 255) };
 
-    m_highlights.append({{pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color});
-    m_highlights.append({{pos.x + box.half_size.x, pos.y - box.half_size.y}, box_color});
-    m_highlights.append({{pos.x + box.half_size.x, pos.y - box.half_size.y}, box_color});
-    m_highlights.append({{pos.x + box.half_size.x, pos.y + box.half_size.y}, box_color});
-    m_highlights.append({{pos.x + box.half_size.x, pos.y + box.half_size.y}, box_color});
-    m_highlights.append({{pos.x - box.half_size.x, pos.y + box.half_size.y}, box_color});
-    m_highlights.append({{pos.x - box.half_size.x, pos.y + box.half_size.y}, box_color});
-    m_highlights.append({{pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color});
+    m_highlights.append({pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color);
+    m_highlights.append({pos.x + box.half_size.x, pos.y - box.half_size.y}, box_color);
+    m_highlights.append({pos.x + box.half_size.x, pos.y - box.half_size.y}, box_color);
+    m_highlights.append({pos.x + box.half_size.x, pos.y + box.half_size.y}, box_color);
+    m_highlights.append({pos.x + box.half_size.x, pos.y + box.half_size.y}, box_color);
+    m_highlights.append({pos.x - box.half_size.x, pos.y + box.half_size.y}, box_color);
+    m_highlights.append({pos.x - box.half_size.x, pos.y + box.half_size.y}, box_color);
+    m_highlights.append({pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color);
 }
 
 void Scene::renderHpBars() {
@@ -223,7 +223,7 @@ void Scene::renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> play
 
 void Scene::renderCommon(std::shared_ptr<Entity> player) {
     if (m_draw_textures) {
-        sf::VertexArray vertices(sf::Triangles);
+        VertexArray vertices(TRIANGLE);
         for (auto e : m_entity_manager.getEntities()) {
             if (!e->hasComponent<CAnimation>()) {
                 continue;
@@ -252,8 +252,7 @@ void Scene::renderCommon(std::shared_ptr<Entity> player) {
             }
         }
         // Draw vertex array
-        sf::RenderStates states(&m_engine->assets().getTexture("Tilemap").getTexture());
-        m_engine->window().draw(vertices, states);
+        m_engine->window().draw(vertices, m_engine->assets().getTexture("Tilemap"));
 
         renderHighlights();
         renderHpBars();
@@ -309,15 +308,15 @@ void Scene::renderPauseText() {
 
     const auto w = static_cast<float>(width());
     constexpr auto h = 32.0f;
-    const auto color = sf::Color(0, 0, 0);
-    sf::VertexArray vertices{ sf::Triangles, 6 };
+    const auto color = Color(0, 0, 0);
+    VertexArray vertices{ TRIANGLE, 6 };
 
-    vertices[0] = {{0.0f, 0.0f}, color};
-    vertices[1] = {{w, 0.0f}, color};
-    vertices[2] = {{w, h}, color};
-    vertices[3] = {{w, h}, color};
-    vertices[4] = {{0.0f, h}, color};
-    vertices[5] = {{0.0f, 0.0f}, color};
+    vertices.setVertexAt(0, {0.0f, 0.0f}, color);
+    vertices.setVertexAt(1, {w, 0.0f}, color);
+    vertices.setVertexAt(2, {w, h}, color);
+    vertices.setVertexAt(3, {w, h}, color);
+    vertices.setVertexAt(4, {0.0f, h}, color);
+    vertices.setVertexAt(5, {0.0f, 0.0f}, color);
     
     m_engine->window().draw(vertices);
 
@@ -336,40 +335,41 @@ bool Scene::targetReached(const Vec2& pos, const Vec2& target) const {
     return fabs(distance) <= 5.0f;
 }
 
-void Scene::addVertexData(const Vec2& pos, const sf::IntRect& texture_rect_in, sf::VertexArray& vertices) {
+void Scene::addVertexData(const Vec2& pos, const sf::IntRect& texture_rect_in, VertexArray& vertices) {
     // Add all entities that are not individually target of some transform into same vertex array to reduce draw() calls
     const auto texture_rect = sf::FloatRect(texture_rect_in);
     const auto half_w = texture_rect.width/2.0f;
     const auto half_h = texture_rect.height/2.0f;
-    vertices.append(sf::Vertex(
-        sf::Vector2f(pos.x - half_w, pos.y - half_h),
-        sf::Vector2f(texture_rect.left, texture_rect.top)
-    ));
-    vertices.append(sf::Vertex(
-        sf::Vector2f(pos.x + half_w, pos.y - half_h),
-        sf::Vector2f(texture_rect.left + texture_rect.width, texture_rect.top)
-    ));
-    vertices.append(sf::Vertex(
-        sf::Vector2f(pos.x + half_w, pos.y + half_h),
-        sf::Vector2f(texture_rect.left + texture_rect.width, texture_rect.top + texture_rect.height)
-    ));
-    vertices.append(sf::Vertex(
-        sf::Vector2f(pos.x - half_w, pos.y - half_h),
-        sf::Vector2f(texture_rect.left, texture_rect.top)
-    ));
-    vertices.append(sf::Vertex(
-        sf::Vector2f(pos.x + half_w, pos.y + half_h),
-        sf::Vector2f(texture_rect.left + texture_rect.width, texture_rect.top + texture_rect.height)
-    ));
-    vertices.append(sf::Vertex(
-        sf::Vector2f(pos.x - half_w, pos.y  + half_h),
-        sf::Vector2f(texture_rect.left, texture_rect.top + texture_rect.height)
-    ));
+ 
+    vertices.append(
+        Vec2(pos.x - half_w, pos.y - half_h),
+        Vec2(texture_rect.left, texture_rect.top)
+    );
+    vertices.append(
+        Vec2(pos.x + half_w, pos.y - half_h),
+        Vec2(texture_rect.left + texture_rect.width, texture_rect.top)
+    );
+    vertices.append(
+        Vec2(pos.x + half_w, pos.y + half_h),
+        Vec2(texture_rect.left + texture_rect.width, texture_rect.top + texture_rect.height)
+    );
+    vertices.append(
+        Vec2(pos.x - half_w, pos.y - half_h),
+        Vec2(texture_rect.left, texture_rect.top)
+    );
+    vertices.append(
+        Vec2(pos.x + half_w, pos.y + half_h),
+        Vec2(texture_rect.left + texture_rect.width, texture_rect.top + texture_rect.height)
+    );
+    vertices.append(
+        Vec2(pos.x - half_w, pos.y  + half_h),
+        Vec2(texture_rect.left, texture_rect.top + texture_rect.height)
+    );
 }
 
-void Scene::addLine(const Vec2& p1, const Vec2& p2, sf::VertexArray& vertices) {
-    vertices.append({{p1.x, p1.y}, sf::Color(255, 255, 255)});
-    vertices.append({{p2.x, p2.y}, sf::Color(255, 255, 255)});
+void Scene::addLine(const Vec2& p1, const Vec2& p2, VertexArray& vertices) {
+    vertices.append(Vec2(p1.x, p1.y), Color(255, 255, 255));
+    vertices.append(Vec2(p2.x, p2.y), Color(255, 255, 255));
 }
 
 Vec2 Scene::gridPos(const Vec2& pos) const {

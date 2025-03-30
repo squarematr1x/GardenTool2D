@@ -2,6 +2,8 @@
 
 #include "event.hpp"
 #include "../math/vec2.hpp"
+#include "../core/vertex-array.hpp"
+#include "../asset/texture.hpp"
 
 void RenderWindow::create(unsigned int w, unsigned int h, const std::string& title) {
     m_window.create(sf::VideoMode(w, h), title);
@@ -39,6 +41,15 @@ void RenderWindow::draw(const sf::Vertex* vertices, size_t vertex_count, Primiti
 
 void RenderWindow::draw(const sf::VertexArray& vertex_array, const sf::RenderStates render_states) {
     m_window.draw(vertex_array, render_states);
+}
+
+void RenderWindow::draw(const VertexArray& vertex_array) {
+    m_window.draw(vertex_array.getVertexArray());
+}
+
+void RenderWindow::draw(const VertexArray& vertex_array, const Texture& texture) {
+    sf::RenderStates states(&texture.getTexture());
+    m_window.draw(vertex_array.getVertexArray(), states);
 }
 
 void RenderWindow::display() {
