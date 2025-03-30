@@ -8,7 +8,7 @@
 #include "../ecs/entity-manager.hpp"
 #include "../engine.hpp"
 #include "../player-config.hpp"
-#include "file.hpp"
+#include "../util/file.hpp"
 
 Editor::~Editor() {
     ImGui::SFML::Shutdown();

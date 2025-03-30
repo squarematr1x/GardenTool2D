@@ -19,4 +19,5 @@ public:
     bool loadFromFile(const std::string& path);
     bool saveToFile(const std::string& path);
     bool create(unsigned int width, unsigned int height);
+    bool create(float width, float height);
 };

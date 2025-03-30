@@ -1,13 +1,13 @@
 #include "layer.hpp"
 
-#include <iostream>
+#include "core/render-window.hpp"
 
 Layer::Layer(const std::string& name, const Texture& texture)
     : m_name(name), m_sprite(texture), m_size(texture.getSize()) {
 }
 
-void Layer::init(const sf::RenderWindow& window) {
-    m_view = sf::View(window.getDefaultView());
+void Layer::init(const RenderWindow& window) {
+    m_view = View(window.getDefaultView());
     m_sprite.setTextureRect(
         0,
         0,
@@ -21,7 +21,7 @@ void Layer::init(const sf::RenderWindow& window) {
     );
 }
 
-void Layer::update(float velocity_x, float coeff, const sf::RenderWindow& window) {
+void Layer::update(float velocity_x, float coeff, const RenderWindow& window) {
     m_view.setCenter(m_view_offset_x, 0);
     m_view_offset_x += velocity_x*coeff;
     m_sprite_offset_x = floor(m_view_offset_x/m_size.x)*m_size.x;

@@ -5,6 +5,8 @@
 #include "scene.hpp"
 #include "../engine.hpp"
 #include "../physics.hpp"
+#include "../core/key.hpp"
+#include "../core/mouse.hpp"
 
 SceneSideScroller::SceneSideScroller(GameEngine* engine, const std::string& level_path)
     : Scene(engine, level_path) {
@@ -12,24 +14,24 @@ SceneSideScroller::SceneSideScroller(GameEngine* engine, const std::string& leve
 }
 
 void SceneSideScroller::init(const std::string& level_path) {
-    registerAction(sf::Keyboard::P, ActionName::PAUSE);
-    registerAction(sf::Keyboard::Escape, ActionName::QUIT);
-    registerAction(sf::Keyboard::T, ActionName::TOGGLE_TEXTURE);
-    registerAction(sf::Keyboard::X, ActionName::TOGGLE_COLLISION);
-    registerAction(sf::Keyboard::G, ActionName::TOGGLE_GRID);
-    registerAction(sf::Keyboard::Tab, ActionName::TOGGLE_LEVEL_EDITOR);
+    registerAction(P, ActionName::PAUSE);
+    registerAction(Escape, ActionName::QUIT);
+    registerAction(T, ActionName::TOGGLE_TEXTURE);
+    registerAction(X, ActionName::TOGGLE_COLLISION);
+    registerAction(G, ActionName::TOGGLE_GRID);
+    registerAction(Tab, ActionName::TOGGLE_LEVEL_EDITOR);
 
-    registerAction(sf::Keyboard::Space, ActionName::UP);
-    registerAction(sf::Keyboard::Up, ActionName::UP);
-    registerAction(sf::Keyboard::Right, ActionName::RIGHT);
-    registerAction(sf::Keyboard::Down, ActionName::DOWN);
-    registerAction(sf::Keyboard::Left, ActionName::LEFT);
-    registerAction(sf::Keyboard::Z, ActionName::SHOOT);
+    registerAction(Space, ActionName::UP);
+    registerAction(Up, ActionName::UP);
+    registerAction(Right, ActionName::RIGHT);
+    registerAction(Down, ActionName::DOWN);
+    registerAction(Left, ActionName::LEFT);
+    registerAction(Z, ActionName::SHOOT);
 
-    registerAction(sf::Mouse::Button::Left, ActionName::LEFT_CLICK);
-    registerAction(sf::Mouse::Button::Middle, ActionName::MIDDLE_CLICK);
-    registerAction(sf::Mouse::Button::Right, ActionName::RIGHT_CLICK);
-    registerAction(sf::Mouse::Wheel::VerticalWheel, ActionName::MOUSE_SCROLL);
+    registerAction(mouse::Button::Left, ActionName::LEFT_CLICK);
+    registerAction(mouse::Button::Middle, ActionName::MIDDLE_CLICK);
+    registerAction(mouse::Button::Right, ActionName::RIGHT_CLICK);
+    registerAction(mouse::Wheel::VerticalWheel, ActionName::MOUSE_SCROLL);
 
     m_grid_text.setCharacterSize(12);
     m_grid_text.setFont(m_engine->assets().getFont("Arial")); 
@@ -207,9 +209,6 @@ void SceneSideScroller::update() {
         sCollision();
         sAnimation();
     }
-    // sf::View mini_map = m_engine->window().getView();
-    // mini_map.setViewport(sf::FloatRect(0.75f, 0.0f, 0.25f, 0.25f));
-    // m_engine->window().setView(mini_map);
 
     sCamera();
     sDragAndDrop();
@@ -607,7 +606,7 @@ void SceneSideScroller::sAnimation() {
 void SceneSideScroller::sCamera() {
     auto& p_pos = m_player->getComponent<CTransform>().pos;
     const auto window_center_x = std::max(width()/2.0f, p_pos.x);
-    sf::View view = m_engine->window().getView();
+    auto view = m_engine->window().getView();
 
     view.setCenter(window_center_x, height() - view.getCenter().y);
     
@@ -620,15 +619,16 @@ void SceneSideScroller::sCamera() {
 }
 
 void SceneSideScroller::sRender() {
-    m_engine->window().clear(sf::Color(236, 115, 22));
+    m_engine->window().clear(236, 115, 22);
 
     // Draw backgrounds
-    sf::View view = m_engine->window().getView();
+    auto view = m_engine->window().getView();
     auto parallax_velocity = 0.01f;
     const auto p_transform = m_player->getComponent<CTransform>();
+    constexpr auto scale = 0.05f;
     for (auto& layer : m_background_layers) {
         layer.update(p_transform.velocity.x, parallax_velocity, m_engine->window());
-        parallax_velocity += 0.05f;
+        parallax_velocity += scale;
         if (m_current_frame == 0) {
             layer.init(m_engine->window());
         }
@@ -655,7 +655,7 @@ void SceneSideScroller::onEnd() {
     m_engine->stopMusic("Level1Music");
 
     // Reset view
-    m_engine->window().setView(m_engine->window().getDefaultView());
+    m_engine->window().setDefaultView();
 
     // Go back to menu
     m_engine->changeScene(SceneType::MENU, std::make_shared<SceneMenu>(m_engine), true);

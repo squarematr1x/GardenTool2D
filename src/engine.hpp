@@ -4,6 +4,7 @@
 #include "asset/assets.hpp"
 #include "editor/editor.hpp"
 #include "math/vec2.hpp"
+#include "core/render-window.hpp"
 
 struct PlayerConfig;
 
@@ -15,7 +16,7 @@ class GameEngine
 {
 	std::string m_title{ "GardenTool2D" };
 	std::string m_cur_song_name{ "" };
-	sf::RenderWindow m_window;
+	RenderWindow m_window;
 	bool m_paused{ false };
 	bool m_running{ true };
 	bool m_edit_mode{ false };
@@ -60,7 +61,7 @@ public:
 	void setSelectedEntityId(size_t id) { m_selected_entity_id = id; }
 	void setSelectedPos(const Vec2& cell) { m_selected_pos = cell; }
 
-	sf::RenderWindow& window() { return m_window; };
+	RenderWindow& window() { return m_window; };
 	const Assets& assets() const { return m_assets; };
 	size_t selectedEntityId() const { return m_selected_entity_id; }
 	const Vec2& selectedPos() const { return m_selected_pos; }

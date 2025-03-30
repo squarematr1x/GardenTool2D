@@ -6,8 +6,14 @@ Sprite::Sprite(const Texture& texture)
 {
 }
 
-const sf::IntRect& Sprite::getTextureRect() const {
-    return m_sprite.getTextureRect();
+const Rect<float> Sprite::getTextureRect() const {
+    auto rect = m_sprite.getTextureRect();
+    return Rect<float>(
+        static_cast<float>(rect.left),
+        static_cast<float>(rect.top),
+        static_cast<float>(rect.width),
+        static_cast<float>(rect.height)
+    );
 }
 
 void Sprite::setOrigin(float x, float y) {

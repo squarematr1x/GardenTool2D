@@ -20,10 +20,10 @@ Text::Text(const Font& font, const std::string& name, unsigned int char_size, fl
 const Rect<float> Text::getLocalBounds() {
     const auto local_bounds = m_text.getLocalBounds();
     const Rect<float> rectangle(
-        local_bounds.width,
-        local_bounds.height,
         local_bounds.left,
-        local_bounds.top
+        local_bounds.top,
+        local_bounds.width,
+        local_bounds.height
     );
     return rectangle;
 }

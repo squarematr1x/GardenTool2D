@@ -11,6 +11,7 @@
 #include "../player-config.hpp"
 
 #include "../asset/text.hpp"
+#include "../core/circle.hpp"
 
 class GameEngine;
 
@@ -42,8 +43,8 @@ public:
 	virtual void registerAction(int key, const ActionName action_name) { m_action_map[key] = action_name; };
 	// virtual void doAction(const Action& action); ?
 
-	size_t width() const;
-	size_t height() const;
+	unsigned int width() const;
+	unsigned int height() const;
 	size_t currentFrame() const { return m_current_frame; };
 
 	bool hasEnded() const { return m_has_ended; }
@@ -71,8 +72,8 @@ public:
 	void updateZoom(float delta);
 	void updateGridSize(Vec2 size) { m_grid_size = size; }
 
-	void addVertexData(const Vec2& pos, const sf::IntRect& texture_rect_in, sf::VertexArray& vertices);
-	void addLine(const Vec2& p1, const Vec2& p2, sf::VertexArray& vertices);
+	void addVertexData(const Vec2& pos, const Rect<float>& texture_rect, VertexArray& vertices);
+	void addLine(const Vec2& p1, const Vec2& p2, VertexArray& vertices);
 	void addHpBar(std::shared_ptr<Entity> e);
 	void addHighlight(std::shared_ptr<Entity> e);
 
@@ -94,8 +95,8 @@ protected:
 	size_t m_current_frame{ 0 };
 	std::map<int, ActionName> m_action_map;
 	Zoom m_zoom;
-	sf::VertexArray m_hp_bars{ sf::Triangles };
-	sf::VertexArray m_highlights{ sf::Lines };
+	VertexArray m_hp_bars{ TRIANGLE };
+	VertexArray m_highlights{ LINES };
 	PlayerConfig m_player_config;
 
 	bool m_paused{ false };
@@ -128,7 +129,6 @@ class SceneMenu: public Scene
 	std::vector<std::string> m_menu_strings;
 	std::vector<std::string> m_level_paths;
 	Text m_menu_text;
-	sf::Color m_background_color{ 20, 20, 20 };
 	size_t m_menu_index{ 0 }; // selected menu item
 	unsigned int m_font_size{ 20 };
 	ParticleSystem m_particles;
@@ -151,7 +151,7 @@ class SceneSideScroller: public Scene
 	bool m_can_shoot{ true };
 	bool m_can_jump{ true };
 
-	sf::CircleShape m_mouse_shape;
+	Circle m_mouse_shape;
 
 public:
 	SceneSideScroller(GameEngine* engine, const std::string& level_path);

@@ -96,5 +96,3 @@ bool contains(const std::vector<Vec2> v, const Vec2& p) {
 }
 
 } // namespace path
-
-

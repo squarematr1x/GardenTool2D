@@ -3,6 +3,8 @@
 #include <filesystem>
 
 #include "../engine.hpp"
+#include "../core/event.hpp"
+#include "../core/key.hpp"
 
 SceneMenu::SceneMenu(GameEngine* engine)
     : Scene(engine) {
@@ -10,12 +12,12 @@ SceneMenu::SceneMenu(GameEngine* engine)
 }
 
 void SceneMenu::init() {
-    registerAction(sf::Keyboard::Up, ActionName::UP);
-    registerAction(sf::Keyboard::Down, ActionName::DOWN);
-    registerAction(sf::Keyboard::Enter, ActionName::PLAY);
-    registerAction(sf::Keyboard::Escape, ActionName::QUIT);
+    registerAction(Up, ActionName::UP);
+    registerAction(Down, ActionName::DOWN);
+    registerAction(Enter, ActionName::PLAY);
+    registerAction(Escape, ActionName::QUIT);
 
-    registerAction(sf::Event::MouseMoved, ActionName::MOUSE_MOVE);
+    registerAction(Event::MouseMoved, ActionName::MOUSE_MOVE);
 
     m_menu_text.setCharacterSize(m_font_size);
     m_menu_text.setFont(m_engine->assets().getFont("Arial"));
@@ -67,7 +69,7 @@ void SceneMenu::sDoAction(const Action& action) {
 }
 
 void SceneMenu::sRender() {
-    m_engine->window().clear(m_background_color);
+    m_engine->window().clear(20, 20, 20);
     m_particles.update();
     m_particles.draw(m_engine->window());
 

@@ -10,6 +10,7 @@ class EntityMemoryPool
     EntityComponentVectorTuple m_pool;
     std::vector<Tag> m_tags;
     std::vector<bool> m_active;
+    // std::vector<size_t> m_free_indexes; // For faster lookup?
 
     EntityMemoryPool(size_t max_entities);
     
@@ -39,3 +40,13 @@ public:
     // NOTE: destorying entity is just to mark it m_active = false
     //       the component data can be safely overwritten
 };
+
+// class Entity {
+//     size_t m_id;
+// public:
+//     template<typename T>
+//     T& getComponent() { return EntityMemoryPool::Instance().getComponent<T>(m_id); }
+
+//     template<typename T>
+//     bool hasComponent() { return EntityMemoryPool::Instance().getComponent<T>(m_id).has; }
+// };
