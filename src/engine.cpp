@@ -11,6 +11,7 @@
 #include "util/profiler.hpp"
 #include "core/event.hpp"
 #include "core/mouse.hpp"
+#include "core/key.hpp"
 
 GameEngine::GameEngine(const std::string& config) {
 	PROFILE_FUNCTION();
@@ -96,7 +97,7 @@ void GameEngine::sUserInput() {
 		}
 
 		if (event.getType() == Event::KeyPressed) {
-			if (event.getKeyCode() == sf::Keyboard::F12) {
+			if (event.getKeyCode() == F12) {
 				Texture texture;
 				if (texture.create(m_window.getSize().x, m_window.getSize().y)) {
 					texture.update(m_window.getWindow());

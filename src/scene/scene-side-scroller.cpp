@@ -5,6 +5,8 @@
 #include "scene.hpp"
 #include "../engine.hpp"
 #include "../physics.hpp"
+#include "../core/key.hpp"
+#include "../core/mouse.hpp"
 
 SceneSideScroller::SceneSideScroller(GameEngine* engine, const std::string& level_path)
     : Scene(engine, level_path) {
@@ -12,24 +14,24 @@ SceneSideScroller::SceneSideScroller(GameEngine* engine, const std::string& leve
 }
 
 void SceneSideScroller::init(const std::string& level_path) {
-    registerAction(sf::Keyboard::P, ActionName::PAUSE);
-    registerAction(sf::Keyboard::Escape, ActionName::QUIT);
-    registerAction(sf::Keyboard::T, ActionName::TOGGLE_TEXTURE);
-    registerAction(sf::Keyboard::X, ActionName::TOGGLE_COLLISION);
-    registerAction(sf::Keyboard::G, ActionName::TOGGLE_GRID);
-    registerAction(sf::Keyboard::Tab, ActionName::TOGGLE_LEVEL_EDITOR);
+    registerAction(P, ActionName::PAUSE);
+    registerAction(Escape, ActionName::QUIT);
+    registerAction(T, ActionName::TOGGLE_TEXTURE);
+    registerAction(X, ActionName::TOGGLE_COLLISION);
+    registerAction(G, ActionName::TOGGLE_GRID);
+    registerAction(Tab, ActionName::TOGGLE_LEVEL_EDITOR);
 
-    registerAction(sf::Keyboard::Space, ActionName::UP);
-    registerAction(sf::Keyboard::Up, ActionName::UP);
-    registerAction(sf::Keyboard::Right, ActionName::RIGHT);
-    registerAction(sf::Keyboard::Down, ActionName::DOWN);
-    registerAction(sf::Keyboard::Left, ActionName::LEFT);
-    registerAction(sf::Keyboard::Z, ActionName::SHOOT);
+    registerAction(Space, ActionName::UP);
+    registerAction(Up, ActionName::UP);
+    registerAction(Right, ActionName::RIGHT);
+    registerAction(Down, ActionName::DOWN);
+    registerAction(Left, ActionName::LEFT);
+    registerAction(Z, ActionName::SHOOT);
 
-    registerAction(sf::Mouse::Button::Left, ActionName::LEFT_CLICK);
-    registerAction(sf::Mouse::Button::Middle, ActionName::MIDDLE_CLICK);
-    registerAction(sf::Mouse::Button::Right, ActionName::RIGHT_CLICK);
-    registerAction(sf::Mouse::Wheel::VerticalWheel, ActionName::MOUSE_SCROLL);
+    registerAction(mouse::Button::Left, ActionName::LEFT_CLICK);
+    registerAction(mouse::Button::Middle, ActionName::MIDDLE_CLICK);
+    registerAction(mouse::Button::Right, ActionName::RIGHT_CLICK);
+    registerAction(mouse::Wheel::VerticalWheel, ActionName::MOUSE_SCROLL);
 
     m_grid_text.setCharacterSize(12);
     m_grid_text.setFont(m_engine->assets().getFont("Arial")); 

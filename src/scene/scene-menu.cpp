@@ -4,6 +4,7 @@
 
 #include "../engine.hpp"
 #include "../core/event.hpp"
+#include "../core/key.hpp"
 
 SceneMenu::SceneMenu(GameEngine* engine)
     : Scene(engine) {
@@ -11,10 +12,10 @@ SceneMenu::SceneMenu(GameEngine* engine)
 }
 
 void SceneMenu::init() {
-    registerAction(sf::Keyboard::Up, ActionName::UP);
-    registerAction(sf::Keyboard::Down, ActionName::DOWN);
-    registerAction(sf::Keyboard::Enter, ActionName::PLAY);
-    registerAction(sf::Keyboard::Escape, ActionName::QUIT);
+    registerAction(Up, ActionName::UP);
+    registerAction(Down, ActionName::DOWN);
+    registerAction(Enter, ActionName::PLAY);
+    registerAction(Escape, ActionName::QUIT);
 
     registerAction(Event::MouseMoved, ActionName::MOUSE_MOVE);
 
