@@ -3,6 +3,8 @@
 #include "event.hpp"
 #include "../math/vec2.hpp"
 #include "../core/vertex-array.hpp"
+#include "../core/circle.hpp"
+#include "../core/rectangle.hpp"
 #include "../asset/texture.hpp"
 
 void RenderWindow::create(unsigned int w, unsigned int h, const std::string& title) {
@@ -31,18 +33,6 @@ void RenderWindow::draw(const sf::Drawable& drawable) {
     m_window.draw(drawable);
 }
 
-void RenderWindow::draw(const sf::Vertex* vertices, size_t vertex_count, Primitive primitive) {
-    m_window.draw(
-        vertices,
-        vertex_count,
-        static_cast<sf::PrimitiveType>(primitive)
-    );
-}
-
-void RenderWindow::draw(const sf::VertexArray& vertex_array, const sf::RenderStates render_states) {
-    m_window.draw(vertex_array, render_states);
-}
-
 void RenderWindow::draw(const VertexArray& vertex_array) {
     m_window.draw(vertex_array.getVertexArray());
 }
@@ -50,6 +40,14 @@ void RenderWindow::draw(const VertexArray& vertex_array) {
 void RenderWindow::draw(const VertexArray& vertex_array, const Texture& texture) {
     sf::RenderStates states(&texture.getTexture());
     m_window.draw(vertex_array.getVertexArray(), states);
+}
+
+void RenderWindow::draw(const Circle& circle) {
+    m_window.draw(circle.getCircle());
+}
+
+void RenderWindow::draw(const Rectangle& rectangle) {
+    m_window.draw(rectangle.getRectangle());
 }
 
 void RenderWindow::display() {

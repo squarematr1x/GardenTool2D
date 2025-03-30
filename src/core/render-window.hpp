@@ -10,6 +10,8 @@ class Event;
 class Vec2;
 class Texture;
 class VertexArray;
+class Circle;
+class Rectangle;
 
 using channel = unsigned char;
 
@@ -28,10 +30,10 @@ public:
     void setDefaultView();
 
     void draw(const sf::Drawable& drawable);
-    void draw(const sf::Vertex* vertices, size_t vertex_count, Primitive primitive);
-    void draw(const sf::VertexArray& vertex_array, const sf::RenderStates render_states);
     void draw(const VertexArray& vertex_array);
     void draw(const VertexArray& vertex_array, const Texture& texture);
+    void draw(const Circle& circle);
+    void draw(const Rectangle& rectangle);
 
     void display();
     void close();

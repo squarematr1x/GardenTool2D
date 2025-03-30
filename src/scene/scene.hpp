@@ -11,6 +11,7 @@
 #include "../player-config.hpp"
 
 #include "../asset/text.hpp"
+#include "../core/circle.hpp"
 
 class GameEngine;
 
@@ -71,7 +72,7 @@ public:
 	void updateZoom(float delta);
 	void updateGridSize(Vec2 size) { m_grid_size = size; }
 
-	void addVertexData(const Vec2& pos, const sf::IntRect& texture_rect_in, VertexArray& vertices);
+	void addVertexData(const Vec2& pos, const Rect<float>& texture_rect, VertexArray& vertices);
 	void addLine(const Vec2& p1, const Vec2& p2, VertexArray& vertices);
 	void addHpBar(std::shared_ptr<Entity> e);
 	void addHighlight(std::shared_ptr<Entity> e);
@@ -150,7 +151,7 @@ class SceneSideScroller: public Scene
 	bool m_can_shoot{ true };
 	bool m_can_jump{ true };
 
-	sf::CircleShape m_mouse_shape;
+	Circle m_mouse_shape;
 
 public:
 	SceneSideScroller(GameEngine* engine, const std::string& level_path);

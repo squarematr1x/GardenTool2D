@@ -207,9 +207,6 @@ void SceneSideScroller::update() {
         sCollision();
         sAnimation();
     }
-    // sf::View mini_map = m_engine->window().getView();
-    // mini_map.setViewport(sf::FloatRect(0.75f, 0.0f, 0.25f, 0.25f));
-    // m_engine->window().setView(mini_map);
 
     sCamera();
     sDragAndDrop();
