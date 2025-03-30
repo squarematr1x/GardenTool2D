@@ -1,6 +1,5 @@
 #include "scene.hpp"
 #include "../engine.hpp"
-#include "../asset/rect.hpp"
 #include "../core/rectangle.hpp"
 
 Scene::Scene(GameEngine* engine)

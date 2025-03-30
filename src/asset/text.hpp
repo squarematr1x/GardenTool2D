@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "rect.hpp"
+#include "../core/rect.hpp"
 
 class Font;
 class Vec2;
