@@ -12,8 +12,7 @@ class Texture;
 class VertexArray;
 class Circle;
 class Rectangle;
-
-using channel = unsigned char;
+struct Color;
 
 class RenderWindow {
     sf::RenderWindow m_window;
@@ -37,7 +36,7 @@ public:
 
     void display();
     void close();
-    void clear(channel r, channel g, channel b, channel a=255);
+    void clear(const Color& color);
 
     bool isOpen() const;
     bool pollEvent(Event& event);

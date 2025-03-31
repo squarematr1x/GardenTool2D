@@ -5,8 +5,7 @@
 #include "../core/rect.hpp"
 
 class Texture;
-
-using channel = unsigned char;
+struct Color;
 
 class Sprite {
     // Wrapper for sprite
@@ -26,6 +25,5 @@ public:
     void setScale(float scale_x, float scale_y);
     void scale(float scale_x, float scale_y);
 
-    // TODO: use Color struct here
-    void setColor(channel r, channel g, channel b, channel a=255);
+    void setColor(const Color& color);
 };

@@ -69,7 +69,7 @@ void SceneMenu::sDoAction(const Action& action) {
 }
 
 void SceneMenu::sRender() {
-    m_engine->window().clear(20, 20, 20);
+    m_engine->window().clear(Color(20, 20, 20));
     m_particles.update();
     m_particles.draw(m_engine->window());
 
@@ -79,9 +79,9 @@ void SceneMenu::sRender() {
         const auto text_rect = m_menu_text.getLocalBounds();
 
         if (index == m_menu_index) {
-            m_menu_text.setFillColor(255, 255, 255);
+            m_menu_text.setFillColor(Color(255, 255, 255));
         } else {
-            m_menu_text.setFillColor(125, 125, 125);
+            m_menu_text.setFillColor(Color(125, 125, 125));
         }
 
         m_menu_text.setString(item);

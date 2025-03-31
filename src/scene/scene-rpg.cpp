@@ -679,9 +679,9 @@ void SceneRPG::sAnimation() {
             }
 
             if (m_player->hasComponent<CInvincibility>()) {
-		        entity->getComponent<CAnimation>().animation.getSprite().setColor(255, 128, 128, 128);
+		        entity->getComponent<CAnimation>().animation.getSprite().setColor(Color(255, 128, 128, 128));
 	        } else {
-                entity->getComponent<CAnimation>().animation.getSprite().setColor(255, 255, 255);
+                entity->getComponent<CAnimation>().animation.getSprite().setColor(Color(255, 255, 255));
             }
         } else {
             entity->getComponent<CAnimation>().animation.update();
@@ -715,7 +715,7 @@ void SceneRPG::sCamera() {
 }
 
 void SceneRPG::sRender() {
-    m_engine->window().clear(113, 166, 50);
+    m_engine->window().clear(Color(113, 166, 50));
 
     // Draw all Entity textures/animations
     renderCommon(m_player);

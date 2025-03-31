@@ -6,8 +6,7 @@
 
 class Font;
 class Vec2;
-
-using channel = unsigned char;
+struct Color;
 
 class Text {
     // Wrapper for text
@@ -26,5 +25,5 @@ public:
     void setCharacterSize(unsigned int char_size);
     void setPosition(float x, float y);
     void setOrigin(float x, float y);
-    void setFillColor(channel r, channel g, channel b, channel a = 255);
+    void setFillColor(const Color& color);
 };

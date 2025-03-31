@@ -1,5 +1,6 @@
 #include "sprite.hpp"
 #include "texture.hpp"
+#include "color.hpp"
 
 Sprite::Sprite(const Texture& texture)
     : m_sprite(texture.getTexture())
@@ -42,6 +43,6 @@ void Sprite::scale(float scale_x, float scale_y) {
     m_sprite.scale(scale_x, scale_y);
 }
 
-void Sprite::setColor(channel r, channel g, channel b, channel a) {
-    m_sprite.setColor(sf::Color(r, g, b, a));
+void Sprite::setColor(const Color& color) {
+    m_sprite.setColor(color.getColor());
 }

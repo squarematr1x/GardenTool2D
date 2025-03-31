@@ -6,6 +6,7 @@
 #include "../core/circle.hpp"
 #include "../core/rectangle.hpp"
 #include "../asset/texture.hpp"
+#include "../asset/color.hpp"
 
 void RenderWindow::create(unsigned int w, unsigned int h, const std::string& title) {
     m_window.create(sf::VideoMode(w, h), title);
@@ -58,8 +59,8 @@ void RenderWindow::close() {
     m_window.close();
 }
 
-void RenderWindow::clear(channel r, channel g, channel b, channel a) {
-    m_window.clear({r, g, b, a});
+void RenderWindow::clear(const Color& color) {
+    m_window.clear(color.getColor());
 }
 
 bool RenderWindow::isOpen() const {
