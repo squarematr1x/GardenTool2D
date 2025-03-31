@@ -41,12 +41,12 @@ enum class Tag : unsigned char {
 	CHECKPOINT,
 };
 
-class Entity
-{
+class Entity {
 	friend class EntityManager; // EntityManager can construct Entities
 
 	Entity(const size_t id, const Tag tag) // Only EntityManager can access this
-		: m_id(id), m_tag(tag) {
+		: m_id(id), m_tag(tag)
+	{
     }
 
 	const size_t m_id{ 0 }; // TODO: Only use this in the future and remove other stuff?

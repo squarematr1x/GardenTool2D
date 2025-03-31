@@ -2,8 +2,7 @@
 
 #include <chrono>
 
-class Timer
-{
+class Timer {
     long long m_start{ 0 };
     long long m_end{ 0 };
 

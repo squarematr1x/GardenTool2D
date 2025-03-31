@@ -22,8 +22,7 @@ enum class SceneType : unsigned char {
 	TOP_DOWN_RPG
 };
 
-class Scene
-{
+class Scene {
 public:
 	// To zoom views when mouse scrolled
 	struct Zoom {
@@ -123,8 +122,7 @@ protected:
 	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity) const;
 };
 
-class SceneMenu: public Scene
-{
+class SceneMenu: public Scene {
 	std::string m_title { "Menu" };
 	std::vector<std::string> m_menu_strings;
 	std::vector<std::string> m_level_paths;
@@ -145,8 +143,7 @@ public:
 	void sRender();
 };
 
-class SceneSideScroller: public Scene
-{
+class SceneSideScroller: public Scene {
 	std::shared_ptr<Entity> m_player;
 	bool m_can_shoot{ true };
 	bool m_can_jump{ true };
@@ -182,8 +179,7 @@ public:
 	void onEnd();
 };
 
-class SceneRPG: public Scene
-{
+class SceneRPG: public Scene {
 	std::shared_ptr<Entity> m_player;
 	bool m_follow{ false };
 	bool m_can_attack{ true };

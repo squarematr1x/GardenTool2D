@@ -4,8 +4,7 @@
 
 constexpr size_t MAX_ENTITIES{ 1000 }; // TODO: Use something else than global variable?
 
-class EntityMemoryPool
-{
+class EntityMemoryPool {
     size_t m_entity_count{ 0 };
     EntityComponentVectorTuple m_pool;
     std::vector<Tag> m_tags;

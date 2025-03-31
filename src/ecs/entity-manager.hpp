@@ -26,8 +26,7 @@ typedef std::tuple<
 	std::vector<CPath>
 > EntityComponentVectorTuple;
 
-class EntityManager
-{
+class EntityManager {
 	EntityVec m_entities; // TODO: replace with std::vector<Entity> m_entities;
 	EntityVec m_entities_to_add;
 	EntityMap m_entity_map;

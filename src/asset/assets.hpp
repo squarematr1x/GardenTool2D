@@ -12,8 +12,7 @@
 #include "../layer.hpp"
 #include "../math/vec2.hpp"
 
-class Assets
-{
+class Assets {
 	std::map<std::string, Texture> m_texture_map;
 	std::map<std::string, Animation> m_animation_map;
 	std::map<std::string, Font> m_font_map;

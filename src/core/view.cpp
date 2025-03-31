@@ -2,7 +2,6 @@
 
 #include "../math/vec2.hpp"
 
-// TODO: replace with Rect<float>
 View::View(float rect_left, float rect_top, float width, float height)
     : m_view({
         rect_left, rect_top, width, height

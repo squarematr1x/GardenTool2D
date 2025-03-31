@@ -3,7 +3,8 @@
 #include <random>
 #include <iterator>
 
-namespace math {
+namespace math
+{
 
 template<typename T, typename TGenerator>
 T selectRandom(T start, T end, TGenerator& gen) {

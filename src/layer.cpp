@@ -3,7 +3,8 @@
 #include "core/render-window.hpp"
 
 Layer::Layer(const std::string& name, const Texture& texture)
-    : m_name(name), m_sprite(texture), m_size(texture.getSize()) {
+    : m_name(name), m_sprite(texture), m_size(texture.getSize())
+{
 }
 
 void Layer::init(const RenderWindow& window) {
