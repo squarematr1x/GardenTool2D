@@ -69,7 +69,7 @@ void SceneMenu::sDoAction(const Action& action) {
 }
 
 void SceneMenu::sRender() {
-    m_engine->window().clear(20, 20, 20);
+    m_engine->window().clear(Color(20, 20, 20));
     m_particles.update();
     m_particles.draw(m_engine->window());
 
@@ -79,15 +79,15 @@ void SceneMenu::sRender() {
         const auto text_rect = m_menu_text.getLocalBounds();
 
         if (index == m_menu_index) {
-            m_menu_text.setFillColor(255, 255, 255);
+            m_menu_text.setFillColor(Color(255, 255, 255));
         } else {
-            m_menu_text.setFillColor(125, 125, 125);
+            m_menu_text.setFillColor(Color(125, 125, 125));
         }
 
         m_menu_text.setString(item);
         m_menu_text.setOrigin(text_rect.left + text_rect.width/2.0f, text_rect.top + text_rect.height/2.0f);
         m_menu_text.setPosition(width()/2.0f, offset);
-        m_engine->window().draw(m_menu_text.getText());
+        m_engine->window().draw(m_menu_text);
         offset += 64.0f;
         index++;
     }

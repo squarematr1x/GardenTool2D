@@ -12,8 +12,9 @@ class Texture;
 class VertexArray;
 class Circle;
 class Rectangle;
-
-using channel = unsigned char;
+class Text;
+class Sprite;
+struct Color;
 
 class RenderWindow {
     sf::RenderWindow m_window;
@@ -29,15 +30,16 @@ public:
     void setView(const View& view);
     void setDefaultView();
 
-    void draw(const sf::Drawable& drawable);
     void draw(const VertexArray& vertex_array);
     void draw(const VertexArray& vertex_array, const Texture& texture);
     void draw(const Circle& circle);
     void draw(const Rectangle& rectangle);
+    void draw(const Text& text);
+    void draw(const Sprite& sprite);
 
     void display();
     void close();
-    void clear(channel r, channel g, channel b, channel a=255);
+    void clear(const Color& color);
 
     bool isOpen() const;
     bool pollEvent(Event& event);

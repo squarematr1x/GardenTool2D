@@ -33,8 +33,7 @@ enum class ActionName : unsigned char {
 	MOUSE_SCROLL
 };
 
-struct Action
-{
+struct Action {
 	ActionName name{ ActionName::NONE };
 	ActionType type{ ActionType::NONE };
 	Vec2 pos{ Vec2(0, 0) };

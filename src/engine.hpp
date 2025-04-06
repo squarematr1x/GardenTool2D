@@ -12,8 +12,7 @@ class Scene;
 
 enum class SceneType: unsigned char;
 
-class GameEngine
-{
+class GameEngine {
 	std::string m_title{ "GardenTool2D" };
 	std::string m_cur_song_name{ "" };
 	RenderWindow m_window;

@@ -1,6 +1,7 @@
 #include "text.hpp"
 
 #include "font.hpp"
+#include "color.hpp"
 #include "../math/vec2.hpp"
 
 Text::Text(const Font& font, const std::string& name, unsigned int char_size, Vec2 pos) {
@@ -48,7 +49,6 @@ void Text::setOrigin(float x, float y) {
     m_text.setOrigin(x, y);
 }
 
-void Text::setFillColor(channel r, channel g, channel b, channel a) {
-    const auto color = sf::Color(r, g, b, a);
-    m_text.setFillColor(color);
+void Text::setFillColor(const Color& color) {
+    m_text.setFillColor(color.getColor());
 }

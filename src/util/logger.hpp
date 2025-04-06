@@ -3,8 +3,7 @@
 #include <fstream>
 
 // A singleton class for logging
-class Logger 
-{
+class Logger  {
     std::ofstream m_fout{ std::ofstream("log.txt") };
 
 public:

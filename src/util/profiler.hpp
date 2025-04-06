@@ -16,16 +16,14 @@
     #define PROFILE_FUNCTION()
 #endif
 
-struct ProfileResult 
-{
+struct ProfileResult {
     std::string name{ "Default" };
     long long start{ 0 };
     long long end{ 0 };
     size_t thread_id{ 0 };
 };
 
-class Profiler
-{
+class Profiler {
     std::string m_output_file{ "profresult.json" };
     std::ofstream m_fout = std::ofstream(m_output_file);
     size_t m_count{ 0 };
@@ -47,8 +45,7 @@ public:
     ~Profiler();
 };
 
-class ProfileTimer
-{
+class ProfileTimer {
     ProfileResult m_result;
     std::chrono::time_point<std::chrono::high_resolution_clock> m_stp; // starting point
     bool m_stopped{ false };

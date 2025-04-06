@@ -7,8 +7,7 @@
 
 class RenderWindow;
 
-class ParticleSystem
-{
+class ParticleSystem {
     struct Particle {
         Vec2 velocity;
         int lifespan{ 0 };

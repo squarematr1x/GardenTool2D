@@ -8,8 +8,7 @@
 #include "../math/vec2.hpp"
 #include "../asset/texture.hpp"
 
-class Animation
-{
+class Animation {
 	std::string m_name{ "none" };
 	Sprite m_sprite;
 

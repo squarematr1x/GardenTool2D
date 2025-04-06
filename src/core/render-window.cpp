@@ -6,6 +6,9 @@
 #include "../core/circle.hpp"
 #include "../core/rectangle.hpp"
 #include "../asset/texture.hpp"
+#include "../asset/color.hpp"
+#include "../asset/text.hpp"
+#include "../asset/sprite.hpp"
 
 void RenderWindow::create(unsigned int w, unsigned int h, const std::string& title) {
     m_window.create(sf::VideoMode(w, h), title);
@@ -29,10 +32,6 @@ void RenderWindow::setDefaultView() {
     m_window.setView(m_window.getDefaultView());
 }
 
-void RenderWindow::draw(const sf::Drawable& drawable) {
-    m_window.draw(drawable);
-}
-
 void RenderWindow::draw(const VertexArray& vertex_array) {
     m_window.draw(vertex_array.getVertexArray());
 }
@@ -50,6 +49,14 @@ void RenderWindow::draw(const Rectangle& rectangle) {
     m_window.draw(rectangle.getRectangle());
 }
 
+void RenderWindow::draw(const Sprite& sprite) {
+    m_window.draw(sprite.getSprite());
+}
+
+void RenderWindow::draw(const Text& text) {
+    m_window.draw(text.getText());
+}
+
 void RenderWindow::display() {
     m_window.display();
 }
@@ -58,8 +65,8 @@ void RenderWindow::close() {
     m_window.close();
 }
 
-void RenderWindow::clear(channel r, channel g, channel b, channel a) {
-    m_window.clear({r, g, b, a});
+void RenderWindow::clear(const Color& color) {
+    m_window.clear(color.getColor());
 }
 
 bool RenderWindow::isOpen() const {
