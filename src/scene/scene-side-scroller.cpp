@@ -633,7 +633,7 @@ void SceneSideScroller::sRender() {
             layer.init(m_engine->window());
         }
         m_engine->window().setView(layer.getView());
-        m_engine->window().draw(layer.getSprite().getSprite());
+        m_engine->window().draw(layer.getSprite());
     }
     m_engine->window().setView(view);
 

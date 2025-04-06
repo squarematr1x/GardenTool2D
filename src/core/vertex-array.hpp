@@ -6,7 +6,6 @@
 #include "../math/vec2.hpp"
 #include "primitive.hpp"
 
-
 // NOTE: might be used directly later
 struct Vertex {
     Vec2 pos;

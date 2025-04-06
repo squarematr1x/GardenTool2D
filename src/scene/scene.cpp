@@ -79,7 +79,7 @@ void Scene::renderGrid(bool show_coordinates) {
             const auto y_offset = 2;
             m_grid_text.setString("(" + x_cell + "," + y_cell + ")");
             m_grid_text.setPosition(x + x_offset, h - y - m_grid_cell_size.y + y_offset);
-            m_engine->window().draw(m_grid_text.getText());
+            m_engine->window().draw(m_grid_text);
         }
     }
     m_engine->window().draw(vertices);
@@ -235,7 +235,7 @@ void Scene::renderCommon(std::shared_ptr<Entity> player) {
                 sprite.setRotation(transform.angle);
                 sprite.setPosition(transform.pos.x, transform.pos.y);
                 sprite.setScale(transform.scale.x, transform.scale.y);
-                m_engine->window().draw(sprite.getSprite());
+                m_engine->window().draw(sprite);
             } else {
                 addVertexData(transform.pos, sprite.getTextureRect(), vertices);
             }
@@ -327,7 +327,7 @@ void Scene::renderPauseText() {
     text.setCharacterSize(16);
     text.setPosition(w/2 - (text.getLocalBounds().width/2), 5.0f);
 
-    m_engine->window().draw(text.getText());
+    m_engine->window().draw(text);
     m_engine->window().setView(view); // Restore previous view
 }
 

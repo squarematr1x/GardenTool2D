@@ -1,10 +1,5 @@
 ============================================== System specifications ============================================== 
 
-Refactor sfml based structure under wrappers
-- sf::Texture, sf::Color, sf::Text, sf::VertexArray, etc.
-- This increases portability
-- Eventually move to SDL3 (or sfml 3)
-
 Refactor
 - Do we need to scale to turn animation sprite left/right?
 

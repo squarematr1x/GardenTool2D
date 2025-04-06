@@ -12,6 +12,8 @@ class Texture;
 class VertexArray;
 class Circle;
 class Rectangle;
+class Text;
+class Sprite;
 struct Color;
 
 class RenderWindow {
@@ -28,11 +30,12 @@ public:
     void setView(const View& view);
     void setDefaultView();
 
-    void draw(const sf::Drawable& drawable);
     void draw(const VertexArray& vertex_array);
     void draw(const VertexArray& vertex_array, const Texture& texture);
     void draw(const Circle& circle);
     void draw(const Rectangle& rectangle);
+    void draw(const Text& text);
+    void draw(const Sprite& sprite);
 
     void display();
     void close();

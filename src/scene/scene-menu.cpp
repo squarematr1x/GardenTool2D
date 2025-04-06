@@ -87,7 +87,7 @@ void SceneMenu::sRender() {
         m_menu_text.setString(item);
         m_menu_text.setOrigin(text_rect.left + text_rect.width/2.0f, text_rect.top + text_rect.height/2.0f);
         m_menu_text.setPosition(width()/2.0f, offset);
-        m_engine->window().draw(m_menu_text.getText());
+        m_engine->window().draw(m_menu_text);
         offset += 64.0f;
         index++;
     }
