@@ -72,11 +72,15 @@ std::ostream& operator<< (std::ostream& out, const Vec2& p) {
 	return out;
 }
 
-float Vec2::distance(const Vec2& p) const {
-	const auto dx{ x - p.x };
-	const auto dy{ y - p.y };
+float Vec2::distance(const Vec2& p, Hearistic h) const {
+	if (h == Hearistic::EUCLIDIC) {
+		const auto dx{ x - p.x };
+		const auto dy{ y - p.y };
 
-	return sqrtf(dx*dx + dy*dy);
+		return sqrtf(dx*dx + dy*dy);
+	} else {
+		return fabs(x - p.x) + fabs(y - p.y);
+	}
 }
 
 float Vec2::length() const {

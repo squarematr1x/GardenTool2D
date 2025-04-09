@@ -8,14 +8,17 @@
 namespace path
 {
 
+// TODO: Has a bug, player moves diagonally many steps (only allow 4 directions)
 std::vector<Vec2> getPath(const Vec2& start, const Vec2& goal, EntityManager& entity_manager) {
-    // This function uses A* algorithm
+    if (!validGoal(goal, entity_manager)) {
+        return {};
+    }
 
     std::vector<Vec2> closed;
     std::priority_queue<SearchNode, std::vector<SearchNode>, CompareNode> open;
 
     constexpr auto g = 0.0f;
-    const auto h = start.distance(goal);
+    const auto h = start.distance(goal, Hearistic::MANHATTAN);
     constexpr auto w = 10.0f;
     const auto f = g + w*h;
 
@@ -79,7 +82,7 @@ std::vector<SearchNode> getNeighbours(const SearchNode& node, const Vec2& goal, 
         }
         if (!collide) {
             auto g = node.g + cell_size.x;
-            auto h = pos.distance(goal);
+            auto h = pos.distance(goal, Hearistic::MANHATTAN);
             auto f = g + w*h;
             nodes.push_back({ pos, f, g });
         }
@@ -93,6 +96,16 @@ bool contains(const std::vector<Vec2> v, const Vec2& p) {
         return false;
     }
     return (std::find(v.begin(), v.end(), p) != v.end());
+}
+
+bool validGoal(const Vec2& goal, EntityManager& entity_manager) {
+    const auto tiles = entity_manager.getEntities(Tag::TILE);
+    for (auto tile : tiles) {
+        if (tile->hasComponent<CBBox>() && physics::isInside(goal, tile)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 } // namespace path
