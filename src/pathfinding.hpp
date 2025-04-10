@@ -9,11 +9,18 @@ namespace path
 
 struct SearchNode {
     Vec2 pos;
+    Vec2 parent { 0, 0 };
+    bool root{ false };
     float f; // cost, f(n) = g(n) + w*h(n)
     float g; // g(n)
 
     SearchNode(const Vec2& pos_in, float f_in, float g_in)
-        : pos(pos_in), f(f_in), g(g_in)
+        : pos(pos_in), root(true), f(f_in), g(g_in)
+    {
+    }
+
+    SearchNode(const Vec2& pos_in, const Vec2& parent_in, float f_in, float g_in)
+        : pos(pos_in), parent(parent_in), f(f_in), g(g_in)
     {
     }
 
