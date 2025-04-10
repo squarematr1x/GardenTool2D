@@ -52,6 +52,10 @@ bool Vec2::operator!= (const Vec2& p) const {
 	return !(*this == p);
 }
 
+bool Vec2::operator< (const Vec2& p) const {
+	return (x < p.x || (x == p.x && y < p.y));
+}
+
 Vec2& Vec2::scale(const float scale) {
 	x *= scale;
 	y *= scale;

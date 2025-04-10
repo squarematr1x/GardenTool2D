@@ -48,6 +48,7 @@ public:
 
 	bool operator== (const Vec2& p) const;
 	bool operator!= (const Vec2& p) const;
+	bool operator< (const Vec2& p) const;
 
 	Vec2& scale(const float scale);
 	Vec2& add(const float value);
