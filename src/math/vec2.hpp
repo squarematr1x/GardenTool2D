@@ -2,6 +2,11 @@
 
 #include <iostream>
 
+enum class Hearistic : unsigned char {
+    MANHATTAN,
+    EUCLIDIC
+};
+
 class Vec2 {
 public:
 	float x{ 0 };
@@ -43,11 +48,12 @@ public:
 
 	bool operator== (const Vec2& p) const;
 	bool operator!= (const Vec2& p) const;
+	bool operator< (const Vec2& p) const;
 
 	Vec2& scale(const float scale);
 	Vec2& add(const float value);
 
-	float distance(const Vec2& p) const;
+	float distance(const Vec2& p, Hearistic h = Hearistic::EUCLIDIC) const;
 	float length() const;
 
 	Vec2 normalize() const;
