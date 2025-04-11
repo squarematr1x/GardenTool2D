@@ -8,7 +8,7 @@
 namespace path
 {
 
-// TODO: Has a bug, player moves diagonally many steps (only allow 4 directions)
+// getPath uses weighted a* algorithm
 std::vector<Vec2> getPath(const Vec2& start, const Vec2& goal, EntityManager& entity_manager) {
     if (!validGoal(goal, entity_manager)) {
         return {};
