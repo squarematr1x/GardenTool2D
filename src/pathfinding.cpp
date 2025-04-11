@@ -8,7 +8,7 @@
 namespace path
 {
 
-// TODO: Has a bug, player moves diagonally many steps (only allow 4 directions)
+// getPath uses weighted a* algorithm
 std::vector<Vec2> getPath(const Vec2& start, const Vec2& goal, EntityManager& entity_manager) {
     if (!validGoal(goal, entity_manager)) {
         return {};
@@ -18,6 +18,9 @@ std::vector<Vec2> getPath(const Vec2& start, const Vec2& goal, EntityManager& en
     std::priority_queue<SearchNode, std::vector<SearchNode>, std::greater<SearchNode>> open;
     std::map<Vec2, SearchNode> open_map;
     std::vector<Vec2> path;
+
+    unsigned int step = 0;
+    constexpr unsigned int max_steps = 100;
 
     constexpr auto g = 0.0f;
     const auto h = start.distance(goal, Hearistic::EUCLIDIC);
@@ -64,6 +67,11 @@ std::vector<Vec2> getPath(const Vec2& start, const Vec2& goal, EntityManager& en
             }
             open.push(neighbour);
             open_map.insert({neighbour.pos, neighbour});
+        }
+
+        if (++step > max_steps) {
+            // Player probably clicked inside a closed area (no path can be found)
+            return {};
         }
     }
 

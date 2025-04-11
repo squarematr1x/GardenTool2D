@@ -31,13 +31,6 @@ struct SearchNode {
     bool operator< (const SearchNode& node) const {
         return f < node.f;
     }
-
-};
-
-struct CompareNode {
-    bool operator()(const SearchNode& a, const SearchNode& b) {
-        return a.f > b.f;
-    }
 };
 
 std::vector<Vec2> getPath(const Vec2& start, const Vec2& goal, EntityManager& entity_manager);

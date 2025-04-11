@@ -12,6 +12,7 @@ A 2D game engine based on entity component system (ECS) architecture.
 * Utilities such as profiler, logger and timer
 * In-built math (2D vector) and physics libraries
 * Particle system
+* Pathfinding
 * Parallax scrolling
 * Texture atlas
 
