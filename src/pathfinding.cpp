@@ -19,6 +19,9 @@ std::vector<Vec2> getPath(const Vec2& start, const Vec2& goal, EntityManager& en
     std::map<Vec2, SearchNode> open_map;
     std::vector<Vec2> path;
 
+    unsigned int step = 0;
+    constexpr unsigned int max_steps = 100;
+
     constexpr auto g = 0.0f;
     const auto h = start.distance(goal, Hearistic::EUCLIDIC);
     constexpr auto w = 1000.0f;
@@ -64,6 +67,11 @@ std::vector<Vec2> getPath(const Vec2& start, const Vec2& goal, EntityManager& en
             }
             open.push(neighbour);
             open_map.insert({neighbour.pos, neighbour});
+        }
+
+        if (++step > max_steps) {
+            // Player probably clicked inside a closed area (no path can be found)
+            return {};
         }
     }
 
