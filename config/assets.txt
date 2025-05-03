@@ -47,6 +47,7 @@ Animation Tooth Tilemap 2 30 128 64 448 512
 Animation GitRun Tilemap 4 20 256 64 320 576
 Animation CreepRun Tilemap 4 10 256 64 320 640
 Animation Drool Tilemap 4 20 256 64 320 704
+Animation GuyRun Tilemap 8 5 512 64 320 832
 
 Animation Coin Tilemap 4 10 256 64 576 0
 Animation Explosion Tilemap 4 10 256 64 576 64
