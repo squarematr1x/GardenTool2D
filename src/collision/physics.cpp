@@ -1,5 +1,5 @@
 #include "physics.hpp"
-#include "ecs/entity.hpp"
+#include "../ecs/entity.hpp"
 
 namespace physics
 {

@@ -4,7 +4,7 @@
 
 #include "scene.hpp"
 #include "../engine.hpp"
-#include "../physics.hpp"
+#include "../collision/physics.hpp"
 #include "../core/key.hpp"
 #include "../core/mouse.hpp"
 
@@ -619,7 +619,7 @@ void SceneSideScroller::sCamera() {
 }
 
 void SceneSideScroller::sRender() {
-    m_engine->window().clear(Color(236, 115, 22));
+    m_engine->window().clear(Color(6, 154, 243));
 
     // Draw backgrounds
     auto view = m_engine->window().getView();
