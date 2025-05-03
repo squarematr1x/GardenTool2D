@@ -7,6 +7,7 @@ bool Sound::loadFromFile(const std::string& path) {
 }
  
 void Sound::play() {
-    m_sound.setBuffer(m_sound_buffer);
-    m_sound.play();
+    if (m_sound.has_value()) {
+        m_sound->play();
+    }
 }

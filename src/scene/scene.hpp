@@ -128,7 +128,6 @@ class SceneMenu: public Scene {
 	std::vector<std::string> m_level_paths;
 	Text m_menu_text;
 	size_t m_menu_index{ 0 }; // selected menu item
-	unsigned int m_font_size{ 20 };
 	ParticleSystem m_particles;
 
 public:

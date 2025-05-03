@@ -10,6 +10,7 @@ class Texture {
 
 public:
     const sf::Texture& getTexture() const { return m_texture; }
+    const sf::Texture* getTexturePtr() const { return &m_texture; } 
 
     const Vec2 getSize() const;
 

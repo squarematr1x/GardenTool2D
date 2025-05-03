@@ -14,7 +14,14 @@ Scene::Scene(GameEngine* engine)
 }
 
 Scene::Scene(GameEngine* engine, const std::string& level_path)
-    : m_engine(engine), m_level_path(level_path) {
+    : m_engine(engine),
+    m_level_path(level_path),
+    m_grid_text(
+        engine->assets().getFont("Arial"),
+        "",
+        12,
+        Vec2(0, 0)
+    ) {
     m_grid_size = Vec2(width(), height());
 }
 
@@ -236,12 +243,13 @@ void Scene::renderCommon(std::shared_ptr<Entity> player) {
                 continue;
             }
             auto& transform = e->getComponent<CTransform>();
-            auto& sprite = e->getComponent<CAnimation>().animation.getSprite();
+            auto& sprite = e->getComponent<CAnimation>().animation.getTextureRect();
             if (transform.transformable) {
                 sprite.setRotation(transform.angle);
                 sprite.setPosition(transform.pos.x, transform.pos.y);
                 sprite.setScale(transform.scale.x, transform.scale.y);
-                m_engine->window().draw(sprite);
+                // TODO: Resolve this later
+                // m_engine->window().draw(sprite);
             } else {
                 addVertexData(transform.pos, sprite.getTextureRect(), vertices);
             }

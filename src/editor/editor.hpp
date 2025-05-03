@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include <SFML/System/Clock.hpp>
 
 #include "../ecs/entity.hpp"

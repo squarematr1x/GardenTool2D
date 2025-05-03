@@ -143,7 +143,7 @@ const std::shared_ptr<Music> Assets::getMusic(const std::string& music_name) con
 
 
 void Assets::addLayer(const std::string& layer_name, const std::string& texture_name) {
-	m_layer_map[layer_name] = Layer(layer_name, getTexture(texture_name));
+	m_layer_map.emplace(layer_name, Layer(layer_name, getTexture(texture_name)));
 }
 
 const Layer& Assets::getLayer(const std::string& layer_name) const {

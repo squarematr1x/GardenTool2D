@@ -10,7 +10,7 @@ SceneMenu::SceneMenu(GameEngine* engine)
     : Scene(engine),
     m_menu_text(engine->assets().getFont("Arial"),
         "",
-        m_font_size,
+        20,
         Vec2(0, 0)
     ) {
     init();
