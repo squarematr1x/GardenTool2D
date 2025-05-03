@@ -7,7 +7,12 @@
 #include "../core/key.hpp"
 
 SceneMenu::SceneMenu(GameEngine* engine)
-    : Scene(engine) {
+    : Scene(engine),
+    m_menu_text(engine->assets().getFont("Arial"),
+        "",
+        m_font_size,
+        Vec2(0, 0)
+    ) {
     init();
 }
 
@@ -18,9 +23,6 @@ void SceneMenu::init() {
     registerAction(Escape, ActionName::QUIT);
 
     registerAction(Event::MouseMoved, ActionName::MOUSE_MOVE);
-
-    m_menu_text.setCharacterSize(m_font_size);
-    m_menu_text.setFont(m_engine->assets().getFont("Arial"));
 
     m_particles.init(m_engine->window().getSize());
 

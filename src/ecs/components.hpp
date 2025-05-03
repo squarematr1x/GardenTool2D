@@ -165,7 +165,6 @@ struct CAnimation: Component {
 	Animation animation;
 	bool repeat{ false };
 	
-	CAnimation() {}
 	CAnimation(const Animation& animation_in)
 		: animation(animation_in)
 	{

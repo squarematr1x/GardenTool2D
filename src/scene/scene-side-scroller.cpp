@@ -33,9 +33,6 @@ void SceneSideScroller::init(const std::string& level_path) {
     registerAction(mouse::Button::Right, ActionName::RIGHT_CLICK);
     registerAction(mouse::Wheel::VerticalWheel, ActionName::MOUSE_SCROLL);
 
-    m_grid_text.setCharacterSize(12);
-    m_grid_text.setFont(m_engine->assets().getFont("Arial")); 
-
     loadLevel(level_path);
 
     // m_engine->playMusic("Level1Music");

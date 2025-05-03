@@ -7,12 +7,11 @@
 class Texture;
 struct Color;
 
+// Wrapper for sprite
 class Sprite {
-    // Wrapper for sprite
     sf::Sprite m_sprite;
 
 public:
-    Sprite() = default;
     Sprite(const Texture& texture);
 
     const sf::Sprite& getSprite() const { return m_sprite; }

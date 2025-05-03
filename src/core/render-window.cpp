@@ -11,7 +11,7 @@
 #include "../asset/sprite.hpp"
 
 void RenderWindow::create(unsigned int w, unsigned int h, const std::string& title) {
-    m_window.create(sf::VideoMode(w, h), title);
+    m_window.create(sf::VideoMode({w, h}), title);
     m_view = View(m_window.getView());
 }
 
@@ -73,8 +73,8 @@ bool RenderWindow::isOpen() const {
     return m_window.isOpen();
 }
 
-bool RenderWindow::pollEvent(Event& event) {
-    return m_window.pollEvent(event.getEvent());
+std::optional<sf::Event> RenderWindow::pollEvent() {
+    return m_window.pollEvent();
 }
 
 unsigned int RenderWindow::width() const {

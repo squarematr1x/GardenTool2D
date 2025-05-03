@@ -10,9 +10,9 @@ void Circle::setRadius(float r) {
 }
 
 void Circle::setOrigin(float x, float y) {
-    m_circle.setOrigin(x, y);
+    m_circle.setOrigin({x, y});
 }
 
 void Circle::setPosition(float x, float y) {
-    m_circle.setPosition(x, y);
+    m_circle.setPosition({x, y});
 }

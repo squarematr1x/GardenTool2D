@@ -20,8 +20,6 @@ class Animation {
 	Vec2 m_offset{ 0, 0 }; // Starting position inside the texture atlas
 
 public:
-	Animation() = default;
-
 	Animation(const std::string& name, const Texture& texture);
 	Animation(const std::string& name, const Texture& texture, size_t frame_count, int speed, Vec2 size = Vec2(0, 0), Vec2 offset = Vec2(0, 0));
 

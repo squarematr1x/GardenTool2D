@@ -3,7 +3,13 @@
 #include "../core/rectangle.hpp"
 
 Scene::Scene(GameEngine* engine)
-    : m_engine(engine) {
+    : m_engine(engine),
+    m_grid_text(
+        engine->assets().getFont("Arial"),
+        "",
+        12,
+        Vec2(0, 0)
+    ) {
     m_grid_size = Vec2(width(), height());
 }
 
@@ -321,11 +327,12 @@ void Scene::renderPauseText() {
     
     m_engine->window().draw(vertices);
 
-    Text text;
-    text.setFont(m_engine->assets().getFont("Arial"));
-    text.setString("Paused");
-    text.setCharacterSize(16);
-    text.setPosition(w/2 - (text.getLocalBounds().width/2), 5.0f);
+    Text text(
+        m_engine->assets().getFont("Arial"),
+        "Paused",
+        16,
+        w/2 - (text.getLocalBounds().width/2), 5.0f
+    );
 
     m_engine->window().draw(text);
     m_engine->window().setView(view); // Restore previous view

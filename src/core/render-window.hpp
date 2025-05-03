@@ -16,6 +16,7 @@ class Text;
 class Sprite;
 struct Color;
 
+// Wrapper for window
 class RenderWindow {
     sf::RenderWindow m_window;
     View m_view;
@@ -42,7 +43,8 @@ public:
     void clear(const Color& color);
 
     bool isOpen() const;
-    bool pollEvent(Event& event);
+
+    std::optional<sf::Event> pollEvent();
 
     unsigned int width() const;
     unsigned int heigh() const;

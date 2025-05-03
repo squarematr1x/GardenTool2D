@@ -24,14 +24,14 @@ bool Texture::loadFromFile(const std::string& path){
 }
 
 bool Texture::create(unsigned int width, unsigned int height) {
-    return m_texture.create(width, height);
+    return m_texture.resize({width, height});
 }
 
 bool Texture::create(float width, float height) {
-    return m_texture.create(
+    return m_texture.resize({
         static_cast<unsigned int>(width),
         static_cast<unsigned int>(height)
-    );
+    });
 }
 
 bool Texture::saveToFile(const std::string& path) {

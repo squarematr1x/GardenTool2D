@@ -4,6 +4,7 @@
 
 class Vec2;
 
+// Wrapper for texture
 class Texture {
     sf::Texture m_texture;
 

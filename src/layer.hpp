@@ -20,7 +20,7 @@ class Layer {
     float m_sprite_offset_x{ 0.0f };
 
 public:
-    Layer() = default;
+    Layer() = delete;
     Layer(const std::string& name, const Texture& texture);
 
     void init(const RenderWindow& window);

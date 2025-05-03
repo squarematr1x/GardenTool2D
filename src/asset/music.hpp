@@ -2,8 +2,8 @@
 
 #include <SFML/Audio.hpp>
 
+// Wrapper for music
 class Music {
-    // Wrapper for music
     sf::Music m_music;
 
 public:
