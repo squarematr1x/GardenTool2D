@@ -113,6 +113,7 @@ protected:
 	Vec2 m_selected_cell{ 0, 0 };
 	const Vec2 m_grid_cell_size{ 64, 64 };
 	Text m_grid_text;
+	Text m_pause_text;
 
 	std::vector<Layer> m_background_layers;
 

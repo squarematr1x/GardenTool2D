@@ -9,6 +9,12 @@ Scene::Scene(GameEngine* engine)
         "",
         12,
         Vec2(0, 0)
+    ),
+    m_pause_text(
+        m_engine->assets().getFont("Arial"),
+        "Paused",
+        16,
+        Vec2(0, 0)
     ) {
     m_grid_size = Vec2(width(), height());
 }
@@ -20,6 +26,12 @@ Scene::Scene(GameEngine* engine, const std::string& level_path)
         engine->assets().getFont("Arial"),
         "",
         12,
+        Vec2(0, 0)
+    ),
+    m_pause_text(
+        m_engine->assets().getFont("Arial"),
+        "Paused",
+        16,
         Vec2(0, 0)
     ) {
     m_grid_size = Vec2(width(), height());
@@ -250,6 +262,7 @@ void Scene::renderCommon(std::shared_ptr<Entity> player) {
                 sprite.setScale(transform.scale.x, transform.scale.y);
                 // TODO: Resolve this later
                 // m_engine->window().draw(sprite);
+                addVertexData(transform.pos, sprite.getTextureRect(), vertices);
             } else {
                 addVertexData(transform.pos, sprite.getTextureRect(), vertices);
             }
@@ -335,14 +348,9 @@ void Scene::renderPauseText() {
     
     m_engine->window().draw(vertices);
 
-    Text text(
-        m_engine->assets().getFont("Arial"),
-        "Paused",
-        16,
-        w/2 - (text.getLocalBounds().width/2), 5.0f
-    );
+    m_pause_text.setPosition(w/2 - m_pause_text.getLocalBounds().width/2, 5.0f);
 
-    m_engine->window().draw(text);
+    m_engine->window().draw(m_pause_text);
     m_engine->window().setView(view); // Restore previous view
 }
 
