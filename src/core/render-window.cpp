@@ -9,6 +9,7 @@
 #include "../asset/color.hpp"
 #include "../asset/text.hpp"
 #include "../asset/sprite.hpp"
+#include "../asset/texture-rect.hpp"
 
 void RenderWindow::create(unsigned int w, unsigned int h, const std::string& title) {
     m_window.create(sf::VideoMode({w, h}), title);
@@ -51,6 +52,10 @@ void RenderWindow::draw(const Rectangle& rectangle) {
 
 void RenderWindow::draw(const Sprite& sprite) {
     m_window.draw(sprite.getSprite());
+}
+
+void RenderWindow::draw(const TextureRect& texture_rect) {
+    m_window.draw(texture_rect.getSprite());
 }
 
 void RenderWindow::draw(const Text& text) {

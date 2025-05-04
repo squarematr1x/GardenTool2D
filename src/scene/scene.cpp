@@ -260,9 +260,7 @@ void Scene::renderCommon(std::shared_ptr<Entity> player) {
                 sprite.setRotation(transform.angle);
                 sprite.setPosition(transform.pos.x, transform.pos.y);
                 sprite.setScale(transform.scale.x, transform.scale.y);
-                // TODO: Resolve this later
-                // m_engine->window().draw(sprite);
-                addVertexData(transform.pos, sprite.getTextureRect(), vertices);
+                m_engine->window().draw(sprite);
             } else {
                 addVertexData(transform.pos, sprite.getTextureRect(), vertices);
             }

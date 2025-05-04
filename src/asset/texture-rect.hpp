@@ -5,6 +5,7 @@
 #include "../core/rect.hpp"
 
 class Texture;
+class Vec2;
 struct Color;
 
 // Wrapper for sprite
@@ -23,6 +24,7 @@ public:
     void setRotation(float angle);
     void setPosition(float x, float y);
     void setScale(float scale_x, float scale_y);
+    void setSize(float x, float y);
     void scale(float scale_x, float scale_y);
 
     void setColor(const Color& color);

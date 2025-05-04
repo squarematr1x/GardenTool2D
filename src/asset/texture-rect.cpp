@@ -1,6 +1,7 @@
 #include "texture-rect.hpp"
 #include "texture.hpp"
 #include "color.hpp"
+#include "../math/vec2.hpp"
 
 TextureRect::TextureRect(const Texture& texture) {
     m_tex_rect.setTexture(texture.getTexturePtr());
@@ -40,6 +41,10 @@ void TextureRect::setScale(float scale_x, float scale_y) {
 
 void TextureRect::scale(float scale_x, float scale_y) {
     m_tex_rect.scale({scale_x, scale_y});
+}
+
+void TextureRect::setSize(float x, float y) {
+    m_tex_rect.setSize({x, y});
 }
 
 void TextureRect::setColor(const Color& color) {

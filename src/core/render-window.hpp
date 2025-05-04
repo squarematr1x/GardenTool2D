@@ -14,6 +14,7 @@ class Circle;
 class Rectangle;
 class Text;
 class Sprite;
+class TextureRect;
 struct Color;
 
 // Wrapper for window
@@ -37,6 +38,7 @@ public:
     void draw(const Rectangle& rectangle);
     void draw(const Text& text);
     void draw(const Sprite& sprite);
+    void draw(const TextureRect& texture_rect);   
 
     void display();
     void close();
