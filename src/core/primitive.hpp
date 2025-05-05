@@ -6,6 +6,5 @@ enum Primitive {
     LINESTRIP,
     TRIANGLE,
     TRIANGLESTRIP,
-    TRIANGLEFAN,
-    QUADS
+    TRIANGLEFAN
 };
