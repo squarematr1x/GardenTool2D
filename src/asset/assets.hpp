@@ -7,6 +7,7 @@
 #include "animation.hpp"
 #include "font.hpp"
 #include "texture.hpp"
+#include "sound-buffer.hpp"
 #include "sound.hpp"
 #include "music.hpp"
 #include "../layer.hpp"
@@ -16,6 +17,7 @@ class Assets {
 	std::map<std::string, Texture> m_texture_map;
 	std::map<std::string, Animation> m_animation_map;
 	std::map<std::string, Font> m_font_map;
+	std::map<std::string, SoundBuffer> m_sound_buffer_map;
 	std::map<std::string, Sound> m_sound_map;
 	std::map<std::string, std::shared_ptr<Music>> m_music_map;
 	std::map<std::string, Layer> m_layer_map;
@@ -34,7 +36,7 @@ public:
 	const Animation& getAnimation(const std::string& animation_name) const;
 	const std::map<std::string, Animation>& getAnimations() const;
 	const Font& getFont(const std::string& font_name) const;
-	Sound getSound(const std::string& sound_name) const;
+	Sound& getSound(const std::string& sound_name);
 	const std::shared_ptr<Music> getMusic(const std::string& music_name) const;
 	const Layer& getLayer(const std::string& layer_name) const;
 };

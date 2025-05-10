@@ -2,15 +2,14 @@
 
 #include <SFML/Audio.hpp>
 
+class SoundBuffer;
+
 // Wrapper for sound
 class Sound {
-    std::optional<sf::Sound> m_sound;
-    sf::SoundBuffer m_sound_buffer;
+    sf::Sound m_sound;
 
 public:
-    Sound() = default;
-
-    bool loadFromFile(const std::string& path);
+    Sound(const SoundBuffer& sound_buffer);
 
     void play();
 };

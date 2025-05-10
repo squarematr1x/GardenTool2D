@@ -110,17 +110,17 @@ const Font& Assets::getFont(const std::string& font_name) const {
 
 void Assets::addSound(const std::string& sound_name, const std::string& path) {
 	PROFILE_FUNCTION();
-	Sound sound;
-	if (!sound.loadFromFile(path)) {
+	m_sound_buffer_map[sound_name] = SoundBuffer();
+	if (!m_sound_buffer_map[sound_name].loadFromFile(path)) {
 		std::cerr << "Cannot load sound file: " << path << '\n';
-		m_sound_map.erase(sound_name);
+		m_sound_buffer_map.erase(sound_name);
 	} else {
+		m_sound_map.emplace(sound_name, Sound(m_sound_buffer_map.at(sound_name)));
 		std::cout << "Loaded Sound: " << path << '\n';
 	}
-	m_sound_map[sound_name] = sound;
 }
 
-Sound Assets::getSound(const std::string& sound_name) const {
+Sound& Assets::getSound(const std::string& sound_name) {
 	assert(m_sound_map.find(sound_name) != m_sound_map.end());
 	return m_sound_map.at(sound_name);
 }
