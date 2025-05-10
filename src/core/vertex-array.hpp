@@ -23,6 +23,7 @@ struct Vertex {
     }
 };
 
+// Wrapper for vertex array
 class VertexArray {
     sf::VertexArray m_vertex_array;
 

@@ -14,6 +14,7 @@ Animation::Animation(const std::string& name, const Texture& texture, size_t fra
 			static_cast<int>(m_size.x),
 			static_cast<int>(m_size.y)
 		);
+		m_sprite.setSize(size.x/frame_count, size.y);
 }
 
 void Animation::update() {

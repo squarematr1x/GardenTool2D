@@ -103,6 +103,7 @@ Tile Brick 81 1 1 1
 Tile Brick 82 1 1 1
 Tile Brick 83 1 1 1
 Tile Brick 84 1 1 1
+Tile GuyRun 5 5 0 0
 
 # Player: x, y, bboxw, bboxh, speed, max speed, jump speed, gravity, weapon animation name hp
 Player 64 2 64 64 5 5 25 2 Fire 4

@@ -7,10 +7,12 @@ void ParticleSystem::resetParticle(size_t index, bool first) {
     const auto mx = m_emitter.x;
     const auto my = m_emitter.y;
 
-    m_vertices.setPosAt(4*index + 0, Vec2(mx, my));
-    m_vertices.setPosAt(4*index + 1, Vec2(mx + m_size, my));
-    m_vertices.setPosAt(4*index + 2, Vec2(mx + m_size, my + m_size));
-    m_vertices.setPosAt(4*index + 3, Vec2(mx, my + m_size));
+    m_vertices.setPosAt(6*index + 0, Vec2(mx, my));
+    m_vertices.setPosAt(6*index + 1, Vec2(mx + m_size, my));
+    m_vertices.setPosAt(6*index + 2, Vec2(mx + m_size, my + m_size));
+    m_vertices.setPosAt(6*index + 3, Vec2(mx, my));
+    m_vertices.setPosAt(6*index + 4, Vec2(mx + m_size, my + m_size));
+    m_vertices.setPosAt(6*index + 5, Vec2(mx, my + m_size));
 
     // Set color
     Color color(
@@ -24,10 +26,12 @@ void ParticleSystem::resetParticle(size_t index, bool first) {
         color.setA(0);
     }
 
-    m_vertices.setColorAt(4*index + 0, color);
-    m_vertices.setColorAt(4*index + 1, color);
-    m_vertices.setColorAt(4*index + 2, color);
-    m_vertices.setColorAt(4*index + 3, color);
+    m_vertices.setColorAt(6*index + 0, color);
+    m_vertices.setColorAt(6*index + 1, color);
+    m_vertices.setColorAt(6*index + 2, color);
+    m_vertices.setColorAt(6*index + 3, color);
+    m_vertices.setColorAt(6*index + 4, color);
+    m_vertices.setColorAt(6*index + 5, color);
 
     // Set random velocity
     const auto rx = static_cast<float>(static_cast<float>(rand())/RAND_MAX)*10.0f - 5.0f;
@@ -41,7 +45,7 @@ void ParticleSystem::resetParticle(size_t index, bool first) {
 
 void ParticleSystem::resetParticles(size_t count, float size) {
     m_particles = std::vector<Particle>(count);
-    m_vertices = VertexArray(QUADS, count*4);
+    m_vertices = VertexArray(TRIANGLE, count*6);
     m_size = size;
 
     const auto particles_size = m_particles.size();
@@ -63,10 +67,12 @@ void ParticleSystem::update() {
             resetParticle(i);
         }
 
-        m_vertices.incPosAt(4*i + 0, m_particles[i].velocity);
-        m_vertices.incPosAt(4*i + 1, m_particles[i].velocity);
-        m_vertices.incPosAt(4*i + 2, m_particles[i].velocity);
-        m_vertices.incPosAt(4*i + 3, m_particles[i].velocity);
+        m_vertices.incPosAt(6*i + 0, m_particles[i].velocity);
+        m_vertices.incPosAt(6*i + 1, m_particles[i].velocity);
+        m_vertices.incPosAt(6*i + 2, m_particles[i].velocity);
+        m_vertices.incPosAt(6*i + 3, m_particles[i].velocity);
+        m_vertices.incPosAt(6*i + 4, m_particles[i].velocity);
+        m_vertices.incPosAt(6*i + 5, m_particles[i].velocity);
 
         m_particles[i].lifespan--;
     }

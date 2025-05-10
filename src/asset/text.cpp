@@ -4,27 +4,23 @@
 #include "color.hpp"
 #include "../math/vec2.hpp"
 
-Text::Text(const Font& font, const std::string& name, unsigned int char_size, Vec2 pos) {
-    m_text.setFont(font.getFont());
-    m_text.setString(name);
-    m_text.setCharacterSize(char_size);
-    m_text.setPosition(pos.x, pos.y);
+Text::Text(const Font& font, const std::string& name, unsigned int char_size, Vec2 pos)
+    : m_text(font.getFont(), name, char_size) {
+    m_text.setPosition({pos.x, pos.y});
 }
 
-Text::Text(const Font& font, const std::string& name, unsigned int char_size, float x, float y) {
-    m_text.setFont(font.getFont());
-    m_text.setString(name);
-    m_text.setCharacterSize(char_size);
-    m_text.setPosition(x, y);
+Text::Text(const Font& font, const std::string& name, unsigned int char_size, float x, float y)
+    : m_text(font.getFont(), name, char_size) {
+    m_text.setPosition({x, y});
 }
 
 const Rect<float> Text::getLocalBounds() {
     const auto local_bounds = m_text.getLocalBounds();
     const Rect<float> rectangle(
-        local_bounds.left,
-        local_bounds.top,
-        local_bounds.width,
-        local_bounds.height
+        local_bounds.position.x,
+        local_bounds.position.y,
+        local_bounds.size.x,
+        local_bounds.size.y
     );
     return rectangle;
 }
@@ -42,11 +38,11 @@ void Text::setCharacterSize(unsigned int char_size) {
 }
 
 void Text::setPosition(float x, float y) {
-    m_text.setPosition(x, y);
+    m_text.setPosition({x, y});
 }
 
 void Text::setOrigin(float x, float y) {
-    m_text.setOrigin(x, y);
+    m_text.setOrigin({x, y});
 }
 
 void Text::setFillColor(const Color& color) {

@@ -4,7 +4,7 @@
 
 #include "scene.hpp"
 #include "../engine.hpp"
-#include "../physics.hpp"
+#include "../collision/physics.hpp"
 #include "../math/random.hpp"
 #include "../pathfinding.hpp"
 #include "../util/timer.hpp"
@@ -406,7 +406,10 @@ void SceneRPG::sDoAction(const Action& action) {
 
                 const auto start = fitToGrid(m_player->getComponent<CTransform>().pos);
                 const auto goal = fitToGrid(worldPos());
+                // Timer t;
+                // t.start();
                 const auto path = path::getPath(start, goal, m_entity_manager);
+                // std::cout << "Total: " << t.elapsed() <<  " us\n";
                 if (path.size() > 0) {
                     m_player->addComponent<CPath>(path);
                 }
@@ -679,9 +682,9 @@ void SceneRPG::sAnimation() {
             }
 
             if (m_player->hasComponent<CInvincibility>()) {
-		        entity->getComponent<CAnimation>().animation.getSprite().setColor(Color(255, 128, 128, 128));
+		        entity->getComponent<CAnimation>().animation.getTextureRect().setColor(Color(255, 128, 128, 128));
 	        } else {
-                entity->getComponent<CAnimation>().animation.getSprite().setColor(Color(255, 255, 255));
+                entity->getComponent<CAnimation>().animation.getTextureRect().setColor(Color(255, 255, 255));
             }
         } else {
             entity->getComponent<CAnimation>().animation.update();

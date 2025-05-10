@@ -4,6 +4,7 @@
 
 using channel = unsigned char;
 
+// Wrapper for color
 struct Color {
     sf::Color m_color{ 255, 255, 255 , 255 };
 

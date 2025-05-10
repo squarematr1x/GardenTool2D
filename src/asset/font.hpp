@@ -2,8 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
+// Wrapper for font
 class Font {
-    // Wrapper for font
     sf::Font m_font;
 
 public:

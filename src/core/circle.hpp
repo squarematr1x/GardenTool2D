@@ -4,6 +4,7 @@
 
 struct Color;
 
+// Wrapper for circle
 class Circle {
     sf::CircleShape m_circle;
 

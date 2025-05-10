@@ -4,11 +4,13 @@
 
 class Vec2;
 
+// Wrapper for texture
 class Texture {
     sf::Texture m_texture;
 
 public:
     const sf::Texture& getTexture() const { return m_texture; }
+    const sf::Texture* getTexturePtr() const { return &m_texture; } 
 
     const Vec2 getSize() const;
 

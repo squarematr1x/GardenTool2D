@@ -3,7 +3,7 @@
 #include <queue>
 
 #include "ecs/entity-manager.hpp"
-#include "physics.hpp"
+#include "collision/physics.hpp"
 
 namespace path
 {

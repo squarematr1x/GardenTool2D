@@ -3,10 +3,7 @@
 #include "../math/vec2.hpp"
 
 View::View(float rect_left, float rect_top, float width, float height)
-    : m_view({
-        rect_left, rect_top, width, height
-    })
-{
+    : m_view(sf::FloatRect{{rect_left, rect_top}, {width, height}}) {
 }
 
 void View::setCenter(float x, float y) {

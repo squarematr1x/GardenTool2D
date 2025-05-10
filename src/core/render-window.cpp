@@ -9,9 +9,10 @@
 #include "../asset/color.hpp"
 #include "../asset/text.hpp"
 #include "../asset/sprite.hpp"
+#include "../asset/texture-rect.hpp"
 
 void RenderWindow::create(unsigned int w, unsigned int h, const std::string& title) {
-    m_window.create(sf::VideoMode(w, h), title);
+    m_window.create(sf::VideoMode({w, h}), title);
     m_view = View(m_window.getView());
 }
 
@@ -53,6 +54,10 @@ void RenderWindow::draw(const Sprite& sprite) {
     m_window.draw(sprite.getSprite());
 }
 
+void RenderWindow::draw(const TextureRect& texture_rect) {
+    m_window.draw(texture_rect.getSprite());
+}
+
 void RenderWindow::draw(const Text& text) {
     m_window.draw(text.getText());
 }
@@ -73,8 +78,8 @@ bool RenderWindow::isOpen() const {
     return m_window.isOpen();
 }
 
-bool RenderWindow::pollEvent(Event& event) {
-    return m_window.pollEvent(event.getEvent());
+std::optional<sf::Event> RenderWindow::pollEvent() {
+    return m_window.pollEvent();
 }
 
 unsigned int RenderWindow::width() const {

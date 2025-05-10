@@ -92,7 +92,11 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                     if (ImGui::TreeNode("Animation")) {
                         if (e->hasComponent<CAnimation>()) {
                             auto anims = engine->assets().getAnimations();
-                            const char* animations[anims.size()];
+                            constexpr auto len = 45;
+                            if (len != anims.size()) {
+                                return;
+                            }
+                            const char* animations[len];
                             const auto anim_name = e->getComponent<CAnimation>().animation.getName();
                             static auto cur_index = 1;
                             auto i = 0;

@@ -8,12 +8,11 @@ class Font;
 class Vec2;
 struct Color;
 
+// Wrapper for text
 class Text {
-    // Wrapper for text
     sf::Text m_text;
 
 public:
-    Text() = default;
     Text(const Font& font, const std::string& name, unsigned int char_size, Vec2 pos);
     Text(const Font& font, const std::string& name, unsigned int char_size, float x, float y);
 

@@ -5,16 +5,18 @@
 #include "../core/rect.hpp"
 
 class Texture;
+class Vec2;
 struct Color;
 
 // Wrapper for sprite
-class Sprite {
-    sf::Sprite m_sprite;
+class TextureRect {
+    sf::RectangleShape m_tex_rect;
 
 public:
-    Sprite(const Texture& texture);
+    TextureRect() = default;
+    TextureRect(const Texture& texture);
 
-    const sf::Sprite& getSprite() const { return m_sprite; }
+    const sf::RectangleShape& getSprite() const { return m_tex_rect; }
     const Rect<float> getTextureRect() const;
 
     void setOrigin(float x, float y);
@@ -22,6 +24,7 @@ public:
     void setRotation(float angle);
     void setPosition(float x, float y);
     void setScale(float scale_x, float scale_y);
+    void setSize(float x, float y);
     void scale(float scale_x, float scale_y);
 
     void setColor(const Color& color);

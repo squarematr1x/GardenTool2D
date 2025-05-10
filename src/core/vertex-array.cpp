@@ -8,7 +8,10 @@ VertexArray::VertexArray(Primitive primitive, size_t vertex_count)
 }
 
 void VertexArray::append(const Vec2& pos, const Vec2& tex_coord) {
-    m_vertex_array.append({{pos.x, pos.y}, {tex_coord.x, tex_coord.y}});
+    sf::Vertex vertex;
+    vertex.position = { pos.x, pos.y };
+    vertex.texCoords = {tex_coord.x, tex_coord.y};
+    m_vertex_array.append(vertex);
 }
 
 void VertexArray::append(const Vec2& pos, const Vec2& tex_coord, const Color& color) {

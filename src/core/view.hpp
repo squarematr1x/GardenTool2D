@@ -4,8 +4,8 @@
 
 class Vec2;
 
+// Wrapper for view
 class View {
-    // Wrapper for view
     sf::View m_view;
 
 public:

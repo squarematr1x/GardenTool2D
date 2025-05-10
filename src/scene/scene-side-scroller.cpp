@@ -4,7 +4,7 @@
 
 #include "scene.hpp"
 #include "../engine.hpp"
-#include "../physics.hpp"
+#include "../collision/physics.hpp"
 #include "../core/key.hpp"
 #include "../core/mouse.hpp"
 
@@ -32,9 +32,6 @@ void SceneSideScroller::init(const std::string& level_path) {
     registerAction(mouse::Button::Middle, ActionName::MIDDLE_CLICK);
     registerAction(mouse::Button::Right, ActionName::RIGHT_CLICK);
     registerAction(mouse::Wheel::VerticalWheel, ActionName::MOUSE_SCROLL);
-
-    m_grid_text.setCharacterSize(12);
-    m_grid_text.setFont(m_engine->assets().getFont("Arial")); 
 
     loadLevel(level_path);
 
@@ -595,9 +592,9 @@ void SceneSideScroller::sAnimation() {
             p_state.prev_state = p_state.state;
 
             if (entity->hasComponent<CInvincibility>()) {
-		        entity->getComponent<CAnimation>().animation.getSprite().setColor(Color(255, 128, 128, 128));
+		        entity->getComponent<CAnimation>().animation.getTextureRect().setColor(Color(255, 128, 128, 128));
 	        } else {
-                entity->getComponent<CAnimation>().animation.getSprite().setColor(Color(255, 255, 255));
+                entity->getComponent<CAnimation>().animation.getTextureRect().setColor(Color(255, 255, 255));
             }
         }
     }
@@ -619,7 +616,7 @@ void SceneSideScroller::sCamera() {
 }
 
 void SceneSideScroller::sRender() {
-    m_engine->window().clear(Color(236, 115, 22));
+    m_engine->window().clear(Color(6, 154, 243));
 
     // Draw backgrounds
     auto view = m_engine->window().getView();

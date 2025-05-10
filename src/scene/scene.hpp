@@ -113,6 +113,7 @@ protected:
 	Vec2 m_selected_cell{ 0, 0 };
 	const Vec2 m_grid_cell_size{ 64, 64 };
 	Text m_grid_text;
+	Text m_pause_text;
 
 	std::vector<Layer> m_background_layers;
 
@@ -128,7 +129,6 @@ class SceneMenu: public Scene {
 	std::vector<std::string> m_level_paths;
 	Text m_menu_text;
 	size_t m_menu_index{ 0 }; // selected menu item
-	unsigned int m_font_size{ 20 };
 	ParticleSystem m_particles;
 
 public:

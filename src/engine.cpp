@@ -79,25 +79,24 @@ void GameEngine::run() {
 	m_window.close();
  }
 
+ // TODO: Re-wrap sfml functionalities use here
 void GameEngine::sUserInput() {
-	Event event;
-
-	while (m_window.pollEvent(event)) {
-		m_editor.processEvent(m_window.getWindow(), event.getEvent());
+	while (const auto event = m_window.pollEvent()) {
+		m_editor.processEvent(m_window.getWindow(), *event);
 		if (m_editor.windowActive()) {
 			break;
 		}
 
-		if (event.getType() == Event::Closed) {
+		if (event->is<sf::Event::Closed>()) {
 			quit();
 		}
 
-		if (event.getType() == Event::Resized) {
-			m_window.setView(View(0, 0, event.getWidth(), event.getHeight()));
+		if (const auto resize = event->getIf<sf::Event::Resized>()) {
+			m_window.setView(View(0, 0, resize->size.x, resize->size.y));
 		}
 
-		if (event.getType() == Event::KeyPressed) {
-			if (event.getKeyCode() == F12) {
+		if (const auto key = event->getIf<sf::Event::KeyPressed>()) {
+			if (key->code == sf::Keyboard::Key::F12) {
 				Texture texture;
 				if (texture.create(m_window.getSize().x, m_window.getSize().y)) {
 					texture.update(m_window.getWindow());
@@ -112,48 +111,51 @@ void GameEngine::sUserInput() {
 						std::cout << "Screenshot saved to " << screenshot_path;
 					}
 				}
+			} else {
+				// if the current scene does not have an action associated with this key, skip the event
+				if (currentScene()->getActionMap().find(static_cast<int>(key->code)) == currentScene()->getActionMap().end()) {
+					continue;
+				}
+				// look up the action and send the action to the scene
+				currentScene()->sDoAction(Action(currentScene()->getActionMap().at(static_cast<int>(key->code)), ActionType::START));
 			}
 		}
 
 		// New action based handling
-		if (event.getType() == Event::KeyPressed || event.getType() == Event::KeyReleased) {
+		if (const auto key = event->getIf<sf::Event::KeyReleased>()) {
 			// if the current scene does not have an action associated with this key, skip the event
-			if (currentScene()->getActionMap().find(event.getKeyCode()) == currentScene()->getActionMap().end()) {
+			if (currentScene()->getActionMap().find(static_cast<int>(key->code)) == currentScene()->getActionMap().end()) {
 				continue;
 			}
-
-			// determine start or end action by whether it was press or realease
-			const auto action_type = (event.getType() == Event::KeyPressed) ? ActionType::START : ActionType::END;
-
 			// look up the action and send the action to the scene
-			currentScene()->sDoAction(Action(currentScene()->getActionMap().at(event.getKeyCode()), action_type));
+			currentScene()->sDoAction(Action(currentScene()->getActionMap().at(static_cast<int>(key->code)), ActionType::END));
 		}
 
 		const auto pos = mouse::getPosition(m_window);
 
-		if (event.getType() == Event::MouseButtonPressed) {
-			switch (event.getMouseButton()) {
-				case mouse::Left: { currentScene()->sDoAction(Action(ActionName::LEFT_CLICK, ActionType::START, pos)); break; }
-				case mouse::Middle: { currentScene()->sDoAction(Action(ActionName::MIDDLE_CLICK, ActionType::START, pos)); break; }
-				case mouse::Right: { currentScene()->sDoAction(Action(ActionName::RIGHT_CLICK, ActionType::START, pos)); break; }
+		if (const auto button = event->getIf<sf::Event::MouseButtonPressed>()) {
+			switch (button->button) {
+				case sf::Mouse::Button::Left: { currentScene()->sDoAction(Action(ActionName::LEFT_CLICK, ActionType::START, pos)); break; }
+				case sf::Mouse::Button::Middle: { currentScene()->sDoAction(Action(ActionName::MIDDLE_CLICK, ActionType::START, pos)); break; }
+				case sf::Mouse::Button::Right: { currentScene()->sDoAction(Action(ActionName::RIGHT_CLICK, ActionType::START, pos)); break; }
 				default: break;
 			}
 		}
-		if (event.getType() == Event::MouseButtonReleased) {
-			switch (event.getMouseButton()) {
-				case mouse::Left: { currentScene()->sDoAction(Action(ActionName::LEFT_CLICK, ActionType::END, pos)); break; }
-				case mouse::Middle: { currentScene()->sDoAction(Action(ActionName::MIDDLE_CLICK, ActionType::END, pos)); break; }
-				case mouse::Right: { currentScene()->sDoAction(Action(ActionName::RIGHT_CLICK, ActionType::END, pos)); break; }
+		if (const auto button = event->getIf<sf::Event::MouseButtonReleased>()) {
+			switch (button->button) {
+				case sf::Mouse::Button::Left: { currentScene()->sDoAction(Action(ActionName::LEFT_CLICK, ActionType::END, pos)); break; }
+				case sf::Mouse::Button::Middle: { currentScene()->sDoAction(Action(ActionName::MIDDLE_CLICK, ActionType::END, pos)); break; }
+				case sf::Mouse::Button::Right: { currentScene()->sDoAction(Action(ActionName::RIGHT_CLICK, ActionType::END, pos)); break; }
 				default: break;
 			}
 		}
-		if (event.getType() == Event::MouseMoved) {
+		if (event->is<sf::Event::MouseMoved>()) {
 			currentScene()->sDoAction(Action(ActionName::MOUSE_MOVE, ActionType::START, pos));
 		}
-		if (event.getType() == Event::MouseWheelScrolled) {
-			if (event.getMouseWheelScrollWheel() == mouse::VerticalWheel) {
-				if (event.getMouseWheelScrollDelta() != 0.0f) {
-					currentScene()->sDoAction(Action(ActionName::MOUSE_SCROLL, ActionType::START, event.getMouseWheelScrollDelta()));
+		if (event->is<sf::Event::MouseWheelScrolled>()) {
+			if (const auto wheel = event->getIf<sf::Event::MouseWheelScrolled>()) {
+				if (wheel->wheel == sf::Mouse::Wheel::Vertical && wheel->delta != 0.0f) {
+					currentScene()->sDoAction(Action(ActionName::MOUSE_SCROLL, ActionType::START, wheel->delta));
 				}
 			}
 		}
