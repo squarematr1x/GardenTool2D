@@ -125,13 +125,15 @@ void Scene::renderActiveGridCell() {
 }
 
 void Scene::renderSelectedGridCell() {
-    auto grid_pos = fitToGrid(m_selected_cell, false);
-    Rectangle active_cell;
-    active_cell.setFillColor(Color(196, 196, 255, 156));
-    active_cell.setPosition(grid_pos.x, grid_pos.y);
-    active_cell.setSize(m_grid_cell_size.x, m_grid_cell_size.y);
+    for (const auto& pos : m_engine->allSelectedPos()) {
+        const auto adjusted_pos = fitToGrid(pos, false);
+        Rectangle active_cell;
+        active_cell.setFillColor(Color(196, 196, 255, 156));
+        active_cell.setPosition(adjusted_pos.x, adjusted_pos.y);
+        active_cell.setSize(m_grid_cell_size.x, m_grid_cell_size.y);
 
-    m_engine->window().draw(active_cell);
+        m_engine->window().draw(active_cell);
+    }
 }
 
 void Scene::renderBBoxes() {

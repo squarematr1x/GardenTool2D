@@ -32,6 +32,7 @@ void SceneSideScroller::init(const std::string& level_path) {
     registerAction(mouse::Button::Middle, ActionName::MIDDLE_CLICK);
     registerAction(mouse::Button::Right, ActionName::RIGHT_CLICK);
     registerAction(mouse::Wheel::VerticalWheel, ActionName::MOUSE_SCROLL);
+    registerAction(LSystem, ActionName::L_SYSTEM);
 
     loadLevel(level_path);
 
@@ -499,6 +500,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::MOUSE_MOVE: m_mouse_pos = action.pos; m_mouse_shape.setPosition(m_mouse_pos.x, m_mouse_pos.y); break;
             case ActionName::MOUSE_SCROLL: updateZoom(action.delta); break;
             case ActionName::MIDDLE_CLICK: break;
+            case ActionName::L_SYSTEM: { m_system_key_pressed = true; break; }
             case ActionName::RIGHT_CLICK: {
                 if (!m_engine->editMode()) {
                     break;
@@ -518,8 +520,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
                 }
 
                 const auto world_pos = worldPos();
-                m_selected_cell = fitToGrid(world_pos);
-                m_engine->setSelectedPos(m_selected_cell);
+                m_engine->pushSelectedPos(fitToGrid(world_pos), !m_system_key_pressed);
                 for (auto e : m_entity_manager.getEntities()) {
                     if (physics::isInside(world_pos, e)) {
                         m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity
@@ -545,6 +546,7 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::LEFT: m_player->getComponent<CInput>().left = false; break;
             case ActionName::UP: m_player->getComponent<CInput>().up = false; break;
             case ActionName::SHOOT: m_player->getComponent<CInput>().attack = false; break;
+            case ActionName::L_SYSTEM: { m_system_key_pressed = false; break; }
             case ActionName::LEFT_CLICK: {
                 if (m_engine->editMode()) {
                     auto world_pos = worldPos();

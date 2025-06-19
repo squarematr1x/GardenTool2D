@@ -105,12 +105,12 @@ protected:
 	bool m_draw_grid{ false };
 	bool m_show_ai_info{ false };
 	bool m_show_hp{ true };
+	bool m_system_key_pressed{ false };
 
 	std::string m_level_path{ "" };
 
 	Vec2 m_mouse_pos;
 	Vec2 m_grid_size{ 0, 0 };
-	Vec2 m_selected_cell{ 0, 0 };
 	const Vec2 m_grid_cell_size{ 64, 64 };
 	Text m_grid_text;
 	Text m_pause_text;

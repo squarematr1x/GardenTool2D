@@ -202,6 +202,20 @@ void GameEngine::stopMusic(const std::string& music_name) {
 	m_assets.getMusic(music_name)->stop();
 }
 
+void GameEngine::pushSelectedPos(const Vec2& cell, bool reset) {
+	if (reset) {
+		m_selected_pos.clear();
+		m_selected_pos.push_back(cell);
+	} else if (find(m_selected_pos.begin(), m_selected_pos.end(), cell) == m_selected_pos.end()) {
+		m_selected_pos.push_back(cell);
+	}
+}
+
+void GameEngine::popSelectedPos(const Vec2& cell) {
+	m_selected_pos.erase(std::remove_if(m_selected_pos.begin(), m_selected_pos.end(),
+		[&](Vec2 pos) { return pos == cell; }), m_selected_pos.end());
+}
+
 // TODO: methods below could be used directly trough Scene
 const std::string& GameEngine::currentLevelPath() {
 	return currentScene()->levelPath();

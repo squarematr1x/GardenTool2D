@@ -30,7 +30,8 @@ enum class ActionName : unsigned char {
 	MIDDLE_CLICK,
 	RIGHT_CLICK,
 	MOUSE_MOVE,
-	MOUSE_SCROLL
+	MOUSE_SCROLL,
+	L_SYSTEM
 };
 
 struct Action {
