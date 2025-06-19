@@ -32,7 +32,6 @@ class GameEngine {
 	Assets m_assets;
 	Editor m_editor;
 
-	size_t m_selected_entity_id;
 	std::vector<size_t> m_selected_entity_ids;
 	std::vector<Vec2> m_selected_pos{ {0, 0} };
 
@@ -43,6 +42,7 @@ class GameEngine {
 	void sUserInput();
 
 	void popSelectedPos(const Vec2& cell);
+	void popSelectedEntityId(size_t id);
 
 	std::shared_ptr<Scene> currentScene() { return m_scenes[m_cur_scene]; }
 
@@ -60,8 +60,8 @@ public:
 	void toggleSound() { m_enable_sound = !m_enable_sound; }
 	void toggleMusic() { m_enable_music = !m_enable_music; }
 	void toggleEditMode();
-	void setSelectedEntityId(size_t id) { m_selected_entity_id = id; }
 	void pushSelectedPos(const Vec2& cell, bool reset=false);
+	void pushSelectedEntityId(size_t id, bool reset=false);
 
 	RenderWindow& window() { return m_window; };
 	const Assets& assets() const { return m_assets; };

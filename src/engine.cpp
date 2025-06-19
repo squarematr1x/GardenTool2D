@@ -218,6 +218,22 @@ void GameEngine::popSelectedPos(const Vec2& cell) {
 		[&](Vec2 pos) { return pos == cell; }), m_selected_pos.end());
 }
 
+void GameEngine::pushSelectedEntityId(size_t id, bool reset) {
+	if (reset) {
+		m_selected_entity_ids.clear();
+		m_selected_entity_ids.push_back(id);
+	} else if (find(m_selected_entity_ids.begin(), m_selected_entity_ids.end(), id) == m_selected_entity_ids.end()) {
+		m_selected_entity_ids.push_back(id);
+	} else if (m_selected_entity_ids.size() > 1) {
+		popSelectedEntityId(id);
+	}
+}
+
+void GameEngine::popSelectedEntityId(size_t id) {
+	m_selected_entity_ids.erase(std::remove_if(m_selected_entity_ids.begin(), m_selected_entity_ids.end(),
+		[&](size_t selected_id) { return selected_id == id; }), m_selected_entity_ids.end());
+}
+
 // TODO: methods below could be used directly trough Scene
 const std::string& GameEngine::currentLevelPath() {
 	return currentScene()->levelPath();

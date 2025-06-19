@@ -379,7 +379,7 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::DOWN: m_player->getComponent<CInput>().down = true; break;
             case ActionName::LEFT: m_player->getComponent<CInput>().left = true; break;
             case ActionName::ATTACK: m_player->getComponent<CInput>().attack = true; break;
-            case ActionName::L_SYSTEM: { m_system_key_pressed = true; break; }
+            case ActionName::L_SYSTEM: m_system_key_pressed = true; break;
             case ActionName::TOGGLE_LEVEL_EDITOR: {
                 m_engine->toggleEditMode();
                 m_paused = m_engine->editMode();
@@ -394,10 +394,11 @@ void SceneRPG::sDoAction(const Action& action) {
                 m_engine->pushSelectedPos(fitToGrid(world_pos), !m_system_key_pressed);
                 for (auto e : m_entity_manager.getEntities()) {
                     if (physics::isInside(world_pos, e)) {
-                        m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity
+                        m_engine->pushSelectedEntityId(e->id(), !m_system_key_pressed);
                         if (e->hasComponent<CDraggable>()) {
                             e->getComponent<CDraggable>().dragged = true;
                         }
+                        break;
                     }
                 }
                 break;

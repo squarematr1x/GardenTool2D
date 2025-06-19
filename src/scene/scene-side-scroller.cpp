@@ -523,11 +523,11 @@ void SceneSideScroller::sDoAction(const Action& action) {
                 m_engine->pushSelectedPos(fitToGrid(world_pos), !m_system_key_pressed);
                 for (auto e : m_entity_manager.getEntities()) {
                     if (physics::isInside(world_pos, e)) {
-                        m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity
-
+                        m_engine->pushSelectedEntityId(e->id(), !m_system_key_pressed);
                         if (e->hasComponent<CDraggable>()) {
                             e->getComponent<CDraggable>().dragged = true;
                         }
+                        break;
                     }
                 }
                 break;
@@ -546,11 +546,10 @@ void SceneSideScroller::sDoAction(const Action& action) {
             case ActionName::LEFT: m_player->getComponent<CInput>().left = false; break;
             case ActionName::UP: m_player->getComponent<CInput>().up = false; break;
             case ActionName::SHOOT: m_player->getComponent<CInput>().attack = false; break;
-            case ActionName::L_SYSTEM: { m_system_key_pressed = false; break; }
+            case ActionName::L_SYSTEM: m_system_key_pressed = false; break;
             case ActionName::LEFT_CLICK: {
                 if (m_engine->editMode()) {
                     auto world_pos = worldPos();
-
                     for (auto e : m_entity_manager.getEntities()) {
                         if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
                             e->getComponent<CDraggable>().dragged = false;

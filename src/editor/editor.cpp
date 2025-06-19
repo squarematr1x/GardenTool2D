@@ -269,11 +269,14 @@ void Editor::processEvent(const sf::RenderWindow& window, const sf::Event& event
 }
 
 void Editor::addEntity(EntityManager& entity_manager, GameEngine* engine) {
-    auto tile = entity_manager.addEntity(Tag::TILE);
-    tile->addComponent<CAnimation>(engine->assets().getAnimation(m_previous_animation), true);
-    tile->addComponent<CTransform>(engine->selectedPos());
-    tile->addComponent<CDraggable>();
-    engine->setSelectedEntityId(tile->id());
+    const auto selected_cells = engine->allSelectedPos();
+    for (const auto& cell : selected_cells) {
+        auto tile = entity_manager.addEntity(Tag::TILE);
+        tile->addComponent<CAnimation>(engine->assets().getAnimation(m_previous_animation), true);
+        tile->addComponent<CTransform>(cell);
+        tile->addComponent<CDraggable>();
+        engine->pushSelectedEntityId(tile->id());
+    }
 
     m_previously_created = true;
 }
