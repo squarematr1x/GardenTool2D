@@ -42,6 +42,8 @@ class GameEngine {
 
 	void sUserInput();
 
+	void popSelectedPos(const Vec2& cell);
+
 	std::shared_ptr<Scene> currentScene() { return m_scenes[m_cur_scene]; }
 
 public:
@@ -60,7 +62,6 @@ public:
 	void toggleEditMode();
 	void setSelectedEntityId(size_t id) { m_selected_entity_id = id; }
 	void pushSelectedPos(const Vec2& cell, bool reset=false);
-	void popSelectedPos(const Vec2& cell);
 
 	RenderWindow& window() { return m_window; };
 	const Assets& assets() const { return m_assets; };

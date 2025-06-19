@@ -208,6 +208,8 @@ void GameEngine::pushSelectedPos(const Vec2& cell, bool reset) {
 		m_selected_pos.push_back(cell);
 	} else if (find(m_selected_pos.begin(), m_selected_pos.end(), cell) == m_selected_pos.end()) {
 		m_selected_pos.push_back(cell);
+	} else if (m_selected_pos.size() > 1) {
+		popSelectedPos(cell);
 	}
 }
 
