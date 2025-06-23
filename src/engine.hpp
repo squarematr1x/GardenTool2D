@@ -32,14 +32,17 @@ class GameEngine {
 	Assets m_assets;
 	Editor m_editor;
 
-	size_t m_selected_entity_id;
-	Vec2 m_selected_pos{ 0, 0 };
+	std::vector<size_t> m_selected_entity_ids;
+	std::vector<Vec2> m_selected_pos{ {0, 0} };
 
 	void init(const std::string& config);
 	void setPaused(bool paused);
 	void update();
 
 	void sUserInput();
+
+	void popSelectedPos(const Vec2& cell);
+	void popSelectedEntityId(size_t id);
 
 	std::shared_ptr<Scene> currentScene() { return m_scenes[m_cur_scene]; }
 
@@ -57,13 +60,15 @@ public:
 	void toggleSound() { m_enable_sound = !m_enable_sound; }
 	void toggleMusic() { m_enable_music = !m_enable_music; }
 	void toggleEditMode();
-	void setSelectedEntityId(size_t id) { m_selected_entity_id = id; }
-	void setSelectedPos(const Vec2& cell) { m_selected_pos = cell; }
+	void pushSelectedPos(const Vec2& cell, bool reset=false);
+	void pushSelectedEntityId(size_t id, bool reset=false);
 
 	RenderWindow& window() { return m_window; };
 	const Assets& assets() const { return m_assets; };
-	size_t selectedEntityId() const { return m_selected_entity_id; }
-	const Vec2& selectedPos() const { return m_selected_pos; }
+	size_t selectedEntityId() const { return m_selected_entity_ids.back(); }
+	const Vec2& selectedPos() const { return m_selected_pos.back(); }
+	const std::vector<size_t>& allSelectedEntityIds() const { return m_selected_entity_ids; }
+	const std::vector<Vec2>& allSelectedPos() const { return m_selected_pos; }
 	const Vec2 toGridPos(const Vec2& pos);
 	const PlayerConfig& getPlayerConfig();
 	bool editMode() const { return m_edit_mode; };

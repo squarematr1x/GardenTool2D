@@ -27,6 +27,7 @@ void SceneRPG::init(const std::string& level_path) {
     registerAction(H, ActionName::TOGGLE_HEALTH);
     registerAction(Q, ActionName::TOGGLE_AI_INFO);
     registerAction(Tab, ActionName::TOGGLE_LEVEL_EDITOR);
+    registerAction(LSystem, ActionName::L_SYSTEM);
 
     registerAction(Space, ActionName::ATTACK);
     registerAction(Up, ActionName::UP);
@@ -378,6 +379,7 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::DOWN: m_player->getComponent<CInput>().down = true; break;
             case ActionName::LEFT: m_player->getComponent<CInput>().left = true; break;
             case ActionName::ATTACK: m_player->getComponent<CInput>().attack = true; break;
+            case ActionName::L_SYSTEM: m_system_key_pressed = true; break;
             case ActionName::TOGGLE_LEVEL_EDITOR: {
                 m_engine->toggleEditMode();
                 m_paused = m_engine->editMode();
@@ -388,15 +390,15 @@ void SceneRPG::sDoAction(const Action& action) {
                     break;
                 }
 
+                const auto world_pos = worldPos();
+                m_engine->pushSelectedPos(fitToGrid(world_pos), !m_system_key_pressed);
                 for (auto e : m_entity_manager.getEntities()) {
-                    const auto world_pos = worldPos();
-                    m_selected_cell = fitToGrid(world_pos);
-                    m_engine->setSelectedPos(m_selected_cell);
                     if (physics::isInside(world_pos, e)) {
-                        m_engine->setSelectedEntityId(e->id()); // Popup UI for the selected entity
+                        m_engine->pushSelectedEntityId(e->id(), !m_system_key_pressed);
                         if (e->hasComponent<CDraggable>()) {
                             e->getComponent<CDraggable>().dragged = true;
                         }
+                        break;
                     }
                 }
                 break;
@@ -415,7 +417,6 @@ void SceneRPG::sDoAction(const Action& action) {
                 }
                 break;
             }
-            
             default: break;
         }
     } else if (action.getType() == ActionType::END) {
@@ -425,6 +426,7 @@ void SceneRPG::sDoAction(const Action& action) {
             case ActionName::RIGHT: m_player->getComponent<CInput>().right = false; break;
             case ActionName::LEFT: m_player->getComponent<CInput>().left = false; break;
             case ActionName::ATTACK: m_player->getComponent<CInput>().attack = false; break;
+            case ActionName::L_SYSTEM: { m_system_key_pressed = false; break; }
             case ActionName::LEFT_CLICK: {
                 if (m_engine->editMode()) {
                     const auto world_pos = worldPos();

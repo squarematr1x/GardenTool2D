@@ -202,6 +202,38 @@ void GameEngine::stopMusic(const std::string& music_name) {
 	m_assets.getMusic(music_name)->stop();
 }
 
+void GameEngine::pushSelectedPos(const Vec2& cell, bool reset) {
+	if (reset) {
+		m_selected_pos.clear();
+		m_selected_pos.push_back(cell);
+	} else if (find(m_selected_pos.begin(), m_selected_pos.end(), cell) == m_selected_pos.end()) {
+		m_selected_pos.push_back(cell);
+	} else if (m_selected_pos.size() > 1) {
+		popSelectedPos(cell);
+	}
+}
+
+void GameEngine::popSelectedPos(const Vec2& cell) {
+	m_selected_pos.erase(std::remove_if(m_selected_pos.begin(), m_selected_pos.end(),
+		[&](Vec2 pos) { return pos == cell; }), m_selected_pos.end());
+}
+
+void GameEngine::pushSelectedEntityId(size_t id, bool reset) {
+	if (reset) {
+		m_selected_entity_ids.clear();
+		m_selected_entity_ids.push_back(id);
+	} else if (find(m_selected_entity_ids.begin(), m_selected_entity_ids.end(), id) == m_selected_entity_ids.end()) {
+		m_selected_entity_ids.push_back(id);
+	} else if (m_selected_entity_ids.size() > 1) {
+		popSelectedEntityId(id);
+	}
+}
+
+void GameEngine::popSelectedEntityId(size_t id) {
+	m_selected_entity_ids.erase(std::remove_if(m_selected_entity_ids.begin(), m_selected_entity_ids.end(),
+		[&](size_t selected_id) { return selected_id == id; }), m_selected_entity_ids.end());
+}
+
 // TODO: methods below could be used directly trough Scene
 const std::string& GameEngine::currentLevelPath() {
 	return currentScene()->levelPath();
