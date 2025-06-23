@@ -11,6 +11,7 @@ struct PlayerConfig;
 class EntityManager;
 class GameEngine;
 
+// NOTE: Editor is only a dev tool, thus never seen/used by the end user
 class Editor {
     const char* m_types[6] = {
         "TILE",

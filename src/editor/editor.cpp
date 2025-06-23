@@ -20,7 +20,7 @@ void Editor::init(sf::RenderWindow& window) {
     }
 }
 
-// NOTE: this function is rather messy, but ImGui in general seems to result in messy code
+// NOTE: this function is rather messy, but immediate GUI in general seems to result in messy code
 void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, GameEngine* engine) {
     ImGui::SFML::Update(window, m_dt.restart());
     ImGui::Begin("Editor");
@@ -28,6 +28,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
     //  ImGui::ShowDemoWindow();
     
     if (ImGui::BeginTabBar("EditTabBar", 0)) {
+        // Add entities
         if (ImGui::BeginTabItem("Add")) {
             ImGui::SeparatorText("Add New Entity");
             auto pos = engine->selectedPos();
@@ -42,6 +43,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
             }
             ImGui::EndTabItem();
         }
+        // Edit entities
         if (ImGui::BeginTabItem("Edit", (bool *)__null, editTabFlag())) {
             size_t e_id = engine->selectedEntityId();
             if (e_id) {
@@ -82,10 +84,21 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                             ImGui::Checkbox("Block movement", &bbox.block_movement);
                             ImGui::SameLine();
                             ImGui::Checkbox("Block vision", &bbox.block_vision);
-                            bbox.half_size.x = bbox.size.x/2;
-                            bbox.half_size.y = bbox.size.y/2;
+                            for (const auto& id : engine->allSelectedEntityIds()) {
+                                auto entity = entity_manager.getEntity(id);
+                                if (entity != nullptr && entity->tag() == Tag::TILE) {
+                                    // Add bounding box for multiple tiles at once
+                                    entity->addComponent<CBBox>(Vec2(bbox.size.x, bbox.size.y), bbox.block_movement, bbox.block_vision);
+                                }
+                            }
                         } else if (ImGui::Button("Add bounding box")) {
-                            e->addComponent<CBBox>(Vec2(64, 64));
+                            for (const auto& id : engine->allSelectedEntityIds()) {
+                                auto entity = entity_manager.getEntity(id);
+                                if (entity != nullptr && entity->tag() == Tag::TILE) {
+                                    // Add bounding box for multiple tiles at once
+                                    entity->addComponent<CBBox>(Vec2(64, 64), true, true);
+                                }
+                            }
                         }
                         ImGui::TreePop();
                     }
@@ -112,7 +125,13 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                             auto prev_index = cur_index;
                             ImGui::ListBox("Animations", &cur_index, animations, IM_ARRAYSIZE(animations), 6);
                             if (prev_index != cur_index) {
-                                e->addComponent<CAnimation>(engine->assets().getAnimation(animations[cur_index]), true);
+                                for (const auto& id : engine->allSelectedEntityIds()) {
+                                    auto entity = entity_manager.getEntity(id);
+                                    if (entity != nullptr && entity->tag() == Tag::TILE) {
+                                        // Add animation for multiple entities at once
+                                        entity->addComponent<CAnimation>(engine->assets().getAnimation(animations[cur_index]), true);
+                                    }
+                                }
                                 m_previous_animation = animations[cur_index];
                             }
                         }
