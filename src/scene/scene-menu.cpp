@@ -1,10 +1,12 @@
 #include "scene.hpp"
 
 #include <filesystem>
+#include <regex>
 
 #include "../engine.hpp"
 #include "../core/event.hpp"
 #include "../core/key.hpp"
+#include "../util/file.hpp"
 
 SceneMenu::SceneMenu(GameEngine* engine)
     : Scene(engine),
@@ -26,14 +28,7 @@ void SceneMenu::init() {
 
     m_particles.init(m_engine->window().getSize());
 
-    const auto path = "config/levels/";
-    for (const auto & entry : std::filesystem::directory_iterator(path)) {
-        m_level_paths.push_back(entry.path());
-        m_menu_strings.push_back(entry.path());
-    }
-
-    std::sort(std::begin(m_level_paths), std::end(m_level_paths));
-    std::sort(std::begin(m_menu_strings), std::end(m_menu_strings));
+    initMenuItems();
 }
 
 void SceneMenu::update() {
@@ -64,6 +59,12 @@ void SceneMenu::sDoAction(const Action& action) {
             m_engine->changeScene(SceneType::SIDE_SCROLL, std::make_shared<SceneSideScroller>(m_engine, file_name));
         } else if (extension == ".rpg.lvl") {
             m_engine->changeScene(SceneType::TOP_DOWN_RPG, std::make_shared<SceneRPG>(m_engine, file_name));
+        } else if (m_menu_index == m_menu_strings.size() - 2) {
+            files::createLevel("level" + std::to_string(m_menu_index + 1), files::LevelType::SIDE_SCROLLER);
+            initMenuItems();
+        } else if (m_menu_index == m_menu_strings.size() - 1) {
+            files::createLevel("level" + std::to_string(m_menu_index + 1), files::LevelType::TOPDOWN_RPG);
+            initMenuItems();
         }
     } else if (action.getName() == ActionName::QUIT) {
         onEnd();
@@ -78,8 +79,6 @@ void SceneMenu::sRender() {
     auto offset = 64.0f;
     size_t index = 0;
     for (const std::string& item : m_menu_strings) {
-        const auto text_rect = m_menu_text.getLocalBounds();
-
         if (index == m_menu_index) {
             m_menu_text.setFillColor(Color(255, 255, 255));
         } else {
@@ -87,14 +86,43 @@ void SceneMenu::sRender() {
         }
 
         m_menu_text.setString(item);
+        const auto text_rect = m_menu_text.getLocalBounds();
         m_menu_text.setOrigin(text_rect.left + text_rect.width/2.0f, text_rect.top + text_rect.height/2.0f);
         m_menu_text.setPosition(width()/2.0f, offset);
         m_engine->window().draw(m_menu_text);
-        offset += 64.0f;
+        offset += 32.0f;
         index++;
     }
 }
 
 void SceneMenu::onEnd() {
     m_engine->quit();
+}
+
+const std::string SceneMenu::getLevelName(const std::string& path) const {
+    std::regex pattern(".*/([^/.]+)\\..*");
+    std::smatch match;
+
+    if (std::regex_match(path, match, pattern) && match.size() > 1) {
+        return match[1];
+    }
+
+    return "";
+}
+
+void SceneMenu::initMenuItems() {
+    m_menu_strings.clear();
+    m_level_paths.clear();
+
+    const auto path = "config/levels/";
+    for (const auto & entry : std::filesystem::directory_iterator(path)) {
+        m_level_paths.push_back(entry.path());
+        m_menu_strings.push_back(getLevelName(entry.path()));
+    }
+
+    std::sort(std::begin(m_level_paths), std::end(m_level_paths));
+    std::sort(std::begin(m_menu_strings), std::end(m_menu_strings));
+
+    m_menu_strings.push_back("+ New side scroller level");
+    m_menu_strings.push_back("+ New topdown rpg level");
 }

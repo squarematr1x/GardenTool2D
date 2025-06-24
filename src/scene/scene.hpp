@@ -131,6 +131,10 @@ class SceneMenu: public Scene {
 	size_t m_menu_index{ 0 }; // selected menu item
 	ParticleSystem m_particles;
 
+	const std::string getLevelName(const std::string& path) const;
+
+	void initMenuItems();
+
 public:
 	SceneMenu(GameEngine* engine);
 
