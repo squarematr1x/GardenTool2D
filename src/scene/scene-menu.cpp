@@ -60,10 +60,10 @@ void SceneMenu::sDoAction(const Action& action) {
         } else if (extension == ".rpg.lvl") {
             m_engine->changeScene(SceneType::TOP_DOWN_RPG, std::make_shared<SceneRPG>(m_engine, file_name));
         } else if (m_menu_index == m_menu_strings.size() - 2) {
-            files::createLevel("level" + std::to_string(m_menu_index + 1), files::LevelType::SIDE_SCROLLER);
+            files::createLevel("level" + std::to_string(m_level_paths.size() - 1), files::LevelType::SIDE_SCROLLER);
             initMenuItems();
         } else if (m_menu_index == m_menu_strings.size() - 1) {
-            files::createLevel("level" + std::to_string(m_menu_index + 1), files::LevelType::TOPDOWN_RPG);
+            files::createLevel("level" + std::to_string(m_level_paths.size() - 1), files::LevelType::TOPDOWN_RPG);
             initMenuItems();
         }
     } else if (action.getName() == ActionName::QUIT) {
@@ -125,4 +125,6 @@ void SceneMenu::initMenuItems() {
 
     m_menu_strings.push_back("+ New side scroller level");
     m_menu_strings.push_back("+ New topdown rpg level");
+    m_level_paths.push_back("");
+    m_level_paths.push_back("");
 }
