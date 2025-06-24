@@ -17,7 +17,7 @@ public:
     Text(const Font& font, const std::string& name, unsigned int char_size, float x, float y);
 
     const sf::Text& getText() const { return m_text; }
-    const Rect<float> getLocalBounds();
+    const Rect<float> getLocalBounds() const;
 
     void setFont(const Font& font);
     void setString(const std::string& name);
