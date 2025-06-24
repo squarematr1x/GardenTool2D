@@ -14,7 +14,7 @@ Text::Text(const Font& font, const std::string& name, unsigned int char_size, fl
     m_text.setPosition({x, y});
 }
 
-const Rect<float> Text::getLocalBounds() {
+const Rect<float> Text::getLocalBounds() const {
     const auto local_bounds = m_text.getLocalBounds();
     const Rect<float> rectangle(
         local_bounds.position.x,
