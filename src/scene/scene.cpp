@@ -144,7 +144,7 @@ void Scene::renderBBoxes() {
         }
         const auto box = e->getComponent<CBBox>();
         const auto pos = e->getComponent<CTransform>().pos;
-        const auto box_color{ Color(255, 255, 255) };
+        const auto box_color = e->hasComponent<CTrigger>() ? Color(0, 255, 0) : Color(255, 255, 255);
 
         vertices.append({pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color);
         vertices.append({pos.x + box.half_size.x, pos.y - box.half_size.y}, box_color);
