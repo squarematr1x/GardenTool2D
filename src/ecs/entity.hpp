@@ -24,7 +24,9 @@ typedef std::tuple<
 	CPatrol,
 	CBehavior,
 	CInteractable,
-	CPath
+	CPath,
+	CTrigger,
+	CTriggerable
 > ComponentTuple;
 
 enum class Tag : unsigned char {
@@ -39,6 +41,8 @@ enum class Tag : unsigned char {
 	TELEPORT,
 	ELEVATOR,
 	CHECKPOINT,
+	TRIGGER,
+	TRIGGERABLE
 };
 
 class Entity {

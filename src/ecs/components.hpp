@@ -25,6 +25,16 @@ enum class WeaponType: unsigned char {
 	RANGED
 };
 
+enum class TriggerType: unsigned char {
+	NONE,
+	APPLY_GRAVITY,
+	DESTROY,
+	CHANGE_SCENE,
+	PLAY_SOUND,
+	PLAY_MUSIC,
+	START_CUTSCENE
+};
+
 struct Component {
 	bool has{ false };
 };
@@ -234,7 +244,7 @@ struct CPatrol: Component {
 };
 
 struct CBehavior: Component {
-	bool hostile{ false }; // NOTE: could set to true if player hits (patrol) enemy first -> trigger CFollowPlayer?
+	bool hostile{ false };
 
 	CBehavior() {}
 	CBehavior(bool hostile_in)
@@ -278,6 +288,31 @@ struct CPath: Component {
 	}
 };
 
+struct CTrigger: Component {
+	// Scene change, start music, cutscene, etc.
+	int id{ -1 };
+	TriggerType type{ TriggerType::NONE };
+
+	// TODO: Triggers could be activated based on timers etc.
+	//       i.e. collision doesn't have to be the only way to activate
+
+	CTrigger() {}
+	CTrigger(int id_in, TriggerType type_in)
+		: id(id_in), type(type_in)
+	{
+	}
+};
+
+struct CTriggerable: Component {
+	int trigger_id{ -1 };
+
+	CTriggerable() {}
+	CTriggerable(int trigger_id_in)
+		: trigger_id(trigger_id_in)
+	{
+	}
+};
+
 struct CLightSource: Component {
 	// For dynamic lighting
 };
@@ -291,10 +326,6 @@ struct CInteractable: Component {
 	bool highlight{ false };
 	bool active{ false };
 };
-
-struct CTrigger: Component {
-	// Scene change, start music, cutscene, etc.
-}; 
 
 struct CDialog: Component {
 	// Dialog tree for entities	
