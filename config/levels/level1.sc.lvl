@@ -75,3 +75,13 @@ Elevator Rock 27 2 1 1 Patrol 2 2 27 5 27 1
 
 # Checkpoint: x, y, bboxw, bboxh
 Checkpoint 22 1 64 64
+
+# Trigger: id, x, y, bboxw, bboxh, trigger type
+Trigger 0 20 1 4 512 ApplyGravity 
+Trigger 1 23 1 4 512 Destroy
+Trigger 2 4 2 40 512 PlayMusic
+
+# Triggerable: Animation, trigger id, x, y, bboxh, bboxh, block_movement, block vision, hp, damage
+Triggerable Rock 0 20 6 64 64 1 1 1 1
+Triggerable Rock 0 22 6 64 64 1 1 1 1
+Triggerable Rock 1 24 6 64 64 1 1 1 0
