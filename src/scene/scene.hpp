@@ -49,7 +49,7 @@ public:
 	bool hasEnded() const { return m_has_ended; }
 	const std::map<int, ActionName>& getActionMap() const { return m_action_map; }
 
-	Vec2 gridPos(const Vec2& pos) const;
+	Vec2 gridPos(const Vec2& pos, const Vec2& size) const;
 	Vec2 fitToGrid(const Vec2& pos, bool mid_pixel = true) const;
 	Vec2 worldPos();
 	Vec2 getCenter() const;

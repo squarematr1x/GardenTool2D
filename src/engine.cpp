@@ -239,8 +239,8 @@ const std::string& GameEngine::currentLevelPath() {
 	return currentScene()->levelPath();
 }
 
-const Vec2 GameEngine::toGridPos(const Vec2& pos) {
-	return currentScene()->gridPos(pos);
+const Vec2 GameEngine::toGridPos(const Vec2& pos, const Vec2& size) {
+	return currentScene()->gridPos(pos, size);
 }
 
 const PlayerConfig& GameEngine::getPlayerConfig() {

@@ -69,7 +69,7 @@ public:
 	const Vec2& selectedPos() const { return m_selected_pos.back(); }
 	const std::vector<size_t>& allSelectedEntityIds() const { return m_selected_entity_ids; }
 	const std::vector<Vec2>& allSelectedPos() const { return m_selected_pos; }
-	const Vec2 toGridPos(const Vec2& pos);
+	const Vec2 toGridPos(const Vec2& pos, const Vec2& size);
 	const PlayerConfig& getPlayerConfig();
 	bool editMode() const { return m_edit_mode; };
 	bool isRunning();

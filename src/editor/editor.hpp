@@ -13,13 +13,15 @@ class GameEngine;
 
 // NOTE: Editor is only a dev tool, thus never seen/used by the end user
 class Editor {
-    const char* m_types[6] = {
+    const char* m_types[8] = {
         "TILE",
         "ENEMY",
         "HEART",
         "ELEVATOR",
         "TELEPORT",
-        "CHECKPOINT"
+        "CHECKPOINT",
+        "TRIGGER",
+        "TRIGGERABLE"
     };
 
     const std::map<std::string, Tag> m_type_map = {
@@ -28,7 +30,15 @@ class Editor {
         { "HEART", Tag::HEART },
         { "ELEVATOR", Tag::ELEVATOR },
         { "TELEPORT", Tag::TELEPORT },
-        { "CHECKPOINT", Tag::CHECKPOINT }
+        { "CHECKPOINT", Tag::CHECKPOINT },
+        { "TRIGGER", Tag::TRIGGER },
+        { "TRIGGERABLE", Tag::TRIGGERABLE }
+    };
+
+    const std::map<TriggerType, std::string> m_trigger_type_map = {
+        { TriggerType::APPLY_GRAVITY, "ApplyGravity" },
+        { TriggerType::DESTROY, "Destroy" },
+        { TriggerType::PLAY_MUSIC, "PlayMusic" }
     };
 
     std::string m_level_path{ "" }; // Current level
