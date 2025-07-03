@@ -395,10 +395,12 @@ void Scene::addLine(const Vec2& p1, const Vec2& p2, VertexArray& vertices) {
     vertices.append(Vec2(p2.x, p2.y), Color(255, 255, 255));
 }
 
-Vec2 Scene::gridPos(const Vec2& pos) const {
+Vec2 Scene::gridPos(const Vec2& pos, const Vec2& size) const {
+    auto fixed_size = Vec2(fmaxf(size.x, 64.0f), fmaxf(size.y, 64.0f));
+
     return Vec2(
-        floor(pos.x/m_grid_cell_size.x),
-        floor((static_cast<float>(height()) - pos.y)/m_grid_cell_size.y)
+        round((pos.x - (fixed_size.x/2))/m_grid_cell_size.x),
+        round((static_cast<float>(height()) - (pos.y + (fixed_size.y/2)))/m_grid_cell_size.y)
     );
 }
 
