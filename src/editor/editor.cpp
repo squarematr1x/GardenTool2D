@@ -45,232 +45,234 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
         }
         // Edit entities
         if (ImGui::BeginTabItem("Edit", (bool *)__null, editTabFlag())) {
-            size_t e_id = engine->selectedEntityId();
-            if (e_id) {
-                char header[128];
-                snprintf(header, sizeof(header), "Edit Entity: %lu", e_id);
-                ImGui::SeparatorText(header);
-                auto e = entity_manager.getEntity(e_id);
-                if (e != nullptr) {
-                    if (ImGui::TreeNode("Transform")) {
-                        if (e->hasComponent<CTransform>()) {
-                            auto& transform = e->getComponent<CTransform>();
-                            ImGui::SetNextItemWidth(100);
-                            ImGui::InputFloat("x", &transform.pos.x, 1.0f, 1.0f, "%.0f");
-                            ImGui::SameLine();
-                            ImGui::SetNextItemWidth(100);
-                            ImGui::InputFloat("y", &transform.pos.y, 1.0f, 1.0f, "%.0f");
+            if (engine->allSelectedEntityIds().size() > 0) {
+                size_t e_id = engine->selectedEntityId();
+                if (e_id) {
+                    char header[128];
+                    snprintf(header, sizeof(header), "Edit Entity: %lu", e_id);
+                    ImGui::SeparatorText(header);
+                    auto e = entity_manager.getEntity(e_id);
+                    if (e != nullptr) {
+                        if (ImGui::TreeNode("Transform")) {
+                            if (e->hasComponent<CTransform>()) {
+                                auto& transform = e->getComponent<CTransform>();
+                                ImGui::SetNextItemWidth(100);
+                                ImGui::InputFloat("x", &transform.pos.x, 1.0f, 1.0f, "%.0f");
+                                ImGui::SameLine();
+                                ImGui::SetNextItemWidth(100);
+                                ImGui::InputFloat("y", &transform.pos.y, 1.0f, 1.0f, "%.0f");
+                            }
+                            ImGui::TreePop();
                         }
-                        ImGui::TreePop();
-                    }
-                    if (ImGui::TreeNode("Gravitation")) {
-                        if (e->hasComponent<CGravity>()) {
-                            auto& gravity = e->getComponent<CGravity>();
-                            ImGui::SetNextItemWidth(100); 
-                            ImGui::InputFloat("Gravity", &gravity.gravity, 0.25f, 0.25f, "%.2f");
-                        } else if (ImGui::Button("Add gravity")) {
-                            e->addComponent<CGravity>();
+                        if (ImGui::TreeNode("Gravitation")) {
+                            if (e->hasComponent<CGravity>()) {
+                                auto& gravity = e->getComponent<CGravity>();
+                                ImGui::SetNextItemWidth(100); 
+                                ImGui::InputFloat("Gravity", &gravity.gravity, 0.25f, 0.25f, "%.2f");
+                            } else if (ImGui::Button("Add gravity")) {
+                                e->addComponent<CGravity>();
+                            }
+                            ImGui::TreePop();
                         }
-                        ImGui::TreePop();
-                    }
-                    if (ImGui::TreeNode("Bounding box")) {
-                        if (e->hasComponent<CBBox>()) {
-                            auto& bbox = e->getComponent<CBBox>();
-                            ImGui::SetNextItemWidth(100);
-                            ImGui::InputFloat("Width", &bbox.size.x, 1.0f, .20f, "%.0f");
-                            ImGui::SameLine();
-                            ImGui::SetNextItemWidth(100);
-                            ImGui::InputFloat("Height", &bbox.size.y, 1.0f, 1.0f, "%.0f");
-                            ImGui::Checkbox("Block movement", &bbox.block_movement);
-                            ImGui::SameLine();
-                            ImGui::Checkbox("Block vision", &bbox.block_vision);
-                            for (const auto& id : engine->allSelectedEntityIds()) {
-                                auto entity = entity_manager.getEntity(id);
-                                if (entity != nullptr && entity->tag() == Tag::TILE) {
-                                    // Add bounding box for multiple tiles at once
-                                    entity->addComponent<CBBox>(Vec2(bbox.size.x, bbox.size.y), bbox.block_movement, bbox.block_vision);
-                                }
-                            }
-                        } else if (ImGui::Button("Add bounding box")) {
-                            for (const auto& id : engine->allSelectedEntityIds()) {
-                                auto entity = entity_manager.getEntity(id);
-                                if (entity != nullptr && entity->tag() == Tag::TILE) {
-                                    // Add bounding box for multiple tiles at once
-                                    entity->addComponent<CBBox>(Vec2(64, 64), true, true);
-                                }
-                            }
-                        }
-                        ImGui::TreePop();
-                    }
-                    if (ImGui::TreeNode("Animation")) {
-                        if (e->hasComponent<CAnimation>()) {
-                            auto anims = engine->assets().getAnimations();
-                            constexpr auto len = 45;
-                            if (len != anims.size()) {
-                                return;
-                            }
-                            const char* animations[len];
-                            const auto anim_name = e->getComponent<CAnimation>().animation.getName();
-                            static auto cur_index = 1;
-                            auto i = 0;
-
-                            for (const auto& pair : anims) {
-                                animations[i] = pair.first.c_str();
-                                if (pair.first == anim_name) {
-                                    cur_index = i;
-                                }
-                                i++;
-                            }
-
-                            auto prev_index = cur_index;
-                            ImGui::ListBox("Animations", &cur_index, animations, IM_ARRAYSIZE(animations), 6);
-                            if (prev_index != cur_index) {
+                        if (ImGui::TreeNode("Bounding box")) {
+                            if (e->hasComponent<CBBox>()) {
+                                auto& bbox = e->getComponent<CBBox>();
+                                ImGui::SetNextItemWidth(100);
+                                ImGui::InputFloat("Width", &bbox.size.x, 1.0f, .20f, "%.0f");
+                                ImGui::SameLine();
+                                ImGui::SetNextItemWidth(100);
+                                ImGui::InputFloat("Height", &bbox.size.y, 1.0f, 1.0f, "%.0f");
+                                ImGui::Checkbox("Block movement", &bbox.block_movement);
+                                ImGui::SameLine();
+                                ImGui::Checkbox("Block vision", &bbox.block_vision);
                                 for (const auto& id : engine->allSelectedEntityIds()) {
                                     auto entity = entity_manager.getEntity(id);
                                     if (entity != nullptr && entity->tag() == Tag::TILE) {
-                                        // Add animation for multiple entities at once
-                                        entity->addComponent<CAnimation>(engine->assets().getAnimation(animations[cur_index]), true);
+                                        // Add bounding box for multiple tiles at once
+                                        entity->addComponent<CBBox>(Vec2(bbox.size.x, bbox.size.y), bbox.block_movement, bbox.block_vision);
                                     }
                                 }
-                                m_previous_animation = animations[cur_index];
-                            }
-                        }
-                        ImGui::TreePop();
-                    }
-                    if (ImGui::TreeNode("Health")) {
-                        if (e->hasComponent<CHealth>()) {
-                            auto& hp = e->getComponent<CHealth>();
-                            ImGui::SetNextItemWidth(100);
-                            ImGui::InputInt("Hp", &hp.current);
-                            ImGui::SameLine();
-                            ImGui::SetNextItemWidth(100);
-                            ImGui::InputInt("Max hp", &hp.max);
-                            if (hp.max < hp.current) {
-                                hp.max = hp.current;
-                            }
-                            if (hp.current < 1) {
-                                hp.current = 1; 
-                            }
-                            hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
-                        } else if (ImGui::Button("Add health")) {
-                            e->addComponent<CHealth>();
-                        }
-                        ImGui::TreePop();
-                    }
-                    if (ImGui::TreeNode("Damage")) {
-                        if (e->hasComponent<CDamage>()) {
-                            auto& damage = e->getComponent<CDamage>();
-                            ImGui::SetNextItemWidth(100);
-                            ImGui::InputInt("Damage", &damage.damage);
-                        } else if (ImGui::Button("Add damage")) {
-                            e->addComponent<CDamage>();
-                        }
-                        ImGui::TreePop();
-                    }
-                    if (ImGui::TreeNode("Invincibility")) {
-                        if (e->hasComponent<CInvincibility>()) {
-                            auto& invincibility = e->getComponent<CInvincibility>();
-                            ImGui::SetNextItemWidth(100);
-                            ImGui::InputInt("Time (frames)", &invincibility.i_frames, 60, 60);
-                        } else if (ImGui::Button("Add invincibility")) {
-                            e->addComponent<CInvincibility>();
-                        }
-                        ImGui::TreePop();
-                    }
-                    if (ImGui::TreeNode("Behavior")) {
-                        if (e->tag() == Tag::ENEMY) {
-                            if (e->hasComponent<CBehavior>()) {
-                                auto& hostile = e->getComponent<CBehavior>().hostile;
-                                ImGui::Checkbox("Hostile", &hostile);
-                            }
-                            if (ImGui::TreeNode("Follow")) {
-                                if (e->hasComponent<CFollowPlayer>()) {
-                                    auto& follow = e->getComponent<CFollowPlayer>();
-                                    ImGui::SetNextItemWidth(100);
-                                    ImGui::InputFloat("x", &follow.home.x, 1.0f, 1.0f, "%.0f");
-                                    ImGui::SameLine();
-                                    ImGui::SetNextItemWidth(100);
-                                    ImGui::InputFloat("y", &follow.home.y, 1.0f, 1.0f, "%.0f");
-                                    ImGui::SetNextItemWidth(100);
-                                    ImGui::InputFloat("Speed", &follow.speed, 1.0f, 1.0f, "%.0f");
-                                } else if (ImGui::Button("Add follow behavior")) {
-                                    e->addComponent<CFollowPlayer>();
-                                    e->removeComponent<CPatrol>();
+                            } else if (ImGui::Button("Add bounding box")) {
+                                for (const auto& id : engine->allSelectedEntityIds()) {
+                                    auto entity = entity_manager.getEntity(id);
+                                    if (entity != nullptr && entity->tag() == Tag::TILE) {
+                                        // Add bounding box for multiple tiles at once
+                                        entity->addComponent<CBBox>(Vec2(64, 64), true, true);
+                                    }
                                 }
-                                ImGui::TreePop();
                             }
+                            ImGui::TreePop();
                         }
-                        if (e->tag() == Tag::ENEMY || e->tag() == Tag::ELEVATOR) {
-                            if (ImGui::TreeNode("Patrol")) {
-                                if (e->hasComponent<CPatrol>()) {
-                                    auto& patrol = e->getComponent<CPatrol>();
-                                    ImGui::SetNextItemWidth(100);
-                                    ImGui::InputFloat("Speed", &patrol.speed, 1.0f, 1.0f, "%.0f");
-                                    auto i = 0;
-                                    for (auto& pos : patrol.positions) {
-                                        ImGui::PushID(i);
-                                        ImGui::SetNextItemWidth(100);
-                                        ImGui::InputFloat("x", &pos.x, 1.0f, 1.0f, "%.0f");
-                                        ImGui::SameLine();
-                                        ImGui::SetNextItemWidth(100);
-                                        ImGui::InputFloat("y", &pos.y, 1.0f, 1.0f, "%.0f");
-                                        ImGui::SetNextItemWidth(100);
-                                        ImGui::PopID();
-                                        i++;
+                        if (ImGui::TreeNode("Animation")) {
+                            if (e->hasComponent<CAnimation>()) {
+                                auto anims = engine->assets().getAnimations();
+                                constexpr auto len = 45;
+                                if (len != anims.size()) {
+                                    return;
+                                }
+                                const char* animations[len];
+                                const auto anim_name = e->getComponent<CAnimation>().animation.getName();
+                                static auto cur_index = 1;
+                                auto i = 0;
+
+                                for (const auto& pair : anims) {
+                                    animations[i] = pair.first.c_str();
+                                    if (pair.first == anim_name) {
+                                        cur_index = i;
                                     }
-                                    if (ImGui::Button("Add position")) {
-                                        patrol.positions.push_back(Vec2(0.0f, 0.0f));
-                                    }
-                                    if (patrol.positions.size() > 2) {
-                                        if (ImGui::Button("Pop position")) {
-                                            patrol.positions.pop_back();
-                                            patrol.cur_pos = 0;
+                                    i++;
+                                }
+
+                                auto prev_index = cur_index;
+                                ImGui::ListBox("Animations", &cur_index, animations, IM_ARRAYSIZE(animations), 6);
+                                if (prev_index != cur_index) {
+                                    for (const auto& id : engine->allSelectedEntityIds()) {
+                                        auto entity = entity_manager.getEntity(id);
+                                        if (entity != nullptr && entity->tag() == Tag::TILE) {
+                                            // Add animation for multiple entities at once
+                                            entity->addComponent<CAnimation>(engine->assets().getAnimation(animations[cur_index]), true);
                                         }
                                     }
-                                } else if (ImGui::Button("Add follow behavior")) {
-                                    e->addComponent<CPatrol>();
-                                    e->removeComponent<CFollowPlayer>();
+                                    m_previous_animation = animations[cur_index];
                                 }
-                                ImGui::TreePop();
                             }
+                            ImGui::TreePop();
                         }
-                        ImGui::TreePop();
-                    }
-                    if (ImGui::TreeNode("Type")) {
-                        static auto cur_index = 0;
-                        for (auto i = 0; i < IM_ARRAYSIZE(m_types); i++) {
-                            const std::string type_str(m_types[i]);
-                            if (!m_type_map.count(type_str)) {
-                                continue;
+                        if (ImGui::TreeNode("Health")) {
+                            if (e->hasComponent<CHealth>()) {
+                                auto& hp = e->getComponent<CHealth>();
+                                ImGui::SetNextItemWidth(100);
+                                ImGui::InputInt("Hp", &hp.current);
+                                ImGui::SameLine();
+                                ImGui::SetNextItemWidth(100);
+                                ImGui::InputInt("Max hp", &hp.max);
+                                if (hp.max < hp.current) {
+                                    hp.max = hp.current;
+                                }
+                                if (hp.current < 1) {
+                                    hp.current = 1; 
+                                }
+                                hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
+                            } else if (ImGui::Button("Add health")) {
+                                e->addComponent<CHealth>();
                             }
-                            if (m_type_map.at(type_str) == e->tag()) {
-                                cur_index = i;
-                                break;
-                            }
+                            ImGui::TreePop();
                         }
-                        auto prev_index = cur_index;
-                        ImGui::ListBox("Types", &cur_index, m_types, IM_ARRAYSIZE(m_types), 6);
-                        if (prev_index != cur_index) {
-                            std::string type(m_types[cur_index]);
-                            if (m_type_map.count(type)) {
-                                e->setTag(m_type_map.at(type));
+                        if (ImGui::TreeNode("Damage")) {
+                            if (e->hasComponent<CDamage>()) {
+                                auto& damage = e->getComponent<CDamage>();
+                                ImGui::SetNextItemWidth(100);
+                                ImGui::InputInt("Damage", &damage.damage);
+                            } else if (ImGui::Button("Add damage")) {
+                                e->addComponent<CDamage>();
                             }
+                            ImGui::TreePop();
                         }
-                        ImGui::TreePop();
-                    }
-            
-                    if (ImGui::Button("Delete")) {
-                        e->destroy();
-                        entity_manager.update();
-                    }
+                        if (ImGui::TreeNode("Invincibility")) {
+                            if (e->hasComponent<CInvincibility>()) {
+                                auto& invincibility = e->getComponent<CInvincibility>();
+                                ImGui::SetNextItemWidth(100);
+                                ImGui::InputInt("Time (frames)", &invincibility.i_frames, 60, 60);
+                            } else if (ImGui::Button("Add invincibility")) {
+                                e->addComponent<CInvincibility>();
+                            }
+                            ImGui::TreePop();
+                        }
+                        if (ImGui::TreeNode("Behavior")) {
+                            if (e->tag() == Tag::ENEMY) {
+                                if (e->hasComponent<CBehavior>()) {
+                                    auto& hostile = e->getComponent<CBehavior>().hostile;
+                                    ImGui::Checkbox("Hostile", &hostile);
+                                }
+                                if (ImGui::TreeNode("Follow")) {
+                                    if (e->hasComponent<CFollowPlayer>()) {
+                                        auto& follow = e->getComponent<CFollowPlayer>();
+                                        ImGui::SetNextItemWidth(100);
+                                        ImGui::InputFloat("x", &follow.home.x, 1.0f, 1.0f, "%.0f");
+                                        ImGui::SameLine();
+                                        ImGui::SetNextItemWidth(100);
+                                        ImGui::InputFloat("y", &follow.home.y, 1.0f, 1.0f, "%.0f");
+                                        ImGui::SetNextItemWidth(100);
+                                        ImGui::InputFloat("Speed", &follow.speed, 1.0f, 1.0f, "%.0f");
+                                    } else if (ImGui::Button("Add follow behavior")) {
+                                        e->addComponent<CFollowPlayer>();
+                                        e->removeComponent<CPatrol>();
+                                    }
+                                    ImGui::TreePop();
+                                }
+                            }
+                            if (e->tag() == Tag::ENEMY || e->tag() == Tag::ELEVATOR) {
+                                if (ImGui::TreeNode("Patrol")) {
+                                    if (e->hasComponent<CPatrol>()) {
+                                        auto& patrol = e->getComponent<CPatrol>();
+                                        ImGui::SetNextItemWidth(100);
+                                        ImGui::InputFloat("Speed", &patrol.speed, 1.0f, 1.0f, "%.0f");
+                                        auto i = 0;
+                                        for (auto& pos : patrol.positions) {
+                                            ImGui::PushID(i);
+                                            ImGui::SetNextItemWidth(100);
+                                            ImGui::InputFloat("x", &pos.x, 1.0f, 1.0f, "%.0f");
+                                            ImGui::SameLine();
+                                            ImGui::SetNextItemWidth(100);
+                                            ImGui::InputFloat("y", &pos.y, 1.0f, 1.0f, "%.0f");
+                                            ImGui::SetNextItemWidth(100);
+                                            ImGui::PopID();
+                                            i++;
+                                        }
+                                        if (ImGui::Button("Add position")) {
+                                            patrol.positions.push_back(Vec2(0.0f, 0.0f));
+                                        }
+                                        if (patrol.positions.size() > 2) {
+                                            if (ImGui::Button("Pop position")) {
+                                                patrol.positions.pop_back();
+                                                patrol.cur_pos = 0;
+                                            }
+                                        }
+                                    } else if (ImGui::Button("Add follow behavior")) {
+                                        e->addComponent<CPatrol>();
+                                        e->removeComponent<CFollowPlayer>();
+                                    }
+                                    ImGui::TreePop();
+                                }
+                            }
+                            ImGui::TreePop();
+                        }
+                        if (ImGui::TreeNode("Type")) {
+                            static auto cur_index = 0;
+                            for (auto i = 0; i < IM_ARRAYSIZE(m_types); i++) {
+                                const std::string type_str(m_types[i]);
+                                if (!m_type_map.count(type_str)) {
+                                    continue;
+                                }
+                                if (m_type_map.at(type_str) == e->tag()) {
+                                    cur_index = i;
+                                    break;
+                                }
+                            }
+                            auto prev_index = cur_index;
+                            ImGui::ListBox("Types", &cur_index, m_types, IM_ARRAYSIZE(m_types), 8);
+                            if (prev_index != cur_index) {
+                                std::string type(m_types[cur_index]);
+                                if (m_type_map.count(type)) {
+                                    e->setTag(m_type_map.at(type));
+                                }
+                            }
+                            ImGui::TreePop();
+                        }
+                
+                        if (ImGui::Button("Delete")) {
+                            e->destroy();
+                            entity_manager.update();
+                        }
 
-                    ImGui::SameLine();
+                        ImGui::SameLine();
 
-                    if (ImGui::Button("Save")) {
-                        parseEntities(entity_manager, engine);
+                        if (ImGui::Button("Save")) {
+                            parseEntities(entity_manager, engine);
+                        }
+                    } else {
+                        ImGui::Text("Entity was deleted.");
                     }
-                } else {
-                    ImGui::Text("Entity was deleted.");
                 }
             }
             ImGui::EndTabItem();
@@ -326,7 +328,9 @@ const std::string Editor::tagString(Tag tag) const {
         { Tag::ELEVATOR, "Elevator" },
         { Tag::CHECKPOINT, "Checkpoint" },
         { Tag::HEART, "Tile" },
-        { Tag::TELEPORT, "Tile" }
+        { Tag::TELEPORT, "Tile" },
+        { Tag::TRIGGER, "Trigger" },
+        { Tag::TRIGGERABLE, "Triggerable" }
     };
     std::string tag_str = "";
     if (tag_map.count(tag)) {
@@ -346,8 +350,27 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
         return;
     }
 
+
+    auto has_size = false;
+    auto size = Vec2(0, 0);
+
+    if (e->hasComponent<CAnimation>()) {
+        size = e->getComponent<CAnimation>().animation.getSize();
+        has_size = true;
+    }
+    if (!has_size && e->hasComponent<CBBox>()) {
+        size = e->getComponent<CBBox>().size;
+        has_size = true;
+    }
+
+
+    if (!has_size) {
+        // An entity must have either animation or bbox to be saved to level file
+        return;
+    }
+
     const auto pos = e->getComponent<CTransform>().pos;
-    const auto grid_pos = engine->toGridPos(Vec2(pos.x, pos.y));
+    const auto grid_pos = engine->toGridPos(pos, size);
     const auto grid_x = grid_pos.x;
     const auto grid_y = grid_pos.y;
 
@@ -363,6 +386,36 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
 
         if (tag == "Checkpoint") {
             ss << tag << " " << grid_x << " " << grid_y << " " << bbox.size.x << " " << bbox.size.y;
+            files::addLine(m_level_content, ss.str());
+            return;
+        }
+
+        if (tag == "Trigger") {
+            int trigger_id = e->getComponent<CTrigger>().id;
+            std::string trigger_type = "None"; 
+            if (m_trigger_type_map.count(e->getComponent<CTrigger>().type)) {
+                trigger_type = m_trigger_type_map.at(e->getComponent<CTrigger>().type);
+            }
+            ss << tag << " " << trigger_id << " " << grid_x << " " << grid_y << " " << bbox.size.x << " " <<
+                bbox.size.y << " " << trigger_type;
+            files::addLine(m_level_content, ss.str());
+            return;
+        }
+
+        if (tag == "Triggerable") {
+            int trigger_id = e->getComponent<CTriggerable>().trigger_id;
+            std::string animation = e->getComponent<CAnimation>().animation.getName();
+            int hp = 0;
+            int damage = 0;
+            if (e->hasComponent<CHealth>()) {
+                hp = e->getComponent<CHealth>().current;
+            }
+            if (e->hasComponent<CDamage>()) {
+                damage = e->getComponent<CDamage>().damage;
+            }
+
+            ss << tag << " " << animation << " " << trigger_id << " " << grid_x << " " << grid_y << " " <<
+                block_movement << " " << block_vision << " " << hp << " " << damage;
             files::addLine(m_level_content, ss.str());
             return;
         }
@@ -406,14 +459,16 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
         const auto patrol = e->getComponent<CPatrol>();
         ss << " Patrol " << patrol.speed << " " << patrol.positions.size();
         for (const auto& pos : patrol.positions) {
-            const auto grid_pos = engine->toGridPos(pos);
+            const auto grid_pos = engine->toGridPos(pos, size);
             ss << " " << grid_pos.x << " " << grid_pos.y;
         }
+        files::addLine(m_level_content, ss.str());
+        return;
     }
 
     if (e->hasComponent<CFollowPlayer>()) {
         const auto follow = e->getComponent<CFollowPlayer>();
-        const auto grid_pos = engine->toGridPos(follow.home);
+        const auto grid_pos = engine->toGridPos(follow.home, size);
         ss << " Follow " << follow.speed << " " << grid_pos.x << " " << grid_pos.y; 
     }
 
@@ -456,6 +511,15 @@ void Editor::parseEntities(EntityManager& entity_manager, GameEngine* engine) {
 
     m_level_content.push_back("\n# Checkpoint: x, y, bboxw, bboxh");
     for (const auto& e : entity_manager.getEntities(Tag::CHECKPOINT)) {
+        parseEntity(e, engine);
+    }
+
+    m_level_content.push_back("\n# Trigger: id, x, y, bboxw, bboxh, trigger type");
+    for (const auto& e : entity_manager.getEntities(Tag::TRIGGER)) {
+        parseEntity(e, engine);
+    }
+    m_level_content.push_back("\n# Triggerable: Animation, trigger id, x, y, block_movement, block vision, hp, damage");
+    for (const auto& e : entity_manager.getEntities(Tag::TRIGGERABLE)) {
         parseEntity(e, engine);
     }
  

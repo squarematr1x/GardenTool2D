@@ -35,8 +35,6 @@ void SceneSideScroller::init(const std::string& level_path) {
     registerAction(LSystem, ActionName::L_SYSTEM);
 
     loadLevel(level_path);
-
-    // m_engine->playMusic("Level1Music");
 }
 
 void SceneSideScroller::loadLevel(const std::string& path) {
@@ -150,6 +148,43 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                 std::string layer;
                 text_stream >> layer;
                 m_background_layers.push_back(m_engine->assets().getLayer(layer));
+            } else if (asset_type == "Trigger") {
+                int id;
+                float x, y, bbox_w, bbox_h;
+                std::string type;
+                text_stream >> id >> x >> y >> bbox_w >> bbox_h >> type;
+                auto trigger = m_entity_manager.addEntity(Tag::TRIGGER);
+                trigger->addComponent<CBBox>(Vec2(bbox_w, bbox_h));
+                trigger->addComponent<CTransform>(gridToMidPixel(x, y, trigger));
+                if (type == "ApplyGravity") {
+                    trigger->addComponent<CTrigger>(id, TriggerType::APPLY_GRAVITY);
+                } else if (type == "Destroy") {
+                    trigger->addComponent<CTrigger>(id, TriggerType::DESTROY);
+                } else if (type == "PlayMusic") {
+                    trigger->addComponent<CTrigger>(id, TriggerType::PLAY_MUSIC);
+                }
+            } else if (asset_type == "Triggerable") {
+                std::string animation;
+                int trigger_id;
+                float x, y;
+                bool block_movement, block_vision;
+                int hp, damage;
+                text_stream >> animation >> trigger_id >> x >> y >> block_movement >> block_vision >> hp >> damage;
+
+                auto triggerable = m_entity_manager.addEntity(Tag::TRIGGERABLE);
+                triggerable->addComponent<CTriggerable>(trigger_id);
+                triggerable->addComponent<CAnimation>(m_engine->assets().getAnimation(animation), true);
+                triggerable->addComponent<CTransform>(gridToMidPixel(x, y, triggerable));
+                if (block_movement) {
+                    const auto& animation_size = triggerable->getComponent<CAnimation>().animation.getSize();
+                    triggerable->addComponent<CBBox>(animation_size, block_movement, block_vision);
+                }
+                if (hp > 0) {
+                    triggerable->addComponent<CHealth>(hp, hp);
+                }
+                if (damage > 0) {
+                    triggerable->addComponent<CDamage>(damage);
+                }
             } else {
                 std::cerr << "Unknown level object: " << asset_type << '\n';
             }
@@ -430,6 +465,41 @@ void SceneSideScroller::sCollision() {
                     }
                 }
                 p_transfrom.velocity.y = 0.0f;
+            }
+        }
+    }
+
+    // Player - trigger collision
+    for (auto trigger_e : m_entity_manager.getEntities(Tag::TRIGGER)) {
+        if (!trigger_e->hasComponent<CTrigger>()) {
+            continue;
+        }
+        if (!physics::overlapping(trigger_e, m_player)) {
+            continue;
+        }
+
+        const auto trigger = trigger_e->getComponent<CTrigger>();
+        if (trigger.type == TriggerType::PLAY_MUSIC) {
+            m_engine->playMusic("Level1Music");
+        }
+
+        for (auto triggerable : m_entity_manager.getEntities(Tag::TRIGGERABLE)) {
+            if (!triggerable->hasComponent<CTriggerable>()) {
+                continue;
+            }
+            if (triggerable->getComponent<CTriggerable>().trigger_id == trigger.id) {
+                switch (trigger.type) {
+                    case TriggerType::APPLY_GRAVITY: {
+                        triggerable->addComponent<CGravity>(2.0f);
+                        triggerable->removeComponent<CTriggerable>();
+                        break;
+                    }
+                    case TriggerType::DESTROY: {
+                        triggerable->destroy();
+                        break;
+                    }
+                    default: break;
+                }
             }
         }
     }
