@@ -362,47 +362,17 @@ void SceneRPG::sMovement() {
 }
 
 void SceneRPG::sDoAction(const Action& action) {
+    sDoActionCommon(action);
+
     if (action.getType() == ActionType::START) {
         switch (action.getName()) {
-            case ActionName::PAUSE: m_paused = !m_paused; break;
-            case ActionName::QUIT: onEnd(); break;
-            case ActionName::MOUSE_SCROLL: updateZoom(action.delta); break;
-            case ActionName::MOUSE_MOVE: m_mouse_pos = action.pos; break;
             case ActionName::TOGGLE_FOLLOW: m_follow = !m_follow; break;
-            case ActionName::TOGGLE_HEALTH: m_show_hp = !m_show_hp; break;
-            case ActionName::TOGGLE_TEXTURE: m_draw_textures = !m_draw_textures; break;
-            case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
-            case ActionName::TOGGLE_GRID: m_draw_grid = !m_draw_grid; break;
             case ActionName::TOGGLE_AI_INFO: m_show_ai_info = !m_show_ai_info; break;
             case ActionName::UP: m_player->getComponent<CInput>().up = true; break;
             case ActionName::RIGHT: m_player->getComponent<CInput>().right = true; break;
             case ActionName::DOWN: m_player->getComponent<CInput>().down = true; break;
             case ActionName::LEFT: m_player->getComponent<CInput>().left = true; break;
             case ActionName::ATTACK: m_player->getComponent<CInput>().attack = true; break;
-            case ActionName::L_SYSTEM: m_system_key_pressed = true; break;
-            case ActionName::TOGGLE_LEVEL_EDITOR: {
-                m_engine->toggleEditMode();
-                m_paused = m_engine->editMode();
-                break;
-            }
-            case ActionName::LEFT_CLICK: {
-                if (!m_engine->editMode()) {
-                    break;
-                }
-
-                const auto world_pos = worldPos();
-                m_engine->pushSelectedPos(fitToGrid(world_pos), !m_system_key_pressed);
-                for (auto e : m_entity_manager.getEntities()) {
-                    if (physics::isInside(world_pos, e)) {
-                        m_engine->pushSelectedEntityId(e->id(), !m_system_key_pressed);
-                        if (e->hasComponent<CDraggable>()) {
-                            e->getComponent<CDraggable>().dragged = true;
-                        }
-                        break;
-                    }
-                }
-                break;
-            }
             case ActionName::RIGHT_CLICK: {
                 m_player->removeComponent<CPath>();
 
@@ -419,26 +389,14 @@ void SceneRPG::sDoAction(const Action& action) {
             }
             default: break;
         }
-    } else if (action.getType() == ActionType::END) {
+    }
+    if (action.getType() == ActionType::END) {
         switch (action.getName()) {
             case ActionName::UP: m_player->getComponent<CInput>().up = false; break;
             case ActionName::DOWN: m_player->getComponent<CInput>().down = false; break;
             case ActionName::RIGHT: m_player->getComponent<CInput>().right = false; break;
             case ActionName::LEFT: m_player->getComponent<CInput>().left = false; break;
             case ActionName::ATTACK: m_player->getComponent<CInput>().attack = false; break;
-            case ActionName::L_SYSTEM: { m_system_key_pressed = false; break; }
-            case ActionName::LEFT_CLICK: {
-                if (m_engine->editMode()) {
-                    const auto world_pos = worldPos();
-                    for (auto e : m_entity_manager.getEntities()) {
-                        if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
-                            e->getComponent<CDraggable>().dragged = false;
-                            e->getComponent<CTransform>().pos = (fitToGrid(world_pos));
-                        }
-                    }
-                    break;
-                }
-            }
             default: break;
         }
     }
@@ -700,22 +658,25 @@ void SceneRPG::sAnimation() {
 
 void SceneRPG::sCamera() {
     auto view = m_engine->window().getView();
-    if (m_follow) {
-        // Get view from player follow camera
-        const auto p_pos = m_player->getComponent<CTransform>().pos;
-        view.setCenter(p_pos.x, p_pos.y);
-    } else {
-        // Get view for room-based camera
-        const auto room = getCurrentRoom();
-        view.setCenter(
-            static_cast<float>((width()/2) + room.x*width()),
-            static_cast<float>((height()/2) + room.y*height())
-        );
+    if (m_free_camera && m_middle_mouse_pressed) {
+        sPan(view);
+    } else if (!m_free_camera && !m_middle_mouse_pressed) {
+        if (m_follow) {
+            // Get view from player follow camera
+            const auto p_pos = m_player->getComponent<CTransform>().pos;
+            view.setCenter(p_pos.x, p_pos.y);
+        } else {
+            // Get view for room-based camera
+            const auto room = getCurrentRoom();
+            view.setCenter(
+                static_cast<float>((width()/2) + room.x*width()),
+                static_cast<float>((height()/2) + room.y*height())
+            );
+        }
     }
-    if (m_zoom.level != m_zoom.prev_level) {
-        m_zoom.prev_level = m_zoom.level;
-        view.zoom(m_zoom.value);
-    }
+
+    sZoom(view);
+
     m_engine->window().setView(view);
 }
 
