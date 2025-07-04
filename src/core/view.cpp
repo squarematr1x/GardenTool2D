@@ -10,6 +10,10 @@ void View::setCenter(float x, float y) {
     m_view.setCenter({x, y});
 }
 
+void View::setCenter(const Vec2& pos) {
+    m_view.setCenter({pos.x, pos.y});
+}
+
 void View::zoom(float factor) {
     m_view.zoom(factor);
 }

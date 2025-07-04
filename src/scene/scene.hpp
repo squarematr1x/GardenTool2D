@@ -76,6 +76,10 @@ public:
 	void addHpBar(std::shared_ptr<Entity> e);
 	void addHighlight(std::shared_ptr<Entity> e);
 
+	void sDoActionCommon(const Action& action);
+	void sZoom(View& view);
+	void sPan(View& view);
+
 	bool targetReached(const Vec2& pos, const Vec2& target) const;
 
 	const std::string& levelPath() const { return m_level_path; }
@@ -106,16 +110,21 @@ protected:
 	bool m_show_ai_info{ false };
 	bool m_show_hp{ true };
 	bool m_system_key_pressed{ false };
+	bool m_free_camera{ false };
+	bool m_middle_mouse_pressed{ false };
 
 	std::string m_level_path{ "" };
 
 	Vec2 m_mouse_pos;
+	Vec2 m_drag_pos;
 	Vec2 m_grid_size{ 0, 0 };
 	const Vec2 m_grid_cell_size{ 64, 64 };
 	Text m_grid_text;
 	Text m_pause_text;
 
 	std::vector<Layer> m_background_layers;
+
+	Circle m_mouse_shape;
 
 	virtual void onEnd() = 0;
 	void setPaused(bool paused) { m_paused = paused; }
@@ -151,8 +160,6 @@ class SceneSideScroller: public Scene {
 	std::shared_ptr<Entity> m_player;
 	bool m_can_shoot{ true };
 	bool m_can_jump{ true };
-
-	Circle m_mouse_shape;
 
 public:
 	SceneSideScroller(GameEngine* engine, const std::string& level_path);

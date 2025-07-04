@@ -1,6 +1,8 @@
 #include "scene.hpp"
+
 #include "../engine.hpp"
 #include "../core/rectangle.hpp"
+#include "../collision/physics.hpp"
 
 Scene::Scene(GameEngine* engine)
     : m_engine(engine),
@@ -431,4 +433,90 @@ const std::vector<std::string> Scene::getLayerNames() const {
         layer_names.push_back(layer.getName());
     }
     return layer_names;
+}
+
+void Scene::sDoActionCommon(const Action& action) {
+    if (action.getType() == ActionType::START) {
+        switch (action.getName()) {
+            case ActionName::TOGGLE_TEXTURE: m_draw_textures = !m_draw_textures; break;
+            case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
+            case ActionName::TOGGLE_GRID: m_draw_grid = !m_draw_grid; break;
+            case ActionName::TOGGLE_HEALTH: m_show_hp = !m_show_hp; break;
+            case ActionName::PAUSE: setPaused(!m_paused); break;
+            case ActionName::QUIT: {
+                if (m_free_camera) {
+                    m_free_camera = false;
+                    break;
+                }
+                onEnd();
+                break;
+            }
+            case ActionName::MOUSE_MOVE: m_mouse_pos = action.pos; m_mouse_shape.setPosition(m_mouse_pos.x, m_mouse_pos.y); break;
+            case ActionName::MOUSE_SCROLL: updateZoom(action.delta); break;
+            case ActionName::MIDDLE_CLICK: {
+                m_free_camera = true;
+                m_drag_pos = m_mouse_pos;
+                m_middle_mouse_pressed = true;
+                break;
+            }
+            case ActionName::L_SYSTEM: { m_system_key_pressed = true; break; }
+            case ActionName::LEFT_CLICK: {
+                if (!m_engine->editMode()) {
+                    break;
+                }
+
+                const auto world_pos = worldPos();
+                m_engine->pushSelectedPos(fitToGrid(world_pos), !m_system_key_pressed);
+                for (auto e : m_entity_manager.getEntities()) {
+                    if (physics::isInside(world_pos, e)) {
+                        m_engine->pushSelectedEntityId(e->id(), !m_system_key_pressed);
+                        if (e->hasComponent<CDraggable>()) {
+                            e->getComponent<CDraggable>().dragged = true;
+                        }
+                        break;
+                    }
+                }
+                break;
+            }
+            case ActionName::TOGGLE_LEVEL_EDITOR: {
+                m_engine->toggleEditMode();
+                m_paused = m_engine->editMode();
+                break;
+            }
+            default: break;
+        } 
+    }
+    if (action.getType() == ActionType::END) {
+        switch (action.getName()) {
+            case ActionName::L_SYSTEM: m_system_key_pressed = false; break;
+            case ActionName::MIDDLE_CLICK: m_middle_mouse_pressed = false; break;
+            case ActionName::LEFT_CLICK: {
+                if (m_engine->editMode()) {
+                    auto world_pos = worldPos();
+                    for (auto e : m_entity_manager.getEntities()) {
+                        if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
+                            e->getComponent<CDraggable>().dragged = false;
+                            e->getComponent<CTransform>().pos = (fitToGrid(world_pos));
+                        }
+                    }
+                    break;
+                }
+            }
+            default: break;
+        }
+    }
+}
+
+void Scene::sPan(View& view) {
+    constexpr auto pan_speed_coeff = 4.0f;
+    auto diff = Vec2(m_drag_pos - m_mouse_pos)/pan_speed_coeff;
+    view.setCenter(view.getCenter().x + diff.x, view.getCenter().y + diff.y);
+    m_engine->window().setView(view);
+}
+
+void Scene::sZoom(View& view) {
+    if (m_zoom.level != m_zoom.prev_level) {
+        m_zoom.prev_level = m_zoom.level;
+        view.zoom(m_zoom.value);
+    }
 }
