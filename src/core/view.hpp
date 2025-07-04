@@ -23,5 +23,6 @@ public:
     const sf::View& getView() const { return m_view; }
 
     void setCenter(float x, float y);
+    void setCenter(const Vec2& pos);
     void zoom(float factor);
 };
