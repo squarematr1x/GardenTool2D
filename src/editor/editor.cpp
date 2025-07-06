@@ -69,6 +69,9 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                 auto& gravity = e->getComponent<CGravity>();
                                 ImGui::SetNextItemWidth(100); 
                                 ImGui::InputFloat("Gravity", &gravity.gravity, 0.25f, 0.25f, "%.2f");
+                                if (ImGui::Button("Delete")) {
+                                    e->removeComponent<CGravity>();
+                                } 
                             } else if (ImGui::Button("Add gravity")) {
                                 e->addComponent<CGravity>();
                             }
@@ -92,6 +95,9 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                         entity->addComponent<CBBox>(Vec2(bbox.size.x, bbox.size.y), bbox.block_movement, bbox.block_vision);
                                     }
                                 }
+                                if (ImGui::Button("Delete")) {
+                                    e->removeComponent<CBBox>();
+                                } 
                             } else if (ImGui::Button("Add bounding box")) {
                                 for (const auto& id : engine->allSelectedEntityIds()) {
                                     auto entity = entity_manager.getEntity(id);
@@ -135,6 +141,17 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                     }
                                     m_previous_animation = animations[cur_index];
                                 }
+                                if (ImGui::Button("Delete")) {
+                                    e->removeComponent<CAnimation>();
+                                } 
+                            } else if (ImGui::Button("Add animation")) {
+                                for (const auto& id : engine->allSelectedEntityIds()) {
+                                    auto entity = entity_manager.getEntity(id);
+                                    if (entity != nullptr && entity->tag() == Tag::TILE) {
+                                        // Add bounding box for multiple tiles at once
+                                        entity->addComponent<CAnimation>(engine->assets().getAnimation("Brick"));
+                                    }
+                                }
                             }
                             ImGui::TreePop();
                         }
@@ -153,6 +170,9 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                     hp.current = 1; 
                                 }
                                 hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
+                                if (ImGui::Button("Delete")) {
+                                    e->removeComponent<CHealth>();
+                                } 
                             } else if (ImGui::Button("Add health")) {
                                 e->addComponent<CHealth>();
                             }
@@ -163,6 +183,9 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                 auto& damage = e->getComponent<CDamage>();
                                 ImGui::SetNextItemWidth(100);
                                 ImGui::InputInt("Damage", &damage.damage);
+                                if (ImGui::Button("Delete")) {
+                                    e->removeComponent<CDamage>();
+                                } 
                             } else if (ImGui::Button("Add damage")) {
                                 e->addComponent<CDamage>();
                             }
@@ -173,6 +196,9 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                 auto& invincibility = e->getComponent<CInvincibility>();
                                 ImGui::SetNextItemWidth(100);
                                 ImGui::InputInt("Time (frames)", &invincibility.i_frames, 60, 60);
+                                if (ImGui::Button("Delete")) {
+                                    e->removeComponent<CInvincibility>();
+                                } 
                             } else if (ImGui::Button("Add invincibility")) {
                                 e->addComponent<CInvincibility>();
                             }
@@ -183,6 +209,9 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                 if (e->hasComponent<CBehavior>()) {
                                     auto& hostile = e->getComponent<CBehavior>().hostile;
                                     ImGui::Checkbox("Hostile", &hostile);
+                                    if (ImGui::Button("Delete")) {
+                                        e->removeComponent<CBehavior>();
+                                    } 
                                 }
                                 if (ImGui::TreeNode("Follow")) {
                                     if (e->hasComponent<CFollowPlayer>()) {
@@ -194,6 +223,9 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                         ImGui::InputFloat("y", &follow.home.y, 1.0f, 1.0f, "%.0f");
                                         ImGui::SetNextItemWidth(100);
                                         ImGui::InputFloat("Speed", &follow.speed, 1.0f, 1.0f, "%.0f");
+                                        if (ImGui::Button("Delete")) {
+                                            e->removeComponent<CFollowPlayer>();
+                                        } 
                                     } else if (ImGui::Button("Add follow behavior")) {
                                         e->addComponent<CFollowPlayer>();
                                         e->removeComponent<CPatrol>();
@@ -228,6 +260,9 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                                 patrol.cur_pos = 0;
                                             }
                                         }
+                                        if (ImGui::Button("Delete")) {
+                                            e->removeComponent<CPatrol>();
+                                        } 
                                     } else if (ImGui::Button("Add follow behavior")) {
                                         e->addComponent<CPatrol>();
                                         e->removeComponent<CFollowPlayer>();
