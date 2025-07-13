@@ -58,14 +58,14 @@ class Entity {
 	bool m_alive{ true };
 	ComponentTuple m_components;
 
+	void setTag(Tag tag) { m_tag = tag; }
+
 public:
 	Tag tag() { return m_tag; }
 	bool isActive() const { return m_alive; }
 	size_t id() const { return m_id; }
 
 	void destroy() { m_alive = false; }
-
-	void setTag(Tag tag) { m_tag = tag; }
 
 	template<typename T>
 	bool hasComponent() const { return getComponent<T>().has; }
