@@ -35,7 +35,20 @@ class Editor {
         { "TRIGGERABLE", Tag::TRIGGERABLE }
     };
 
-    const std::map<TriggerType, std::string> m_trigger_type_map = {
+    const char* m_trigger_types[3] = {
+        "APPLY_GRAVITY",
+        "DESTROY",
+        "PLAY_MUSIC"
+    };
+
+    const std::map<std::string, TriggerType> m_trigger_type_map = {
+        { "APPLY_GRAVITY", TriggerType::APPLY_GRAVITY },
+        { "DESTROY", TriggerType::DESTROY },
+        { "PLAY_MUSIC", TriggerType::PLAY_MUSIC }
+    };
+
+    // TODO: clean this
+    const std::map<TriggerType, std::string> m_trigger_level_file_type_map = {
         { TriggerType::APPLY_GRAVITY, "ApplyGravity" },
         { TriggerType::DESTROY, "Destroy" },
         { TriggerType::PLAY_MUSIC, "PlayMusic" }
@@ -52,6 +65,10 @@ class Editor {
     void parseEntities(EntityManager& entity_manager, GameEngine* engine);
 
     int editTabFlag();
+    
+    int getNextTriggerId(EntityManager& entity_manager) const;
+
+    std::vector<int> getTriggerIds(EntityManager& entity_manager) const;
 
     const std::string tagString(Tag tag) const;
 

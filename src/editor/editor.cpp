@@ -25,7 +25,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
     ImGui::SFML::Update(window, m_dt.restart());
     ImGui::Begin("Editor");
 
-    //  ImGui::ShowDemoWindow();
+    // ImGui::ShowDemoWindow();
     
     if (ImGui::BeginTabBar("EditTabBar", 0)) {
         // Add entities
@@ -272,6 +272,52 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                             }
                             ImGui::TreePop();
                         }
+                        if (ImGui::TreeNode("Trigger")) {
+                            if (e->tag() == Tag::TRIGGER) {
+                                if (e->hasComponent<CTrigger>()) {
+                                    auto& trigger = e->getComponent<CTrigger>();
+                                    ImGui::BeginDisabled();
+                                    ImGui::InputInt("id", &trigger.id, 0);
+                                    ImGui::EndDisabled();
+                                    static auto cur_index = 0;
+                                    for (auto i = 0; i < IM_ARRAYSIZE(m_trigger_types); i++) {
+                                        const std::string type_str(m_trigger_types[i]);
+                                        if (!m_trigger_type_map.count(type_str)) {
+                                            continue;
+                                        }
+                                        if (m_trigger_type_map.at(type_str) == trigger.type) {
+                                            cur_index = i;
+                                            break;
+                                        }
+                                    }
+                                    auto prev_index = cur_index;
+                                    ImGui::ListBox("Types", &cur_index, m_trigger_types, IM_ARRAYSIZE(m_trigger_types), 3);
+                                    if (prev_index != cur_index) {
+                                        std::string type(m_trigger_types[cur_index]);
+                                        if (m_trigger_type_map.count(type)) {
+                                            trigger.type = m_trigger_type_map.at(type);
+                                        }
+                                    }
+                                    
+                                } else if (ImGui::Button("Add Trigger")) {
+                                    e->addComponent<CTrigger>(getNextTriggerId(entity_manager), TriggerType::NONE);
+                                }
+                            }
+                            ImGui::TreePop();
+                        }
+                        if (ImGui::TreeNode("Triggerable")) {
+                            if (e->tag() == Tag::TRIGGERABLE) {
+                                if (e->hasComponent<CTriggerable>()) {
+                                    auto& triggerable = e->getComponent<CTriggerable>();
+                                    ImGui::InputInt("Trigger id", &triggerable.trigger_id);                    
+                                } else if (!getTriggerIds(entity_manager).size()) {
+                                    ImGui::Text("No triggers exist yet.");
+                                } else if (ImGui::Button("Add Triggerable")) {
+                                    e->addComponent<CTriggerable>(getTriggerIds(entity_manager).back());
+                                }
+                            }
+                            ImGui::TreePop();
+                        }
                         if (ImGui::TreeNode("Type")) {
                             static auto cur_index = 0;
                             for (auto i = 0; i < IM_ARRAYSIZE(m_types); i++) {
@@ -289,7 +335,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                             if (prev_index != cur_index) {
                                 std::string type(m_types[cur_index]);
                                 if (m_type_map.count(type)) {
-                                    e->setTag(m_type_map.at(type));
+                                    entity_manager.setTag(e->id(), m_type_map.at(type));
                                 }
                             }
                             ImGui::TreePop();
@@ -428,8 +474,8 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
         if (tag == "Trigger") {
             int trigger_id = e->getComponent<CTrigger>().id;
             std::string trigger_type = "None"; 
-            if (m_trigger_type_map.count(e->getComponent<CTrigger>().type)) {
-                trigger_type = m_trigger_type_map.at(e->getComponent<CTrigger>().type);
+            if (m_trigger_level_file_type_map.count(e->getComponent<CTrigger>().type)) {
+                trigger_type = m_trigger_level_file_type_map.at(e->getComponent<CTrigger>().type);
             }
             ss << tag << " " << trigger_id << " " << grid_x << " " << grid_y << " " << bbox.size.x << " " <<
                 bbox.size.y << " " << trigger_type;
@@ -559,4 +605,35 @@ void Editor::parseEntities(EntityManager& entity_manager, GameEngine* engine) {
     }
  
     files::writeFile(m_level_path, m_level_content);
+}
+
+int Editor::getNextTriggerId(EntityManager& entity_manager) const {
+    std::vector<int> ids;
+    
+    for (const auto& e : entity_manager.getEntities(Tag::TRIGGER)) {
+        if (!e->hasComponent<CTrigger>()) {
+            continue;
+        }
+        ids.push_back(e->getComponent<CTrigger>().id);
+    }
+
+    if (ids.size() == 0) {
+        return 0;
+    }
+
+    std::sort(ids.begin(), ids.end(), std::greater<>());
+    return ++ids.front();
+}
+
+std::vector<int> Editor::getTriggerIds(EntityManager& entity_manager) const {
+    std::vector<int> ids;
+    
+    for (const auto& e : entity_manager.getEntities(Tag::TRIGGER)) {
+        if (!e->hasComponent<CTrigger>()) {
+            continue;
+        }
+        ids.push_back(e->getComponent<CTrigger>().id);
+    }
+
+    return ids;
 }
