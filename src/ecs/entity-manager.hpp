@@ -50,4 +50,6 @@ public:
 	EntityVec& getEntities(const Tag tag);
 
 	void update();
+
+	void setTag(size_t id, const Tag tag);
 };

@@ -23,8 +23,8 @@ void EntityManager::update() {
 
 	removeDeadEntities(m_entities);
 
-	for (auto& [tag, entityVec] : m_entity_map) {
-		removeDeadEntities(entityVec);
+	for (auto& [tag, entity_vec] : m_entity_map) {
+		removeDeadEntities(entity_vec);
 	}
 
 	m_entities_to_add.clear();
@@ -37,4 +37,17 @@ void EntityManager::removeDeadEntities(EntityVec& vec) {
 
 EntityVec& EntityManager::getEntities(const Tag tag) {
 	return m_entity_map[tag];
+}
+
+void EntityManager::setTag(size_t id, const Tag tag) {
+	for (auto& [tag, entity_vec] : m_entity_map) {
+		entity_vec.erase(std::remove_if(entity_vec.begin(), entity_vec.end(),
+			[id](std::shared_ptr<Entity> e) { return e->id() == id; }), entity_vec.end());
+	}
+
+	auto e = getEntity(id);
+	if (e != nullptr) {
+		e->setTag(tag);
+		m_entity_map[e->tag()].push_back(e);
+	}
 }
