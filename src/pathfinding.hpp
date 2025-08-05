@@ -33,6 +33,14 @@ struct SearchNode {
     }
 };
 
+struct Vec2Hasher {
+    std::size_t operator()(const Vec2& v) const {
+        std::size_t hx = std::hash<float>{}(v.x);
+        std::size_t hy = std::hash<float>{}(v.y);
+        return hx ^ (hy << 1);
+    }
+};
+
 std::vector<Vec2> getPath(const Vec2& start, const Vec2& goal, EntityManager& entity_manager);
 std::vector<SearchNode> getNeighbours(const SearchNode& node, const Vec2& goal, EntityManager& entity_manager, const Vec2& cell_size=Vec2(64, 64));
 
