@@ -38,7 +38,7 @@ class EdgePool {
     };
 
     struct Cell {
-        std::array<int, 4> edge_id{ 0, 0, 0, 0 };
+        std::array<size_t, 4> edge_id{ 0, 0, 0, 0 };
         std::array<bool, 4> edge_exists{ false, false, false, false };
         bool exists{ false };
     };

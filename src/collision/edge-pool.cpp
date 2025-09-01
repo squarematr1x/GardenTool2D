@@ -8,7 +8,7 @@
 void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) {
     std::unordered_set<Vec2, Vec2Hasher> vertices;
 
-    for (const auto& e : entity_manager.getEntities(Tag::TILE)) {
+    for (auto& e : entity_manager.getEntities(Tag::TILE)) {
         if (!e->hasComponent<CBBox>()) {
             continue;
         }
@@ -17,7 +17,7 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
 
     auto boundaries = getWorldBoundary(entity_manager, engine);
     std::vector<Cell> cells;
-    int w = 0;
+    size_t w_steps = 0;
 
     // Init
     for (float y = boundaries.min.y; y <= boundaries.max.y; y += 64.0f) {
@@ -25,20 +25,18 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
             Cell cell;
             cells.push_back(cell);
         }
-        w++;
+        w_steps++;
     }
     if (cells.size() <= 0) {
         return;
     }
 
-    int i = 0;
+    size_t i = 0;
     for (float x = boundaries.min.x; x <= boundaries.max.x; x += 64.0f) {
         for (float y = boundaries.min.y; y <= boundaries.max.y; y+= 64.0f) {
             auto cell = cells[i];
             size_t w = i - 1;
-            size_t e = i + 1;
-            size_t n = i - w;
-            size_t s = i + w;
+            size_t n = i - w_steps;
             if (auto search = vertices.find(Vec2(x, y)); search != vertices.end()) {
                 cell.exists = true;
                 
@@ -50,7 +48,7 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
                         cell.edge_exists[WEST] = true;
                         cell.edge_id[WEST] = cells[n].edge_id[WEST];
                     } else {
-                        int edge_id = m_edges.size();
+                        auto edge_id = m_edges.size();
                         m_edges.push_back({
                             { x - 32.0f, y - 32.0f },
                             { x - 32.0f, y + 32.0f }
@@ -68,7 +66,7 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
                         cell.edge_exists[EAST] = true;
                         cell.edge_id[EAST] = cells[n].edge_id[EAST];
                     } else {
-                        int edge_id = m_edges.size();
+                        auto edge_id = m_edges.size();
                         m_edges.push_back({
                             { x + 32.0f, y - 32.0f },
                             { x - 32.0f, y - 32.0f }
@@ -86,7 +84,7 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
                         cell.edge_exists[NORTH] = true;
                         cell.edge_id[NORTH] = cells[w].edge_id[NORTH];
                     } else {
-                        int edge_id = m_edges.size();
+                        auto edge_id = m_edges.size();
                         m_edges.push_back({
                             { x + 32.0f, y + 32.0f },
                             { x - 32.0f, y + 32.0f }
@@ -104,7 +102,7 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
                         cell.edge_exists[SOUTH] = true;
                         cell.edge_id[SOUTH] = cells[w].edge_id[SOUTH];
                     } else {
-                        int edge_id = m_edges.size();
+                        auto edge_id = m_edges.size();
                         m_edges.push_back({
                             { x + 32.0f, y - 32.0f },
                             { x + 32.0f, y + 32.0f }
@@ -117,6 +115,9 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
             i++;
         }
     }
+    for (const auto& e : m_edges) {
+        std::cout << e.start << "->" << e.end << '\n';
+    }
 }
 
 const Boundary EdgePool::getWorldBoundary(EntityManager& entity_manager, GameEngine* engine) {
@@ -124,7 +125,7 @@ const Boundary EdgePool::getWorldBoundary(EntityManager& entity_manager, GameEng
     Vec2 max(engine->window().getSize().x, engine->window().getSize().y);
     const Vec2 m_grid_cell_size{ 64, 64 };
 
-    for (const auto& e : entity_manager.getEntities(Tag::TILE)) {
+    for (auto& e : entity_manager.getEntities(Tag::TILE)) {
         if (!e->hasComponent<CBBox>()) {
             continue;
         }
