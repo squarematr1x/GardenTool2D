@@ -21,10 +21,10 @@ struct Boundary {
 
 class EdgePool {
     enum Direction: int {
-        WEST,
-        EAST,
         NORTH,
-        SOUTH
+        SOUTH,
+        EAST,
+        WEST
     };
 
     struct Edge {

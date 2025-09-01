@@ -42,53 +42,76 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
             if (auto search = vertices.find(Vec2(x, y)); search != vertices.end()) {
                 cell.exists = true;
                 
-                // West
-                if (auto search = vertices.find(Vec2(x - 64.0f, y)); search != vertices.end() && validIndex(w, cells)) {
-                    cell.edge_exists[0] = true;
-                    cell.edge_id[0] = cells[w].edge_id[0];
-                } else {
-                    int edge_id = m_edges.size();
-                    m_edges.push_back({
-                        { x - 32.0f, y - 32.0f },
-                        { x - 32.0f, y + 32.0f }
-                    });
-                    cell.edge_id[0] = edge_id;
+                // If this cell has no western neighbour it needs western edge
+                if (auto search = vertices.find(Vec2(x - 64.0f, y)); search == vertices.end()) {
+                    if (auto search = vertices.find(Vec2(x, y - 64.0f)); search != vertices.end() && validIndex(n, cells)) {
+                        // Norther neighbour has a western edge, so grow it downwards
+                        m_edges[cells[n].edge_id[WEST]].end.y += 64.0f;
+                        cell.edge_exists[WEST] = true;
+                        cell.edge_id[WEST] = cells[n].edge_id[WEST];
+                    } else {
+                        int edge_id = m_edges.size();
+                        m_edges.push_back({
+                            { x - 32.0f, y - 32.0f },
+                            { x - 32.0f, y + 32.0f }
+                        });
+                        cell.edge_id[WEST] = edge_id;
+                        cell.edge_exists[WEST] = true;
+                    }
                 }
-                // East
-                if (auto search = vertices.find(Vec2(x - 64.0f, y)); search != vertices.end() && validIndex(e, cells)) {
-                    cell.edge_exists[1] = true;
-                    cell.edge_id[1] = cells[e].edge_id[1];
-                } else {
-                    int edge_id = m_edges.size();
-                    m_edges.push_back({
-                        { x + 32.0f, y - 32.0f },
-                        { x + 32.0f, y + 32.0f }
-                    });
-                    cell.edge_id[1] = edge_id;
+
+                // If this cell has no eastern neighbour it needs eastern edge
+                if (auto search = vertices.find(Vec2(x + 64.0f, y)); search == vertices.end()) {
+                    if (auto search = vertices.find(Vec2(x, y - 64.0f)); search != vertices.end() && validIndex(n, cells)) {
+                        // Norther neighbour has a western edge, so grow it downwards
+                        m_edges[cells[n].edge_id[EAST]].end.y += 64.0f;
+                        cell.edge_exists[EAST] = true;
+                        cell.edge_id[EAST] = cells[n].edge_id[EAST];
+                    } else {
+                        int edge_id = m_edges.size();
+                        m_edges.push_back({
+                            { x + 32.0f, y - 32.0f },
+                            { x - 32.0f, y - 32.0f }
+                        });
+                        cell.edge_id[EAST] = edge_id;
+                        cell.edge_exists[EAST] = true;
+                    }
                 }
-                // North
-                if (auto search = vertices.find(Vec2(x, y - 64.0f)); search != vertices.end() && validIndex(n, cells)) {
-                    cell.edge_exists[2] = true;
-                    cell.edge_id[2] = cells[n].edge_id[2];
-                } else {
-                    int edge_id = m_edges.size();
-                    m_edges.push_back({
-                        { x - 32.0f, y - 32.0f },
-                        { x + 32.0f, y - 32.0f }
-                    });
-                    cell.edge_id[2] = edge_id;
+
+                // If this cell has no northern neighbour it needs northern edge
+                if (auto search = vertices.find(Vec2(x, y - 64.0f)); search == vertices.end()) {
+                    if (auto search = vertices.find(Vec2(x - 64.0f, y)); search != vertices.end() && validIndex(w, cells)) {
+                        // Western neighbour has a northern edge, so grow it eastwards
+                        m_edges[cells[w].edge_id[NORTH]].end.y += 64.0f;
+                        cell.edge_exists[NORTH] = true;
+                        cell.edge_id[NORTH] = cells[w].edge_id[NORTH];
+                    } else {
+                        int edge_id = m_edges.size();
+                        m_edges.push_back({
+                            { x + 32.0f, y + 32.0f },
+                            { x - 32.0f, y + 32.0f }
+                        });
+                        cell.edge_id[NORTH] = edge_id;
+                        cell.edge_exists[NORTH] = true;
+                    }
                 }
-                // South
-                if (auto search = vertices.find(Vec2(x, y + 64.0f)); search != vertices.end() && validIndex(s, cells)) {
-                    cell.edge_exists[3] = true;
-                    cell.edge_id[3] = cells[s].edge_id[3];
-                } else {
-                    int edge_id = m_edges.size();
-                    m_edges.push_back({
-                        { x - 32.0f, y + 32.0f },
-                        { x + 32.0f, y + 32.0f }
-                    });
-                    cell.edge_id[3] = edge_id;
+
+                // If this cell has no southern neighbour it needs southern edge
+                if (auto search = vertices.find(Vec2(x, y + 64.0f)); search == vertices.end()) {
+                    if (auto search = vertices.find(Vec2(x - 64.0f, y)); search != vertices.end() && validIndex(w, cells)) {
+                        // Norther neighbour has a western edge, so grow it eastwards
+                        m_edges[cells[w].edge_id[SOUTH]].end.y += 64.0f;
+                        cell.edge_exists[SOUTH] = true;
+                        cell.edge_id[SOUTH] = cells[w].edge_id[SOUTH];
+                    } else {
+                        int edge_id = m_edges.size();
+                        m_edges.push_back({
+                            { x + 32.0f, y - 32.0f },
+                            { x + 32.0f, y + 32.0f }
+                        });
+                        cell.edge_id[SOUTH] = edge_id;
+                        cell.edge_exists[SOUTH] = true;
+                    }
                 }
             }
             i++;
