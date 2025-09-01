@@ -9,11 +9,11 @@ class GameEngine;
 class EntityManager; 
 
 
-struct Boundaries {
+struct Boundary {
     Vec2 min;
     Vec2 max;
 
-    Boundaries(const Vec2& min_in, const Vec2& max_in)
+    Boundary(const Vec2& min_in, const Vec2& max_in)
         : min(min_in), max(max_in)
     {
     }
@@ -30,6 +30,11 @@ class EdgePool {
     struct Edge {
         Vec2 start;
         Vec2 end;
+
+        Edge(const Vec2& start_in, const Vec2& end_in)
+            : start(start_in), end(end_in)
+        {
+        }
     };
 
     struct Cell {
@@ -43,7 +48,9 @@ class EdgePool {
     GameEngine* m_engine{ nullptr };
 
 public:
-    const Boundaries getWorldBoundaries(EntityManager& entity_manager, GameEngine* engine);
+    const Boundary getWorldBoundary(EntityManager& entity_manager, GameEngine* engine);
     void constructPool(EntityManager& entity_manager, GameEngine* engine);
     void tileMapToPolyMap(const Vec2& start, const Vec2& size, float block_w, int pitch);
+
+    bool validIndex(size_t index, std::vector<Cell> cells);
 };
