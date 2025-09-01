@@ -7,14 +7,6 @@ enum class Hearistic : unsigned char {
     EUCLIDIC
 };
 
-struct Vec2Hasher {
-    std::size_t operator()(const Vec2& v) const {
-        std::size_t hx = std::hash<float>{}(v.x);
-        std::size_t hy = std::hash<float>{}(v.y);
-        return hx ^ (hy << 1);
-    }
-};
-
 class Vec2 {
 public:
 	float x{ 0 };
@@ -67,4 +59,12 @@ public:
 	Vec2 normalize() const;
 
 	friend std::ostream& operator<< (std::ostream& out, const Vec2& p);
+};
+
+struct Vec2Hasher {
+    std::size_t operator()(const Vec2& v) const {
+        std::size_t hx = std::hash<float>{}(v.x);
+        std::size_t hy = std::hash<float>{}(v.y);
+        return hx ^ (hy << 1);
+    }
 };
