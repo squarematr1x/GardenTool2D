@@ -53,4 +53,6 @@ public:
     void tileMapToPolyMap(const Vec2& start, const Vec2& size, float block_w, int pitch);
 
     bool validIndex(size_t index, std::vector<Cell> cells);
+
+    const std::vector<Edge>& getEdges() const { return m_edges; }
 };
