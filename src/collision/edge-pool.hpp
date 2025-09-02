@@ -45,14 +45,13 @@ class EdgePool {
 
     std::vector<Edge> m_edges;
     std::vector<Cell> m_world;
-    GameEngine* m_engine{ nullptr };
 
-public:
     const Boundary getWorldBoundary(EntityManager& entity_manager, GameEngine* engine);
-    void constructPool(EntityManager& entity_manager, GameEngine* engine);
-    void tileMapToPolyMap(const Vec2& start, const Vec2& size, float block_w, int pitch);
 
     bool validIndex(size_t index, std::vector<Cell> cells);
+
+public:
+    void constructPool(EntityManager& entity_manager, GameEngine* engine);
 
     const std::vector<Edge>& getEdges() const { return m_edges; }
 };

@@ -16,7 +16,7 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
     }
 
     auto boundaries = getWorldBoundary(entity_manager, engine);
-    std::vector<Cell> cells;
+    std::vector<Cell> grid;
     size_t w_steps = 0;
 
     // Init
@@ -27,106 +27,113 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
             if (auto search = vertices.find(Vec2(x, y)); search != vertices.end()) {
                 cell.exists = true;
             }
-            cells.push_back(cell);
+            grid.push_back(cell);
             w_steps++;
         }
     }
 
-    if (cells.size() <= 0) {
+    if (grid.size() <= 0) {
         return;
     }
 
     size_t i = 0;
     for (float x = boundaries.min.x; x <= boundaries.max.x; x += 64.0f) {
         for (float y = boundaries.min.y; y <= boundaries.max.y; y+= 64.0f) {
-            auto cell = cells[i];
+            if (!grid[i].exists) {
+                i++;
+                continue;
+            }
+
+            auto cell = grid[i];
             const size_t w = i - 1;
             const size_t e = i + 1;
             const size_t n = i - w_steps;
             const size_t s = i + w_steps;
 
-            if (cells[i].exists) {
-                // If this cell has no western neighbour it needs western edge
-                if (validIndex(w, cells) && !cells[w].exists) {
-                    if (validIndex(n, cells) && cells[n].edge_exists[WEST]) {
-                        // Norther neighbour has a western edge, so grow it downwards
-                        m_edges[cells[n].edge_id[WEST]].end.y += 64.0f;
-                        cell.edge_exists[WEST] = true;
-                        cell.edge_id[WEST] = cells[n].edge_id[WEST];
-                    } else {
-                        // Create new edge
-                        auto edge_id = m_edges.size();
-                        m_edges.push_back({
-                            { x - 32.0f, y - 32.0f },
-                            { x - 32.0f, y + 32.0f }
-                        });
-                        cell.edge_id[WEST] = edge_id;
-                        cell.edge_exists[WEST] = true;
-                    }
-                }
-
-                // If this cell has no eastern neighbour it needs eastern edge
-                if (validIndex(e, cells) && !cells[e].exists) {
-                    if (validIndex(n, cells) && cells[n].edge_exists[EAST]) {
-                        // Norther neighbour has a western edge, so grow it downwards
-                        m_edges[cells[n].edge_id[EAST]].end.y += 64.0f;
-                        cell.edge_exists[EAST] = true;
-                        cell.edge_id[EAST] = cells[n].edge_id[EAST];
-                    } else {
-                        // Create new edge
-                        auto edge_id = m_edges.size();
-                        m_edges.push_back({
-                            { x + 32.0f, y - 32.0f },
-                            { x + 32.0f, y + 32.0f }
-                        });
-                        cell.edge_id[EAST] = edge_id;
-                        cell.edge_exists[EAST] = true;
-                    }
-                }
-
-                // If this cell has no northern neighbour it needs northern edge
-                if (validIndex(n, cells) && !cells[n].exists) {
-                    if (validIndex(w, cells) && cells[w].edge_exists[NORTH]) {
-                        // Western neighbour has a northern edge, so grow it eastwards
-                        m_edges[cells[w].edge_id[NORTH]].end.x += 64.0f;
-                        cell.edge_exists[NORTH] = true;
-                        cell.edge_id[NORTH] = cells[w].edge_id[NORTH];
-                    } else {
-                        // Create new edge
-                        auto edge_id = m_edges.size();
-                        m_edges.push_back({
-                            { x - 32.0f, y - 32.0f },
-                            { x + 32.0f, y - 32.0f }
-                        });
-                        cell.edge_id[NORTH] = edge_id;
-                        cell.edge_exists[NORTH] = true;
-                    }
-                }
-
-                // If this cell has no southern neighbour it needs southern edge
-                if (validIndex(s, cells) && !cells[s].exists) {
-                    if (validIndex(w, cells) && cells[w].edge_exists[SOUTH]) {
-                        // Western neighbour has a southern edge, so grow it eastwards
-                        m_edges[cells[w].edge_id[SOUTH]].end.x += 64.0f;
-                        cell.edge_exists[SOUTH] = true;
-                        cell.edge_id[SOUTH] = cells[w].edge_id[SOUTH];
-                    } else {
-                        // Create new edge
-                        auto edge_id = m_edges.size();
-                        m_edges.push_back({
-                            { x - 32.0f, y + 32.0f },
-                            { x + 32.0f, y + 32.0f }
-                        });
-                        cell.edge_id[SOUTH] = edge_id;
-                        cell.edge_exists[SOUTH] = true;
-                    }
-                }
+            // If this cell has no western neighbour it needs western edge
+            if (validIndex(w, grid) && !grid[w].exists && validIndex(n, grid) && grid[n].edge_exists[WEST]) {
+                // Norther neighbour has a western edge, so grow it downwards
+                m_edges[grid[n].edge_id[WEST]].end.y += 64.0f;
+                cell.edge_exists[WEST] = true;
+                cell.edge_id[WEST] = grid[n].edge_id[WEST];
+            } else {
+                // Create new edge
+                auto edge_id = m_edges.size();
+                m_edges.push_back({
+                    { x - 32.0f, y - 32.0f },
+                    { x - 32.0f, y + 32.0f }
+                });
+                cell.edge_id[WEST] = edge_id;
+                cell.edge_exists[WEST] = true;
             }
+
+            // If this cell has no eastern neighbour it needs eastern edge
+            if (validIndex(e, grid) && !grid[e].exists && validIndex(n, grid) && grid[n].edge_exists[EAST]) {
+                // Norther neighbour has a western edge, so grow it downwards
+                m_edges[grid[n].edge_id[EAST]].end.y += 64.0f;
+                cell.edge_exists[EAST] = true;
+                cell.edge_id[EAST] = grid[n].edge_id[EAST];
+            } else {
+                // Create new edge
+                auto edge_id = m_edges.size();
+                m_edges.push_back({
+                    { x + 32.0f, y - 32.0f },
+                    { x + 32.0f, y + 32.0f }
+                });
+                cell.edge_id[EAST] = edge_id;
+                cell.edge_exists[EAST] = true;
+            }
+
+            // If this cell has no northern neighbour it needs northern edge
+            if (validIndex(n, grid) && !grid[n].exists && validIndex(w, grid) && grid[w].edge_exists[NORTH]) {
+                // Western neighbour has a northern edge, so grow it eastwards
+                m_edges[grid[w].edge_id[NORTH]].end.x += 64.0f;
+                cell.edge_exists[NORTH] = true;
+                cell.edge_id[NORTH] = grid[w].edge_id[NORTH];
+            } else {
+                // Create new edge
+                auto edge_id = m_edges.size();
+                m_edges.push_back({
+                    { x - 32.0f, y - 32.0f },
+                    { x + 32.0f, y - 32.0f }
+                });
+                cell.edge_id[NORTH] = edge_id;
+                cell.edge_exists[NORTH] = true;
+            }
+
+            // If this cell has no southern neighbour it needs southern edge
+            if (validIndex(s, grid) && !grid[s].exists && validIndex(w, grid) && grid[w].edge_exists[SOUTH]) {
+                // Western neighbour has a southern edge, so grow it eastwards
+                m_edges[grid[w].edge_id[SOUTH]].end.x += 64.0f;
+                cell.edge_exists[SOUTH] = true;
+                cell.edge_id[SOUTH] = grid[w].edge_id[SOUTH];
+            } else {
+                // Create new edge
+                auto edge_id = m_edges.size();
+                m_edges.push_back({
+                    { x - 32.0f, y + 32.0f },
+                    { x + 32.0f, y + 32.0f }
+                });
+                cell.edge_id[SOUTH] = edge_id;
+                cell.edge_exists[SOUTH] = true;
+            }
+            grid[i] = cell;
             i++;
         }
     }
     // for (const auto& e : m_edges) {
     //     std::cout << e.start << "->" << e.end << '\n';
+    // }
+
+    // size_t j = 0;
+    // for (float y = boundaries.min.y; y <= boundaries.max.y; y += 64.0f) {
+    //     w_steps = 0;
+    //     for (float x = boundaries.min.x; x <= boundaries.max.x; x+= 64.0f) {
+    //         if (grid[j].edge_exists[WEST]) std::cout << "[W]";
+    //         else std::cout << "[ ]";
+    //         j++;
+    //     }
+    //     std::cout << '\n';
     // }
 }
 
