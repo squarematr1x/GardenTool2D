@@ -3,16 +3,18 @@
 #include "../ecs/entity-manager.hpp"
 #include "../engine.hpp"
 
-void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) {
+void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine, const Vec2& cell_size) {
     std::unordered_set<Vec2, Vec2Hasher> vertices;
     std::vector<Cell> grid;
     size_t w_steps = 0;
+    size_t i = 0;
+    auto half_cell_size = cell_size / 2;
     auto boundary = getWorldBoundary(entity_manager, engine, vertices);
 
     // Init grid
-    for (float y = boundary.min.y; y <= boundary.max.y; y += 64.0f) {
+    for (float y = boundary.min.y; y <= boundary.max.y; y += cell_size.y) {
         w_steps = 0;
-        for (float x = boundary.min.x; x <= boundary.max.x; x+= 64.0f) {
+        for (float x = boundary.min.x; x <= boundary.max.x; x+= cell_size.x) {
             Cell cell;
             if (auto search = vertices.find(Vec2(x, y)); search != vertices.end()) {
                 cell.exists = true;
@@ -26,9 +28,8 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
         return;
     }
 
-    size_t i = 0;
-    for (float y = boundary.min.y; y <= boundary.max.y; y += 64.0f) {
-        for (float x = boundary.min.x; x <= boundary.max.x; x+= 64.0f) {
+    for (float y = boundary.min.y; y <= boundary.max.y; y += cell_size.y) {
+        for (float x = boundary.min.x; x <= boundary.max.x; x+= cell_size.x) {
             if (!grid[i].exists) {
                 i++;
                 continue;
@@ -43,7 +44,7 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
             if (!validIndex(w, grid) || (validIndex(w, grid) && !grid[w].exists)) {
                 if (validIndex(n, grid) && grid[n].edge_exists[WEST]) {
                     // Norther neighbour has a western edge, so grow it downwards
-                    m_edges[grid[n].edge_id[WEST]].end.y += 68.0f;
+                    m_edges[grid[n].edge_id[WEST]].end.y += cell_size.y;
                     grid[i].edge_exists[WEST] = true;
                     grid[i].edge_id[WEST] = grid[n].edge_id[WEST];
                 } else {
@@ -51,8 +52,8 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
                     grid[i].edge_id[WEST] = m_edges.size();
                     grid[i].edge_exists[WEST] = true;
                     m_edges.push_back({
-                        { x - 32.0f, y - 32.0f },
-                        { x - 32.0f, y + 32.0f }
+                        { x - half_cell_size.x, y - half_cell_size.y },
+                        { x - half_cell_size.x, y + half_cell_size.y }
                     });
                 }
             }
@@ -61,7 +62,7 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
             if (!validIndex(e, grid) || (validIndex(e, grid) && !grid[e].exists)) {
                 if (validIndex(n, grid) && grid[n].edge_exists[EAST]) {
                     // Norther neighbour has a eastern edge, so grow it downwards
-                    m_edges[grid[n].edge_id[EAST]].end.y += 64.0f;
+                    m_edges[grid[n].edge_id[EAST]].end.y += cell_size.y;
                     grid[i].edge_exists[EAST] = true;
                     grid[i].edge_id[EAST] = grid[n].edge_id[EAST];
                 } else {
@@ -69,8 +70,8 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
                     grid[i].edge_id[EAST] = m_edges.size();
                     grid[i].edge_exists[EAST] = true;
                     m_edges.push_back({
-                        { x + 32.0f, y - 32.0f },
-                        { x + 32.0f, y + 32.0f }
+                        { x + half_cell_size.x, y - half_cell_size.y },
+                        { x + half_cell_size.x, y + half_cell_size.y }
                     });
                 }
             }
@@ -79,7 +80,7 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
             if (!validIndex(n, grid) || (validIndex(n, grid) && !grid[n].exists)) {
                 if (validIndex(w, grid) && grid[w].edge_exists[NORTH]) {
                     // Western neighbour has a northern edge, so grow it eastwards
-                    m_edges[grid[w].edge_id[NORTH]].end.x += 64.0f;
+                    m_edges[grid[w].edge_id[NORTH]].end.x += cell_size.x;
                     grid[i].edge_exists[NORTH] = true;
                     grid[i].edge_id[NORTH] = grid[w].edge_id[NORTH];
                 } else {
@@ -87,8 +88,8 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
                     grid[i].edge_id[NORTH] = m_edges.size();
                     grid[i].edge_exists[NORTH] = true;
                     m_edges.push_back({
-                        { x - 32.0f, y - 32.0f },
-                        { x + 32.0f, y - 32.0f }
+                        { x - half_cell_size.x, y - half_cell_size.y },
+                        { x + half_cell_size.x, y - half_cell_size.y }
                     });
                 }
             }
@@ -97,7 +98,7 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
             if (!validIndex(s, grid) || (validIndex(s, grid) && !grid[s].exists)) {
                 if (validIndex(w, grid) && grid[w].edge_exists[SOUTH]) {
                     // Western neighbour has a southern edge, so grow it eastwards
-                    m_edges[grid[w].edge_id[SOUTH]].end.x += 64.0f;
+                    m_edges[grid[w].edge_id[SOUTH]].end.x += cell_size.x;
                     grid[i].edge_exists[SOUTH] = true;
                     grid[i].edge_id[SOUTH] = grid[w].edge_id[SOUTH];
                 } else {
@@ -105,8 +106,8 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
                     grid[i].edge_id[SOUTH] = m_edges.size();
                     grid[i].edge_exists[SOUTH] = true;
                     m_edges.push_back({
-                        { x - 32.0f, y + 32.0f },
-                        { x + 32.0f, y + 32.0f }
+                        { x - half_cell_size.x, y + half_cell_size.y },
+                        { x + half_cell_size.x, y + half_cell_size.y }
                     });
                 }
             }
@@ -115,7 +116,7 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
     }
 }
 
-const Boundary EdgePool::getWorldBoundary(EntityManager& entity_manager, GameEngine* engine, std::unordered_set<Vec2, Vec2Hasher>& vertices) {
+const Boundary EdgePool::getWorldBoundary(EntityManager& entity_manager, GameEngine* engine, std::unordered_set<Vec2, Vec2Hasher>& vertices, bool padding, const Vec2& cell_size) {
     Vec2 min(0.0f, 0.0f);
     Vec2 max(engine->window().getSize().x, engine->window().getSize().y);
 
@@ -140,6 +141,13 @@ const Boundary EdgePool::getWorldBoundary(EntityManager& entity_manager, GameEng
         }
 
         vertices.insert(transform.pos);
+    }
+
+    if (padding) {
+        min.x -= cell_size.x;
+        min.y -= cell_size.y;
+        max.x += cell_size.x;
+        max.y += cell_size.y;
     }
 
     return Boundary{ min, max };

@@ -45,12 +45,15 @@ class EdgePool {
 
     std::vector<Edge> m_edges;
 
-    const Boundary getWorldBoundary(EntityManager& entity_manager, GameEngine* engine, std::unordered_set<Vec2, Vec2Hasher>& vertices);
+    const Boundary getWorldBoundary(
+        EntityManager& entity_manager, GameEngine* engine, std::unordered_set<Vec2, Vec2Hasher>& vertices,
+        bool padding = true, const Vec2& cell_size = Vec2(64.0f, 64.0f)
+    );
 
     bool validIndex(size_t index, std::vector<Cell> cells);
 
 public:
-    void constructPool(EntityManager& entity_manager, GameEngine* engine);
+    void constructPool(EntityManager& entity_manager, GameEngine* engine, const Vec2& cell_size);
 
     const std::vector<Edge>& getEdges() const { return m_edges; }
 };
