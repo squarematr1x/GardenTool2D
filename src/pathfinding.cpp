@@ -1,6 +1,7 @@
 #include "pathfinding.hpp"
 
 #include <queue>
+#include <unordered_set>
 
 #include "ecs/entity-manager.hpp"
 #include "collision/physics.hpp"
@@ -14,7 +15,7 @@ std::vector<Vec2> getPath(const Vec2& start, const Vec2& goal, EntityManager& en
         return {};
     }
 
-    std::vector<Vec2> closed;
+    std::unordered_set<Vec2, Vec2Hasher> closed;
     std::priority_queue<SearchNode, std::vector<SearchNode>, std::greater<SearchNode>> open;
     std::map<Vec2, SearchNode> open_map;
     std::vector<Vec2> path;
@@ -49,14 +50,14 @@ std::vector<Vec2> getPath(const Vec2& start, const Vec2& goal, EntityManager& en
         }
 
         open.pop();
-        if (contains(closed, current.pos)) {
+        if (auto search = closed.find(current.pos); search != closed.end()) {
             continue;
         }
-        closed.push_back(current.pos);
+        closed.insert(current.pos);
 
         const auto neighbours = getNeighbours(current, goal, entity_manager);
         for (const auto& neighbour : neighbours) {
-            if (contains(closed, neighbour.pos)) {
+            if (auto search = closed.find(neighbour.pos); search != closed.end()) {
                 continue;
             }
             if (open_map.find(neighbour.pos) != open_map.end()) {
@@ -116,13 +117,6 @@ std::vector<SearchNode> getNeighbours(const SearchNode& node, const Vec2& goal, 
     }
 
     return nodes;
-}
-
-bool contains(const std::vector<Vec2> v, const Vec2& p) {
-    if (v.empty()) {
-        return false;
-    }
-    return (std::find(v.begin(), v.end(), p) != v.end());
 }
 
 bool validGoal(const Vec2& goal, EntityManager& entity_manager) {
