@@ -1,25 +1,15 @@
 #include "edge-pool.hpp"
 
-#include <unordered_set>
-
 #include "../ecs/entity-manager.hpp"
 #include "../engine.hpp"
 
 void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) {
     std::unordered_set<Vec2, Vec2Hasher> vertices;
-
-    for (auto& e : entity_manager.getEntities(Tag::TILE)) {
-        if (!e->hasComponent<CBBox>()) {
-            continue;
-        }
-        vertices.insert(e->getComponent<CTransform>().pos);
-    }
-
-    auto boundary = getWorldBoundary(entity_manager, engine);
     std::vector<Cell> grid;
     size_t w_steps = 0;
+    auto boundary = getWorldBoundary(entity_manager, engine, vertices);
 
-    // Init
+    // Init grid
     for (float y = boundary.min.y; y <= boundary.max.y; y += 64.0f) {
         w_steps = 0;
         for (float x = boundary.min.x; x <= boundary.max.x; x+= 64.0f) {
@@ -53,7 +43,7 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
             if (!validIndex(w, grid) || (validIndex(w, grid) && !grid[w].exists)) {
                 if (validIndex(n, grid) && grid[n].edge_exists[WEST]) {
                     // Norther neighbour has a western edge, so grow it downwards
-                    m_edges[grid[n].edge_id[WEST]].end.y += 64.0f;
+                    m_edges[grid[n].edge_id[WEST]].end.y += 68.0f;
                     grid[i].edge_exists[WEST] = true;
                     grid[i].edge_id[WEST] = grid[n].edge_id[WEST];
                 } else {
@@ -123,26 +113,11 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine) 
             i++;
         }
     }
-    // for (const auto& e : m_edges) {
-    //     std::cout << e.start << "->" << e.end << '\n';
-    // }
-
-    // size_t j = 0;
-    // for (float y = boundaries.min.y; y <= boundaries.max.y; y += 64.0f) {
-    //     w_steps = 0;
-    //     for (float x = boundaries.min.x; x <= boundaries.max.x; x+= 64.0f) {
-    //         if (grid[j].edge_exists[WEST]) std::cout << "[W]";
-    //         else std::cout << "[ ]";
-    //         j++;
-    //     }
-    //     std::cout << '\n';
-    // }
 }
 
-const Boundary EdgePool::getWorldBoundary(EntityManager& entity_manager, GameEngine* engine) {
+const Boundary EdgePool::getWorldBoundary(EntityManager& entity_manager, GameEngine* engine, std::unordered_set<Vec2, Vec2Hasher>& vertices) {
     Vec2 min(0.0f, 0.0f);
     Vec2 max(engine->window().getSize().x, engine->window().getSize().y);
-    const Vec2 m_grid_cell_size{ 64, 64 };
 
     for (auto& e : entity_manager.getEntities(Tag::TILE)) {
         if (!e->hasComponent<CBBox>()) {
@@ -163,6 +138,8 @@ const Boundary EdgePool::getWorldBoundary(EntityManager& entity_manager, GameEng
         if (transform.pos.y > max.y) {
             max.y = transform.pos.y;
         }
+
+        vertices.insert(transform.pos);
     }
 
     return Boundary{ min, max };

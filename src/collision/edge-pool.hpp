@@ -1,13 +1,13 @@
 #pragma once
 
 #include <vector>
+#include <unordered_set>
 
 #include "../math/vec2.hpp"
 
 class GameEngine;
 
 class EntityManager; 
-
 
 struct Boundary {
     Vec2 min;
@@ -44,9 +44,8 @@ class EdgePool {
     };
 
     std::vector<Edge> m_edges;
-    std::vector<Cell> m_world;
 
-    const Boundary getWorldBoundary(EntityManager& entity_manager, GameEngine* engine);
+    const Boundary getWorldBoundary(EntityManager& entity_manager, GameEngine* engine, std::unordered_set<Vec2, Vec2Hasher>& vertices);
 
     bool validIndex(size_t index, std::vector<Cell> cells);
 
