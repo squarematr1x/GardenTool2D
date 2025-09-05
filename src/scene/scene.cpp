@@ -474,7 +474,28 @@ void Scene::sDoActionCommon(const Action& action) {
             case ActionName::TOGGLE_LIGHT: {
                 m_draw_light = !m_draw_light;
                 if (m_draw_light) {
-                    m_visibility_points = light::constructVisibilityPoints(worldPos(), 1000.0f, m_pool.getEdges());
+                    std::vector<Edge> edges = m_pool.getEdges();
+                    // Add northern border
+                    edges.push_back({
+                        Vec2(worldPos().x - width(), worldPos().y - height()),
+                        Vec2(worldPos().x + width(), worldPos().y - height())
+                    });
+                    // Add souther border
+                    edges.push_back({
+                        Vec2(worldPos().x - width(), worldPos().y + height()),
+                        Vec2(worldPos().x + width(), worldPos().y + height())
+                    });
+                    // Add western border
+                    edges.push_back({
+                        Vec2(worldPos().x - width(), worldPos().y - height()),
+                        Vec2(worldPos().x - width(), worldPos().y + height())
+                    });
+                    // Add eastern border
+                    edges.push_back({
+                        Vec2(worldPos().x + width(), worldPos().y - height()),
+                        Vec2(worldPos().x + width(), worldPos().y + height())
+                    });
+                    m_visibility_points = light::constructVisibilityPoints(worldPos(), 1000.0f, edges);
                 } else {
                     m_visibility_points.clear();
                 }
