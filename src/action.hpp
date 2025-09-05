@@ -26,6 +26,7 @@ enum class ActionName : unsigned char {
 	TOGGLE_FOLLOW,
 	TOGGLE_HEALTH,
 	TOGGLE_AI_INFO,
+	TOGGLE_LIGHT,
 	LEFT_CLICK,
 	MIDDLE_CLICK,
 	RIGHT_CLICK,

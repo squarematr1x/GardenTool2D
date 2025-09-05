@@ -3,6 +3,7 @@
 #include "../engine.hpp"
 #include "../core/rectangle.hpp"
 #include "../collision/physics.hpp"
+#include "../collision/light.hpp"
 
 Scene::Scene(GameEngine* engine)
     : m_engine(engine),
@@ -157,6 +158,11 @@ void Scene::renderBBoxes() {
         vertices.append({pos.x - box.half_size.x, pos.y + box.half_size.y}, box_color);
         vertices.append({pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color);
     }
+
+    for (const auto& e : m_pool.getEdges()) {
+        vertices.append({e.start}, Color(255, 75, 10));
+        vertices.append({e.end}, Color(255, 75, 10));
+    }
     m_engine->window().draw(vertices);
 }
 
@@ -251,6 +257,28 @@ void Scene::renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> play
     }
 }
 
+void Scene::renderLights(const Vec2& source, const std::vector<std::tuple<float, float, float>>& visibility_points) {
+    if (m_visibility_points.size() == 0) {
+        return;
+    }
+
+    VertexArray vertices(TRIANGLE);
+    Color light_color(255, 255, 255, 185);
+    size_t n = m_visibility_points.size();
+
+    for (size_t i = 0; i < n - 1; i++) {
+        vertices.append(source, light_color );
+        vertices.append({ std::get<1>(visibility_points[i]), std::get<2>(visibility_points[i]) }, light_color );
+        vertices.append({ std::get<1>(visibility_points[i + 1]), std::get<2>(visibility_points[i + 1]) }, light_color );
+    }
+
+    vertices.append(source, light_color );
+    vertices.append({ std::get<1>(visibility_points[n - 1]), std::get<2>(visibility_points[n - 1]) }, light_color );
+    vertices.append({ std::get<1>(visibility_points[0]), std::get<2>(visibility_points[0]) }, light_color );
+
+    m_engine->window().draw(vertices);
+}
+
 void Scene::renderCommon(std::shared_ptr<Entity> player) {
     if (m_draw_textures) {
         VertexArray vertices(TRIANGLE);
@@ -284,6 +312,7 @@ void Scene::renderCommon(std::shared_ptr<Entity> player) {
         // Draw vertex array
         m_engine->window().draw(vertices, m_engine->assets().getTexture("Tilemap"));
 
+        renderLights(worldPos(), m_visibility_points);
         renderHighlights();
         renderHpBars();
     }
@@ -442,6 +471,15 @@ void Scene::sDoActionCommon(const Action& action) {
             case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
             case ActionName::TOGGLE_GRID: m_draw_grid = !m_draw_grid; break;
             case ActionName::TOGGLE_HEALTH: m_show_hp = !m_show_hp; break;
+            case ActionName::TOGGLE_LIGHT: {
+                m_draw_light = !m_draw_light;
+                if (m_draw_light) {
+                    m_visibility_points = light::constructVisibilityPoints(worldPos(), 1000.0f, m_pool.getEdges());
+                } else {
+                    m_visibility_points.clear();
+                }
+                break;
+            }
             case ActionName::PAUSE: setPaused(!m_paused); break;
             case ActionName::QUIT: {
                 if (m_free_camera) {

@@ -26,6 +26,7 @@ void SceneRPG::init(const std::string& level_path) {
     registerAction(Y, ActionName::TOGGLE_FOLLOW);
     registerAction(H, ActionName::TOGGLE_HEALTH);
     registerAction(Q, ActionName::TOGGLE_AI_INFO);
+    registerAction(L, ActionName::TOGGLE_LIGHT);
     registerAction(Tab, ActionName::TOGGLE_LEVEL_EDITOR);
     registerAction(LSystem, ActionName::L_SYSTEM);
 
@@ -41,6 +42,9 @@ void SceneRPG::init(const std::string& level_path) {
     registerAction(mouse::Wheel::VerticalWheel, ActionName::MOUSE_SCROLL);
 
     loadLevel(level_path);
+
+    m_entity_manager.update();
+    m_pool.constructPool(m_entity_manager, m_engine, m_grid_cell_size);
 
     setRoomSize();
 }
@@ -681,7 +685,7 @@ void SceneRPG::sCamera() {
 }
 
 void SceneRPG::sRender() {
-    m_engine->window().clear(Color(113, 166, 50));
+    m_engine->window().clear(Color(114, 166, 114));
 
     // Draw all Entity textures/animations
     renderCommon(m_player);

@@ -13,6 +13,9 @@
 #include "../asset/text.hpp"
 #include "../core/circle.hpp"
 
+#include "../collision/edge-pool.hpp"
+
+
 class GameEngine;
 
 enum class SceneType : unsigned char {
@@ -72,6 +75,7 @@ public:
 	void updateGridSize(Vec2 size) { m_grid_size = size; }
 
 	void addVertexData(const Vec2& pos, const Rect<float>& texture_rect, VertexArray& vertices);
+	void renderLights(const Vec2& source, const std::vector<std::tuple<float, float, float>>& visibility_points);
 	void addLine(const Vec2& p1, const Vec2& p2, VertexArray& vertices);
 	void addHpBar(std::shared_ptr<Entity> e);
 	void addHighlight(std::shared_ptr<Entity> e);
@@ -112,6 +116,7 @@ protected:
 	bool m_system_key_pressed{ false };
 	bool m_free_camera{ false };
 	bool m_middle_mouse_pressed{ false };
+	bool m_draw_light{ false };
 
 	std::string m_level_path{ "" };
 
@@ -125,6 +130,9 @@ protected:
 	std::vector<Layer> m_background_layers;
 
 	Circle m_mouse_shape;
+
+	EdgePool m_pool;
+	std::vector<std::tuple<float, float, float>> m_visibility_points;
 
 	virtual void onEnd() = 0;
 	void setPaused(bool paused) { m_paused = paused; }
