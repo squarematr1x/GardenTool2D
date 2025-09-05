@@ -1,15 +1,14 @@
 #include "light.hpp"
 
+#include <algorithm>
+
 #include "edge-pool.hpp"
-#include "../math/vec2.hpp"
 
 namespace light
 {
 
-std::vector<std::tuple<float, float, float>> constructVisibilityPoints(const Vec2& source, float r, const std::vector<Edge>& edges) {
-    // TODO: replace with struct
-    // struct LightPoint { float angle; Vec2 p; };
-    std::vector<std::tuple<float, float, float>> visibility_points;
+std::vector<IntersectPoint> constructVisibilityPoints(const Vec2& source, float r, const std::vector<Edge>& edges) {
+    std::vector<IntersectPoint> visibility_points;
 
     // For each edge in pool
     for (auto& e1 : edges) {
@@ -66,7 +65,7 @@ std::vector<std::tuple<float, float, float>> constructVisibilityPoints(const Vec
                     }
                 }
                 if (valid) {
-                    visibility_points.push_back({ min_ang, min_px, min_py });
+                    visibility_points.push_back({ min_ang, Vec2(min_px, min_py) });
                 }
             }
         }
@@ -75,10 +74,18 @@ std::vector<std::tuple<float, float, float>> constructVisibilityPoints(const Vec
     std::sort(
         visibility_points.begin(),
         visibility_points.end(),
-        [&](const std::tuple<float, float, float> &t1, const std::tuple<float, float, float> &t2) {
-            return std::get<0>(t1) < std::get<0>(t2);
+        [&](const IntersectPoint &t1, const IntersectPoint &t2) {
+            return t1.angle < t2.angle;
         }
     );
+    auto it = std::unique(
+        visibility_points.begin(),
+        visibility_points.end(),
+        [&](const IntersectPoint &t1, const IntersectPoint &t2) {
+            return fabs(t1.point.x - t2.point.x) < 0.1f && fabs(t1.point.y - t2.point.y) < 0.1f;
+        }
+    );
+    visibility_points.resize(static_cast<size_t>((distance(visibility_points.begin(), it))));
 
     return visibility_points;
 }

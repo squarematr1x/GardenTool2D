@@ -3,7 +3,6 @@
 #include "../engine.hpp"
 #include "../core/rectangle.hpp"
 #include "../collision/physics.hpp"
-#include "../collision/light.hpp"
 
 Scene::Scene(GameEngine* engine)
     : m_engine(engine),
@@ -257,7 +256,7 @@ void Scene::renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> play
     }
 }
 
-void Scene::renderLights(const Vec2& source, const std::vector<std::tuple<float, float, float>>& visibility_points) {
+void Scene::renderLights(const Vec2& source, const std::vector<light::IntersectPoint>& visibility_points) {
     if (m_visibility_points.size() == 0) {
         return;
     }
@@ -267,14 +266,14 @@ void Scene::renderLights(const Vec2& source, const std::vector<std::tuple<float,
     size_t n = m_visibility_points.size();
 
     for (size_t i = 0; i < n - 1; i++) {
-        vertices.append(source, light_color );
-        vertices.append({ std::get<1>(visibility_points[i]), std::get<2>(visibility_points[i]) }, light_color );
-        vertices.append({ std::get<1>(visibility_points[i + 1]), std::get<2>(visibility_points[i + 1]) }, light_color );
+        vertices.append(source, light_color);
+        vertices.append(visibility_points[i].point, light_color);
+        vertices.append(visibility_points[i + 1].point, light_color);
     }
 
-    vertices.append(source, light_color );
-    vertices.append({ std::get<1>(visibility_points[n - 1]), std::get<2>(visibility_points[n - 1]) }, light_color );
-    vertices.append({ std::get<1>(visibility_points[0]), std::get<2>(visibility_points[0]) }, light_color );
+    vertices.append(source, light_color);
+    vertices.append(visibility_points[n - 1].point, light_color);
+    vertices.append(visibility_points[0].point, light_color);
 
     m_engine->window().draw(vertices);
 }
