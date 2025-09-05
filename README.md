@@ -19,6 +19,7 @@ A 2D game engine based on entity component system (ECS) architecture.
 * Texture atlas
 * Trigger system
 * Sound and music
+* Dynamic lighting
 
 ## Libraries
 
