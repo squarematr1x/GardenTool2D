@@ -93,6 +93,7 @@ public:
 
 	const PlayerConfig& getPlayerConfig() const { return m_player_config; }
 	const std::vector<std::string> getLayerNames() const;
+	const std::vector<Edge> getEdgesWithBorders();
 
 protected:
 	Scene(GameEngine* engine);

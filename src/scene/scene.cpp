@@ -425,6 +425,40 @@ void Scene::addLine(const Vec2& p1, const Vec2& p2, VertexArray& vertices) {
     vertices.append(Vec2(p2.x, p2.y), Color(255, 255, 255));
 }
 
+const std::vector<Edge> Scene::getEdgesWithBorders() {
+    auto w = width();
+    auto h = height();
+
+    for (unsigned int i = 0; i <= m_zoom.magnitude; i++) {
+        w += width();
+        h += height();
+    }
+
+    std::vector<Edge> edges = m_pool.getEdges();
+    // Add northern border
+    edges.push_back({
+        Vec2(worldPos().x - w, worldPos().y - h),
+        Vec2(worldPos().x + w, worldPos().y - h)
+    });
+    // Add souther border
+    edges.push_back({
+        Vec2(worldPos().x - w, worldPos().y + h),
+        Vec2(worldPos().x + w, worldPos().y + h)
+    });
+    // Add western border
+    edges.push_back({
+        Vec2(worldPos().x - w, worldPos().y - h),
+        Vec2(worldPos().x - w, worldPos().y + h)
+    });
+    // Add eastern border
+    edges.push_back({
+        Vec2(worldPos().x + w, worldPos().y - h),
+        Vec2(worldPos().x + w, worldPos().y + h)
+    });
+
+    return edges;
+}
+
 Vec2 Scene::gridPos(const Vec2& pos, const Vec2& size) const {
     auto fixed_size = Vec2(fmaxf(size.x, 64.0f), fmaxf(size.y, 64.0f));
 
@@ -473,27 +507,7 @@ void Scene::sDoActionCommon(const Action& action) {
             case ActionName::TOGGLE_LIGHT: {
                 m_draw_light = !m_draw_light;
                 if (m_draw_light) {
-                    std::vector<Edge> edges = m_pool.getEdges();
-                    // Add northern border
-                    edges.push_back({
-                        Vec2(worldPos().x - width(), worldPos().y - height()),
-                        Vec2(worldPos().x + width(), worldPos().y - height())
-                    });
-                    // Add souther border
-                    edges.push_back({
-                        Vec2(worldPos().x - width(), worldPos().y + height()),
-                        Vec2(worldPos().x + width(), worldPos().y + height())
-                    });
-                    // Add western border
-                    edges.push_back({
-                        Vec2(worldPos().x - width(), worldPos().y - height()),
-                        Vec2(worldPos().x - width(), worldPos().y + height())
-                    });
-                    // Add eastern border
-                    edges.push_back({
-                        Vec2(worldPos().x + width(), worldPos().y - height()),
-                        Vec2(worldPos().x + width(), worldPos().y + height())
-                    });
+                    auto edges = getEdgesWithBorders();
                     m_visibility_points = light::constructVisibilityPoints(worldPos(), 1000.0f, edges);
                 } else {
                     m_visibility_points.clear();
