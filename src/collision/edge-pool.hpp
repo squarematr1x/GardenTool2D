@@ -6,7 +6,6 @@
 #include "../math/vec2.hpp"
 
 class GameEngine;
-
 class EntityManager; 
 
 struct Boundary {
@@ -19,22 +18,22 @@ struct Boundary {
     }
 };
 
+struct Edge {
+    Vec2 start;
+    Vec2 end;
+
+    Edge(const Vec2& start_in, const Vec2& end_in)
+        : start(start_in), end(end_in)
+    {
+    }
+};
+
 class EdgePool {
     enum Direction: int {
         NORTH,
         SOUTH,
         EAST,
         WEST
-    };
-
-    struct Edge {
-        Vec2 start;
-        Vec2 end;
-
-        Edge(const Vec2& start_in, const Vec2& end_in)
-            : start(start_in), end(end_in)
-        {
-        }
     };
 
     struct Cell {

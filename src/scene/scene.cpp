@@ -157,6 +157,11 @@ void Scene::renderBBoxes() {
         vertices.append({pos.x - box.half_size.x, pos.y + box.half_size.y}, box_color);
         vertices.append({pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color);
     }
+
+    for (const auto& e : m_pool.getEdges()) {
+        vertices.append({e.start}, Color(255, 75, 10));
+        vertices.append({e.end}, Color(255, 75, 10));
+    }
     m_engine->window().draw(vertices);
 }
 
@@ -251,6 +256,28 @@ void Scene::renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> play
     }
 }
 
+void Scene::renderLights(const Vec2& source, const std::vector<light::IntersectPoint>& visibility_points) {
+    if (m_visibility_points.size() == 0) {
+        return;
+    }
+
+    VertexArray vertices(TRIANGLE);
+    Color light_color(255, 255, 255, 185);
+    size_t n = m_visibility_points.size();
+
+    for (size_t i = 0; i < n - 1; i++) {
+        vertices.append(source, light_color);
+        vertices.append(visibility_points[i].point, light_color);
+        vertices.append(visibility_points[i + 1].point, light_color);
+    }
+
+    vertices.append(source, light_color);
+    vertices.append(visibility_points[n - 1].point, light_color);
+    vertices.append(visibility_points[0].point, light_color);
+
+    m_engine->window().draw(vertices);
+}
+
 void Scene::renderCommon(std::shared_ptr<Entity> player) {
     if (m_draw_textures) {
         VertexArray vertices(TRIANGLE);
@@ -284,6 +311,7 @@ void Scene::renderCommon(std::shared_ptr<Entity> player) {
         // Draw vertex array
         m_engine->window().draw(vertices, m_engine->assets().getTexture("Tilemap"));
 
+        renderLights(worldPos(), m_visibility_points);
         renderHighlights();
         renderHpBars();
     }
@@ -397,6 +425,40 @@ void Scene::addLine(const Vec2& p1, const Vec2& p2, VertexArray& vertices) {
     vertices.append(Vec2(p2.x, p2.y), Color(255, 255, 255));
 }
 
+const std::vector<Edge> Scene::getEdgesWithBorders() {
+    auto w = width();
+    auto h = height();
+
+    for (unsigned int i = 0; i <= m_zoom.magnitude; i++) {
+        w += width();
+        h += height();
+    }
+
+    std::vector<Edge> edges = m_pool.getEdges();
+    // Add northern border
+    edges.push_back({
+        Vec2(worldPos().x - w, worldPos().y - h),
+        Vec2(worldPos().x + w, worldPos().y - h)
+    });
+    // Add souther border
+    edges.push_back({
+        Vec2(worldPos().x - w, worldPos().y + h),
+        Vec2(worldPos().x + w, worldPos().y + h)
+    });
+    // Add western border
+    edges.push_back({
+        Vec2(worldPos().x - w, worldPos().y - h),
+        Vec2(worldPos().x - w, worldPos().y + h)
+    });
+    // Add eastern border
+    edges.push_back({
+        Vec2(worldPos().x + w, worldPos().y - h),
+        Vec2(worldPos().x + w, worldPos().y + h)
+    });
+
+    return edges;
+}
+
 Vec2 Scene::gridPos(const Vec2& pos, const Vec2& size) const {
     auto fixed_size = Vec2(fmaxf(size.x, 64.0f), fmaxf(size.y, 64.0f));
 
@@ -442,6 +504,16 @@ void Scene::sDoActionCommon(const Action& action) {
             case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
             case ActionName::TOGGLE_GRID: m_draw_grid = !m_draw_grid; break;
             case ActionName::TOGGLE_HEALTH: m_show_hp = !m_show_hp; break;
+            case ActionName::TOGGLE_LIGHT: {
+                m_draw_light = !m_draw_light;
+                if (m_draw_light) {
+                    auto edges = getEdgesWithBorders();
+                    m_visibility_points = light::constructVisibilityPoints(worldPos(), 1000.0f, edges);
+                } else {
+                    m_visibility_points.clear();
+                }
+                break;
+            }
             case ActionName::PAUSE: setPaused(!m_paused); break;
             case ActionName::QUIT: {
                 if (m_free_camera) {

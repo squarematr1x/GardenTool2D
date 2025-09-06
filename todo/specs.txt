@@ -1,5 +1,10 @@
 ============================================== System specifications ============================================== 
 
+Static tiles
+- Tiles that can't be modified during runtime (e.g. destroyed)
+  - Can modified trough editor though
+- An edge pool can be created from these tiles to reduce collision checks
+
 Dynamic lighting
 - In some levels everything could be dark, if no light source entity nearby etc.
 - Point lights can be entities?
@@ -9,16 +14,15 @@ Collision
   - This reduces the number of collision that need to be detected.
   - Helps with dynamic lighting calculations also.
 
+Text rendering
+- Use sprites, how to map?
+
 UI
 - Used for inventory, skill trees map, etc.
 - Add ingame menu
   - Use to control sound, music, load from checkpoint etc.
 - Editor
   - Undo/redo in editor (could use ctrl+z)
-
-Saving/loading game
-- Create/load save files
-- Just modify player data in lvl as a starter
 
 Dialogue tree
 - Create a specific datastructure for this
