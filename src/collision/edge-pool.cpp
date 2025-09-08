@@ -143,6 +143,7 @@ const Boundary EdgePool::getWorldBoundary(EntityManager& entity_manager, GameEng
         vertices.insert(transform.pos);
     }
 
+    // To create outer boundary for lights (in case there is no walls)
     if (padding) {
         min.x -= cell_size.x;
         min.y -= cell_size.y;
