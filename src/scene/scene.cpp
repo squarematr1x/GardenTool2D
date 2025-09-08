@@ -262,7 +262,7 @@ void Scene::renderLights(const Vec2& source, const std::vector<light::IntersectP
     }
 
     VertexArray vertices(TRIANGLE);
-    Color light_color(255, 255, 255, 185);
+    Color light_color(255, 255, 255, 145);
     size_t n = m_visibility_points.size();
 
     for (size_t i = 0; i < n - 1; i++) {
