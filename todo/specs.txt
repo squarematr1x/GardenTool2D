@@ -4,21 +4,17 @@ Static tiles
 - Tiles that can't be modified during runtime (e.g. destroyed)
   - Can modified trough editor though
 - An edge pool can be created from these tiles to reduce collision checks
+- The vertex array containing this data can be constructed when app starts and reused (no need to re-calculate these)
 
 Dynamic lighting
-- In some levels everything could be dark, if no light source entity nearby etc.
 - Point lights can be entities?
-
-Collision
-- Have some sort of edge pool where tiles are combinen into larger objects
-  - This reduces the number of collision that need to be detected.
-  - Helps with dynamic lighting calculations also.
+- Add/use CLightDynamic and CLightStatic components for entities?
 
 Text rendering
-- Use sprites, how to map?
+- All text should be part of UI layer
 
 UI
-- Used for inventory, skill trees map, etc.
+- Used for inventory, skill trees, map, etc.
 - Add ingame menu
   - Use to control sound, music, load from checkpoint etc.
 - Editor
