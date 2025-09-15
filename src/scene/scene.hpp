@@ -61,7 +61,7 @@ public:
 	// Rendering helpers
 	void drawLine(const Vec2& p1, const Vec2& p2);
 
-	void renderGrid(bool show_coordinates = false);
+	void renderGrid();
 	void renderActiveGridCell();
 	void renderSelectedGridCell();
 	void renderBBoxes();
@@ -69,14 +69,16 @@ public:
 	void renderHpBars();
 	void renderHighlights();
 	void renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> player);
+	void renderText(const std::string& text, const Vec2& pos);
 	void renderPauseText();
+	void renderLights(const Vec2& source, const std::vector<light::IntersectPoint>& visibility_points);
 	void renderCommon(std::shared_ptr<Entity> player);
 
 	void updateZoom(float delta);
 	void updateGridSize(Vec2 size) { m_grid_size = size; }
 
+	void addTextVertexData(const std::string& str, VertexArray& vertices, const Vec2& start_pos = Vec2(24.0f, 24.0f), bool center = false);
 	void addVertexData(const Vec2& pos, const Rect<float>& texture_rect, VertexArray& vertices);
-	void renderLights(const Vec2& source, const std::vector<light::IntersectPoint>& visibility_points);
 	void addLine(const Vec2& p1, const Vec2& p2, VertexArray& vertices);
 	void addHpBar(std::shared_ptr<Entity> e);
 	void addHighlight(std::shared_ptr<Entity> e);
@@ -126,8 +128,6 @@ protected:
 	Vec2 m_drag_pos;
 	Vec2 m_grid_size{ 0, 0 };
 	const Vec2 m_grid_cell_size{ 64, 64 };
-	Text m_grid_text;
-	Text m_pause_text;
 
 	std::vector<Layer> m_background_layers;
 
@@ -146,7 +146,7 @@ class SceneMenu: public Scene {
 	std::string m_title { "Menu" };
 	std::vector<std::string> m_menu_strings;
 	std::vector<std::string> m_level_paths;
-	Text m_menu_text;
+	Text m_menu_text; // TODO: Replace with new text system?
 	size_t m_menu_index{ 0 }; // selected menu item
 	ParticleSystem m_particles;
 
