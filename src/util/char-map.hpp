@@ -95,7 +95,7 @@ const std::map<char, Coord> char_map{
     {'"', { 128.0f, 148.0f, 12.0f, 20.0f }},
     {'&', { 172.0f, 148.0f, 16.0f, 20.0f }},
 
-    // NOTE: Add characters more when needed
+    // NOTE: Add more characters when needed
 };
 
 } // namespace text
