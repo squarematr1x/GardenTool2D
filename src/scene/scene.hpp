@@ -16,6 +16,7 @@
 #include "../collision/edge-pool.hpp"
 #include "../collision/light.hpp"
 
+#include "../util/char-map.hpp"
 
 class GameEngine;
 
@@ -69,7 +70,7 @@ public:
 	void renderHpBars();
 	void renderHighlights();
 	void renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> player);
-	void renderText(const std::string& text, const Vec2& pos);
+	void renderText(const std::string& text, const Vec2& pos, bool center = false);
 	void renderPauseText();
 	void renderLights(const Vec2& source, const std::vector<light::IntersectPoint>& visibility_points);
 	void renderCommon(std::shared_ptr<Entity> player);
@@ -78,6 +79,7 @@ public:
 	void updateGridSize(Vec2 size) { m_grid_size = size; }
 
 	void addTextVertexData(const std::string& str, VertexArray& vertices, const Vec2& start_pos = Vec2(24.0f, 24.0f), bool center = false);
+	void addTextBox(const Vec2& pos, const text::Coord& coord, VertexArray& vertices);
 	void addVertexData(const Vec2& pos, const Rect<float>& texture_rect, VertexArray& vertices);
 	void addLine(const Vec2& p1, const Vec2& p2, VertexArray& vertices);
 	void addHpBar(std::shared_ptr<Entity> e);

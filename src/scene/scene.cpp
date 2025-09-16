@@ -3,7 +3,6 @@
 #include "../engine.hpp"
 #include "../core/rectangle.hpp"
 #include "../collision/physics.hpp"
-#include "../util/char-map.hpp"
 
 Scene::Scene(GameEngine* engine)
     : m_engine(engine) {
@@ -328,12 +327,12 @@ Vec2 Scene::worldPos() {
     return Vec2(world_pos.x, world_pos.y);
 }
 
-void Scene::renderText(const std::string& text, const Vec2& pos) {
+void Scene::renderText(const std::string& text, const Vec2& pos, bool center) {
     const auto view = m_engine->window().getView();
     const auto default_view = m_engine->window().getDefaultView(); // Ignore zoom level etc.
     m_engine->window().setView(default_view);
     VertexArray text_vertices(TRIANGLE);
-    addTextVertexData(text, text_vertices, pos);
+    addTextVertexData(text, text_vertices, pos, center);
     m_engine->window().draw(text_vertices, m_engine->assets().getTexture("Textmap"));
     m_engine->window().setView(view); // Restore previous view
 }
@@ -356,7 +355,7 @@ void Scene::renderPauseText() {
     m_engine->window().draw(vertices);
 
     constexpr auto pause_text{ "Pause" };
-    renderText(pause_text, Vec2(size.x/2, 6.0f));
+    renderText(pause_text, Vec2(size.x/2, 6.0f), true);
 }
 
 bool Scene::targetReached(const Vec2& pos, const Vec2& target) const {
@@ -369,48 +368,60 @@ void Scene::addTextVertexData(const std::string& str, VertexArray& vertices, con
     constexpr auto space_w{ 8.0f };
     constexpr auto line_h{ 28.0f };
     auto pos = start_pos;
+    auto text_w = 0.0f;
 
     if (center) {
-        pos = start_pos;
-    } 
+        for (const auto c : str) {
+            if (text::char_map.find(c) != text::char_map.end()) {
+                auto coord = text::char_map.at(c);
+                text_w += (coord.size.x + gap_w);
+            } else {
+                text_w += space_w;
+            }
+        }
+        pos.x = start_pos.x - (text_w/2);
+    }
 
     for (const auto c : str) {
-        if(text::char_map.find(c) != text::char_map.end()) {
+        if (text::char_map.find(c) != text::char_map.end()) {
             auto coord = text::char_map.at(c);
-             vertices.append(
-                Vec2(pos.x, pos.y),
-                Vec2(coord.offset.x, coord.offset.y)
-            );
-            vertices.append(
-                Vec2(pos.x + coord.size.x, pos.y),
-                Vec2(coord.offset.x + coord.size.x, coord.offset.y)
-            );
-            vertices.append(
-                Vec2(pos.x + coord.size.x, pos.y + coord.size.y),
-                Vec2(coord.offset.x + coord.size.x, coord.offset.y + coord.size.y)
-            );
-            vertices.append(
-                Vec2(pos.x, pos.y),
-                Vec2(coord.offset.x, coord.offset.y)
-            );
-            vertices.append(
-                Vec2(pos.x + coord.size.x, pos.y + coord.size.y),
-                Vec2(coord.offset.x + coord.size.x, coord.offset.y + coord.size.y)
-            );
-            vertices.append(
-                Vec2(pos.x, pos.y + coord.size.y),
-                Vec2(coord.offset.x , coord.offset.y + coord.size.y)
-            );
+            addTextBox(pos, coord, vertices);
             pos.x += (coord.size.x + gap_w);
         } else {
             pos.x += space_w;
         }
-
         if (pos.x + line_h > width()) {
             pos.x = start_pos.x;
             pos.y += line_h;
         }
     }
+}
+
+void Scene::addTextBox(const Vec2& pos, const text::Coord& coord, VertexArray& vertices) {
+    vertices.append(
+        Vec2(pos.x, pos.y),
+        Vec2(coord.offset.x, coord.offset.y)
+    );
+    vertices.append(
+        Vec2(pos.x + coord.size.x, pos.y),
+        Vec2(coord.offset.x + coord.size.x, coord.offset.y)
+    );
+    vertices.append(
+        Vec2(pos.x + coord.size.x, pos.y + coord.size.y),
+        Vec2(coord.offset.x + coord.size.x, coord.offset.y + coord.size.y)
+    );
+    vertices.append(
+        Vec2(pos.x, pos.y),
+        Vec2(coord.offset.x, coord.offset.y)
+    );
+    vertices.append(
+        Vec2(pos.x + coord.size.x, pos.y + coord.size.y),
+        Vec2(coord.offset.x + coord.size.x, coord.offset.y + coord.size.y)
+    );
+    vertices.append(
+        Vec2(pos.x, pos.y + coord.size.y),
+        Vec2(coord.offset.x , coord.offset.y + coord.size.y)
+    );
 }
 
 void Scene::addVertexData(const Vec2& pos, const Rect<float>& texture_rect, VertexArray& vertices) {
