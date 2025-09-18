@@ -76,8 +76,8 @@ void Scene::renderGrid() {
 }
 
 void Scene::renderActiveGridCell() {
-    auto world_pos = worldPos();
-    auto grid_pos = fitToGrid(world_pos, false);
+    const auto world_pos = worldPos();
+    const auto grid_pos = fitToGrid(world_pos, false);
 
     Rectangle active_cell;
     active_cell.setFillColor(Color(255, 255, 255, 128));
@@ -223,8 +223,8 @@ void Scene::renderLights(const Vec2& source, const std::vector<light::IntersectP
     }
 
     VertexArray vertices(TRIANGLE);
-    Color light_color(255, 255, 255, 145);
-    size_t n = m_visibility_points.size();
+    const Color light_color(255, 255, 255, 145);
+    const size_t n = m_visibility_points.size();
 
     for (size_t i = 0; i < n - 1; i++) {
         vertices.append(source, light_color);
@@ -359,7 +359,7 @@ void Scene::renderPauseText() {
 }
 
 bool Scene::targetReached(const Vec2& pos, const Vec2& target) const {
-    auto distance = pos.distance(target);
+    const auto distance = pos.distance(target);
     return fabs(distance) <= 5.0f;
 }
 
@@ -501,7 +501,7 @@ const std::vector<Edge> Scene::getEdgesWithBorders() {
 }
 
 Vec2 Scene::gridPos(const Vec2& pos, const Vec2& size) const {
-    auto fixed_size = Vec2(fmaxf(size.x, 64.0f), fmaxf(size.y, 64.0f));
+    const auto fixed_size = Vec2(fmaxf(size.x, 64.0f), fmaxf(size.y, 64.0f));
 
     return Vec2(
         round((pos.x - (fixed_size.x/2))/m_grid_cell_size.x),
@@ -622,7 +622,7 @@ void Scene::sDoActionCommon(const Action& action) {
 
 void Scene::sPan(View& view) {
     constexpr auto pan_speed_coeff = 4.0f;
-    auto diff = Vec2(m_drag_pos - m_mouse_pos)/pan_speed_coeff;
+    const auto diff = Vec2(m_drag_pos - m_mouse_pos)/pan_speed_coeff;
     view.setCenter(view.getCenter().x + diff.x, view.getCenter().y + diff.y);
     m_engine->window().setView(view);
 }
