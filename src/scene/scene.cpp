@@ -327,12 +327,12 @@ Vec2 Scene::worldPos() {
     return Vec2(world_pos.x, world_pos.y);
 }
 
-void Scene::renderText(const std::string& text, const Vec2& pos, bool center) {
+void Scene::renderText(const std::string& text, const Vec2& pos, const Color& color, bool center) {
     const auto view = m_engine->window().getView();
     const auto default_view = m_engine->window().getDefaultView(); // Ignore zoom level etc.
     m_engine->window().setView(default_view);
     VertexArray text_vertices(TRIANGLE);
-    addTextVertexData(text, text_vertices, pos, center);
+    addTextVertexData(text, text_vertices, pos, color, center);
     m_engine->window().draw(text_vertices, m_engine->assets().getTexture("Textmap"));
     m_engine->window().setView(view); // Restore previous view
 }
@@ -355,7 +355,7 @@ void Scene::renderPauseText() {
     m_engine->window().draw(vertices);
 
     constexpr auto pause_text{ "Pause" };
-    renderText(pause_text, Vec2(size.x/2, 6.0f), true);
+    renderText(pause_text, Vec2(size.x/2, 6.0f), Color(255, 255, 255), true);
 }
 
 bool Scene::targetReached(const Vec2& pos, const Vec2& target) const {
@@ -363,7 +363,7 @@ bool Scene::targetReached(const Vec2& pos, const Vec2& target) const {
     return fabs(distance) <= 5.0f;
 }
 
-void Scene::addTextVertexData(const std::string& str, VertexArray& vertices, const Vec2& start_pos, bool center) {
+void Scene::addTextVertexData(const std::string& str, VertexArray& vertices, const Vec2& start_pos, const Color& color, bool center) {
     constexpr auto gap_w{ 4.0f };
     constexpr auto space_w{ 8.0f };
     constexpr auto line_h{ 28.0f };
@@ -385,7 +385,7 @@ void Scene::addTextVertexData(const std::string& str, VertexArray& vertices, con
     for (const auto c : str) {
         if (text::char_map.find(c) != text::char_map.end()) {
             auto coord = text::char_map.at(c);
-            addTextBox(pos, coord, vertices);
+            addTextBox(pos, coord, vertices, color);
             pos.x += (coord.size.x + gap_w);
         } else {
             pos.x += space_w;
@@ -397,30 +397,36 @@ void Scene::addTextVertexData(const std::string& str, VertexArray& vertices, con
     }
 }
 
-void Scene::addTextBox(const Vec2& pos, const text::Coord& coord, VertexArray& vertices) {
+void Scene::addTextBox(const Vec2& pos, const text::Coord& coord, VertexArray& vertices, const Color& color) {
     vertices.append(
         Vec2(pos.x, pos.y),
-        Vec2(coord.offset.x, coord.offset.y)
+        Vec2(coord.offset.x, coord.offset.y),
+        color
     );
     vertices.append(
         Vec2(pos.x + coord.size.x, pos.y),
-        Vec2(coord.offset.x + coord.size.x, coord.offset.y)
+        Vec2(coord.offset.x + coord.size.x, coord.offset.y),
+        color
     );
     vertices.append(
         Vec2(pos.x + coord.size.x, pos.y + coord.size.y),
-        Vec2(coord.offset.x + coord.size.x, coord.offset.y + coord.size.y)
+        Vec2(coord.offset.x + coord.size.x, coord.offset.y + coord.size.y),
+        color
     );
     vertices.append(
         Vec2(pos.x, pos.y),
-        Vec2(coord.offset.x, coord.offset.y)
+        Vec2(coord.offset.x, coord.offset.y),
+        color
     );
     vertices.append(
         Vec2(pos.x + coord.size.x, pos.y + coord.size.y),
-        Vec2(coord.offset.x + coord.size.x, coord.offset.y + coord.size.y)
+        Vec2(coord.offset.x + coord.size.x, coord.offset.y + coord.size.y),
+        color
     );
     vertices.append(
         Vec2(pos.x, pos.y + coord.size.y),
-        Vec2(coord.offset.x , coord.offset.y + coord.size.y)
+        Vec2(coord.offset.x , coord.offset.y + coord.size.y),
+        color
     );
 }
 

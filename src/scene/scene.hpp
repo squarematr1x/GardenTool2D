@@ -10,7 +10,6 @@
 #include "../layer.hpp"
 #include "../player-config.hpp"
 
-#include "../asset/text.hpp"
 #include "../core/circle.hpp"
 
 #include "../collision/edge-pool.hpp"
@@ -70,7 +69,7 @@ public:
 	void renderHpBars();
 	void renderHighlights();
 	void renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> player);
-	void renderText(const std::string& text, const Vec2& pos, bool center = false);
+	void renderText(const std::string& text, const Vec2& pos, const Color& color = Color(255, 255, 255), bool center = false);
 	void renderPauseText();
 	void renderLights(const Vec2& source, const std::vector<light::IntersectPoint>& visibility_points);
 	void renderCommon(std::shared_ptr<Entity> player);
@@ -78,8 +77,8 @@ public:
 	void updateZoom(float delta);
 	void updateGridSize(Vec2 size) { m_grid_size = size; }
 
-	void addTextVertexData(const std::string& str, VertexArray& vertices, const Vec2& start_pos = Vec2(24.0f, 24.0f), bool center = false);
-	void addTextBox(const Vec2& pos, const text::Coord& coord, VertexArray& vertices);
+	void addTextVertexData(const std::string& str, VertexArray& vertices, const Vec2& start_pos = Vec2(24.0f, 24.0f), const Color& color = Color(255, 255, 255), bool center = false);
+	void addTextBox(const Vec2& pos, const text::Coord& coord, VertexArray& vertices, const Color& color);
 	void addVertexData(const Vec2& pos, const Rect<float>& texture_rect, VertexArray& vertices);
 	void addLine(const Vec2& p1, const Vec2& p2, VertexArray& vertices);
 	void addHpBar(std::shared_ptr<Entity> e);
@@ -148,7 +147,6 @@ class SceneMenu: public Scene {
 	std::string m_title { "Menu" };
 	std::vector<std::string> m_menu_strings;
 	std::vector<std::string> m_level_paths;
-	Text m_menu_text; // TODO: Replace with new text system?
 	size_t m_menu_index{ 0 }; // selected menu item
 	ParticleSystem m_particles;
 
