@@ -1,5 +1,6 @@
 # Texture: name, path, repeating
 Texture Tilemap assets/textures/tilemap.png 0
+Texture Textmap assets/textures/text-atlas.png 0
 Texture Layer1 assets/textures/background1.png 1
 Texture Layer2 assets/textures/background2.png 1
 Texture Layer3 assets/textures/background3.png 1

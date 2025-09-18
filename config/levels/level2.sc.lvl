@@ -106,10 +106,14 @@ Tile Brick 84 1 1 1
 Tile GuyRun 5 5 0 0
 
 # Player: x, y, bboxw, bboxh, speed, max speed, jump speed, gravity, weapon animation name hp
-Player 64 2 64 64 5 5 25 2 Fire 4
+Player 5 2 64 64 5 5 25 2 Fire 4
 
 # NPC: animation name, x, y, block movement, block vision, hostile, hp, damage, behavior
 
 # Elevator: animation name, x, y, block movement, block vision, behavior
 
 # Checkpoint: x, y, bboxw, bboxh
+
+# Trigger: id, x, y, bboxw, bboxh, trigger type
+
+# Triggerable: Animation, trigger id, x, y, block_movement, block vision, hp, damage

@@ -5,37 +5,13 @@
 #include "../collision/physics.hpp"
 
 Scene::Scene(GameEngine* engine)
-    : m_engine(engine),
-    m_grid_text(
-        engine->assets().getFont("Arial"),
-        "",
-        12,
-        Vec2(0, 0)
-    ),
-    m_pause_text(
-        m_engine->assets().getFont("Arial"),
-        "Paused",
-        16,
-        Vec2(0, 0)
-    ) {
+    : m_engine(engine) {
     m_grid_size = Vec2(width(), height());
 }
 
 Scene::Scene(GameEngine* engine, const std::string& level_path)
     : m_engine(engine),
-    m_level_path(level_path),
-    m_grid_text(
-        engine->assets().getFont("Arial"),
-        "",
-        12,
-        Vec2(0, 0)
-    ),
-    m_pause_text(
-        m_engine->assets().getFont("Arial"),
-        "Paused",
-        16,
-        Vec2(0, 0)
-    ) {
+    m_level_path(level_path) {
     m_grid_size = Vec2(width(), height());
 }
 
@@ -72,7 +48,7 @@ void Scene::drawLine(const Vec2& p1, const Vec2& p2) {
     m_engine->window().draw(line);
 }
 
-void Scene::renderGrid(bool show_coordinates) {
+void Scene::renderGrid() {
     const Vec2 center = getCenter();
 
     const auto w = m_grid_size.x;
@@ -91,23 +67,8 @@ void Scene::renderGrid(bool show_coordinates) {
     for (auto x = next_grid_x; x < right_x; x += m_grid_cell_size.x) {
         addLine(Vec2(x, up_y), Vec2(x, low_y), vertices);
     }
-
     for (auto y = next_grid_y; y < low_y; y += m_grid_cell_size.y) {
         addLine(Vec2(left_x, y), Vec2(right_x, y), vertices);
-
-        if (!show_coordinates) {
-            continue;
-        }
-
-        for (float x = next_grid_x; x < right_x; x += m_grid_cell_size.x) {
-            const auto x_cell = std::to_string(static_cast<int>(x)/static_cast<int>(m_grid_cell_size.x));
-            const auto y_cell = std::to_string(static_cast<int>(y)/static_cast<int>(m_grid_cell_size.y));
-            const auto x_offset = 3;
-            const auto y_offset = 2;
-            m_grid_text.setString("(" + x_cell + "," + y_cell + ")");
-            m_grid_text.setPosition(x + x_offset, h - y - m_grid_cell_size.y + y_offset);
-            m_engine->window().draw(m_grid_text);
-        }
     }
     m_engine->window().draw(vertices);
 
@@ -262,7 +223,7 @@ void Scene::renderLights(const Vec2& source, const std::vector<light::IntersectP
     }
 
     VertexArray vertices(TRIANGLE);
-    Color light_color(255, 255, 255, 185);
+    Color light_color(255, 255, 255, 145);
     size_t n = m_visibility_points.size();
 
     for (size_t i = 0; i < n - 1; i++) {
@@ -314,6 +275,13 @@ void Scene::renderCommon(std::shared_ptr<Entity> player) {
         renderLights(worldPos(), m_visibility_points);
         renderHighlights();
         renderHpBars();
+
+        // TODO: just testing, to be removed
+        bool render_ui = true;
+        if (render_ui) {
+            renderText("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+-=()!?.,%/\"&", Vec2(24.0f, 24.0f));
+        }
+
     }
 
     if (m_draw_grid || m_engine->editMode()) {
@@ -359,34 +327,107 @@ Vec2 Scene::worldPos() {
     return Vec2(world_pos.x, world_pos.y);
 }
 
-void Scene::renderPauseText() {
+void Scene::renderText(const std::string& text, const Vec2& pos, const Color& color, bool center) {
     const auto view = m_engine->window().getView();
     const auto default_view = m_engine->window().getDefaultView(); // Ignore zoom level etc.
     m_engine->window().setView(default_view);
+    VertexArray text_vertices(TRIANGLE);
+    addTextVertexData(text, text_vertices, pos, color, center);
+    m_engine->window().draw(text_vertices, m_engine->assets().getTexture("Textmap"));
+    m_engine->window().setView(view); // Restore previous view
+}
 
-    const auto w = static_cast<float>(width());
-    constexpr auto h = 32.0f;
-    const auto color = Color(0, 0, 0);
+void Scene::renderPauseText() {
+    const auto default_view = m_engine->window().getDefaultView(); // Ignore zoom level etc.
+    m_engine->window().setView(default_view);
+
+    const auto size = Vec2(static_cast<float>(width()), 32.0f);
+    const auto background_color = Color(0, 0, 0);
     VertexArray vertices{ TRIANGLE, 6 };
 
-    vertices.setVertexAt(0, {0.0f, 0.0f}, color);
-    vertices.setVertexAt(1, {w, 0.0f}, color);
-    vertices.setVertexAt(2, {w, h}, color);
-    vertices.setVertexAt(3, {w, h}, color);
-    vertices.setVertexAt(4, {0.0f, h}, color);
-    vertices.setVertexAt(5, {0.0f, 0.0f}, color);
+    vertices.setVertexAt(0, {0.0f, 0.0f}, background_color);
+    vertices.setVertexAt(1, {size.x, 0.0f}, background_color);
+    vertices.setVertexAt(2, {size.x, size.y}, background_color);
+    vertices.setVertexAt(3, {size.x, size.y}, background_color);
+    vertices.setVertexAt(4, {0.0f, size.y}, background_color);
+    vertices.setVertexAt(5, {0.0f, 0.0f}, background_color);
     
     m_engine->window().draw(vertices);
 
-    m_pause_text.setPosition(w/2 - m_pause_text.getLocalBounds().width/2, 5.0f);
-
-    m_engine->window().draw(m_pause_text);
-    m_engine->window().setView(view); // Restore previous view
+    constexpr auto pause_text{ "Pause" };
+    renderText(pause_text, Vec2(size.x/2, 6.0f), Color(255, 255, 255), true);
 }
 
 bool Scene::targetReached(const Vec2& pos, const Vec2& target) const {
     auto distance = pos.distance(target);
     return fabs(distance) <= 5.0f;
+}
+
+void Scene::addTextVertexData(const std::string& str, VertexArray& vertices, const Vec2& start_pos, const Color& color, bool center) {
+    constexpr auto gap_w{ 4.0f };
+    constexpr auto space_w{ 8.0f };
+    constexpr auto line_h{ 28.0f };
+    auto pos = start_pos;
+    auto text_w = 0.0f;
+
+    if (center) {
+        for (const auto c : str) {
+            if (text::char_map.find(c) != text::char_map.end()) {
+                auto coord = text::char_map.at(c);
+                text_w += (coord.size.x + gap_w);
+            } else {
+                text_w += space_w;
+            }
+        }
+        pos.x = start_pos.x - (text_w/2);
+    }
+
+    for (const auto c : str) {
+        if (text::char_map.find(c) != text::char_map.end()) {
+            auto coord = text::char_map.at(c);
+            addTextBox(pos, coord, vertices, color);
+            pos.x += (coord.size.x + gap_w);
+        } else {
+            pos.x += space_w;
+        }
+        if (pos.x + line_h > width()) {
+            pos.x = start_pos.x;
+            pos.y += line_h;
+        }
+    }
+}
+
+void Scene::addTextBox(const Vec2& pos, const text::Coord& coord, VertexArray& vertices, const Color& color) {
+    vertices.append(
+        Vec2(pos.x, pos.y),
+        Vec2(coord.offset.x, coord.offset.y),
+        color
+    );
+    vertices.append(
+        Vec2(pos.x + coord.size.x, pos.y),
+        Vec2(coord.offset.x + coord.size.x, coord.offset.y),
+        color
+    );
+    vertices.append(
+        Vec2(pos.x + coord.size.x, pos.y + coord.size.y),
+        Vec2(coord.offset.x + coord.size.x, coord.offset.y + coord.size.y),
+        color
+    );
+    vertices.append(
+        Vec2(pos.x, pos.y),
+        Vec2(coord.offset.x, coord.offset.y),
+        color
+    );
+    vertices.append(
+        Vec2(pos.x + coord.size.x, pos.y + coord.size.y),
+        Vec2(coord.offset.x + coord.size.x, coord.offset.y + coord.size.y),
+        color
+    );
+    vertices.append(
+        Vec2(pos.x, pos.y + coord.size.y),
+        Vec2(coord.offset.x , coord.offset.y + coord.size.y),
+        color
+    );
 }
 
 void Scene::addVertexData(const Vec2& pos, const Rect<float>& texture_rect, VertexArray& vertices) {
