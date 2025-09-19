@@ -89,7 +89,7 @@ void SceneMenu::onEnd() {
 }
 
 const std::string SceneMenu::getLevelName(const std::string& path) const {
-    std::regex pattern(".*/([^/.]+)\\..*");
+    const std::regex pattern(".*/([^/.]+)\\..*");
     std::smatch match;
 
     if (std::regex_match(path, match, pattern) && match.size() > 1) {
