@@ -210,7 +210,7 @@ void SceneSideScroller::spawnBullet() {
     auto bullet = m_entity_manager.addEntity(Tag::BULLET);
     bullet->addComponent<CAnimation>(m_engine->assets().getAnimation("Fire"), true);
 
-    constexpr auto bullet_v = 4.0f; // TODO: Add to config file?
+    constexpr auto bullet_v = 7.0f; // TODO: Add to config file?
     if (transform.scale.x < 0) {
         bullet->addComponent<CTransform>(transform.pos, Vec2(-bullet_v, 0.0f));
     } else {
