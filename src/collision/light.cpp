@@ -18,7 +18,7 @@ std::vector<IntersectPoint> constructVisibilityPoints(const Vec2& source, float 
             float rdx = (i == 0 ? e1.start.x : e1.end.x) - source.x;
             float rdy = (i == 0 ? e1.start.y : e1.end.y) - source.y;
 
-            float base_ang = atan2f(rdy, rdx);
+            const float base_ang = atan2f(rdy, rdx);
             float ang = 0.0f;
 
             // For each point, cast 3 rays, 1 directly at point

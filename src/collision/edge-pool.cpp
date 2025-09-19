@@ -8,8 +8,8 @@ void EdgePool::constructPool(EntityManager& entity_manager, GameEngine* engine, 
     std::vector<Cell> grid;
     size_t w_steps = 0;
     size_t i = 0;
-    auto half_cell_size = cell_size / 2;
-    auto boundary = getWorldBoundary(entity_manager, engine, vertices);
+    const auto half_cell_size = cell_size / 2;
+    const auto boundary = getWorldBoundary(entity_manager, engine, vertices);
 
     // Init grid
     for (float y = boundary.min.y; y <= boundary.max.y; y += cell_size.y) {
