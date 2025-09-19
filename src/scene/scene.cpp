@@ -338,6 +338,7 @@ void Scene::renderText(const std::string& text, const Vec2& pos, const Color& co
 }
 
 void Scene::renderPauseText() {
+    const auto view = m_engine->window().getView();
     const auto default_view = m_engine->window().getDefaultView(); // Ignore zoom level etc.
     m_engine->window().setView(default_view);
 
@@ -353,6 +354,7 @@ void Scene::renderPauseText() {
     vertices.setVertexAt(5, {0.0f, 0.0f}, background_color);
     
     m_engine->window().draw(vertices);
+    m_engine->window().setView(view);
 
     constexpr auto pause_text{ "Pause" };
     renderText(pause_text, Vec2(size.x/2, 6.0f), Color(255, 255, 255), true);

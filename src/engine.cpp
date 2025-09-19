@@ -60,11 +60,8 @@ void GameEngine::run() {
 	m_editor.init(m_window.getWindow());
 
 	while (isRunning()) {
-		if (!m_paused) {
-			update();
-			currentScene()->update();
-			// TODO: Add render() <- common function for all scenes?
-		}
+		update();
+		currentScene()->update();
 
 		if (m_edit_mode) {
 			auto& entity_manager = currentScene()->getEntityManager();
