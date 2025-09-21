@@ -61,7 +61,7 @@ class Editor {
     std::vector<std::string> m_level_content;
 
     void addEntity(EntityManager& entity_manager, GameEngine* engine);
-    void parseEntity(std::shared_ptr<Entity> e, GameEngine* engine);
+    void parseEntity(Entity e, GameEngine* engine);
     void parseEntities(EntityManager& entity_manager, GameEngine* engine);
 
     int editTabFlag();

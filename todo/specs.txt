@@ -23,6 +23,7 @@ UI
 Dialogue tree
 - Create a specific datastructure for this
 - Store npc and dialogues in json file
+- Use similar text selection (option) as in menu scene?
 
 Sound component
 - If player move, set CSound -> active = true
@@ -42,7 +43,3 @@ Multithreading
 
 Build
 - Start using e.g. CMake
-
-Memory pooling for CPU cache coherent code
-- entity-memory-pool.hpp is a skeleton for this
-- No need to use shared pointers

@@ -19,16 +19,16 @@ struct Intersect { // TODO: Use this later when needed
 };
 
 
-Vec2 getOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b);
-Vec2 getPrevOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b);
+Vec2 getOverlap(Entity a, Entity b);
+Vec2 getPrevOverlap(Entity a, Entity b);
 
 Orientation orientation(const Vec2& a, const Vec2& b, const Vec2& c);
 
-bool isInside(const Vec2& pos, std::shared_ptr<Entity> entity);
-bool overlapping(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b);
-bool previouslyOverlapping(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b);
+bool isInside(const Vec2& pos, Entity entity);
+bool overlapping(Entity a, Entity b);
+bool previouslyOverlapping(Entity a, Entity b);
 bool onSegement(const Vec2& a, const Vec2& b, const Vec2& c);
 bool lineIntersect(const Vec2& a, const Vec2& b, const Vec2& c, const Vec2& d);
-bool entityIntersect(const Vec2& a, const Vec2& b, std::shared_ptr<Entity> entity);
+bool entityIntersect(const Vec2& a, const Vec2& b, Entity entity);
 
 } // namespace physics

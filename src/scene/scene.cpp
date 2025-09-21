@@ -4,6 +4,8 @@
 #include "../core/rectangle.hpp"
 #include "../collision/physics.hpp"
 
+#include "../util/timer.hpp"
+
 Scene::Scene(GameEngine* engine)
     : m_engine(engine) {
     m_grid_size = Vec2(width(), height());
@@ -102,12 +104,12 @@ void Scene::renderSelectedGridCell() {
 void Scene::renderBBoxes() {
     VertexArray vertices(LINES);
     for (const auto& e : m_entity_manager.getEntities()) {
-        if (!e->hasComponent<CBBox>()) {
+        if (!e.hasComponent<CBBox>()) {
             continue;
         }
-        const auto box = e->getComponent<CBBox>();
-        const auto pos = e->getComponent<CTransform>().pos;
-        const auto box_color = e->hasComponent<CTrigger>() ? Color(0, 255, 0) : Color(255, 255, 255);
+        const auto box = e.getComponent<CBBox>();
+        const auto pos = e.getComponent<CTransform>().pos;
+        const auto box_color = e.hasComponent<CTrigger>() ? Color(0, 255, 0) : Color(255, 255, 255);
 
         vertices.append({pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color);
         vertices.append({pos.x + box.half_size.x, pos.y - box.half_size.y}, box_color);
@@ -130,16 +132,16 @@ void Scene::renderCursor() {
     // TODO: Implement cursor rendering here
 }
 
-void Scene::addHpBar(std::shared_ptr<Entity> e) {
-    if (!e->hasComponent<CHealth>() || !e->hasComponent<CAnimation>()) {
+void Scene::addHpBar(Entity e) {
+    if (!e.hasComponent<CHealth>() || !e.hasComponent<CAnimation>()) {
         return;
     }
 
-    const auto size = e->getComponent<CAnimation>().animation.getSize();
-    const auto pos = e->getComponent<CTransform>().pos;
+    const auto size = e.getComponent<CAnimation>().animation.getSize();
+    const auto pos = e.getComponent<CTransform>().pos;
     constexpr auto y_offset{ 16.0f };
     constexpr auto hbar_h{ 8.0f };
-    const auto x_size = size.x*e->getComponent<CHealth>().percentage;
+    const auto x_size = size.x*e.getComponent<CHealth>().percentage;
 
     m_hp_bars.append({pos.x - size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, Color(0, 0, 0));
     m_hp_bars.append({pos.x + size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, Color(0, 0, 0));
@@ -156,13 +158,13 @@ void Scene::addHpBar(std::shared_ptr<Entity> e) {
     m_hp_bars.append({pos.x - size.x/2, pos.y - size.y/2 - y_offset + hbar_h}, Color(255, 0, 0));
 }
 
-void Scene::addHighlight(std::shared_ptr<Entity> e) {
-    if (!e->hasComponent<CBBox>()) {
+void Scene::addHighlight(Entity e) {
+    if (!e.hasComponent<CBBox>()) {
         return;
     }
 
-    const auto box = e->getComponent<CBBox>();
-    const auto pos = e->getComponent<CTransform>().pos;
+    const auto box = e.getComponent<CBBox>();
+    const auto pos = e.getComponent<CTransform>().pos;
     const auto box_color{ Color(255, 255, 255) };
 
     m_highlights.append({pos.x - box.half_size.x, pos.y - box.half_size.y}, box_color);
@@ -185,9 +187,9 @@ void Scene::renderHighlights() {
     m_highlights.clear();
 }
 
-void Scene::renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> player) {
-    const auto e_pos = e->getComponent<CTransform>().pos;
-    const auto p_pos = player->getComponent<CTransform>().pos;
+void Scene::renderInfoAI(Entity e, Entity player) {
+    const auto e_pos = e.getComponent<CTransform>().pos;
+    const auto p_pos = player.getComponent<CTransform>().pos;
     Circle center;
     center.setFillColor(Color(255, 255, 255));
     center.setRadius(4);
@@ -197,14 +199,14 @@ void Scene::renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> play
     center.setPosition(p_pos.x, p_pos.y);
     m_engine->window().draw(center);
 
-    if (e->hasComponent<CFollowPlayer>()) {
-        if (e->getComponent<CFollowPlayer>().detected == true) {
+    if (e.hasComponent<CFollowPlayer>()) {
+        if (e.getComponent<CFollowPlayer>().detected == true) {
             drawLine(e_pos, p_pos);
         }
     }
 
-    if (e->hasComponent<CPatrol>()) {
-        const auto positions = e->getComponent<CPatrol>().positions;
+    if (e.hasComponent<CPatrol>()) {
+        const auto positions = e.getComponent<CPatrol>().positions;
         Circle patrol_pos;
         patrol_pos.setFillColor(Color(255, 255, 255));
         patrol_pos.setRadius(4);
@@ -239,15 +241,15 @@ void Scene::renderLights(const Vec2& source, const std::vector<light::IntersectP
     m_engine->window().draw(vertices);
 }
 
-void Scene::renderCommon(std::shared_ptr<Entity> player) {
+void Scene::renderCommon(Entity player) {
     if (m_draw_textures) {
         VertexArray vertices(TRIANGLE);
         for (auto e : m_entity_manager.getEntities()) {
-            if (!e->hasComponent<CAnimation>()) {
+            if (!e.hasComponent<CAnimation>()) {
                 continue;
             }
-            auto& transform = e->getComponent<CTransform>();
-            auto& sprite = e->getComponent<CAnimation>().animation.getTextureRect();
+            auto& transform = e.getComponent<CTransform>();
+            auto& sprite = e.getComponent<CAnimation>().animation.getTextureRect();
             if (transform.transformable) {
                 sprite.setRotation(transform.angle);
                 sprite.setPosition(transform.pos.x, transform.pos.y);
@@ -261,11 +263,11 @@ void Scene::renderCommon(std::shared_ptr<Entity> player) {
                 addHpBar(e);
             }
 
-            if (m_show_ai_info && e->tag() == Tag::ENEMY) {
+            if (m_show_ai_info && e.tag() == Tag::ENEMY) {
                 renderInfoAI(e, player);
             }
 
-            if (e->hasComponent<CInteractable>() && e->getComponent<CInteractable>().highlight) {
+            if (e.hasComponent<CInteractable>() && e.getComponent<CInteractable>().highlight) {
                 addHighlight(e);
             }
         }
@@ -511,19 +513,19 @@ Vec2 Scene::gridPos(const Vec2& pos, const Vec2& size) const {
     );
 }
 
-Vec2 Scene::gridToMidPixel(float grid_x, float grid_y, std::shared_ptr<Entity> entity) const {
+Vec2 Scene::gridToMidPixel(float grid_x, float grid_y, Entity entity) const {
     const auto mod_h = static_cast<float>(static_cast<int>(height())%static_cast<int>(m_grid_cell_size.y));
     const auto grid_h = mod_h != 0 ? height() + m_grid_cell_size.y - mod_h : height();
 
-    if (entity->hasComponent<CAnimation>()) {
-        const auto animation_size = entity->getComponent<CAnimation>().animation.getSize();
+    if (entity.hasComponent<CAnimation>()) {
+        const auto animation_size = entity.getComponent<CAnimation>().animation.getSize();
         const auto x = grid_x*m_grid_cell_size.x + (animation_size.x/2.0f);
         const auto y = grid_h - (grid_y*m_grid_cell_size.y + (animation_size.y/2.0f));
 
         return Vec2(x, y);
     }
-    if (entity->hasComponent<CBBox>()) {
-        const auto half_size = entity->getComponent<CBBox>().half_size;
+    if (entity.hasComponent<CBBox>()) {
+        const auto half_size = entity.getComponent<CBBox>().half_size;
         const auto x = grid_x*m_grid_cell_size.x + half_size.x;
         const auto y = grid_h - (grid_y*m_grid_cell_size.y + half_size.y);
 
@@ -550,8 +552,12 @@ void Scene::sDoActionCommon(const Action& action) {
             case ActionName::TOGGLE_LIGHT: {
                 m_draw_light = !m_draw_light;
                 if (m_draw_light) {
+
+                    Timer t;
+                    t.start();
                     auto edges = getEdgesWithBorders();
                     m_visibility_points = light::constructVisibilityPoints(worldPos(), 1000.0f, edges);
+                    std::cout << "light calculation time: " << t.elapsed() << "us\n";
                 } else {
                     m_visibility_points.clear();
                 }
@@ -584,9 +590,9 @@ void Scene::sDoActionCommon(const Action& action) {
                 m_engine->pushSelectedPos(fitToGrid(world_pos), !m_system_key_pressed);
                 for (auto e : m_entity_manager.getEntities()) {
                     if (physics::isInside(world_pos, e)) {
-                        m_engine->pushSelectedEntityId(e->id(), !m_system_key_pressed);
-                        if (e->hasComponent<CDraggable>()) {
-                            e->getComponent<CDraggable>().dragged = true;
+                        m_engine->pushSelectedEntityId(e.id(), !m_system_key_pressed);
+                        if (e.hasComponent<CDraggable>()) {
+                            e.getComponent<CDraggable>().dragged = true;
                         }
                         break;
                     }
@@ -609,9 +615,9 @@ void Scene::sDoActionCommon(const Action& action) {
                 if (m_engine->editMode()) {
                     auto world_pos = worldPos();
                     for (auto e : m_entity_manager.getEntities()) {
-                        if (e->hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
-                            e->getComponent<CDraggable>().dragged = false;
-                            e->getComponent<CTransform>().pos = (fitToGrid(world_pos));
+                        if (e.hasComponent<CDraggable>() && physics::isInside(world_pos, e)) {
+                            e.getComponent<CDraggable>().dragged = false;
+                            e.getComponent<CTransform>().pos = (fitToGrid(world_pos));
                         }
                     }
                     break;

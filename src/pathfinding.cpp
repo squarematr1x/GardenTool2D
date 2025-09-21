@@ -103,7 +103,7 @@ std::vector<SearchNode> getNeighbours(const SearchNode& node, const Vec2& goal, 
     for (const auto& pos : positions) {
         bool collide = false;
         for (auto tile : tiles) {
-            if (tile->hasComponent<CBBox>() && physics::isInside(pos, tile)) {
+            if (tile.hasComponent<CBBox>() && physics::isInside(pos, tile)) {
                 collide = true;
                 break;
             }
@@ -122,7 +122,7 @@ std::vector<SearchNode> getNeighbours(const SearchNode& node, const Vec2& goal, 
 bool validGoal(const Vec2& goal, EntityManager& entity_manager) {
     const auto tiles = entity_manager.getEntities(Tag::TILE);
     for (auto tile : tiles) {
-        if (tile->hasComponent<CBBox>() && physics::isInside(goal, tile)) {
+        if (tile.hasComponent<CBBox>() && physics::isInside(goal, tile)) {
             return false;
         }
     }

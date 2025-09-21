@@ -188,9 +188,9 @@ void GameEngine::toggleEditMode() {
 	auto entity_manager = currentScene()->getEntityManager();
 	for (auto& e : entity_manager.getEntities()) {
 		if (m_edit_mode) {
-			e->addComponent<CDraggable>();
+			e.addComponent<CDraggable>();
 		} else {
-			e->removeComponent<CDraggable>();
+			e.removeComponent<CDraggable>();
 		}
 	}
 }

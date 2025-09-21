@@ -4,6 +4,22 @@
 
 #include "../asset/animation.hpp"
 
+enum class Tag : unsigned char {
+	DEFAULT,
+	TILE,
+	PLAYER,
+	ENEMY,
+	BULLET,
+	EXPLOSION,
+	SWORD,
+	HEART,
+	TELEPORT,
+	ELEVATOR,
+	CHECKPOINT,
+	TRIGGER,
+	TRIGGERABLE
+};
+
 enum class State: unsigned char {
 	NONE,
 	JUMP,
@@ -73,6 +89,7 @@ struct CTransform: Component {
 struct CScore: Component {
 	int score;
 
+	CScore() {}
 	CScore(int s)
 		: score(s)
 	{
@@ -313,22 +330,34 @@ struct CTriggerable: Component {
 	}
 };
 
-struct CLightSource: Component {
-	// For dynamic lighting
-};
-
-struct CSound: Component {
-	// Play different sounds related to certain entity
-};
-
 struct CInteractable: Component {
 	// Interact with e.g. button, door, npc, item, etc.
 	bool highlight{ false };
 	bool active{ false };
 };
 
+// NOTE: Combine this with CInteractable ^?
+struct CInfo: Component {
+	std::string name{ "" };
+	std::string description{ "" };
+
+	CInfo() {}
+	CInfo(const std::string& name_in, const std::string& description_in)
+		: name(name_in), description(description_in)
+	{
+	}
+};
+
 struct CDialog: Component {
 	// Dialog tree for entities	
+};
+
+struct CLightSource: Component {
+	// For dynamic lighting
+};
+
+struct CSound: Component {
+	// Play different sounds related to certain entity
 };
 
 struct CGridCoordinate: Component {

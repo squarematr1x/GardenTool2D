@@ -121,11 +121,11 @@ const Boundary EdgePool::getWorldBoundary(EntityManager& entity_manager, GameEng
     Vec2 max(engine->window().getSize().x, engine->window().getSize().y);
 
     for (auto& e : entity_manager.getEntities(Tag::TILE)) {
-        if (!e->hasComponent<CBBox>()) {
+        if (!e.hasComponent<CBBox>()) {
             continue;
         }
 
-        const auto transform = e->getComponent<CTransform>();
+        const auto transform = e.getComponent<CTransform>();
 
         if (transform.pos.x < min.x) {
             min.x = transform.pos.x;

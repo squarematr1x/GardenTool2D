@@ -68,11 +68,11 @@ public:
 	void renderCursor();
 	void renderHpBars();
 	void renderHighlights();
-	void renderInfoAI(std::shared_ptr<Entity> e, std::shared_ptr<Entity> player);
+	void renderInfoAI(Entity e, Entity player);
 	void renderText(const std::string& text, const Vec2& pos, const Color& color = Color(255, 255, 255), bool center = false);
 	void renderPauseText();
 	void renderLights(const Vec2& source, const std::vector<light::IntersectPoint>& visibility_points);
-	void renderCommon(std::shared_ptr<Entity> player);
+	void renderCommon(Entity player);
 
 	void updateZoom(float delta);
 	void updateGridSize(Vec2 size) { m_grid_size = size; }
@@ -81,8 +81,8 @@ public:
 	void addTextBox(const Vec2& pos, const text::Coord& coord, VertexArray& vertices, const Color& color);
 	void addVertexData(const Vec2& pos, const Rect<float>& texture_rect, VertexArray& vertices);
 	void addLine(const Vec2& p1, const Vec2& p2, VertexArray& vertices);
-	void addHpBar(std::shared_ptr<Entity> e);
-	void addHighlight(std::shared_ptr<Entity> e);
+	void addHpBar(Entity e);
+	void addHighlight(Entity e);
 
 	void sDoActionCommon(const Action& action);
 	void sZoom(View& view);
@@ -140,7 +140,7 @@ protected:
 	virtual void onEnd() = 0;
 	void setPaused(bool paused) { m_paused = paused; }
 
-	Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity) const;
+	Vec2 gridToMidPixel(float gridX, float gridY, Entity entity) const;
 };
 
 class SceneMenu: public Scene {
@@ -167,7 +167,7 @@ public:
 };
 
 class SceneSideScroller: public Scene {
-	std::shared_ptr<Entity> m_player;
+	Entity m_player;
 	bool m_can_shoot{ true };
 	bool m_can_jump{ true };
 
@@ -201,7 +201,7 @@ public:
 };
 
 class SceneRPG: public Scene {
-	std::shared_ptr<Entity> m_player;
+	Entity m_player;
 	bool m_follow{ false };
 	bool m_can_attack{ true };
 	Vec2 m_room_size{ 20, 12 };
@@ -216,10 +216,10 @@ public:
 	void loadLevel(const std::string& path);
 
 	void spawnPlayer();
-	void spawnSword(std::shared_ptr<Entity> entity);
-	void setSwordPos(std::shared_ptr<Entity> entity, const Vec2& facing, const Vec2& pos);
+	void spawnSword(Entity entity);
+	void setSwordPos(Entity entity, const Vec2& facing, const Vec2& pos);
 	void setRoomSize();
-	void setFacing(std::shared_ptr<Entity> entity);
+	void setFacing(Entity entity);
 
 	void teleport(const Vec2& cur_doorway);
 
