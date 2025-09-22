@@ -333,7 +333,6 @@ struct CMovable: Component {
 	bool active{ true };
 };
 
-// NOTE: Combine this with CInteractable ^?
 struct CInfo: Component {
 	std::string name{ "" };
 	std::string description{ "" };
