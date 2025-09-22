@@ -61,6 +61,7 @@ void EntityMemoryPool::clearComponents(size_t entity_id) {
     clearComponent<CTrigger>(entity_id);
     clearComponent<CTriggerable>(entity_id);
     clearComponent<CInteractable>(entity_id);
+    clearComponent<CBreakable>(entity_id);
 }
 
 void EntityMemoryPool::reserveComponents() {
@@ -84,6 +85,7 @@ void EntityMemoryPool::reserveComponents() {
     reserveComponent<CTrigger>();
     reserveComponent<CTriggerable>();
     reserveComponent<CInteractable>();
+    reserveComponent<CBreakable>();
 }
 
 template <typename T>

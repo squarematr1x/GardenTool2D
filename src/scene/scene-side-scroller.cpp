@@ -65,7 +65,8 @@ void SceneSideScroller::loadLevel(const std::string& path) {
                 if (block_movement) {
                     const auto& animation_size = tile.getComponent<CAnimation>().animation.getSize();
                     if (animation == "Brick") {
-                        tile.addComponent<CBBox>(animation_size, block_movement, block_vision, true);
+                        tile.addComponent<CBBox>(animation_size, block_movement, block_vision);
+                        tile.addComponent<CBreakable>();
                     } else {
                         tile.addComponent<CBBox>(animation_size, block_movement, block_vision);
                     }
@@ -208,7 +209,7 @@ void SceneSideScroller::spawnBullet() {
     const auto transform = m_player.getComponent<CTransform>();
 
     auto bullet = m_entity_manager.addEntity(Tag::BULLET);
-   bullet.addComponent<CAnimation>(m_engine->assets().getAnimation("Fire"), true);
+    bullet.addComponent<CAnimation>(m_engine->assets().getAnimation("Fire"), true);
 
     constexpr auto bullet_v = 7.0f; // TODO: Add to config file?
     if (transform.scale.x < 0) {
@@ -216,8 +217,8 @@ void SceneSideScroller::spawnBullet() {
     } else {
        bullet.addComponent<CTransform>(transform.pos, Vec2(bullet_v, 0.0f));
     }
-   bullet.addComponent<CBBox>(Vec2(32.0f, 32.0f));
-   bullet.addComponent<CLifespan>(60);
+    bullet.addComponent<CBBox>(Vec2(32.0f, 32.0f));
+    bullet.addComponent<CLifespan>(60);
 }
 
 void SceneSideScroller::spawnExplosion(const Vec2& pos) {
@@ -391,7 +392,7 @@ void SceneSideScroller::sCollision() {
         // Bullet collision
         for (auto bullet : m_entity_manager.getEntities(Tag::BULLET)) {
             if (physics::overlapping(bullet, e)) {
-                if (e.getComponent<CBBox>().breakable) {
+                if (e.hasComponent<CBreakable>()) {
                     // Destroy tile and bullet
                     spawnExplosion(e.getComponent<CTransform>().pos);
                     e.destroy();
@@ -455,7 +456,7 @@ void SceneSideScroller::sCollision() {
                     }
                 } else if (p_transfrom.velocity.y < 0) {
                     p_transfrom.pos.y += overlap.y;
-                    if (e.getComponent<CBBox>().breakable) {
+                    if (e.hasComponent<CBreakable>()) {
                         spawnExplosion(e.getComponent<CTransform>().pos);
                         e.destroy();
                     } else if (e.getComponent<CAnimation>().animation.getName() == "Question1") {
@@ -559,7 +560,8 @@ void SceneSideScroller::sDoAction(const Action& action) {
                 tile.addComponent<CAnimation>(m_engine->assets().getAnimation("Brick"), true);
                 tile.addComponent<CTransform>(fitToGrid(world_pos));
                 tile.addComponent<CDraggable>();
-                tile.addComponent<CBBox>(tile.getComponent<CAnimation>().animation.getSize(), true, true, true);
+                tile.addComponent<CBBox>(tile.getComponent<CAnimation>().animation.getSize(), true, true);
+                tile.addComponent<CBreakable>();
                 m_entity_manager.update();
                 break;
             }

@@ -8,6 +8,7 @@
 
 class Entity {
     size_t m_id;
+
 public:
 	Entity() = default;
 	Entity(size_t id)

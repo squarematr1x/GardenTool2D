@@ -27,7 +27,8 @@ typedef std::tuple<
 	std::vector<CPath>,
 	std::vector<CTrigger>,
 	std::vector<CTriggerable>,
-	std::vector<CInteractable>
+	std::vector<CInteractable>,
+    std::vector<CBreakable>
 > ComponentVectorTuple;
 
 class EntityMemoryPool {
