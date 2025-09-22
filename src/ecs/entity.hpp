@@ -27,7 +27,7 @@ public:
 	bool isActive() const { return EntityMemoryPool::Instance().isActive(m_id); }
 
 	template<typename T, typename... TArgs>
-	T& addComponent(TArgs&&... args) {
+	T& addComponent(TArgs&&... args) const {
 		auto& component = EntityMemoryPool::Instance().getComponent<T>(m_id);
 		component = T(std::forward<TArgs>(args)...);
 		component.has = true;
@@ -35,9 +35,7 @@ public:
 	}
 
 	template<typename T>
-    void removeComponent() { EntityMemoryPool::Instance().getComponent<T>(m_id) = T(); }
-
-	void destroy() { EntityMemoryPool::Instance().destroyEntity(m_id); }
-
-	void setTag(Tag tag) { EntityMemoryPool::Instance().setTag(tag, m_id); }
+    void removeComponent() const { EntityMemoryPool::Instance().getComponent<T>(m_id) = T(); }
+	void destroy() const { EntityMemoryPool::Instance().destroyEntity(m_id); }
+	void setTag(Tag tag) const { EntityMemoryPool::Instance().setTag(tag, m_id); }
 };
