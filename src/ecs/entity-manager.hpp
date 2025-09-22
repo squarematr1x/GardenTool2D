@@ -14,7 +14,7 @@ class EntityManager {
 public:
 	EntityManager() {}
 
-	Entity& getEntity(const size_t id);
+	Entity getEntity(const size_t id);
 	Entity addEntity(const Tag tag);
 
 	std::vector<Entity>& getEntities() { return m_entities; }

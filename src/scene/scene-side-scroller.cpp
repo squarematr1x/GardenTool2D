@@ -508,21 +508,6 @@ void SceneSideScroller::sCollision() {
     for (auto enemy : m_entity_manager.getEntities(Tag::ENEMY)) {
         auto enemy_damage = enemy.getComponent<CDamage>().damage;
 
-        for (auto sword : m_entity_manager.getEntities(Tag::SWORD)) {
-            if (physics::overlapping(enemy, sword)) {
-                if (!sword.hasComponent<CDamage>()) {
-                    continue;
-                }
-                auto& hp = enemy.getComponent<CHealth>();
-                hp.current -= sword.getComponent<CDamage>().damage;
-                hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
-
-                if (hp.current <= 0) {
-                    enemy.destroy();
-                }
-            }
-        }
-
         if (m_player.hasComponent<CInvincibility>()) {
             continue;
         }
@@ -538,6 +523,7 @@ void SceneSideScroller::sCollision() {
 
             if (hp.current <= 0) {
                 m_player.destroy();
+                m_entity_manager.update();
                 spawnPlayer();
             } else {
                 m_player.addComponent<CInvincibility>();
@@ -685,5 +671,5 @@ void SceneSideScroller::onEnd() {
     m_engine->window().setDefaultView();
 
     // Go back to menu
-    m_engine->changeScene(SceneType::MENU, std::make_shared<SceneMenu>(m_engine), true);
+    m_engine->changeScene(SceneType::MENU, std::make_shared<SceneMenu>(m_engine));
 }

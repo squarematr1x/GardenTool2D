@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tuple>
+#include <queue>
 
 #include "components.hpp"
 
@@ -27,20 +28,20 @@ typedef std::tuple<
 	std::vector<CTrigger>,
 	std::vector<CTriggerable>,
 	std::vector<CInteractable>
-> EntityComponentVectorTuple;
+> ComponentVectorTuple;
 
 class EntityMemoryPool {
-    EntityComponentVectorTuple m_pool;
+    ComponentVectorTuple m_components;
     std::vector<Tag> m_tags;
     std::vector<bool> m_active;
     size_t m_entity_count{ 0 };
-    // std::vector<size_t> m_free_indexes; // For faster lookup, prefer std::unordered_set or std::queue (get first free index)?
+    // std::queue<size_t> m_free_indexes; // NOTE: check later
 
-    EntityMemoryPool(size_t max_entities); // Reserve space here?
+    EntityMemoryPool(size_t max_entities);
 
     size_t getNextEntityIndex() const;
 
-    void clearComponents(size_t index);
+    void clearComponents(size_t entity_id);
     void reserveComponents();
 
     template <typename T>
@@ -56,7 +57,7 @@ public:
     }
 
     template <typename T>
-    T& getComponent(size_t entity_id) { return std::get<std::vector<T>>(m_pool)[entity_id]; }
+    T& getComponent(size_t entity_id) { return std::get<std::vector<T>>(m_components)[entity_id]; }
 
     Tag getTag(size_t entity_id) const { return m_tags[entity_id]; }
     void setTag(Tag tag, size_t entity_id) { m_tags[entity_id] = tag; }
@@ -66,4 +67,5 @@ public:
     size_t addEntity(const Tag tag);
 
     void destroyEntity(size_t entity_id);
+    void resetAll();
 };

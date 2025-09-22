@@ -25,7 +25,6 @@ size_t EntityMemoryPool::getNextEntityIndex() const {
 
 size_t EntityMemoryPool::addEntity(const Tag tag) {
     size_t index = getNextEntityIndex();
-
     m_active[index] = true;
     m_tags[index] = tag;
     m_entity_count++;
@@ -41,27 +40,27 @@ void EntityMemoryPool::destroyEntity(size_t entity_id) {
     clearComponents(entity_id);
 }
 
-void EntityMemoryPool::clearComponents(size_t index) {
-    clearComponent<CTransform>(index);
-    clearComponent<CScore>(index);
-    clearComponent<CHealth>(index);
-    clearComponent<CInput>(index);
-    clearComponent<CLifespan>(index);
-    clearComponent<CDamage>(index);
-    clearComponent<CInvincibility>(index);
-    clearComponent<CBBox>(index);
-    clearComponent<CAnimation>(index);
-    clearComponent<CGravity>(index);
-    clearComponent<CState>(index);
-    clearComponent<CDraggable>(index);
-    clearComponent<CFollowPlayer>(index);
-    clearComponent<CPatrol>(index);
-    clearComponent<CBehavior>(index);
-    clearComponent<CWeapon>(index);
-    clearComponent<CPath>(index);
-    clearComponent<CTrigger>(index);
-    clearComponent<CTriggerable>(index);
-    clearComponent<CInteractable>(index);
+void EntityMemoryPool::clearComponents(size_t entity_id) {
+    clearComponent<CTransform>(entity_id);
+    clearComponent<CScore>(entity_id);
+    clearComponent<CHealth>(entity_id);
+    clearComponent<CInput>(entity_id);
+    clearComponent<CLifespan>(entity_id);
+    clearComponent<CDamage>(entity_id);
+    clearComponent<CInvincibility>(entity_id);
+    clearComponent<CBBox>(entity_id);
+    clearComponent<CAnimation>(entity_id);
+    clearComponent<CGravity>(entity_id);
+    clearComponent<CState>(entity_id);
+    clearComponent<CDraggable>(entity_id);
+    clearComponent<CFollowPlayer>(entity_id);
+    clearComponent<CPatrol>(entity_id);
+    clearComponent<CBehavior>(entity_id);
+    clearComponent<CWeapon>(entity_id);
+    clearComponent<CPath>(entity_id);
+    clearComponent<CTrigger>(entity_id);
+    clearComponent<CTriggerable>(entity_id);
+    clearComponent<CInteractable>(entity_id);
 }
 
 void EntityMemoryPool::reserveComponents() {
@@ -89,16 +88,23 @@ void EntityMemoryPool::reserveComponents() {
 
 template <typename T>
 void EntityMemoryPool::clearComponent(size_t entity_id) {
-    auto& component_vec = std::get<std::vector<T>>(m_pool);
+    auto& component_vec = std::get<std::vector<T>>(m_components);
     component_vec[entity_id] = T();
-    component_vec[entity_id].has = false;
 }
 
 template <typename T>
 void EntityMemoryPool::reserveComponent() {
-    auto& component_vec = std::get<std::vector<T>>(m_pool);
+    auto& component_vec = std::get<std::vector<T>>(m_components);
     component_vec.reserve(MAX_ENTITIES);
     for (size_t i = 0; i < MAX_ENTITIES; i++) {
         component_vec.push_back(T());
     }
+}
+
+void EntityMemoryPool::resetAll() {
+    for (size_t i = 0; i < MAX_ENTITIES; i++) {
+        m_active.push_back(false);
+        m_tags.push_back(Tag::DEFAULT);
+    }
+    reserveComponents();
 }

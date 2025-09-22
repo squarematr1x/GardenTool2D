@@ -20,7 +20,6 @@ void Editor::init(sf::RenderWindow& window) {
     }
 }
 
-// NOTE: this function is rather messy, but immediate GUI in general seems to result in messy code
 void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, GameEngine* engine) {
     ImGui::SFML::Update(window, m_dt.restart());
     ImGui::Begin("Editor");
@@ -342,6 +341,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                         }
                 
                         if (ImGui::Button("Delete")) {
+                            engine->popSelectedEntityId(e.id());
                             e.destroy();
                             entity_manager.update();
                         }

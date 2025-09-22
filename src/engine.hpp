@@ -41,9 +41,6 @@ class GameEngine {
 
 	void sUserInput();
 
-	void popSelectedPos(const Vec2& cell);
-	void popSelectedEntityId(size_t id);
-
 	std::shared_ptr<Scene> currentScene() { return m_scenes[m_cur_scene]; }
 
 public:
@@ -52,7 +49,7 @@ public:
 	void run();
 	void quit();
 
-	void changeScene(const SceneType scene_name, std::shared_ptr<Scene> scene, bool end_current_scene = false);
+	void changeScene(const SceneType scene_name, std::shared_ptr<Scene> scene);
 	void playSound(const std::string& sound_name);
 	void playMusic(const std::string& music_name);
 	void stopMusic(const std::string& music_name);
@@ -60,8 +57,11 @@ public:
 	void toggleSound() { m_enable_sound = !m_enable_sound; }
 	void toggleMusic() { m_enable_music = !m_enable_music; }
 	void toggleEditMode();
-	void pushSelectedPos(const Vec2& cell, bool reset=false);
-	void pushSelectedEntityId(size_t id, bool reset=false);
+	void pushSelectedPos(const Vec2& cell, bool reset = false);
+	void pushSelectedEntityId(size_t id, bool reset = false);
+	void popSelectedPos(const Vec2& cell);
+	void popSelectedEntityId(size_t id);
+	void cleanEditMode();
 
 	RenderWindow& window() { return m_window; };
 	const Assets& assets() const { return m_assets; };

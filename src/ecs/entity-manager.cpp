@@ -6,8 +6,14 @@ Entity EntityManager::addEntity(const Tag tag) {
 	return e;
 }
 
-Entity& EntityManager::getEntity(const size_t id) {
-	return m_entities[id];
+Entity EntityManager::getEntity(const size_t id) {
+	for (auto entity : m_entities) {
+		if (entity.id() == id) { 
+			return entity;
+		}
+	}
+	// TODO: find a better way
+	return addEntity(Tag::DEFAULT);
 }
 
 void EntityManager::update() {

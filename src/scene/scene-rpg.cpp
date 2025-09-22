@@ -196,7 +196,7 @@ void SceneRPG::spawnSword(Entity entity) {
     // Set weapon cooldown
     auto& weapon = entity.getComponent<CWeapon>();
     weapon.remaining_cooldown = weapon.max_cooldown;
-    weapon.current_weapon_id = sword.id();
+    weapon.id = sword.id();
 
     // Play sword sound
     m_engine->playSound("SoundSword");
@@ -355,17 +355,17 @@ void SceneRPG::sMovement() {
         }
     }
 
-    for (auto e : m_entity_manager.getEntities()){
+    for (auto e : m_entity_manager.getEntities()) {
         auto& transform = e.getComponent<CTransform>();
         transform.prev_pos = transform.pos;
         transform.pos += transform.velocity;
 
         if (e.hasComponent<CWeapon>()) {
             auto weapon = e.getComponent<CWeapon>();
-            if (weapon.current_weapon_id) {
-                auto weapon_e = m_entity_manager.getEntity(weapon.current_weapon_id);
+            if (weapon.id && m_entity_manager.isActive(weapon.id)) {
+                auto weapon_e = m_entity_manager.getEntity(weapon.id);
                 setSwordPos(weapon_e, transform.facing, transform.pos);
-                weapon.current_weapon_id = 0;
+                weapon.id = 0;
             }
         }
     }
@@ -542,27 +542,27 @@ void SceneRPG::sCollision() {
 
     // Player - enemy collision
     for (auto enemy : m_entity_manager.getEntities(Tag::ENEMY)) {
-        auto enemy_damage = enemy.getComponent<CDamage>().damage;
-
         for (const auto& sword : m_entity_manager.getEntities(Tag::SWORD)) {
-            if (physics::overlapping(enemy, sword)) {
-                if (!sword.hasComponent<CDamage>()) {
-                    continue;
-                }
-                auto& hp = enemy.getComponent<CHealth>();
-                hp.current -= sword.getComponent<CDamage>().damage;
-                hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
+            if (!physics::overlapping(enemy, sword)) {
+                continue;
+            }
+            if (!sword.hasComponent<CDamage>()) {
+                continue;
+            }
 
-                if (hp.current <= 0) {
-                    enemy.destroy();
-                } else {
-                    enemy.addComponent<CBehavior>(true);
-                    if (enemy.hasComponent<CPatrol>()) {
-                        const auto pos = enemy.getComponent<CTransform>().pos;
-                        const auto follow_speed = 1.0f;
-                        enemy.removeComponent<CPatrol>();
-                        enemy.addComponent<CFollowPlayer>(pos, follow_speed);
-                    }
+            auto& hp = enemy.getComponent<CHealth>();
+            hp.current -= sword.getComponent<CDamage>().damage;
+            hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
+
+            if (hp.current <= 0) {
+                enemy.destroy();
+            } else {
+                enemy.addComponent<CBehavior>(true);
+                if (enemy.hasComponent<CPatrol>()) {
+                    const auto pos = enemy.getComponent<CTransform>().pos;
+                    const auto follow_speed = 1.0f;
+                    enemy.removeComponent<CPatrol>();
+                    enemy.addComponent<CFollowPlayer>(pos, follow_speed);
                 }
             }
         }
@@ -577,11 +577,13 @@ void SceneRPG::sCollision() {
 
         if (enemy.getComponent<CBehavior>().hostile && physics::overlapping(m_player, enemy)) {
             auto& hp = m_player.getComponent<CHealth>();
+            auto enemy_damage = enemy.getComponent<CDamage>().damage;
             hp.current -= enemy_damage;
             hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
 
             if (hp.current <= 0) {
                 m_player.destroy();
+                m_entity_manager.update();
                 spawnPlayer();
             } else {
                 m_player.addComponent<CInvincibility>();
@@ -609,12 +611,12 @@ void SceneRPG::sCollision() {
 }
 
 void SceneRPG::sAnimation() {
-    for (auto entity : m_entity_manager.getEntities()) {
-        if (!entity.hasComponent<CAnimation>()) {
+    for (auto e : m_entity_manager.getEntities()) {
+        if (!e.hasComponent<CAnimation>()) {
             continue;
         }
 
-        if (entity.tag() == Tag::PLAYER) {
+        if (e.tag() == Tag::PLAYER) {
             auto& p_state = m_player.getComponent<CState>();
             const auto p_transform = m_player.getComponent<CTransform>();
             if (p_transform.facing != p_transform.prev_facing || p_state.state != p_state.prev_state) {
@@ -648,20 +650,20 @@ void SceneRPG::sAnimation() {
             p_state.prev_state = p_state.state;
 
             if (m_player.getComponent<CTransform>().velocity != Vec2(0.0f, 0.0f)) {
-                entity.getComponent<CAnimation>().animation.update();
+                e.getComponent<CAnimation>().animation.update();
             }
 
             if (m_player.hasComponent<CInvincibility>()) {
-		        entity.getComponent<CAnimation>().animation.getTextureRect().setColor(Color(255, 128, 128, 128));
+		        e.getComponent<CAnimation>().animation.getTextureRect().setColor(Color(255, 128, 128, 128));
 	        } else {
-                entity.getComponent<CAnimation>().animation.getTextureRect().setColor(Color(255, 255, 255));
+                e.getComponent<CAnimation>().animation.getTextureRect().setColor(Color(255, 255, 255));
             }
         } else {
-            entity.getComponent<CAnimation>().animation.update();
+            e.getComponent<CAnimation>().animation.update();
         }
 
-        if (!entity.getComponent<CAnimation>().repeat && entity.getComponent<CAnimation>().animation.hasEnded()) {
-            entity.destroy();
+        if (!e.getComponent<CAnimation>().repeat && e.getComponent<CAnimation>().animation.hasEnded()) {
+            e.destroy();
         }
     }
 }
@@ -722,5 +724,5 @@ void SceneRPG::onEnd() {
     m_engine->window().setDefaultView();
 
     // Go back to menu
-    m_engine->changeScene(SceneType::MENU, std::make_shared<SceneMenu>(m_engine), true);
+    m_engine->changeScene(SceneType::MENU, std::make_shared<SceneMenu>(m_engine));
 }

@@ -274,7 +274,7 @@ struct CWeapon: Component {
 	WeaponType type{ WeaponType::MELEE };
 	int max_cooldown{ 20 };
 	int remaining_cooldown{ 0 };
-	size_t current_weapon_id{ 0 };
+	size_t id{ 0 };
 
 	CWeapon() {}
 	CWeapon(WeaponType type_in) 
@@ -287,8 +287,8 @@ struct CWeapon: Component {
 	{
 	}
 
-	CWeapon(WeaponType type_in, int cooldown_in, size_t weapon_id_in) 
-		: type(type_in), max_cooldown(cooldown_in), current_weapon_id(weapon_id_in)
+	CWeapon(WeaponType type_in, int cooldown_in, size_t id_in) 
+		: type(type_in), max_cooldown(cooldown_in), id(id_in)
 	{
 	}
 };
