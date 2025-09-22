@@ -329,6 +329,10 @@ struct CBreakable: Component {
 	bool active{ true };
 };
 
+struct CMovable: Component {
+	bool active{ true };
+};
+
 // NOTE: Combine this with CInteractable ^?
 struct CInfo: Component {
 	std::string name{ "" };
