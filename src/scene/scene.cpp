@@ -280,7 +280,7 @@ void Scene::renderCommon(Entity player) {
                 continue;
             }
             const auto edges = getEdgesWithBorders();
-            const auto pos = m_engine->window().mapPixelToCoords(e.getComponent<CTransform>().pos);
+            const auto pos = e.getComponent<CTransform>().pos;
             const auto visibility_points = light::constructVisibilityPoints(pos, 1000.0f, edges);
             renderLights(pos, visibility_points);
         }
