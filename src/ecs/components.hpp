@@ -344,12 +344,12 @@ struct CInfo: Component {
 	}
 };
 
-struct CDialog: Component {
-	// Dialog tree for entities	
+struct CLightSource: Component {
+	bool active{ false };
 };
 
-struct CLightSource: Component {
-	// For dynamic lighting
+struct CDialog: Component {
+	// Dialog tree for entities	
 };
 
 struct CSound: Component {

@@ -5,7 +5,7 @@
 
 #include "components.hpp"
 
-constexpr size_t MAX_ENTITIES{ 10000 };
+constexpr size_t MAX_ENTITIES{ 1000 };
 
 typedef std::tuple<
 	std::vector<CTransform>,
@@ -28,7 +28,8 @@ typedef std::tuple<
 	std::vector<CTrigger>,
 	std::vector<CTriggerable>,
 	std::vector<CInteractable>,
-    std::vector<CBreakable>
+    std::vector<CBreakable>,
+    std::vector<CLightSource>
 > ComponentVectorTuple;
 
 class EntityMemoryPool {

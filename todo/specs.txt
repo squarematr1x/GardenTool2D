@@ -6,10 +6,6 @@ Static tiles
 - An edge pool can be created from these tiles to reduce collision checks
 - The vertex array containing this data can be constructed when app starts and reused (no need to re-calculate these)
 
-Dynamic lighting
-- Point lights can be entities?
-- Add/use CLightDynamic and CLightStatic components for entities?
-
 Text rendering
 - All text should be part of UI layer
 
@@ -35,7 +31,6 @@ Shaders
 - Use entity effects such as taking damage etc.
 
 Testing
-- Use doctest for unit testing
 - Important to test collision and pathfinding
 
 Multithreading

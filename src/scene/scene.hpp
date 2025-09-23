@@ -121,7 +121,6 @@ protected:
 	bool m_system_key_pressed{ false };
 	bool m_free_camera{ false };
 	bool m_middle_mouse_pressed{ false };
-	bool m_draw_light{ false };
 
 	std::string m_level_path{ "" };
 
@@ -135,7 +134,6 @@ protected:
 	Circle m_mouse_shape;
 
 	EdgePool m_pool;
-	std::vector<light::IntersectPoint> m_visibility_points;
 
 	virtual void onEnd() = 0;
 	void setPaused(bool paused) { m_paused = paused; }
