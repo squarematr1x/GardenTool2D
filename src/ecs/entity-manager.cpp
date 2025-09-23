@@ -1,24 +1,25 @@
 #include "entity-manager.hpp"
 
-std::shared_ptr<Entity> EntityManager::addEntity(const Tag tag) {
-	auto e = std::shared_ptr<Entity>(new Entity(++m_total_entities, tag));
+Entity EntityManager::addEntity(const Tag tag) {
+	auto e = Entity(EntityMemoryPool::Instance().addEntity(tag));
 	m_entities_to_add.push_back(e);
 	return e;
 }
 
-std::shared_ptr<Entity> EntityManager::getEntity(const size_t id) {
-	for (auto& e : m_entities) {
-		if (e->id() == id) {
-			return e;
+Entity EntityManager::getEntity(const size_t id) {
+	for (auto entity : m_entities) {
+		if (entity.id() == id) { 
+			return entity;
 		}
 	}
-	return nullptr;
+	// TODO: find a better way
+	return addEntity(Tag::DEFAULT);
 }
 
 void EntityManager::update() {
 	for (auto& e : m_entities_to_add) {
 		m_entities.push_back(e);
-		m_entity_map[e->tag()].push_back(e);
+		m_entity_map[e.tag()].push_back(e);
 	}
 
 	removeDeadEntities(m_entities);
@@ -30,24 +31,22 @@ void EntityManager::update() {
 	m_entities_to_add.clear();
 }
 
-void EntityManager::removeDeadEntities(EntityVec& vec) {
+void EntityManager::removeDeadEntities(std::vector<Entity>& vec) {
 	vec.erase(std::remove_if(vec.begin(), vec.end(),
-		[](std::shared_ptr<Entity> e) { return !e->isActive(); }), vec.end());
+		[](Entity e) { return !e.isActive(); }), vec.end());
 }
 
-EntityVec& EntityManager::getEntities(const Tag tag) {
+std::vector<Entity>& EntityManager::getEntities(const Tag tag) {
 	return m_entity_map[tag];
 }
 
 void EntityManager::setTag(size_t id, const Tag tag) {
 	for (auto& [tag, entity_vec] : m_entity_map) {
 		entity_vec.erase(std::remove_if(entity_vec.begin(), entity_vec.end(),
-			[id](std::shared_ptr<Entity> e) { return e->id() == id; }), entity_vec.end());
+			[id](Entity e) { return e.id() == id; }), entity_vec.end());
 	}
 
 	auto e = getEntity(id);
-	if (e != nullptr) {
-		e->setTag(tag);
-		m_entity_map[e->tag()].push_back(e);
-	}
+	e.setTag(tag);
+	m_entity_map[e.tag()].push_back(e);
 }

@@ -20,7 +20,6 @@ void Editor::init(sf::RenderWindow& window) {
     }
 }
 
-// NOTE: this function is rather messy, but immediate GUI in general seems to result in messy code
 void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, GameEngine* engine) {
     ImGui::SFML::Update(window, m_dt.restart());
     ImGui::Begin("Editor");
@@ -52,10 +51,10 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                     snprintf(header, sizeof(header), "Edit Entity: %lu", e_id);
                     ImGui::SeparatorText(header);
                     auto e = entity_manager.getEntity(e_id);
-                    if (e != nullptr) {
+                    if (e.isActive()) {
                         if (ImGui::TreeNode("Transform")) {
-                            if (e->hasComponent<CTransform>()) {
-                                auto& transform = e->getComponent<CTransform>();
+                            if (e.hasComponent<CTransform>()) {
+                                auto& transform = e.getComponent<CTransform>();
                                 ImGui::SetNextItemWidth(100);
                                 ImGui::InputFloat("x", &transform.pos.x, 1.0f, 1.0f, "%.0f");
                                 ImGui::SameLine();
@@ -65,21 +64,21 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                             ImGui::TreePop();
                         }
                         if (ImGui::TreeNode("Gravitation")) {
-                            if (e->hasComponent<CGravity>()) {
-                                auto& gravity = e->getComponent<CGravity>();
+                            if (e.hasComponent<CGravity>()) {
+                                auto& gravity = e.getComponent<CGravity>();
                                 ImGui::SetNextItemWidth(100); 
                                 ImGui::InputFloat("Gravity", &gravity.gravity, 0.25f, 0.25f, "%.2f");
                                 if (ImGui::Button("Delete")) {
-                                    e->removeComponent<CGravity>();
+                                    e.removeComponent<CGravity>();
                                 } 
                             } else if (ImGui::Button("Add gravity")) {
-                                e->addComponent<CGravity>();
+                                e.addComponent<CGravity>();
                             }
                             ImGui::TreePop();
                         }
                         if (ImGui::TreeNode("Bounding box")) {
-                            if (e->hasComponent<CBBox>()) {
-                                auto& bbox = e->getComponent<CBBox>();
+                            if (e.hasComponent<CBBox>()) {
+                                auto& bbox = e.getComponent<CBBox>();
                                 ImGui::SetNextItemWidth(100);
                                 ImGui::InputFloat("Width", &bbox.size.x, 1.0f, .20f, "%.0f");
                                 ImGui::SameLine();
@@ -90,34 +89,34 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                 ImGui::Checkbox("Block vision", &bbox.block_vision);
                                 for (const auto& id : engine->allSelectedEntityIds()) {
                                     auto entity = entity_manager.getEntity(id);
-                                    if (entity != nullptr && entity->tag() == Tag::TILE) {
+                                    if (entity.tag() == Tag::TILE) {
                                         // Add bounding box for multiple tiles at once
-                                        entity->addComponent<CBBox>(Vec2(bbox.size.x, bbox.size.y), bbox.block_movement, bbox.block_vision);
+                                        entity.addComponent<CBBox>(Vec2(bbox.size.x, bbox.size.y), bbox.block_movement, bbox.block_vision);
                                     }
                                 }
                                 if (ImGui::Button("Delete")) {
-                                    e->removeComponent<CBBox>();
+                                    e.removeComponent<CBBox>();
                                 } 
                             } else if (ImGui::Button("Add bounding box")) {
                                 for (const auto& id : engine->allSelectedEntityIds()) {
                                     auto entity = entity_manager.getEntity(id);
-                                    if (entity != nullptr && entity->tag() == Tag::TILE) {
+                                    if (entity.tag() == Tag::TILE) {
                                         // Add bounding box for multiple tiles at once
-                                        entity->addComponent<CBBox>(Vec2(64, 64), true, true);
+                                        entity.addComponent<CBBox>(Vec2(64, 64), true, true);
                                     }
                                 }
                             }
                             ImGui::TreePop();
                         }
                         if (ImGui::TreeNode("Animation")) {
-                            if (e->hasComponent<CAnimation>()) {
+                            if (e.hasComponent<CAnimation>()) {
                                 auto anims = engine->assets().getAnimations();
                                 constexpr auto len = 45;
                                 if (len != anims.size()) {
                                     return;
                                 }
                                 const char* animations[len];
-                                const auto anim_name = e->getComponent<CAnimation>().animation.getName();
+                                const auto anim_name = e.getComponent<CAnimation>().animation.getName();
                                 static auto cur_index = 1;
                                 auto i = 0;
 
@@ -134,30 +133,30 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                 if (prev_index != cur_index) {
                                     for (const auto& id : engine->allSelectedEntityIds()) {
                                         auto entity = entity_manager.getEntity(id);
-                                        if (entity != nullptr && entity->tag() == Tag::TILE) {
+                                        if (entity.tag() == Tag::TILE) {
                                             // Add animation for multiple entities at once
-                                            entity->addComponent<CAnimation>(engine->assets().getAnimation(animations[cur_index]), true);
+                                            entity.addComponent<CAnimation>(engine->assets().getAnimation(animations[cur_index]), true);
                                         }
                                     }
                                     m_previous_animation = animations[cur_index];
                                 }
                                 if (ImGui::Button("Delete")) {
-                                    e->removeComponent<CAnimation>();
+                                    e.removeComponent<CAnimation>();
                                 } 
                             } else if (ImGui::Button("Add animation")) {
                                 for (const auto& id : engine->allSelectedEntityIds()) {
                                     auto entity = entity_manager.getEntity(id);
-                                    if (entity != nullptr && entity->tag() == Tag::TILE) {
+                                    if (entity.tag() == Tag::TILE) {
                                         // Add bounding box for multiple tiles at once
-                                        entity->addComponent<CAnimation>(engine->assets().getAnimation("Brick"));
+                                        entity.addComponent<CAnimation>(engine->assets().getAnimation("Brick"));
                                     }
                                 }
                             }
                             ImGui::TreePop();
                         }
                         if (ImGui::TreeNode("Health")) {
-                            if (e->hasComponent<CHealth>()) {
-                                auto& hp = e->getComponent<CHealth>();
+                            if (e.hasComponent<CHealth>()) {
+                                auto& hp = e.getComponent<CHealth>();
                                 ImGui::SetNextItemWidth(100);
                                 ImGui::InputInt("Hp", &hp.current);
                                 ImGui::SameLine();
@@ -171,51 +170,51 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                 }
                                 hp.percentage = static_cast<float>(hp.current)/static_cast<float>(hp.max);
                                 if (ImGui::Button("Delete")) {
-                                    e->removeComponent<CHealth>();
+                                    e.removeComponent<CHealth>();
                                 } 
                             } else if (ImGui::Button("Add health")) {
-                                e->addComponent<CHealth>();
+                                e.addComponent<CHealth>();
                             }
                             ImGui::TreePop();
                         }
                         if (ImGui::TreeNode("Damage")) {
-                            if (e->hasComponent<CDamage>()) {
-                                auto& damage = e->getComponent<CDamage>();
+                            if (e.hasComponent<CDamage>()) {
+                                auto& damage = e.getComponent<CDamage>();
                                 ImGui::SetNextItemWidth(100);
                                 ImGui::InputInt("Damage", &damage.damage);
                                 if (ImGui::Button("Delete")) {
-                                    e->removeComponent<CDamage>();
+                                    e.removeComponent<CDamage>();
                                 } 
                             } else if (ImGui::Button("Add damage")) {
-                                e->addComponent<CDamage>();
+                                e.addComponent<CDamage>();
                             }
                             ImGui::TreePop();
                         }
                         if (ImGui::TreeNode("Invincibility")) {
-                            if (e->hasComponent<CInvincibility>()) {
-                                auto& invincibility = e->getComponent<CInvincibility>();
+                            if (e.hasComponent<CInvincibility>()) {
+                                auto& invincibility = e.getComponent<CInvincibility>();
                                 ImGui::SetNextItemWidth(100);
                                 ImGui::InputInt("Time (frames)", &invincibility.i_frames, 60, 60);
                                 if (ImGui::Button("Delete")) {
-                                    e->removeComponent<CInvincibility>();
+                                    e.removeComponent<CInvincibility>();
                                 } 
                             } else if (ImGui::Button("Add invincibility")) {
-                                e->addComponent<CInvincibility>();
+                                e.addComponent<CInvincibility>();
                             }
                             ImGui::TreePop();
                         }
                         if (ImGui::TreeNode("Behavior")) {
-                            if (e->tag() == Tag::ENEMY) {
-                                if (e->hasComponent<CBehavior>()) {
-                                    auto& hostile = e->getComponent<CBehavior>().hostile;
+                            if (e.tag() == Tag::ENEMY) {
+                                if (e.hasComponent<CBehavior>()) {
+                                    auto& hostile = e.getComponent<CBehavior>().hostile;
                                     ImGui::Checkbox("Hostile", &hostile);
                                     if (ImGui::Button("Delete")) {
-                                        e->removeComponent<CBehavior>();
+                                        e.removeComponent<CBehavior>();
                                     } 
                                 }
                                 if (ImGui::TreeNode("Follow")) {
-                                    if (e->hasComponent<CFollowPlayer>()) {
-                                        auto& follow = e->getComponent<CFollowPlayer>();
+                                    if (e.hasComponent<CFollowPlayer>()) {
+                                        auto& follow = e.getComponent<CFollowPlayer>();
                                         ImGui::SetNextItemWidth(100);
                                         ImGui::InputFloat("x", &follow.home.x, 1.0f, 1.0f, "%.0f");
                                         ImGui::SameLine();
@@ -224,19 +223,19 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                         ImGui::SetNextItemWidth(100);
                                         ImGui::InputFloat("Speed", &follow.speed, 1.0f, 1.0f, "%.0f");
                                         if (ImGui::Button("Delete")) {
-                                            e->removeComponent<CFollowPlayer>();
+                                            e.removeComponent<CFollowPlayer>();
                                         } 
                                     } else if (ImGui::Button("Add follow behavior")) {
-                                        e->addComponent<CFollowPlayer>();
-                                        e->removeComponent<CPatrol>();
+                                        e.addComponent<CFollowPlayer>();
+                                        e.removeComponent<CPatrol>();
                                     }
                                     ImGui::TreePop();
                                 }
                             }
-                            if (e->tag() == Tag::ENEMY || e->tag() == Tag::ELEVATOR) {
+                            if (e.tag() == Tag::ENEMY || e.tag() == Tag::ELEVATOR) {
                                 if (ImGui::TreeNode("Patrol")) {
-                                    if (e->hasComponent<CPatrol>()) {
-                                        auto& patrol = e->getComponent<CPatrol>();
+                                    if (e.hasComponent<CPatrol>()) {
+                                        auto& patrol = e.getComponent<CPatrol>();
                                         ImGui::SetNextItemWidth(100);
                                         ImGui::InputFloat("Speed", &patrol.speed, 1.0f, 1.0f, "%.0f");
                                         auto i = 0;
@@ -261,11 +260,11 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                             }
                                         }
                                         if (ImGui::Button("Delete")) {
-                                            e->removeComponent<CPatrol>();
+                                            e.removeComponent<CPatrol>();
                                         } 
                                     } else if (ImGui::Button("Add follow behavior")) {
-                                        e->addComponent<CPatrol>();
-                                        e->removeComponent<CFollowPlayer>();
+                                        e.addComponent<CPatrol>();
+                                        e.removeComponent<CFollowPlayer>();
                                     }
                                     ImGui::TreePop();
                                 }
@@ -273,9 +272,9 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                             ImGui::TreePop();
                         }
                         if (ImGui::TreeNode("Trigger")) {
-                            if (e->tag() == Tag::TRIGGER) {
-                                if (e->hasComponent<CTrigger>()) {
-                                    auto& trigger = e->getComponent<CTrigger>();
+                            if (e.tag() == Tag::TRIGGER) {
+                                if (e.hasComponent<CTrigger>()) {
+                                    auto& trigger = e.getComponent<CTrigger>();
                                     ImGui::BeginDisabled();
                                     ImGui::InputInt("id", &trigger.id, 0);
                                     ImGui::EndDisabled();
@@ -300,20 +299,20 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                     }
                                     
                                 } else if (ImGui::Button("Add Trigger")) {
-                                    e->addComponent<CTrigger>(getNextTriggerId(entity_manager), TriggerType::NONE);
+                                    e.addComponent<CTrigger>(getNextTriggerId(entity_manager), TriggerType::NONE);
                                 }
                             }
                             ImGui::TreePop();
                         }
                         if (ImGui::TreeNode("Triggerable")) {
-                            if (e->tag() == Tag::TRIGGERABLE) {
-                                if (e->hasComponent<CTriggerable>()) {
-                                    auto& triggerable = e->getComponent<CTriggerable>();
+                            if (e.tag() == Tag::TRIGGERABLE) {
+                                if (e.hasComponent<CTriggerable>()) {
+                                    auto& triggerable = e.getComponent<CTriggerable>();
                                     ImGui::InputInt("Trigger id", &triggerable.trigger_id);                    
                                 } else if (!getTriggerIds(entity_manager).size()) {
                                     ImGui::Text("No triggers exist yet.");
                                 } else if (ImGui::Button("Add Triggerable")) {
-                                    e->addComponent<CTriggerable>(getTriggerIds(entity_manager).back());
+                                    e.addComponent<CTriggerable>(getTriggerIds(entity_manager).back());
                                 }
                             }
                             ImGui::TreePop();
@@ -325,7 +324,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                 if (!m_type_map.count(type_str)) {
                                     continue;
                                 }
-                                if (m_type_map.at(type_str) == e->tag()) {
+                                if (m_type_map.at(type_str) == e.tag()) {
                                     cur_index = i;
                                     break;
                                 }
@@ -335,14 +334,15 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                             if (prev_index != cur_index) {
                                 std::string type(m_types[cur_index]);
                                 if (m_type_map.count(type)) {
-                                    entity_manager.setTag(e->id(), m_type_map.at(type));
+                                    entity_manager.setTag(e.id(), m_type_map.at(type));
                                 }
                             }
                             ImGui::TreePop();
                         }
                 
                         if (ImGui::Button("Delete")) {
-                            e->destroy();
+                            engine->popSelectedEntityId(e.id());
+                            e.destroy();
                             entity_manager.update();
                         }
 
@@ -374,10 +374,10 @@ void Editor::addEntity(EntityManager& entity_manager, GameEngine* engine) {
     const auto selected_cells = engine->allSelectedPos();
     for (const auto& cell : selected_cells) {
         auto tile = entity_manager.addEntity(Tag::TILE);
-        tile->addComponent<CAnimation>(engine->assets().getAnimation(m_previous_animation), true);
-        tile->addComponent<CTransform>(cell);
-        tile->addComponent<CDraggable>();
-        engine->pushSelectedEntityId(tile->id());
+        tile.addComponent<CAnimation>(engine->assets().getAnimation(m_previous_animation), true);
+        tile.addComponent<CTransform>(cell);
+        tile.addComponent<CDraggable>();
+        engine->pushSelectedEntityId(tile.id());
     }
 
     m_previously_created = true;
@@ -420,13 +420,13 @@ const std::string Editor::tagString(Tag tag) const {
     return tag_str;
 }
 
-void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
-    const auto tag = tagString(e->tag());
+void Editor::parseEntity(Entity e, GameEngine* engine) {
+    const auto tag = tagString(e.tag());
     if (tag == "") {
         return;
     }
 
-    if (!e->hasComponent<CTransform>()) {
+    if (!e.hasComponent<CTransform>()) {
         // Currently not saving entities without position to level files
         return;
     }
@@ -435,12 +435,12 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
     auto has_size = false;
     auto size = Vec2(0, 0);
 
-    if (e->hasComponent<CAnimation>()) {
-        size = e->getComponent<CAnimation>().animation.getSize();
+    if (e.hasComponent<CAnimation>()) {
+        size = e.getComponent<CAnimation>().animation.getSize();
         has_size = true;
     }
-    if (!has_size && e->hasComponent<CBBox>()) {
-        size = e->getComponent<CBBox>().size;
+    if (!has_size && e.hasComponent<CBBox>()) {
+        size = e.getComponent<CBBox>().size;
         has_size = true;
     }
 
@@ -450,7 +450,7 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
         return;
     }
 
-    const auto pos = e->getComponent<CTransform>().pos;
+    const auto pos = e.getComponent<CTransform>().pos;
     const auto grid_pos = engine->toGridPos(pos, size);
     const auto grid_x = grid_pos.x;
     const auto grid_y = grid_pos.y;
@@ -460,8 +460,8 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
 
     std::stringstream ss;
 
-    if (e->hasComponent<CBBox>()) {
-        const auto bbox = e->getComponent<CBBox>();
+    if (e.hasComponent<CBBox>()) {
+        const auto bbox = e.getComponent<CBBox>();
         block_movement = bbox.block_movement;
         block_vision = bbox.block_vision;
 
@@ -472,10 +472,10 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
         }
 
         if (tag == "Trigger") {
-            int trigger_id = e->getComponent<CTrigger>().id;
+            int trigger_id = e.getComponent<CTrigger>().id;
             std::string trigger_type = "None"; 
-            if (m_trigger_level_file_type_map.count(e->getComponent<CTrigger>().type)) {
-                trigger_type = m_trigger_level_file_type_map.at(e->getComponent<CTrigger>().type);
+            if (m_trigger_level_file_type_map.count(e.getComponent<CTrigger>().type)) {
+                trigger_type = m_trigger_level_file_type_map.at(e.getComponent<CTrigger>().type);
             }
             ss << tag << " " << trigger_id << " " << grid_x << " " << grid_y << " " << bbox.size.x << " " <<
                 bbox.size.y << " " << trigger_type;
@@ -484,15 +484,15 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
         }
 
         if (tag == "Triggerable") {
-            int trigger_id = e->getComponent<CTriggerable>().trigger_id;
-            std::string animation = e->getComponent<CAnimation>().animation.getName();
+            int trigger_id = e.getComponent<CTriggerable>().trigger_id;
+            std::string animation = e.getComponent<CAnimation>().animation.getName();
             int hp = 0;
             int damage = 0;
-            if (e->hasComponent<CHealth>()) {
-                hp = e->getComponent<CHealth>().current;
+            if (e.hasComponent<CHealth>()) {
+                hp = e.getComponent<CHealth>().current;
             }
-            if (e->hasComponent<CDamage>()) {
-                damage = e->getComponent<CDamage>().damage;
+            if (e.hasComponent<CDamage>()) {
+                damage = e.getComponent<CDamage>().damage;
             }
 
             ss << tag << " " << animation << " " << trigger_id << " " << grid_x << " " << grid_y << " " <<
@@ -503,8 +503,8 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
     }
 
     std::string animation_name =  "";
-    if (e->hasComponent<CAnimation>()) {
-        animation_name = e->getComponent<CAnimation>().animation.getName();
+    if (e.hasComponent<CAnimation>()) {
+        animation_name = e.getComponent<CAnimation>().animation.getName();
     }
 
     if (tag == "Player") {
@@ -524,20 +524,20 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
         auto hp = 1;
         auto damage = 0;
 
-        if (e->hasComponent<CBehavior>()) {
-            hostile = e->getComponent<CBehavior>().hostile;
+        if (e.hasComponent<CBehavior>()) {
+            hostile = e.getComponent<CBehavior>().hostile;
         }
-        if (e->hasComponent<CHealth>()) {
-            hp = e->getComponent<CHealth>().current;
+        if (e.hasComponent<CHealth>()) {
+            hp = e.getComponent<CHealth>().current;
         }
-        if (e->hasComponent<CDamage>()) {
-            damage = e->getComponent<CDamage>().damage;
+        if (e.hasComponent<CDamage>()) {
+            damage = e.getComponent<CDamage>().damage;
         }
         ss << " " << hostile << " " << hp << " " << damage;
     }
 
-    if (e->hasComponent<CPatrol>()) {
-        const auto patrol = e->getComponent<CPatrol>();
+    if (e.hasComponent<CPatrol>()) {
+        const auto patrol = e.getComponent<CPatrol>();
         ss << " Patrol " << patrol.speed << " " << patrol.positions.size();
         for (const auto& pos : patrol.positions) {
             const auto grid_pos = engine->toGridPos(pos, size);
@@ -547,8 +547,8 @@ void Editor::parseEntity(std::shared_ptr<Entity> e, GameEngine* engine) {
         return;
     }
 
-    if (e->hasComponent<CFollowPlayer>()) {
-        const auto follow = e->getComponent<CFollowPlayer>();
+    if (e.hasComponent<CFollowPlayer>()) {
+        const auto follow = e.getComponent<CFollowPlayer>();
         const auto grid_pos = engine->toGridPos(follow.home, size);
         ss << " Follow " << follow.speed << " " << grid_pos.x << " " << grid_pos.y; 
     }
@@ -611,10 +611,10 @@ int Editor::getNextTriggerId(EntityManager& entity_manager) const {
     std::vector<int> ids;
     
     for (const auto& e : entity_manager.getEntities(Tag::TRIGGER)) {
-        if (!e->hasComponent<CTrigger>()) {
+        if (!e.hasComponent<CTrigger>()) {
             continue;
         }
-        ids.push_back(e->getComponent<CTrigger>().id);
+        ids.push_back(e.getComponent<CTrigger>().id);
     }
 
     if (ids.size() == 0) {
@@ -629,10 +629,10 @@ std::vector<int> Editor::getTriggerIds(EntityManager& entity_manager) const {
     std::vector<int> ids;
     
     for (const auto& e : entity_manager.getEntities(Tag::TRIGGER)) {
-        if (!e->hasComponent<CTrigger>()) {
+        if (!e.hasComponent<CTrigger>()) {
             continue;
         }
-        ids.push_back(e->getComponent<CTrigger>().id);
+        ids.push_back(e.getComponent<CTrigger>().id);
     }
 
     return ids;

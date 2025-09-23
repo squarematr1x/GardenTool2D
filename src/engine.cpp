@@ -36,11 +36,11 @@ void GameEngine::init(const std::string& path) {
 	changeScene(SceneType::MENU, std::make_shared<SceneMenu>(this));
 }
 
-void GameEngine::changeScene(SceneType scene_name, std::shared_ptr<Scene> scene, bool end_current_scene) {
-	(void)end_current_scene; // TODO: Use later if needed
+void GameEngine::changeScene(SceneType scene_name, std::shared_ptr<Scene> scene) {
 	m_scenes[scene_name] = scene;
 	m_cur_scene = scene_name;
 	m_edit_mode = false;
+	cleanEditMode();
 	m_editor.setLevel(scene->levelPath());
 }
 
@@ -188,10 +188,13 @@ void GameEngine::toggleEditMode() {
 	auto entity_manager = currentScene()->getEntityManager();
 	for (auto& e : entity_manager.getEntities()) {
 		if (m_edit_mode) {
-			e->addComponent<CDraggable>();
+			e.addComponent<CDraggable>();
 		} else {
-			e->removeComponent<CDraggable>();
+			e.removeComponent<CDraggable>();
 		}
+	}
+	if (!m_edit_mode) {
+		cleanEditMode();
 	}
 }
 
@@ -229,6 +232,11 @@ void GameEngine::pushSelectedEntityId(size_t id, bool reset) {
 void GameEngine::popSelectedEntityId(size_t id) {
 	m_selected_entity_ids.erase(std::remove_if(m_selected_entity_ids.begin(), m_selected_entity_ids.end(),
 		[&](size_t selected_id) { return selected_id == id; }), m_selected_entity_ids.end());
+}
+
+void GameEngine::cleanEditMode() {
+	m_selected_pos = { Vec2(0, 0) };
+	m_selected_entity_ids.clear();
 }
 
 // TODO: methods below could be used directly trough Scene

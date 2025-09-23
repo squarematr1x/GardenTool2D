@@ -4,6 +4,22 @@
 
 #include "../asset/animation.hpp"
 
+enum class Tag : unsigned char {
+	DEFAULT,
+	TILE,
+	PLAYER,
+	ENEMY,
+	BULLET,
+	EXPLOSION,
+	SWORD,
+	HEART,
+	TELEPORT,
+	ELEVATOR,
+	CHECKPOINT,
+	TRIGGER,
+	TRIGGERABLE
+};
+
 enum class State: unsigned char {
 	NONE,
 	JUMP,
@@ -73,6 +89,7 @@ struct CTransform: Component {
 struct CScore: Component {
 	int score;
 
+	CScore() {}
 	CScore(int s)
 		: score(s)
 	{
@@ -144,8 +161,6 @@ struct CBBox: Component {
 	Vec2 half_size{ 0.0f, 0.0f }; // To reduce computations
 	bool block_movement{ false };
 	bool block_vision{ false };
-	bool movable{ false }; // Allow the player to move objects
-	bool breakable{ false }; // Destroy on collision
 
 	CBBox() {}
 	CBBox(Vec2 size_in)
@@ -158,15 +173,6 @@ struct CBBox: Component {
 		half_size(size_in/2),
 		block_movement(block_movement_in),
 		block_vision(block_vision_in)
-	{
-	}
-
-	CBBox(Vec2 size_in, bool block_movement_in, bool block_vision_in, bool breakable_in)
-		: size(size_in),
-		half_size(size_in/2),
-		block_movement(block_movement_in),
-		block_vision(block_vision_in),
-		breakable(breakable_in)
 	{
 	}
 };
@@ -257,7 +263,7 @@ struct CWeapon: Component {
 	WeaponType type{ WeaponType::MELEE };
 	int max_cooldown{ 20 };
 	int remaining_cooldown{ 0 };
-	size_t current_weapon_id{ 0 };
+	size_t id{ 0 };
 
 	CWeapon() {}
 	CWeapon(WeaponType type_in) 
@@ -270,8 +276,8 @@ struct CWeapon: Component {
 	{
 	}
 
-	CWeapon(WeaponType type_in, int cooldown_in, size_t weapon_id_in) 
-		: type(type_in), max_cooldown(cooldown_in), current_weapon_id(weapon_id_in)
+	CWeapon(WeaponType type_in, int cooldown_in, size_t id_in) 
+		: type(type_in), max_cooldown(cooldown_in), id(id_in)
 	{
 	}
 };
@@ -313,22 +319,41 @@ struct CTriggerable: Component {
 	}
 };
 
-struct CLightSource: Component {
-	// For dynamic lighting
-};
-
-struct CSound: Component {
-	// Play different sounds related to certain entity
-};
-
 struct CInteractable: Component {
 	// Interact with e.g. button, door, npc, item, etc.
 	bool highlight{ false };
 	bool active{ false };
 };
 
+struct CBreakable: Component {
+	bool active{ true };
+};
+
+struct CMovable: Component {
+	bool active{ true };
+};
+
+struct CInfo: Component {
+	std::string name{ "" };
+	std::string description{ "" };
+
+	CInfo() {}
+	CInfo(const std::string& name_in, const std::string& description_in)
+		: name(name_in), description(description_in)
+	{
+	}
+};
+
 struct CDialog: Component {
 	// Dialog tree for entities	
+};
+
+struct CLightSource: Component {
+	// For dynamic lighting
+};
+
+struct CSound: Component {
+	// Play different sounds related to certain entity
 };
 
 struct CGridCoordinate: Component {

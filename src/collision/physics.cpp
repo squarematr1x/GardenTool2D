@@ -4,11 +4,11 @@
 namespace physics
 {
 
-Vec2 getOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
-	const auto pos_a = a->getComponent<CTransform>().pos;
-	const auto pos_b = b->getComponent<CTransform>().pos;
-	const auto half_size_a = a->getComponent<CBBox>().half_size;
-	const auto half_size_b = b->getComponent<CBBox>().half_size;
+Vec2 getOverlap(Entity a, Entity b) {
+	const auto pos_a = a.getComponent<CTransform>().pos;
+	const auto pos_b = b.getComponent<CTransform>().pos;
+	const auto half_size_a = a.getComponent<CBBox>().half_size;
+	const auto half_size_b = b.getComponent<CBBox>().half_size;
 	const auto delta = Vec2(
 		fabsf(pos_a.x - pos_b.x),
 		fabsf(pos_a.y - pos_b.y)
@@ -21,11 +21,11 @@ Vec2 getOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
 	return Vec2(overlap_x, overlap_y);
 }
 
-Vec2 getPrevOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
-	const auto pos_a = a->getComponent<CTransform>().prev_pos;
-	const auto pos_b = b->getComponent<CTransform>().prev_pos;
-	const auto half_size_a = a->getComponent<CBBox>().half_size;
-	const auto half_size_b = b->getComponent<CBBox>().half_size;
+Vec2 getPrevOverlap(Entity a, Entity b) {
+	const auto pos_a = a.getComponent<CTransform>().prev_pos;
+	const auto pos_b = b.getComponent<CTransform>().prev_pos;
+	const auto half_size_a = a.getComponent<CBBox>().half_size;
+	const auto half_size_b = b.getComponent<CBBox>().half_size;
 	const auto delta = Vec2(
 		fabsf(pos_a.x - pos_b.x),
 		fabsf(pos_a.y - pos_b.y)
@@ -38,27 +38,27 @@ Vec2 getPrevOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
 	return Vec2(overlap_x, overlap_y);
 }
 
-bool overlapping(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
+bool overlapping(Entity a, Entity b) {
 	const auto overlap = getOverlap(a, b);
 	
 	return (overlap.x > 0 && overlap.y > 0);
 }
 
-bool previouslyOverlapping(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
+bool previouslyOverlapping(Entity a, Entity b) {
 	const auto prev_overlap = getPrevOverlap(a, b);
 	
 	return (prev_overlap.x > 0 && prev_overlap.y > 0);
 }
 
-bool isInside(const Vec2& pos, std::shared_ptr<Entity> entity) {
-	const auto e_pos = entity->getComponent<CTransform>().pos;
+bool isInside(const Vec2& pos, Entity entity) {
+	const auto e_pos = entity.getComponent<CTransform>().pos;
     auto size = Vec2(0, 0); 
 
-	if (entity->hasComponent<CAnimation>()) {
-		size = entity->getComponent<CAnimation>().animation.getSize();
+	if (entity.hasComponent<CAnimation>()) {
+		size = entity.getComponent<CAnimation>().animation.getSize();
 	}
-	if (entity->hasComponent<CBBox>()) {
-		size = entity->getComponent<CBBox>().size;
+	if (entity.hasComponent<CBBox>()) {
+		size = entity.getComponent<CBBox>().size;
 	}
 
     const auto dx = fabs(pos.x - e_pos.x);
@@ -113,9 +113,9 @@ bool lineIntersect(const Vec2& a, const Vec2& b, const Vec2& c, const Vec2& d) {
 	return false;
 }
 
-bool entityIntersect(const Vec2& a, const Vec2& b, std::shared_ptr<Entity> entity) {
-	const auto half_size = entity->getComponent<CBBox>().half_size;
-	const auto pos = entity->getComponent<CTransform>().pos;
+bool entityIntersect(const Vec2& a, const Vec2& b, Entity entity) {
+	const auto half_size = entity.getComponent<CBBox>().half_size;
+	const auto pos = entity.getComponent<CTransform>().pos;
 	const Vec2 p1(pos.x - half_size.x, pos.y - half_size.y);
 	const Vec2 p2(pos.x + half_size.x, pos.y - half_size.y);
 	const Vec2 p3(pos.x + half_size.x, pos.y + half_size.y);
