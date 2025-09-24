@@ -220,13 +220,13 @@ void Scene::renderInfoAI(Entity e, Entity player) {
 }
 
 void Scene::renderLights(const Vec2& source, const std::vector<light::IntersectPoint>& visibility_points) {
-    if (m_visibility_points.size() == 0) {
+    if (visibility_points.size() == 0) {
         return;
     }
 
     VertexArray vertices(TRIANGLE);
     const Color light_color(255, 255, 255, 145);
-    const size_t n = m_visibility_points.size();
+    const size_t n = visibility_points.size();
 
     for (size_t i = 0; i < n - 1; i++) {
         vertices.append(source, light_color);
@@ -274,7 +274,16 @@ void Scene::renderCommon(Entity player) {
         // Draw vertex array
         m_engine->window().draw(vertices, m_engine->assets().getTexture("Tilemap"));
 
-        renderLights(worldPos(), m_visibility_points);
+       // Draw lights
+        for (const auto& e : m_entity_manager.getEntities()) {
+            if (!e.hasComponent<CLightSource>()) {
+                continue;
+            }
+            const auto edges = getEdgesWithBorders();
+            const auto pos = e.getComponent<CTransform>().pos;
+            const auto visibility_points = light::constructVisibilityPoints(pos, 1000.0f, edges);
+            renderLights(pos, visibility_points);
+        }
         renderHighlights();
         renderHpBars();
 
@@ -331,8 +340,7 @@ Vec2 Scene::worldPos() {
 
 void Scene::renderText(const std::string& text, const Vec2& pos, const Color& color, bool center) {
     const auto view = m_engine->window().getView();
-    const auto default_view = m_engine->window().getDefaultView(); // Ignore zoom level etc.
-    m_engine->window().setView(default_view);
+    m_engine->window().setUIView();
     VertexArray text_vertices(TRIANGLE);
     addTextVertexData(text, text_vertices, pos, color, center);
     m_engine->window().draw(text_vertices, m_engine->assets().getTexture("Textmap"));
@@ -341,8 +349,7 @@ void Scene::renderText(const std::string& text, const Vec2& pos, const Color& co
 
 void Scene::renderPauseText() {
     const auto view = m_engine->window().getView();
-    const auto default_view = m_engine->window().getDefaultView(); // Ignore zoom level etc.
-    m_engine->window().setView(default_view);
+    m_engine->window().setUIView();
 
     const auto size = Vec2(static_cast<float>(width()), 32.0f);
     const auto background_color = Color(0, 0, 0);
@@ -549,20 +556,6 @@ void Scene::sDoActionCommon(const Action& action) {
             case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
             case ActionName::TOGGLE_GRID: m_draw_grid = !m_draw_grid; break;
             case ActionName::TOGGLE_HEALTH: m_show_hp = !m_show_hp; break;
-            case ActionName::TOGGLE_LIGHT: {
-                m_draw_light = !m_draw_light;
-                if (m_draw_light) {
-
-                    Timer t;
-                    t.start();
-                    auto edges = getEdgesWithBorders();
-                    m_visibility_points = light::constructVisibilityPoints(worldPos(), 1000.0f, edges);
-                    std::cout << "light calculation time: " << t.elapsed() << "us\n";
-                } else {
-                    m_visibility_points.clear();
-                }
-                break;
-            }
             case ActionName::PAUSE: setPaused(!m_paused); break;
             case ActionName::QUIT: {
                 if (m_free_camera) {

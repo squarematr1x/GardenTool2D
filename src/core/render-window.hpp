@@ -31,6 +31,7 @@ public:
 	void setVerticalSyncEnabled(bool enable);
     void setView(const View& view);
     void setDefaultView();
+    void setUIView();
 
     void draw(const VertexArray& vertex_array);
     void draw(const VertexArray& vertex_array, const Texture& texture);

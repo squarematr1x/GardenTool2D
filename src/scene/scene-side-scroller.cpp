@@ -669,9 +669,6 @@ void SceneSideScroller::onEnd() {
     // Stop music
     m_engine->stopMusic("Level1Music");
 
-    // Reset view
-    m_engine->window().setDefaultView();
-
     // Go back to menu
     m_engine->changeScene(SceneType::MENU, std::make_shared<SceneMenu>(m_engine));
 }
