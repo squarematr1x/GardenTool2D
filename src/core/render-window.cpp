@@ -33,6 +33,16 @@ void RenderWindow::setDefaultView() {
     m_window.setView(m_window.getDefaultView());
 }
 
+void RenderWindow::setUIView() {
+    const auto ui_view = View(
+        0.0f,
+        0.0f,
+        static_cast<float>(m_window.getSize().x),
+        static_cast<float>(m_window.getSize().y)
+    );
+    m_window.setView(ui_view.getView());
+}
+
 void RenderWindow::draw(const VertexArray& vertex_array) {
     m_window.draw(vertex_array.getVertexArray());
 }
@@ -101,7 +111,6 @@ Vec2 RenderWindow::mapPixelToCoords(const Vec2 pos) const {
     });
     return Vec2(coords.x, coords.y);
 }
-
 
 const View& RenderWindow::getView() const {
     return m_view;

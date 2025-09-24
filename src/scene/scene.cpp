@@ -340,8 +340,7 @@ Vec2 Scene::worldPos() {
 
 void Scene::renderText(const std::string& text, const Vec2& pos, const Color& color, bool center) {
     const auto view = m_engine->window().getView();
-    const auto default_view = m_engine->window().getDefaultView(); // Ignore zoom level etc.
-    m_engine->window().setView(default_view);
+    m_engine->window().setUIView();
     VertexArray text_vertices(TRIANGLE);
     addTextVertexData(text, text_vertices, pos, color, center);
     m_engine->window().draw(text_vertices, m_engine->assets().getTexture("Textmap"));
