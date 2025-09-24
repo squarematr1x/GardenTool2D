@@ -349,8 +349,7 @@ void Scene::renderText(const std::string& text, const Vec2& pos, const Color& co
 
 void Scene::renderPauseText() {
     const auto view = m_engine->window().getView();
-    const auto default_view = m_engine->window().getDefaultView(); // Ignore zoom level etc.
-    m_engine->window().setView(default_view);
+    m_engine->window().setUIView();
 
     const auto size = Vec2(static_cast<float>(width()), 32.0f);
     const auto background_color = Color(0, 0, 0);
