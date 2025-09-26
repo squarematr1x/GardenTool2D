@@ -72,6 +72,7 @@ public:
 	void renderText(const std::string& text, const Vec2& pos, const Color& color = Color(255, 255, 255), bool center = false);
 	void renderPauseText();
 	void renderLights(const Vec2& source, const std::vector<light::IntersectPoint>& visibility_points);
+	void renderNoiseArea(Entity e);
 	void renderCommon(Entity player);
 
 	void updateZoom(float delta);
@@ -116,6 +117,7 @@ protected:
 	bool m_draw_textures{ true };
 	bool m_draw_collision{ false };
 	bool m_draw_grid{ false };
+	bool m_draw_noise_area{ false };
 	bool m_show_ai_info{ false };
 	bool m_show_hp{ true };
 	bool m_system_key_pressed{ false };

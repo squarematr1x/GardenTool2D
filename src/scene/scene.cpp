@@ -241,6 +241,25 @@ void Scene::renderLights(const Vec2& source, const std::vector<light::IntersectP
     m_engine->window().draw(vertices);
 }
 
+void Scene::renderNoiseArea(Entity e) {
+    if (!e.hasComponent<CNoise>()) {
+        return;
+    }
+
+    if (!e.getComponent<CNoise>().active) {
+        return;
+    }
+
+    Circle noise_area(e.getComponent<CNoise>().r);
+    noise_area.setFillColor(Color(230, 15, 255, 64));
+    noise_area.setPosition(
+        e.getComponent<CTransform>().pos.x - e.getComponent<CNoise>().r,
+        e.getComponent<CTransform>().pos.y - e.getComponent<CNoise>().r
+    );
+
+    m_engine->window().draw(noise_area);
+}
+
 void Scene::renderCommon(Entity player) {
     if (m_draw_textures) {
         VertexArray vertices(TRIANGLE);
@@ -284,6 +303,12 @@ void Scene::renderCommon(Entity player) {
             const auto visibility_points = light::constructVisibilityPoints(pos, 1000.0f, edges);
             renderLights(pos, visibility_points);
         }
+
+        // Draw noise/sound area
+        if (m_draw_noise_area) {
+            renderNoiseArea(player);
+        }
+
         renderHighlights();
         renderHpBars();
 
@@ -556,6 +581,7 @@ void Scene::sDoActionCommon(const Action& action) {
             case ActionName::TOGGLE_COLLISION: m_draw_collision = !m_draw_collision; break;
             case ActionName::TOGGLE_GRID: m_draw_grid = !m_draw_grid; break;
             case ActionName::TOGGLE_HEALTH: m_show_hp = !m_show_hp; break;
+            case ActionName::TOGGLE_NOISE_AREA: m_draw_noise_area = !m_draw_noise_area; break;
             case ActionName::PAUSE: setPaused(!m_paused); break;
             case ActionName::QUIT: {
                 if (m_free_camera) {

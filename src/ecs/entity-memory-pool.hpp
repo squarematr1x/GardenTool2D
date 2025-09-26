@@ -29,7 +29,8 @@ typedef std::tuple<
 	std::vector<CTriggerable>,
 	std::vector<CInteractable>,
     std::vector<CBreakable>,
-    std::vector<CLightSource>
+    std::vector<CLightSource>,
+    std::vector<CNoise>
 > ComponentVectorTuple;
 
 class EntityMemoryPool {

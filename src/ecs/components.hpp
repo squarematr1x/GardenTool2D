@@ -348,6 +348,19 @@ struct CLightSource: Component {
 	bool active{ false };
 };
 
+struct CNoise: Component {
+	bool active{ false };
+	// The radius of the area circle
+	// r while running could be 2*r walking?
+	float r{ 0.0f };
+
+	CNoise() {}
+	CNoise(float r_in)
+		: r(r_in)
+	{
+	}
+};
+
 struct CDialog: Component {
 	// Dialog tree for entities	
 };

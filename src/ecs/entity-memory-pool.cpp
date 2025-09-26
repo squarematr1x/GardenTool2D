@@ -63,6 +63,7 @@ void EntityMemoryPool::clearComponents(size_t entity_id) {
     clearComponent<CInteractable>(entity_id);
     clearComponent<CBreakable>(entity_id);
     clearComponent<CLightSource>(entity_id);
+    clearComponent<CNoise>(entity_id);
 }
 
 void EntityMemoryPool::reserveComponents() {
@@ -88,6 +89,7 @@ void EntityMemoryPool::reserveComponents() {
     reserveComponent<CInteractable>();
     reserveComponent<CBreakable>();
     reserveComponent<CLightSource>();
+    reserveComponent<CNoise>();
 }
 
 template <typename T>
