@@ -21,12 +21,6 @@ Dialogue tree
 - Store npc and dialogues in json file
 - Use similar text selection (option) as in menu scene?
 
-Sound component
-- If player move, set CSound -> active = true
-  - if active calculate area around the player and check if enemy entities inside the area
-    - set enities inside the are to agressive
-  - double the area if running (walking normal)
-
 Shaders
 - Use entity effects such as taking damage etc.
 
@@ -38,3 +32,8 @@ Multithreading
 
 Build
 - Start using e.g. CMake
+
+Rotating level
+- Rotate view 180 degrees
+- Invert gravity
+- Invert animation
