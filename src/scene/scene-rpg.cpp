@@ -27,6 +27,7 @@ void SceneRPG::init(const std::string& level_path) {
     registerAction(H, ActionName::TOGGLE_HEALTH);
     registerAction(Q, ActionName::TOGGLE_AI_INFO);
     registerAction(L, ActionName::TOGGLE_LIGHT);
+    registerAction(U, ActionName::TOGGLE_NOISE_AREA);
     registerAction(Tab, ActionName::TOGGLE_LEVEL_EDITOR);
     registerAction(LSystem, ActionName::L_SYSTEM);
 
@@ -175,6 +176,8 @@ void SceneRPG::spawnPlayer() {
     m_player.addComponent<CHealth>(m_player_config.hp, m_player_config.hp);
     m_player.addComponent<CState>(State::RUN);
     m_player.addComponent<CWeapon>();
+    // m_player.addComponent<CLightSource>();
+    m_player.addComponent<CNoise>(200.0f);
 }
 
 void SceneRPG::spawnSword(Entity entity) {
@@ -368,6 +371,11 @@ void SceneRPG::sMovement() {
                 weapon.id = 0;
             }
         }
+
+        if (e.hasComponent<CNoise>()) {
+            const bool make_sound = transform.velocity != Vec2(0.0f, 0.0f);
+            e.getComponent<CNoise>().active = make_sound;
+        }
     }
 }
 
@@ -453,6 +461,13 @@ void SceneRPG::sAI() {
                     target = e.getComponent<CFollowPlayer>().home;
                     e.getComponent<CFollowPlayer>().detected = false;
                     break;
+                }
+            }
+
+            if (m_player.hasComponent<CNoise>() && m_player.getComponent<CNoise>().active) {
+                if (m_player.getComponent<CTransform>().pos.distance(transform.pos) < m_player.getComponent<CNoise>().r) {
+                    target = m_player.getComponent<CTransform>().pos;
+                    e.getComponent<CFollowPlayer>().home = target;
                 }
             }
 
