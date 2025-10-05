@@ -39,7 +39,7 @@ enum class ActionName : unsigned char {
 struct Action {
 	ActionName name{ ActionName::NONE };
 	ActionType type{ ActionType::NONE };
-	Vec2 pos{ Vec2(0, 0) };
+	Vec2 pos{ 0 };
 	float delta{ 1.0f };
 
 	Action(ActionName name_in, ActionType type_in)

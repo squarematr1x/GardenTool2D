@@ -52,7 +52,7 @@ bool previouslyOverlapping(Entity a, Entity b) {
 
 bool isInside(const Vec2& pos, Entity entity) {
 	const auto e_pos = entity.getComponent<CTransform>().pos;
-    auto size = Vec2(0, 0); 
+    auto size = Vec2(0); 
 
 	if (entity.hasComponent<CAnimation>()) {
 		size = entity.getComponent<CAnimation>().animation.getSize();

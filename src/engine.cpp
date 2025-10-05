@@ -235,7 +235,7 @@ void GameEngine::popSelectedEntityId(size_t id) {
 }
 
 void GameEngine::cleanEditMode() {
-	m_selected_pos = { Vec2(0, 0) };
+	m_selected_pos = { Vec2(0) };
 	m_selected_entity_ids.clear();
 }
 

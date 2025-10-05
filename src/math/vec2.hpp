@@ -21,8 +21,18 @@ public:
 	{
 	}
 
+	Vec2(float both)
+		: x(both), y(both)
+	{
+	}
+
 	Vec2(int x_in, int y_in)
 		: x(static_cast<float>(x_in)), y(static_cast<float>(y_in))
+	{
+	}
+
+	Vec2(int both)
+		: x(static_cast<float>(both)), y(static_cast<float>(both))
 	{
 	}
 
@@ -31,8 +41,18 @@ public:
 	{
 	}
 
+	Vec2(unsigned int both)
+		: x(static_cast<float>(both)), y(static_cast<float>(both))
+	{
+	}
+
 	Vec2(size_t x_in, size_t y_in)
 		: x(static_cast<float>(x_in)), y(static_cast<float>(y_in))
+	{
+	}
+
+	Vec2(size_t both)
+		: x(static_cast<float>(both)), y(static_cast<float>(both))
 	{
 	}
 
