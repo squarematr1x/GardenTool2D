@@ -243,10 +243,10 @@ void SceneRPG::setRoomSize() {
 
 void SceneRPG::setFacing(Entity entity) {
     auto& transform = entity.getComponent<CTransform>();
-    if (transform.velocity == Vec2(0.0f, 0.0f)) {
+    if (transform.velocity == Vec2(0.0f)) {
         return;
     }
-    transform.facing = Vec2(0.0f, 0.0f);
+    transform.facing = Vec2(0.0f);
     transform.scale = Vec2(fabsf(transform.scale.x), transform.scale.y);
     if (std::floor(transform.velocity.x) > 0.0f) {
         transform.facing.x = 1.0f;
@@ -322,7 +322,7 @@ void SceneRPG::sMovement() {
         } else {
             path.cur_pos++;
             if (path.cur_pos >= path.positions.size()) {
-                p_transform.velocity = Vec2(0.0f, 0.0f);
+                p_transform.velocity = Vec2(0.0f);
                 m_player.removeComponent<CPath>();
             }
         }
@@ -373,7 +373,7 @@ void SceneRPG::sMovement() {
         }
 
         if (e.hasComponent<CNoise>()) {
-            const bool make_sound = transform.velocity != Vec2(0.0f, 0.0f);
+            const bool make_sound = transform.velocity != Vec2(0.0f);
             e.getComponent<CNoise>().active = make_sound;
         }
     }
@@ -477,7 +477,7 @@ void SceneRPG::sAI() {
                 desired = desired*e.getComponent<CFollowPlayer>().speed;
                 transform.velocity = desired;
             } else {
-                transform.velocity = Vec2(0.0f, 0.0f);
+                transform.velocity = Vec2(0.0f);
             }
 
             // TODO: implement steering:
@@ -664,7 +664,7 @@ void SceneRPG::sAnimation() {
             }
             p_state.prev_state = p_state.state;
 
-            if (m_player.getComponent<CTransform>().velocity != Vec2(0.0f, 0.0f)) {
+            if (m_player.getComponent<CTransform>().velocity != Vec2(0.0f)) {
                 e.getComponent<CAnimation>().animation.update();
             }
 

@@ -217,20 +217,20 @@ void SceneSideScroller::spawnBullet() {
     } else {
        bullet.addComponent<CTransform>(transform.pos, Vec2(bullet_v, 0.0f));
     }
-    bullet.addComponent<CBBox>(Vec2(32.0f, 32.0f));
+    bullet.addComponent<CBBox>(Vec2(32.0f));
     bullet.addComponent<CLifespan>(60);
 }
 
 void SceneSideScroller::spawnExplosion(const Vec2& pos) {
     auto explosion = m_entity_manager.addEntity(Tag::EXPLOSION);
     explosion.addComponent<CAnimation>(m_engine->assets().getAnimation("Explosion"));
-    explosion.addComponent<CTransform>(pos, Vec2(0, 0));
+    explosion.addComponent<CTransform>(pos, Vec2(0));
 }
 
 void SceneSideScroller::spawnItem(const Vec2& pos, const std::string& animation_name, Tag tag) {
     auto item = m_entity_manager.addEntity(tag);
     item.addComponent<CAnimation>(m_engine->assets().getAnimation(animation_name), true);
-    item.addComponent<CTransform>(pos, Vec2(0, 0));
+    item.addComponent<CTransform>(pos, Vec2(0));
 }
 
 void SceneSideScroller::update() {

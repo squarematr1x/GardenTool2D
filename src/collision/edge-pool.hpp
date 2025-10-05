@@ -46,7 +46,7 @@ class EdgePool {
 
     const Boundary getWorldBoundary(
         EntityManager& entity_manager, GameEngine* engine, std::unordered_set<Vec2, Vec2Hasher>& vertices,
-        bool padding = true, const Vec2& cell_size = Vec2(64.0f, 64.0f)
+        bool padding = true, const Vec2& cell_size = Vec2(64.0f)
     );
 
     bool validIndex(size_t index, std::vector<Cell> cells);

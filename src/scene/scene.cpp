@@ -563,7 +563,7 @@ Vec2 Scene::gridToMidPixel(float grid_x, float grid_y, Entity entity) const {
 
         return Vec2(x, y);
     }
-    return Vec2(0, 0);
+    return Vec2(0);
 }
 
 const std::vector<std::string> Scene::getLayerNames() const {

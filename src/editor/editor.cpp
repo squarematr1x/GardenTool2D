@@ -31,7 +31,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
         if (ImGui::BeginTabItem("Add")) {
             ImGui::SeparatorText("Add New Entity");
             auto pos = engine->selectedPos();
-            if (pos == Vec2(0, 0)) {
+            if (pos == Vec2(0)) {
                 ImGui::Text("Click and select grid position");
             } else {
                 ImGui::Text("Add entity to position: (%.0f, %0.f)", pos.x, pos.y);
@@ -102,7 +102,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                     auto entity = entity_manager.getEntity(id);
                                     if (entity.tag() == Tag::TILE) {
                                         // Add bounding box for multiple tiles at once
-                                        entity.addComponent<CBBox>(Vec2(64, 64), true, true);
+                                        entity.addComponent<CBBox>(Vec2(64), true, true);
                                     }
                                 }
                             }
@@ -251,7 +251,7 @@ void Editor::update(sf::RenderWindow& window, EntityManager& entity_manager, Gam
                                             i++;
                                         }
                                         if (ImGui::Button("Add position")) {
-                                            patrol.positions.push_back(Vec2(0.0f, 0.0f));
+                                            patrol.positions.push_back(Vec2(0.0f));
                                         }
                                         if (patrol.positions.size() > 2) {
                                             if (ImGui::Button("Pop position")) {
@@ -433,7 +433,7 @@ void Editor::parseEntity(Entity e, GameEngine* engine) {
 
 
     auto has_size = false;
-    auto size = Vec2(0, 0);
+    auto size = Vec2(0);
 
     if (e.hasComponent<CAnimation>()) {
         size = e.getComponent<CAnimation>().animation.getSize();
