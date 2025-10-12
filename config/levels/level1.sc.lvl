@@ -15,7 +15,7 @@ Tile Brick 3 1 1 1
 Tile Brick 3 3 1 1
 Tile Brick 4 0 1 1
 Tile Brick 4 1 1 1
-Tile Question1 4 3 1 1
+Tile Question1 1 4 1 1
 Tile Brick 6 0 1 1
 Tile Brick 6 1 1 1
 Tile Brick 7 0 1 1
@@ -60,6 +60,7 @@ Tile Bush 33 2 0 0
 Tile Heart 7 8 0 0
 Tile BrickRound 16 5 1 1
 Tile GuyRun 5 5 0 0
+Tile Brick 10 1 1 1
 
 # Player: x, y, bboxw, bboxh, speed, max speed, jump speed, gravity, weapon animation name hp
 Player 1 2 56 62 5 5 25 2 Fire 4
@@ -69,9 +70,9 @@ NPC CreepRun 7 2 0 0 1 2 1 Patrol 2 2 6 2 8 2
 NPC GitRun 13 1 0 0 1 4 1 Patrol 2 2 13 1 14 1
 
 # Elevator: animation name, x, y, block movement, block vision, behavior
-Elevator Brick 16 1 1 1 Patrol 2 2 16 1 20 1
-Elevator Rock 25 1 1 1 Patrol 2 2 25 1 25 5
-Elevator Rock 27 5 1 1 Patrol 2 2 27 5 27 1
+Elevator Brick 18 1 1 1 Patrol 2 2 16 1 20 1
+Elevator Rock 25 3 1 1 Patrol 2 2 25 1 25 5
+Elevator Rock 27 3 1 1 Patrol 2 2 27 5 27 1
 
 # Checkpoint: x, y, bboxw, bboxh
 Checkpoint 22 1 64 64
