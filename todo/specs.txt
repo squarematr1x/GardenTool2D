@@ -4,22 +4,28 @@ Static tiles
 - Tiles that can't be modified during runtime (e.g. destroyed)
   - Can modified trough editor though
 - An edge pool can be created from these tiles to reduce collision checks
+  - Update edge pool when changes applied to this
 - The vertex array containing this data can be constructed when app starts and reused (no need to re-calculate these)
-
-Text rendering
-- All text should be part of UI layer
-
-UI
-- Used for inventory, skill trees, map, etc.
-- Add ingame menu
-  - Use to control sound, music, load from checkpoint etc.
-- Editor
-  - Undo/redo in editor (could use ctrl+z)
 
 Dialogue tree
 - Create a specific datastructure for this
 - Store npc and dialogues in json file
 - Use similar text selection (option) as in menu scene?
+
+Migrate to SDL3
+- Replace sfml3
+- sdl3_mixer not available yet
+
+UI Layer
+- Text rendering is part of this layer
+- Used for inventory, skill trees, map, etc.
+- Add ingame menu
+  - Use to control sound, music, load from checkpoint etc.
+
+Editor
+- Wait until SDL3 migration completed
+- Undo/redo in editor (could use ctrl+z)
+- Add support for adding/modifying all the components
 
 Shaders
 - Use entity effects such as taking damage etc.
